@@ -72,7 +72,6 @@ GEM
       execjs
     coffee-script-source (1.9.1.1)
     database_cleaner (1.4.1)
-    diff-lcs (1.2.5)
     dynamic_form (1.1.4)
     erubis (2.7.0)
     execjs (2.5.2)
@@ -81,9 +80,6 @@ GEM
     factory_girl_rails (4.5.0)
       factory_girl (~> 4.5.0)
       railties (>= 3.0.0)
-    grit (2.4.1)
-      diff-lcs (~> 1.1)
-      mime-types (~> 1.15)
     haml (4.0.6)
       tilt
     highline (1.7.2)
@@ -155,6 +151,7 @@ GEM
     shoulda-context (1.2.1)
     shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
+    silencer (1.0.1)
     sprockets (2.2.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -199,7 +196,6 @@ DEPENDENCIES
   dynamic_form
   factory_girl (>= 2.6.4)
   factory_girl_rails (>= 1.2)
-  grit (~> 2.4.0)
   haml (= 4.0.6)
   jdbc-sqlite3 (>= 3.6.3.054)
   jquery-rails
@@ -216,6 +212,7 @@ DEPENDENCIES
   sass-rails (~> 3.2.3)
   shoulda (>= 2.11.3)
   shoulda-matchers (>= 2.0.0)
+  silencer
   sucker_punch (~> 1.0)
   test_after_commit (= 0.4.1)
   uglifier (>= 1.0.3)

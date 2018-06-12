@@ -69,7 +69,6 @@
               %div{:class=>"finalizing", :id=>finalizer_div_id, :style=>"display:none;" , :onmouseout=>"toggleFinalizer(this, '#{finalizer_div_id}')"}
                 = form_tag({:controller=>'publications', :action=>'become_finalizer', :id=>publication.id}) do
                   = submit_tag "Make me finalizer", :disabled => publication.advisory_lock_exists?("become_finalizer_#{publication.id}"), :onclick => 'this.disabled=true;this.form.submit();'
-              
           - if list_name == "needs_review" || list_name == "waiting"
             - if publication.votes.count > 0
               = publication.votes.count

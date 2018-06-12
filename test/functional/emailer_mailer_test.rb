@@ -45,6 +45,7 @@ class EmailerMailerTest < ActionMailer::TestCase
     teardown do 
       @publication.destroy
       @board_publication.destroy
+      @meta_board.destroy
       @creator.destroy
     end
 

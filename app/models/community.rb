@@ -14,6 +14,7 @@ class Community < ActiveRecord::Base
   
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name
+  validates_format_of :name, :without => Repository::BASH_SPECIAL_CHARACTERS_REGEX, :message => 'Name cannot contain any of the following special characters: $!`"'
 
   #The end_user is a sosol user to whom the communities' finalized publications are copied.
   def end_user

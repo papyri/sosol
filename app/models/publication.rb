@@ -22,6 +22,7 @@ require 'shellwords'
 
 class Publication < ActiveRecord::Base
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized approved_pending }
+  @@canon_mutex = Mutex.new
 
   validates_presence_of :title, :branch
 
@@ -668,7 +669,11 @@ class Publication < ActiveRecord::Base
     canon_branch_point = self.merge_base
     board_branch_point = self.origin.head
 
-    return `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} rev-list #{canon_branch_point}..#{board_branch_point}`.split("\n")
+    rev_list = Repository.run_command("#{self.repository.git_command_prefix} rev-list #{canon_branch_point}..#{board_branch_point}").split("\n")
+    unless $?.success?
+      raise "git rev-list failure in Publication#creator_commits: #{$?.inspect}"
+    end
+    return rev_list
   end
 
   def flatten_commits(finalizing_publication, finalizer, board_members)
@@ -693,21 +698,16 @@ class Publication < ActiveRecord::Base
 
     controlled_commits = self.creator_commits.select do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
-      begin
-        controlled_commit_diffs = self.repository.repo.diff("#{creator_commit}^", creator_commit, board_controlled_paths.clone)
-      rescue Grit::Git::GitTimeout
-        Rails.logger.error("Git timeout - don't actually need the actual diff here but assume we could produce one if given enough time")
-        controlled_commit_diffs = ['timeout']
-      end
-      controlled_commit_diffs.length > 0
+      commit_touches_path = Repository.run_command("#{self.repository.git_command_prefix} log #{creator_commit}^..#{creator_commit} -- #{board_controlled_paths.clone.map{|p| Shellwords.escape(p)}.join(" ")}")
+      !commit_touches_path.blank?
     end
 
     Rails.logger.info("Controlled Commits: #{controlled_commits.inspect}")
 
     creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
     controlled_commits.each do |controlled_commit|
-      message = self.repository.repo.commit(controlled_commit).message.strip
-      unless message.empty?
+      message = Repository.run_command("#{self.repository.git_command_prefix} log -1 --pretty=format:%s #{controlled_commit}").strip
+      unless message.blank?
         creator_commit_messages << " - #{message}"
       end
     end
@@ -732,7 +732,7 @@ class Publication < ActiveRecord::Base
 
     # parent commit should ALWAYS be canonical master head
     # FIXME: handle racing during finalization
-    parent_commit = Repository.new.repo.get_head('master').commit.sha
+    parent_commit = Repository.new.get_head('master')
 
     # roll a tree SHA1 by reading the canonical master tree,
     # adding controlled path blobs, then writing the modified tree
@@ -783,34 +783,40 @@ class Publication < ActiveRecord::Base
   #
   def send_to_finalizer(finalizer = nil)
     board_members = self.owner.users
-    if !finalizer
-      #get someone from the board
-#      board_members = self.owner.users
-      # just select a random board member to be the finalizer
+    if finalizer.nil?
+      # select a random board member to be the finalizer
       finalizer = board_members[rand(board_members.length)]
-    end
 
-    self.remove_finalizer()
-    finalizing_publication = copy_to_owner(finalizer)
-    # finalizing_publication = clone_to_owner(finalizer)
-    self.flatten_commits(finalizing_publication, finalizer, board_members)
+      self.remove_finalizer()
+      finalizing_publication = copy_to_owner(finalizer)
+      # finalizing_publication = clone_to_owner(finalizer)
 
-    #should we clear the modified flag so we can tell if the finalizer has done anything
-    # that way we will know in the future if we can change finalizersedidd
-    finalizing_publication.change_status('finalizing')
-    retries = 0
-    begin
-      finalizing_publication.save!
-    rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
-      Rails.logger.warn(e.message)
-      retries += 1
-      if retries <= 3
-        sleep(2 ** retries)
-        Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
-        retry
-      else
-        raise e
+      approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
+      approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
+      approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
+      approve_members = approve_votes.map {|v| v.user}
+
+      self.flatten_commits(finalizing_publication, finalizer, approve_members)
+
+      #should we clear the modified flag so we can tell if the finalizer has done anything
+      # that way we will know in the future if we can change finalizersedidd
+      finalizing_publication.change_status('finalizing')
+      retries = 0
+      begin
+        finalizing_publication.save!
+      rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+        Rails.logger.warn(e.message)
+        retries += 1
+        if retries <= 3
+          sleep(2 ** retries)
+          Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
+          retry
+        else
+          raise e
+        end
       end
+    elsif board_members.include?(finalizer)
+      self.change_finalizer(finalizer)
     end
   end
 
@@ -835,9 +841,7 @@ class Publication < ActiveRecord::Base
     old_finalizing_publication = self.find_finalizer_publication
 
     if old_finalizing_publication.nil?
-      #some kind of error should be thrown?
-      Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.title + " .")
-      return false
+      raise("Attempt to change finalizer on nonexistent finalize publication " + self.inspect + " .")
     end
 
     self.transaction do
@@ -888,7 +892,7 @@ class Publication < ActiveRecord::Base
   end
 
   def merge_base(branch = 'master')
-    `git --git-dir=#{Shellwords.escape(self.repository.repo.path)} merge-base #{branch} #{self.head}`.chomp
+    Repository.run_command("#{self.repository.git_command_prefix} merge-base #{branch} #{self.head}").chomp
   end
 
   #Copies changes made to this publication back to the creator's (origin) publication.
@@ -960,145 +964,109 @@ class Publication < ActiveRecord::Base
 
     jgit_tree.commit(commit_comment, committer_user.jgit_actor)
 
-      #goal is to copy final blobs back to user's original publication (and preserve other blobs in original publication)
-     #  origin_index = self.origin.owner.repository.repo.index
-     #  origin_index.read_tree('master')
-
-     #  Rails.logger.debug "=======orign INDEX before add========"
-     #  Rails.logger.debug origin_index.inspect
-
-
-     #  #add the controlled paths to the index
-     #  controlled_paths_blobs.each_pair do |path, blob|
-     #     origin_index.add(path, blob.data)
-     #     Rails.logger.debug "--Adding controlled path blob: " + path + " " + blob.data
-     #  end
-
-     #  #need to add exiting tree to index, except for controlled blobs
-     #  uncontrolled_paths_blobs.each_pair do |path, blob|
-     #      origin_index.add(path, blob.data)
-     #      Rails.logger.debug "--Adding uncontrolled path blob: " + path + " " + blob.data
-     #  end
-
-
-     #  Rails.logger.debug "=======orign INDEX after add========"
-     #  Rails.logger.debug origin_index.inspect
-
-     # #origin_index.commit(params[:comment],  @publication.origin.head, @current_user , nil, @publication.origin.branch)
-     #  origin_index.commit(commit_comment,  self.origin.head, committer_user , nil, self.origin.branch)
-
-     #Rails.logger.info origin_index.commit("comment",  @publication.origin.head, nil, nil, @publication.origin.branch)
-
-      self.origin.save
+    self.origin.save
   end
 
 
   def commit_to_canon
     #commit_sha is just used to return git sha reference point for comment
     commit_sha = nil
+    @@canon_mutex.lock
+    begin
+      canon = Repository.new
+      publication_sha = self.head
+      canonical_sha = canon.get_head('master')
 
-    canon = Repository.new
-    publication_sha = self.head
-    canonical_sha = canon.repo.get_head('master').commit.sha
+      if canon_controlled_identifiers.length > 0
+        if self.merge_base(canonical_sha) == canonical_sha
+          # nothing new from canon, trivial merge by updating HEAD
+          # e.g. "Fast-forward" merge, HEAD is already contained in the commit
+          # canon.fetch_objects(self.owner.repository)
+          # canon.add_alternates(self.owner.repository)
+          # commit_sha = canon.update_ref('master', publication_sha)
+          canon.copy_branch_from_repo(self.branch, 'master', self.owner.repository)
 
-    if canon_controlled_identifiers.length > 0
-      if self.merge_base(canonical_sha) == canonical_sha
-        # nothing new from canon, trivial merge by updating HEAD
-        # e.g. "Fast-forward" merge, HEAD is already contained in the commit
-        # canon.fetch_objects(self.owner.repository)
-        canon.add_alternates(self.owner.repository)
-        commit_sha = canon.repo.update_ref('master', publication_sha)
+          self.change_status('committed')
+          self.save!
+        else
+          # Both the merged commit and HEAD are independent and must be tied
+          # together by a merge commit that has both of them as its parents.
 
-        self.change_status('committed')
-        self.save!
-      else
-        # Both the merged commit and HEAD are independent and must be tied
-        # together by a merge commit that has both of them as its parents.
-
-        # TODO: DRY from flatten_commits
-        controlled_blobs = self.canon_controlled_paths.collect do |controlled_path|
-          self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
-        end
-
-        controlled_paths_blobs =
-          Hash[*((self.canon_controlled_paths.zip(controlled_blobs)).flatten)]
-
-        Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
-        Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-
-        self.owner.repository.update_master_from_canonical
-        jgit_tree = JGit::JGitTree.new()
-        jgit_tree.load_from_repo(self.owner.repository.jgit_repo, 'master')
-        inserter = self.owner.repository.jgit_repo.newObjectInserter()
-        controlled_paths_blobs.each_pair do |path, blob|
-          unless blob.nil?
-            file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
-            jgit_tree.add_blob(path, file_id.name())
+          # TODO: DRY from flatten_commits
+          controlled_blobs = self.canon_controlled_paths.collect do |controlled_path|
+            self.owner.repository.get_blob_from_branch(controlled_path, self.branch)
           end
+
+          controlled_paths_blobs =
+            Hash[*((self.canon_controlled_paths.zip(controlled_blobs)).flatten)]
+
+          Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
+          Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
+          
+          # roll a tree SHA1 by reading the canonical master tree,
+          # adding controlled path blobs, then writing the modified tree
+          # (happens on the finalizer's repo)
+          self.owner.repository.update_master_from_canonical
+          jgit_tree = JGit::JGitTree.new()
+          jgit_tree.load_from_repo(self.owner.repository.jgit_repo, 'master')
+          inserter = self.owner.repository.jgit_repo.newObjectInserter()
+          controlled_paths_blobs.each_pair do |path, blob|
+            unless blob.nil?
+              file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB, blob.to_java_string.getBytes(java.nio.charset.Charset.forName("UTF-8")))
+              jgit_tree.add_blob(path, file_id.name())
+            end
+          end
+          inserter.flush()
+
+          tree_sha1 = jgit_tree.update_sha
+         
+          Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+          commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
+
+          inserter = self.owner.repository.jgit_repo.newObjectInserter()
+
+          commit = org.eclipse.jgit.lib.CommitBuilder.new()
+          commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
+          commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
+          commit.setAuthor(self.owner.jgit_actor)
+          commit.setCommitter(self.owner.jgit_actor)
+          commit.setEncoding("UTF-8")
+          commit.setMessage(commit_message)
+
+          finalized_commit_sha1 = inserter.insert(commit).name()
+          inserter.flush()
+          inserter.release()
+
+          Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
+
+          # Update our own head first
+          self.owner.repository.update_ref(self.branch, finalized_commit_sha1)
+
+          # canon.fetch_objects(self.owner.repository)
+          # canon.add_alternates(self.owner.repository)
+          # commit_sha = canon.update_ref('master', finalized_commit_sha1)
+          canon.copy_branch_from_repo(self.branch, 'master', self.owner.repository)
+
+          self.change_status('committed')
+          self.save!
         end
-        inserter.flush()
 
-        tree_sha1 = jgit_tree.update_sha
-
-        # roll a tree SHA1 by reading the canonical master tree,
-        # adding controlled path blobs, then writing the modified tree
-        # (happens on the finalizer's repo)
-        #self.owner.repository.update_master_from_canonical
-        #index = self.owner.repository.repo.index
-        #index.read_tree('master')
-        #controlled_paths_blobs.each_pair do |path, blob|
-        #  index.add(path, blob)
-        #end
-
-        #tree_sha1 = index.write_tree(index.tree, index.current_tree)
-        Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
-
-        commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
-
-        inserter = self.owner.repository.jgit_repo.newObjectInserter()
-
-        commit = org.eclipse.jgit.lib.CommitBuilder.new()
-        commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
-        commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
-        commit.setAuthor(self.owner.jgit_actor)
-        commit.setCommitter(self.owner.jgit_actor)
-        commit.setEncoding("UTF-8")
-        commit.setMessage(commit_message)
-
-        finalized_commit_sha1 = inserter.insert(commit).name()
-        inserter.flush()
-        inserter.release()
-
-        Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
-
-        # Update our own head first
-        self.owner.repository.repo.update_ref(self.branch, finalized_commit_sha1)
-
-        # canon.fetch_objects(self.owner.repository)
-        canon.add_alternates(self.owner.repository)
-        commit_sha = canon.repo.update_ref('master', finalized_commit_sha1)
-
+        # finalized, try to repack
+        RepackCanonicalJob.new.async.perform()
+      else
+        # nothing under canon control, just say it's committed
         self.change_status('committed')
         self.save!
       end
-
-      # finalized, try to repack
-      begin
-        canon.repo.git.repack({})
-      rescue Grit::Git::GitTimeout
-        Rails.logger.warn("Canonical repository not repacked after finalization!")
-      end
-    else
-      # nothing under canon control, just say it's committed
-      self.change_status('committed')
-      self.save!
-
-    end
+    ensure
+      @@canon_mutex.unlock
+    end # @@canon_mutex held
     return commit_sha
   end
 
   def finalize(finalization_comment_string = '')
-    self.with_lock do
+    self.with_advisory_lock("finalize_#{self.id}") do
       # check if any identifiers need renaming before proceeding
       if self.needs_rename?
         raise "Publication has one or more identifiers which need to be renamed before finalizing: #{self.identifiers_needing_rename.map{|i| i.name}.join(', ')}"
@@ -1180,7 +1148,7 @@ class Publication < ActiveRecord::Base
       # associate comment with original identifier/publication
       finalization_comment.identifier_id = self.controlled_identifiers.last
       finalization_comment.publication = self.origin
-      finalization_comment.save
+      finalization_comment.save!
 
       # create an event to show up on dashboard
       finalization_event = Event.new()
@@ -1264,11 +1232,8 @@ class Publication < ActiveRecord::Base
 
   def diff_from_canon
     canon = Repository.new
-    canonical_sha = canon.repo.get_head('master').commit.sha
-    diff = `git --git-dir="#{self.owner.repository.path}" diff --unified=5000 #{canonical_sha} #{self.head} -- #{self.controlled_paths.map{|path| "\"#{path}\""}.join(' ')}`
-    # diff = self.owner.repository.repo.git.diff(
-      # {:unified => 5000, :timeout => false}, canonical_sha, self.head,
-      # '--', *(self.controlled_paths))
+    canonical_sha = canon.get_head('master')
+    diff = Repository.run_command("git --git-dir=\"#{self.owner.repository.path}\" diff --unified=5000 #{canonical_sha} #{self.head} -- #{self.controlled_paths.map{|path| "\"#{path}\""}.join(' ')}")
     return diff || ""
   end
 

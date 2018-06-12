@@ -8,9 +8,7 @@ class FinalizeJob
       ActiveRecord::Base.connection_pool.clear_reloadable_connections!
       ActiveRecord::Base.connection_pool.with_connection do
         publication = Publication.find(publication_id)
-        publication.with_advisory_lock("finalize_#{publication_id}") do
-          publication.finalize(finalization_comment)
-        end
+        publication.finalize(finalization_comment)
       end
     ensure
       Rails.logger.debug("FinalizeJob finished (publication_id: #{publication_id} finalization_comment: #{finalization_comment})")

@@ -64,7 +64,6 @@
    test/               test environment git repositories
  doc/                  generated documentation
  lib/                  shared application libraries
-   git_conf.rb         allows setting per-branch Git repositories for development
    java/               Java JAR files, usable by JRuby
    jruby_xml.rb        JRubyXML class for abstracting Java XML libraries
    linking_info.rb     LinkingInfo class

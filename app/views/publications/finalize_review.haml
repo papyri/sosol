@@ -10,7 +10,7 @@
 
       = hidden_field_tag 'identifier_id', @identifier.id
       %br
-      = submit_tag "Finalize", :class => 'save', :disabled => (@publication.advisory_lock_exists?("finalize_#{@publication.id}") || @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}"))
+      = submit_tag "Finalize", :onclick => 'this.disabled=true;this.form.submit();', :class => 'save', :disabled => (@publication.advisory_lock_exists?("finalize_#{@publication.id}") || @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}"))
 
     %br
     = render :partial => 'common/diff', :object => @diff

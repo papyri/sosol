@@ -1,5 +1,6 @@
 require 'test_helper'
 require 'ddiff'
+require 'thwait'
 
 class SosolWorkflowTest < ActionController::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
@@ -104,7 +105,6 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         #the board memeber
         @meta_board.users << @board_user
-        #@meta_board.users << @board_user_2
 
         #the vote
         @meta_decree = FactoryGirl.create(:count_decree,
@@ -123,6 +123,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         @text_board = FactoryGirl.create(:board, :title => "text")
         #the board memeber
         @text_board.users << @board_user
+        @text_board.users << @board_user_2
         #the vote
         @text_decree = FactoryGirl.create(:count_decree,
                                           :board => @text_board,
@@ -153,7 +154,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         begin
           ActiveRecord::Base.connection_pool.with_connection do |conn|
             count = 0
-            [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].each do |entity|
+            [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].reverse.each do |entity|
               count = count + 1
               #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
               unless entity.nil?
@@ -304,7 +305,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Rails.logger.info(meta_final_identifier.inspect)
         # do rename
         open_session do |meta_rename_session|
-          meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/hgv/9999999999'
         end
 
@@ -315,9 +316,11 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Rails.logger.info(meta_final_identifier.inspect)
         assert !meta_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
+        canonical_before_finalize = Repository.new.get_head('master')
+
         open_session do |meta_finalize_session|
 
-          meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + meta_final_publication.owner.id.to_s, \
             :comment => 'I agree meta is great and now it is final'
 
           Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
@@ -327,6 +330,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         meta_final_publication.reload
         assert_equal "finalized", meta_final_publication.status, "Meta final publication not finalized"
+
+        canonical_after_finalize = Repository.new.get_head('master')
+        assert_not_equal canonical_before_finalize, canonical_after_finalize, 'Meta finalization should update canonical master'
 
         Rails.logger.debug "Meta committed"
 
@@ -394,13 +400,9 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         assert_equal "approved", text_publication.status, "Text publication not approved after vote"
         Rails.logger.debug "--Text publication approved"
 
-        #now finalizer should have it, only one person on board so it should be them
-        finalizer_publications = @board_user.publications
-        assert_equal 2, finalizer_publications.length, "Finalizer does not have a new (text) publication to finalize"
-
         text_final_publication = text_publication.find_finalizer_publication
 
-        assert_not_nil text_final_publication, "Publicaiton does not have text finalizer"
+        assert_not_nil text_final_publication, "Publication does not have text finalizer"
         Rails.logger.debug "---Finalizer has text publication"
 
         text_final_identifier = nil
@@ -415,14 +417,12 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         # try to finalize without rename
         open_session do |text_finalize_session|
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
           Rails.logger.debug "----session data is: " + text_finalize_session.session.to_hash.inspect
           Rails.logger.debug text_finalize_session.body
-
-          Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
         end
 
         text_final_publication.reload
@@ -430,17 +430,38 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         # do rename
         open_session do |text_rename_session|
-          text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+          text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
         end
 
         text_final_publication.reload
         assert !text_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
-        # actually finalize now that we've renamed
+        other_finalizer = (@text_board.users - [text_final_publication.owner]).first
+        assert_not_equal other_finalizer, text_final_publication.owner, 'Other finalizer should not be current finalizer'
+
+        publication_head_original = text_final_publication.head()
+        # do make-me-finalizer now that we've renamed
+        open_session do |mmf_session|
+          mmf_session.post 'publications/' + text_publication.id.to_s + '/become_finalizer?test_user_id=' + other_finalizer.id.to_s
+          Rails.logger.debug "--MMF flash is: " + mmf_session.flash.inspect
+          Rails.logger.debug "----MMF session data is: " + mmf_session.session.to_hash.inspect
+          Rails.logger.debug mmf_session.body
+        end
+
+        assert_raise ActiveRecord::RecordNotFound, 'Original finalization publication should be destroyed by make-me-finalizer process' do
+          Publication.find(text_final_publication.id)
+        end
+        text_final_publication = text_publication.find_finalizer_publication
+        assert_equal other_finalizer, text_final_publication.owner, 'Other finalizer should be finalizer after make-me-finalizer'
+        assert !text_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed then make-me-finalizered"
+        assert_equal publication_head_original, text_final_publication.head(), 'New finalizer publication should have the same commit history as the original'
+
+        canonical_before_finalize = Repository.new.get_head('master')
+        # actually finalize
         open_session do |text_finalize_session|
 
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
@@ -451,7 +472,10 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         end
 
         text_final_publication.reload
-        assert_equal "finalized", meta_final_publication.status, "Text final publication not finalized"
+        assert_equal "finalized", text_final_publication.status, "Text final publication not finalized"
+
+        canonical_after_finalize = Repository.new.get_head('master')
+        assert_not_equal canonical_before_finalize, canonical_after_finalize, 'Text finalization should update canonical master'
 
         Rails.logger.debug "---Text publication Finalized"
 
@@ -505,6 +529,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
     end
 
     teardown do
+      Rails.logger.info("Running IDP2 context teardown in thread: #{Thread.current.object_id}")
       ActiveRecord::Base.connection_pool.clear_reloadable_connections!
       ActiveRecord::Base.connection_pool.with_connection do |conn|
         ( @ddb_board.users + [ @james, @submitter,
@@ -523,6 +548,83 @@ class SosolWorkflowTest < ActionController::IntegrationTest
       teardown do
         # @publication.reload
         # @publication.destroy
+      end
+
+      context "with only DDB modifications" do
+        setup do
+          @new_ddb = DDBIdentifier.new_from_template(@publication)
+          @publication.reload
+        end
+
+        should "not be able to race with multiple submissions" do
+          Rails.logger.info("submission race on pub: #{@publication.inspect}")
+          assert Publication.exists?(@publication.id)
+          assert User.exists?(@publication.owner.id)
+          submit_publication_id = @publication.id.to_s
+          submitter = @publication.owner.id.to_s
+
+          new_active_threads = []
+
+          new_active_threads << Thread.new do
+            begin
+              ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+              ActiveRecord::Base.connection_pool.with_connection do |conn|
+                open_session do |submit_session|
+                  begin
+                    submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
+                  rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
+                    Rails.logger.info("#{e.class} inside submission thread 1")
+                  end
+                end
+              end
+            ensure
+              # The new thread gets a new AR connection, so we should
+              # always close it and flush logs before we terminate
+              Rails.logger.debug('submit race submit 1 finished')
+              ActiveRecord::Base.connection.close
+              Rails.logger.flush
+            end
+          end
+
+          new_active_threads << Thread.new do
+            begin
+              ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+              ActiveRecord::Base.connection_pool.with_connection do |conn|
+                open_session do |submit_session|
+                  begin
+                    submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
+                  rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
+                    Rails.logger.info("#{e.class} inside submit thread 2")
+                  end
+                end
+              end
+            ensure
+              # The new thread gets a new AR connection, so we should
+              # always close it and flush logs before we terminate
+              Rails.logger.debug('submit race submit 2 finished')
+              ActiveRecord::Base.connection.close
+              Rails.logger.flush
+            end
+          end
+
+          Rails.logger.debug "submit race threadwaiting on: #{new_active_threads.inspect}"
+          Rails.logger.flush
+          # new_active_threads.each(&:join)
+          ThreadsWait.all_waits(*new_active_threads)
+          Rails.logger.debug "submit race threadwaiting done"
+          Rails.logger.flush
+
+          ActiveRecord::Base.clear_active_connections!
+          ActiveRecord::Base.connection_pool.clear_reloadable_connections!
+          ActiveRecord::Base.connection_pool.with_connection do |conn|
+            @publication.reload
+            assert_equal 1, @publication.children.length, 'submitted publication should only have one child after submissions'
+            assert_equal 1, @publication.all_children.length, 'submitted publication should only have one child after submissions'
+            assert_equal 'submitted', @publication.status, 'submitted publication should have status "submitted" after submissions'
+          end
+          Rails.logger.debug "submit race assertions done"
+          Rails.logger.flush
+        end
       end
 
       context "submitted with only DDB modifications" do
@@ -598,18 +700,25 @@ class SosolWorkflowTest < ActionController::IntegrationTest
             assert User.exists?(different_finalizer)
             assert User.exists?(different_finalizer_2)
 
-            mmf_publication_id = @ddb_board.publications.first.id.to_s
+            mmf_publication = @ddb_board.publications.first
+            mmf_publication_id = mmf_publication.id.to_s
+            mmf_publication_owner_id = mmf_publication.owner.id.to_s
 
-            Rails.logger.info("MMF race on pub: #{@ddb_board.publications.first.inspect}")
+            Rails.logger.info("MMF race on pub: #{mmf_publication.inspect}")
+            Rails.logger.info("MMF race parent thread id: #{Thread.current.object_id}")
 
             new_active_threads = []
 
             new_active_threads << Thread.new do
               begin
+                Rails.logger.info("Starting MMF race thread 1: #{Thread.current.object_id}")
                 ActiveRecord::Base.connection_pool.clear_reloadable_connections!
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
                     begin
+                      assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 1'
+                      assert User.exists?(different_finalizer), 'MMF finalizer should exist in thread 1'
+                      assert Board.exists?(mmf_publication_owner_id), 'MMF board should exist in thread 1'
                       make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
                     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                       Rails.logger.info("#{e.class} inside MMF thread 1")
@@ -627,10 +736,14 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
             new_active_threads << Thread.new do
               begin
+                Rails.logger.info("Starting MMF race thread 2: #{Thread.current.object_id}")
                 ActiveRecord::Base.connection_pool.clear_reloadable_connections!
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
                     begin
+                      assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 2'
+                      assert User.exists?(different_finalizer_2), 'MMF finalizer should exist in thread 2'
+                      assert Board.exists?(mmf_publication_owner_id), 'MMF board should exist in thread 2'
                       make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
                     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                       Rails.logger.info("#{e.class} inside MMF thread 2")
@@ -648,7 +761,8 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
             Rails.logger.debug "MMF race threadwaiting on: #{new_active_threads.inspect}"
             Rails.logger.flush
-            new_active_threads.each(&:join)
+            # new_active_threads.each(&:join)
+            ThreadsWait.all_waits(*new_active_threads)
             Rails.logger.debug "MMF race threadwaiting done"
             Rails.logger.flush
 

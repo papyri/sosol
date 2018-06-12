@@ -1,0 +1,6 @@
+.git
+db/git
+db/test
+Dockerfile
+.dockerignore
+log/*.log

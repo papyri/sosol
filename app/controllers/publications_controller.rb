@@ -217,67 +217,69 @@ class PublicationsController < ApplicationController
 
   def submit
     @publication.with_lock do
-      #prevent resubmitting...most likely by impatient clicking on submit button
-      if ! %w{editing new}.include?(@publication.status)
-        flash[:error] =  'Publication has already been submitted. Did you click "Submit" multiple times?'
-        redirect_to @publication
-        return
-      end
-      
-      #check if we need to signup to a community 
-      if params[:do_community_signup] && params[:community] && params[:community][:id] != "0"
-        @community = Community.find(params[:community][:id].to_s)
-        unless (@community.add_member(@current_user.id))
-           flash[:error] = 'Unable to signup for selected community'
-           redirect_to @publication
-           return
+      @publication.with_advisory_lock("submit_#{@publication.id}") do
+        #prevent resubmitting...most likely by impatient clicking on submit button
+        if ! %w{editing new}.include?(@publication.status)
+          flash[:error] =  'Publication has already been submitted. Did you click "Submit" multiple times?'
+          redirect_to @publication
+          return
         end
-      end
+        
+        #check if we need to signup to a community 
+        if params[:do_community_signup] && params[:community] && params[:community][:id] != "0"
+          @community = Community.find(params[:community][:id].to_s)
+          unless (@community.add_member(@current_user.id))
+             flash[:error] = 'Unable to signup for selected community'
+             redirect_to @publication
+             return
+          end
+        end
 
-      #check if we are submitting to a community
-      #community_id = params[:community_id]
-      if params[:community] && params[:community][:id]
-        community_id = params[:community][:id]
-        community_id.strip
-        if !community_id.empty? && community_id != "0" && !community_id.nil?
-          @publication.community_id = community_id
-          Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
+        #check if we are submitting to a community
+        #community_id = params[:community_id]
+        if params[:community] && params[:community][:id]
+          community_id = params[:community][:id]
+          community_id.strip
+          if !community_id.empty? && community_id != "0" && !community_id.nil?
+            @publication.community_id = community_id
+            Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to " + @publication.community.format_name
+          else
+            #force community id to nil for sosol
+            @publication.community_id = nil;
+            Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to SoSOL"
+          end
+
         else
-          #force community id to nil for sosol
+          #force community id to 0 for sosol
           @publication.community_id = nil;
-          Rails.logger.info "Publication " + @publication.id.to_s + " " + @publication.title + " will be submitted to SoSOL"
         end
 
-      else
-        #force community id to 0 for sosol
-        @publication.community_id = nil;
-      end
 
+        #need to set id to 0
+        #raise community_id
 
-      #need to set id to 0
-      #raise community_id
-
-      #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
-      #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
-      @comment = Comment.new( {:publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
-      @comment.save
-
-      error_text, identifier_for_comment = @publication.submit
-      if error_text == ""
-        #update comment with git hash when successfully submitted
-        @comment.git_hash = @publication.recent_submit_sha
-        @comment.identifier_id = identifier_for_comment
+        #@comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
+        #git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
+        @comment = Comment.new( {:publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
         @comment.save
-        expire_publication_cache
-        expire_fragment(/board_publications_\d+/)
-        flash[:notice] = 'Publication submitted.'
-      else
-        #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
-        cleanup_id = Comment.find(:last, :conditions => {:publication_id => params[:id].to_s, :reason => "submit", :user_id => @current_user.id } )
-        Comment.destroy(cleanup_id)
-        flash[:error] = error_text
+
+        error_text, identifier_for_comment = @publication.submit
+        if error_text == ""
+          #update comment with git hash when successfully submitted
+          @comment.git_hash = @publication.recent_submit_sha
+          @comment.identifier_id = identifier_for_comment
+          @comment.save
+          expire_publication_cache
+          expire_fragment(/board_publications_\d+/)
+          flash[:notice] = 'Publication submitted.'
+        else
+          #cleanup comment that was inserted before submit completed that is no longer valid because of submit error
+          cleanup_id = Comment.find(:last, :conditions => {:publication_id => params[:id].to_s, :reason => "submit", :user_id => @current_user.id } )
+          Comment.destroy(cleanup_id)
+          flash[:error] = error_text
+        end
+        redirect_to @publication
       end
-      redirect_to @publication
     end
   end
 
@@ -698,7 +700,7 @@ class PublicationsController < ApplicationController
 
   protected
     def find_publication
-      @publication ||= Publication.find(params[:id].to_s)
+      @publication ||= Publication.find(params[:id].to_s, :lock => true)
     end
 
     def ownership_guard
