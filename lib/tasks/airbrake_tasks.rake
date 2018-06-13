@@ -7,6 +7,6 @@ unless ARGV.any? {|a| a =~ /^gems/}
     $: << File.join(vendored_notifier, 'lib')
   end
 
-  require 'airbrake/tasks'
+  require 'airbrake/rake/tasks'
 
 end

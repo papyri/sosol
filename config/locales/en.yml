@@ -463,3 +463,10 @@ en:
     zotero:
       accept: 'accept zotero data'
       cancel: 'discard zotero data'
+  mailers:
+    comments: 'Comments:'
+    commenton: 'on'
+    commentby: 'by'
+    notapplicable: '(NA)'
+    form_subject_hint: "(Parseable placeholders: '!IDENTIFIER_TITLES', '!PUBLICATION_TITLE', and '!TOPIC')"
+    form_message_hint: "(Parseable placeholders: '!IDENTIFIER_TITLES' '!IDENTIFIER_LINKS' '!PUBLICATION_TITLE' '!PUBLICATION_LINK', '!PUBLICATION_CREATOR_NAME !BOARD_PUBLICATION_LINK')"

@@ -14,33 +14,12 @@ module ApplicationHelper
     @rpx.base_url + '/openid/v2/widget'
   end
   
-  def clippy(textarea_id, bgcolor='#FFFFFF')
-    html = <<-EOF
-      <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
-              width="110"
-              height="14"
-              id="clippy" >
-      <param name="movie" value="#{Sosol::Application.config.action_controller.relative_url_root}/flash/clippy.swf"/>
-      <param name="allowScriptAccess" value="always" />
-      <param name="quality" value="high" />
-      <param name="scale" value="noscale" />
-      <param name="FlashVars" value="id=#{textarea_id}" />
-      <param name="bgcolor" value="#{bgcolor}">
-      <embed src="#{Sosol::Application.config.action_controller.relative_url_root}/flash/clippy.swf"
-             width="110"
-             height="14"
-             name="clippy"
-             quality="high"
-             wmode="opaque"
-             allowScriptAccess="always"
-             type="application/x-shockwave-flash"
-             pluginspage="http://www.macromedia.com/go/getflashplayer"
-             FlashVars="id=#{textarea_id}"
-             bgcolor="#{bgcolor}"
-      />
-      </object>
-    EOF
-    html.html_safe
+  def clippy(textarea_id)
+    [
+      javascript_include_tag("clipboard"),
+      %Q{<button type="button" id="copy-#{textarea_id}" data-clipboard-target="##{textarea_id}">Copy to Clipboard</button>},
+      %Q{<script type="text/javascript">new ClipboardJS('#copy-#{textarea_id}');</script>},
+    ].join("\n").html_safe
   end
 end
 

@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    DDB Identifier Title <a href="http://localhost/publications/!PUBLICATION_ID/ddb_identifiers/!IDENTIFIER_ID/preview">DDB Identifier Title</a> Publication Title <a href="http://localhost/publications/!PUBLICATION_ID">Publication Title</a> John Doe <a href="http://localhost/publications/!BOARD_PUBLICATION_ID">Board Publication Title</a> A nice board
+  </body>
+</html>

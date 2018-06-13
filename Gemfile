@@ -1,6 +1,7 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
-source 'http://rubygems.org'
+source 'https://rubygems.org'
+ruby "2.0.0", :engine => "jruby", :engine_version => "1.7.26"
 
 gem 'rails', '~> 3.2.22'
 
@@ -18,7 +19,7 @@ end
 
 gem 'jquery-rails'
 gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
-gem 'haml', '>= 3.0.25'
+gem 'haml', '= 4.0.6'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
@@ -31,16 +32,16 @@ gem 'shoulda-matchers', '>= 2.0.0'
 gem 'shoulda', '>= 2.11.3'
 gem "factory_girl_rails", ">= 1.2"
 gem 'factory_girl', '>= 2.6.4'
-gem 'airbrake', '>= 3.0.5'
-gem 'grit', '~> 2.4.0'
+gem 'airbrake', '~> 5.6.1'
 gem 'rubyzip', '~> 0.9.0', :require => 'zip/zip'
 gem 'prototype-rails'
 gem 'dynamic_form'
 gem 'capistrano', '~> 2.15.0'
-gem 'warbler'
+gem 'warbler', '~> 1.4.0'
 gem 'puma'
 gem 'database_cleaner'
 gem 'sucker_punch', '~> 2.0'
-gem 'with_advisory_lock'
+gem 'with_advisory_lock', '~> 3.0.0'
+gem 'silencer'
 
-gem 'test_after_commit', :group => :test
+gem 'test_after_commit', '= 0.4.1', :group => :test

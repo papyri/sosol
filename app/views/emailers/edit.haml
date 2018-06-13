@@ -46,9 +46,17 @@
     %br
     = f.text_area :extra_addresses, :cols => "80", :rows => "2"
 
-
+  %p
+    = f.label :subject
+    %br
+    =f.text_field :subject , {:placeholder => "!TOPIC: !PUBLICATION_TITLE !IDENTIFIER_TITLES!", :size => "75"}
+    %span
+      = I18n.t("mailers.form_subject_hint")
+ 
   %p
     = f.label :message
+    %span 
+      = I18n.t("mailers.form_message_hint")
     %br
     = f.text_area :message, :cols => "80", :rows => "20"
   %p
