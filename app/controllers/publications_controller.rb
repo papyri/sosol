@@ -355,7 +355,7 @@ class PublicationsController < ApplicationController
         # @publication.finalize(params[:comment])
         # flash[:notice] = 'Publication finalized.'
         # Asynchronous finalization, errors get sent to Airbrake
-        FinalizeJob.new.async.perform(@publication.id, params[:comment])
+        FinalizeJob.perform_async(@publication.id, params[:comment])
         flash[:notice] = "Finalization running. Check back in a few minutes."
         # Need a way to do this at the correct time for async finalization?
         expire_publication_cache(@publication.creator.id)

@@ -1053,7 +1053,7 @@ class Publication < ActiveRecord::Base
         end
 
         # finalized, try to repack
-        RepackCanonicalJob.new.async.perform()
+        RepackCanonicalJob.perform_async()
       else
         # nothing under canon control, just say it's committed
         self.change_status('committed')
