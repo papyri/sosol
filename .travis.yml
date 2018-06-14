@@ -11,9 +11,6 @@ before_install:
   - gem install bundler
   - gem update bundler
 before_script:
-  - gem pristine executable-hooks
-  - gem pristine gem-wrappers
-  - gem pristine jruby-launcher
   - gem --version
   - bundle exec cap local externals:setup
   - touch config/environments/test_secret.rb
