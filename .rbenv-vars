@@ -1,2 +1,2 @@
-JRUBY_OPTS=-J-Xmx4g --2.0
+JRUBY_OPTS=-J-Xmx4g
 RUBYOPT?=-W0

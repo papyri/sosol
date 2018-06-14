@@ -1,7 +1,7 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'https://rubygems.org'
-ruby "2.0.0", :engine => "jruby", :engine_version => "1.7.26"
+ruby "2.3.3", :engine => "jruby", :engine_version => "9.1.17.0"
 
 gem 'rails', '~> 3.2.22'
 
@@ -33,11 +33,12 @@ gem 'shoulda', '>= 2.11.3'
 gem "factory_girl_rails", ">= 1.2"
 gem 'factory_girl', '>= 2.6.4'
 gem 'airbrake', '~> 5.6.1'
-gem 'rubyzip', '~> 0.9.0', :require => 'zip/zip'
+gem 'rubyzip', '~> 1.0'
+gem 'zip-zip'
 gem 'prototype-rails'
 gem 'dynamic_form'
 gem 'capistrano', '~> 2.15.0'
-gem 'warbler', '~> 1.4.0'
+gem 'warbler', '~> 2.0'
 gem 'puma'
 gem 'database_cleaner'
 gem 'sucker_punch', '~> 2.0'
