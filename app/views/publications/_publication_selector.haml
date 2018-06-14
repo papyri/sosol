@@ -86,7 +86,7 @@
     }
     new Ajax.Request(request_url, {
       method: 'get',
-      requestHeaders: { "Accept": 'RDF/JSON' },
+      requestHeaders: { "Accept": 'application/rdf+json' },
       onSuccess: function(response) {
         var json = response.responseText.evalJSON();
         
