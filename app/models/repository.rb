@@ -137,7 +137,7 @@ class Repository
   end
 
   def repack
-    self.class.run_command("#{self.git_command_prefix} repack")
+    self.class.run_command("#{self.git_command_prefix} repack 2>&1")
     unless $?.success?
       Rails.logger.warn("Canonical repack failed")
     end
