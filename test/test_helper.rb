@@ -53,7 +53,7 @@ class ActiveSupport::TestCase
     if (!File.directory?(Sosol::Application.config.canonical_repository)) && File.directory?(Sosol::Application.config.canonical_canonical_repository)
       clone_command = ["git clone --bare",
                     Sosol::Application.config.canonical_canonical_repository,
-                    Sosol::Application.config.canonical_repository].join(' ')
+                    Sosol::Application.config.canonical_repository, '>/dev/null', '2>&1'].join(' ')
 
       `#{clone_command}`
       return $?.success?
