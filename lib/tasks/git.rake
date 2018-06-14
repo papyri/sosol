@@ -16,7 +16,7 @@ namespace :git do
     namespace :canonical do
       desc "Clone Canonical idp.data Git database"
       task :clone => :environment do
-        require 'config/boot'
+        require File.expand_path('../../../config/boot', __FILE__)
         
         if ENV['RAILS_ENV'] == "test"
           CANONICAL_CLONE_URL = "git://github.com/ryanfb/idp.data.test.git"
