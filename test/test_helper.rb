@@ -55,7 +55,7 @@ class ActiveSupport::TestCase
                     Sosol::Application.config.canonical_canonical_repository,
                     Sosol::Application.config.canonical_repository].join(' ')
 
-      puts `#{clone_command}`
+      `#{clone_command}`
       return $?.success?
     else
       return true
