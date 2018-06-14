@@ -219,5 +219,8 @@ DEPENDENCIES
   warbler (~> 1.4.0)
   with_advisory_lock (~> 3.0.0)
 
+RUBY VERSION
+   ruby 2.0.0p598 (jruby 1.7.26)
+
 BUNDLED WITH
-   1.15.1
+   1.16.2
