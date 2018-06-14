@@ -29,6 +29,9 @@ namespace :git do
                           CANONICAL_CLONE_URL,
                           "\"#{Sosol::Application.config.canonical_repository}\""].join(' ')
           
+          if ENV['RAILS_ENV'] == "test"
+            clone_command += ' >/dev/null 2>&1'
+          end
           system(clone_command)
         end
       end
