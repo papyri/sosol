@@ -219,6 +219,10 @@ class Repository
     self.update_ref('master',Repository.new.get_head('master'))
   end
 
+  def rename_branch(old_name, new_name)
+    return self.class.run_command("#{self.git_command_prefix} branch -m #{Shellwords.escape(old_name)} #{Shellwords.escape(new_name)}")
+  end
+
   def create_branch(name, source_name = 'master', force = false)
     # We always assume we want to branch from master by default
     if source_name == 'master'

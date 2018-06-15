@@ -512,10 +512,7 @@ class Publication < ActiveRecord::Base
           self.status = new_status
           self.save!
           # save succeeded, so perform actual git change
-          # branch from the original branch
-          self.owner.repository.create_branch(new_branch_name, old_branch_name)
-          # delete the original branch
-          self.owner.repository.delete_branch(old_branch_name)
+          self.owner.repository.rename_branch(old_branch_name, new_branch_name)
         end
       rescue ActiveRecord::RecordInvalid
         self.title += self.created_at.strftime(" (%Y/%m/%d-%H.%M.%S)")
