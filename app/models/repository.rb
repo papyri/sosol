@@ -8,7 +8,11 @@ class Repository
   attr_reader :master, :path
   @@jgit_repo_cache = java.util.WeakHashMap.new
 
-  BASH_SPECIAL_CHARACTERS_REGEX = /[$`!"]/ # special rules for bash quoting in copy_branch_from_repo: no $ ` ! "
+  # Repository#copy_branch_from_repo uses double quotes for the subshell.
+  # Thus $ ` \ ! " in a quoted string won't work as expected.
+  # See the bash man page QUOTING section on double quotes.
+  # We also exclude some extra characters that could be confusing.
+  BASH_SPECIAL_CHARACTERS_REGEX = /[\[\\~^?$`!":\t]/ # special rules for bash quoting: no [ \ ~ ^ ? $ ` ! " : TAB
   # Excerpted from git/refs.c: (https://github.com/git/git/blob/master/refs.c#L55-L69)
   # Make sure "ref" is something reasonable to have under ".git/refs/";
   # We do not like it if:
@@ -21,7 +25,7 @@ class Repository
       /[.\/]$/, # it ends with a "/" or a "."
       /@{/, # it contains a "@{" portion
       /\.lock$/, # it ends with ".lock
-      BASH_SPECIAL_CHARACTERS_REGEX
+      BASH_SPECIAL_CHARACTERS_REGEX # also exclude special characters for bash quoting
     ]
 
   # Returns input string in a form acceptable to  ".git/refs/"
