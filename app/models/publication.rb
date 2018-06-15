@@ -1148,11 +1148,22 @@ class Publication < ActiveRecord::Base
       finalization_comment.save!
 
       # create an event to show up on dashboard
-      finalization_event = Event.new()
-      finalization_event.owner = self.owner
-      finalization_event.target = self.parent #used parent so would match approve event
-      finalization_event.category = "committed"
-      finalization_event.save!
+      retries = 0
+      begin
+        finalization_event = Event.new()
+        finalization_event.owner = self.owner
+        finalization_event.target = self.parent #used parent so would match approve event
+        finalization_event.category = "committed"
+        finalization_event.save!
+      rescue NoMethodError => e
+        Rails.logger.error(e.inspect)
+        if (retries += 1) < 4
+          sleep(1)
+          retry
+        else
+          raise e
+        end
+      end
 
       # set status of identifiers
       self.set_origin_and_local_identifier_status("committed")
