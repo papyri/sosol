@@ -4,7 +4,7 @@ require 'rails/all'
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(:default, Rails.env) if defined?(Bundler)
+Bundler.require(:default, :assets, Rails.env) if defined?(Bundler)
 
 module Sosol
   class Application < Rails::Application
@@ -33,7 +33,7 @@ module Sosol
     I18n.config.enforce_available_locales = true
     
     # JavaScript files you want as :defaults (application.js is always included).
-    config.action_view.javascript_expansions[:defaults] = %w(prototype effects dragdrop controls rails)
+    # config.action_view.javascript_expansions[:defaults] = %w(prototype effects dragdrop controls rails)
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
@@ -65,5 +65,9 @@ module Sosol
     config.xsugar_standalone_use_proxy = false
     # URL for the standalone XSugar server
     config.xsugar_standalone_url = ''
+
+    config.assets.enabled = true
+    config.assets.version = '1.0'
+    config.assets.compress = false
   end
 end
