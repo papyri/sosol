@@ -30,14 +30,14 @@
 #hd .bottom .lt_corner{
   width: 18px;
   height: 24px;
-  background: url('/images/sub_bar_lt_corner.gif') no-repeat;
+  background: image-url("sub_bar_lt_corner.gif") no-repeat;
   float: left;
   margin-right: 6px;
 }
 #hd .bottom .rt_corner{
   width: 18px;
   height: 24px;
-  background: url('/images/sub_bar_rt_corner.gif') no-repeat;
+  background: image-url("sub_bar_rt_corner.gif") no-repeat;
   float: right;
   margin-left: 6px;
 }
