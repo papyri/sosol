@@ -783,37 +783,41 @@ class Publication < ActiveRecord::Base
     if finalizer.nil?
       # select a random board member to be the finalizer
       finalizer = board_members[rand(board_members.length)]
+    end
+    if board_members.include?(finalizer)
+      # if there's an existing finalizer publication we need to copy
+      # the publication between finalizers instead of copying it from
+      # the board copy of the publication
+      if self.find_finalizer_publication
+        self.change_finalizer(finalizer)
+      else
+        finalizing_publication = copy_to_owner(finalizer)
 
-      self.remove_finalizer()
-      finalizing_publication = copy_to_owner(finalizer)
-      # finalizing_publication = clone_to_owner(finalizer)
+        approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
+        approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
+        approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
+        approve_members = approve_votes.map {|v| v.user}
 
-      approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
-      approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
-      approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
-      approve_members = approve_votes.map {|v| v.user}
+        self.flatten_commits(finalizing_publication, finalizer, approve_members)
 
-      self.flatten_commits(finalizing_publication, finalizer, approve_members)
-
-      #should we clear the modified flag so we can tell if the finalizer has done anything
-      # that way we will know in the future if we can change finalizersedidd
-      finalizing_publication.change_status('finalizing')
-      retries = 0
-      begin
-        finalizing_publication.save!
-      rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
-        Rails.logger.warn(e.message)
-        retries += 1
-        if retries <= 3
-          sleep(2 ** retries)
-          Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
-          retry
-        else
-          raise e
+        #should we clear the modified flag so we can tell if the finalizer has done anything
+        # that way we will know in the future if we can change finalizersedidd
+        finalizing_publication.change_status('finalizing')
+        retries = 0
+        begin
+          finalizing_publication.save!
+        rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+          Rails.logger.warn(e.message)
+          retries += 1
+          if retries <= 3
+            sleep(2 ** retries)
+            Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
+            retry
+          else
+            raise e
+          end
         end
       end
-    elsif board_members.include?(finalizer)
-      self.change_finalizer(finalizer)
     end
   end
 
@@ -838,7 +842,8 @@ class Publication < ActiveRecord::Base
     old_finalizing_publication = self.find_finalizer_publication
 
     if old_finalizing_publication.nil?
-      raise("Attempt to change finalizer on nonexistent finalize publication " + self.inspect + " .")
+      Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.inspect + " .")
+      self.send_to_finalizer(new_finalizer)
     end
 
     self.transaction do
@@ -846,7 +851,11 @@ class Publication < ActiveRecord::Base
       new_finalizing_publication = old_finalizing_publication.dup
       new_finalizing_publication.owner = new_finalizer
       new_finalizing_publication.creator = old_finalizing_publication.creator
-      new_finalizing_publication.title = old_finalizing_publication.title
+      new_title = old_finalizing_publication.parent.owner.name + '/' + Time.now.strftime("%Y/%m/%d")
+      if new_finalizer.repository.branches.include?(Repository.sanitize_ref(new_title + '/' + old_finalizing_publication.parent.title))
+        new_title += Time.now.strftime("-%H.%M.%S")
+      end
+      new_finalizing_publication.title = new_title + '/' + old_finalizing_publication.parent.title
       new_finalizing_publication.branch = Repository.sanitize_ref(new_finalizing_publication.title)
       new_finalizing_publication.parent = old_finalizing_publication.parent
 
@@ -1377,7 +1386,8 @@ class Publication < ActiveRecord::Base
     return vote_total, vote_ddb, vote_meta, vote_trans
   end
 
-  #Creates a new publication for the new_owner that is a separate copy of this publication.
+  #Creates a new publication for the new_owner that is a separate copy of this publication,
+  #with this publication as the parent.
   #
   #*Args* +new_owner+ the owner for the cloned copy.
   #
@@ -1386,7 +1396,11 @@ class Publication < ActiveRecord::Base
     duplicate = self.dup
     duplicate.owner = new_owner
     duplicate.creator = self.creator
-    duplicate.title = self.owner.name + "/" + self.title
+    new_title = self.owner.name + '/' + Time.now.strftime("%Y/%m/%d")
+    if new_owner.repository.branches.include?(Repository.sanitize_ref(new_title + '/' + self.title))
+      new_title += Time.now.strftime("-%H.%M.%S")
+    end
+    duplicate.title = new_title + '/' + self.title
     duplicate.branch = Repository.sanitize_ref(duplicate.title)
     duplicate.parent = self
     duplicate.save!
