@@ -1403,8 +1403,16 @@ class Publication < ActiveRecord::Base
     new_owner.repository.copy_branch_from_repo(
       self.branch, self.branch, self.owner.repository
     )
+    self.all_children.each do |child|
+      if child.creator == self.owner
+        child.creator = new_owner
+        child.save!
+      end
+    end
+    if self.creator == self.owner
+      self.creator = new_owner
+    end
     self.owner = new_owner
-    self.creator = new_owner
     self.save!
   end
 
