@@ -1397,6 +1397,17 @@ class Publication < ActiveRecord::Base
     return vote_total, vote_ddb, vote_meta, vote_trans
   end
 
+  # This is a helper method for moving publications between two user accounts,
+  # for the purposes of merging one account with another.
+  def change_owner_and_creator(new_owner)
+    new_owner.repository.copy_branch_from_repo(
+      self.branch, self.branch, self.owner.repository
+    )
+    self.owner = new_owner
+    self.creator = new_owner
+    self.save!
+  end
+
   #Creates a new publication for the new_owner that is a separate copy of this publication,
   #with this publication as the parent.
   #
