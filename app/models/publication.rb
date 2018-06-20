@@ -1141,20 +1141,31 @@ class Publication < ActiveRecord::Base
       # done committing to canon
       
       # store a comment on finalize even if the user makes no comment...so we have a record of the action
-      finalization_comment = Comment.new()
+      retries = 0
+      begin
+        finalization_comment = Comment.new()
 
-      if finalization_comment_string && finalization_comment_string != ""
-        finalization_comment.comment = finalization_comment_string.to_s
-      else
-        finalization_comment.comment = "no comment"
+        if finalization_comment_string && finalization_comment_string != ""
+          finalization_comment.comment = finalization_comment_string.to_s
+        else
+          finalization_comment.comment = "no comment"
+        end
+        finalization_comment.user = self.owner
+        finalization_comment.reason = "finalizing"
+        finalization_comment.git_hash = canon_sha
+        # associate comment with original identifier/publication
+        finalization_comment.identifier_id = self.controlled_identifiers.last
+        finalization_comment.publication = self.origin
+        finalization_comment.save!
+      rescue NoMethodError => e
+        Rails.logger.error(e.inspect)
+        if (retries += 1) < 4
+          sleep(1)
+          retry
+        else
+          raise e
+        end
       end
-      finalization_comment.user = self.owner
-      finalization_comment.reason = "finalizing"
-      finalization_comment.git_hash = canon_sha
-      # associate comment with original identifier/publication
-      finalization_comment.identifier_id = self.controlled_identifiers.last
-      finalization_comment.publication = self.origin
-      finalization_comment.save!
 
       # create an event to show up on dashboard
       retries = 0
