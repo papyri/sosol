@@ -33,7 +33,7 @@ module Sosol
     I18n.config.enforce_available_locales = true
     
     # JavaScript files you want as :defaults (application.js is always included).
-    # config.action_view.javascript_expansions[:defaults] = %w(prototype effects dragdrop controls rails)
+    # config.action_view.javascript_expansions[:defaults] = %w(prototype effects dragdrop controls jquery rails)
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
