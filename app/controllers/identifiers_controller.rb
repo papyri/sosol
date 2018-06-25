@@ -109,6 +109,11 @@ class IdentifiersController < ApplicationController
       @identifier[:xml_content] = new_content
       @is_editor_view = true
       render :template => 'identifiers/editxml'
+    rescue RuntimeError => runtime_error
+      flash.now[:error] = runtime_error.message + ". This file was NOT SAVED."
+      @identifier[:xml_content] = xml_content
+      @is_editor_view = true
+      render :template => 'identifiers/editxml'
     end
   end
   
