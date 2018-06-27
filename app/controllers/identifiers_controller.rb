@@ -2,6 +2,7 @@
 # - contains methods common to these identifiers
 class IdentifiersController < ApplicationController
   rescue_from Exceptions::CommitError, :with => :commit_failed
+  rescue_from Java::JavaLang::NullPointerException, :with => :retrieve_failed
   # - GET /publications/1/xxx_identifiers/1/editxml
   # - edit the XML file from the repository of the associated identifier
   def editxml
@@ -202,7 +203,11 @@ class IdentifiersController < ApplicationController
       flash.keep
       redirect_to polymorphic_path([@identifier.publication,@identifier],
                               :action => :edit) and return
-    
     end
 
+    def retrieve_failed(null_pointer_error)
+      flash[:error] = "Error retrieving file content from repository. This error has been logged for review by an administrator."
+      notify_airbrake(null_pointer_error, params)
+      redirect_to dashboard_url
+    end
 end

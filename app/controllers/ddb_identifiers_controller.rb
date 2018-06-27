@@ -56,10 +56,6 @@ class DdbIdentifiersController < IdentifiersController
       flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
       new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
       @identifier[:leiden_plus] = new_content
-    rescue Java::JavaLang::NullPointerException => null_pointer_error
-      flash[:error] = "Error retrieving file content from repository. This error has been logged for review by an administrator."
-      notify_airbrake(null_pointer_error)
-      redirect_to dashboard_url
     end
     @is_editor_view = true
   end
