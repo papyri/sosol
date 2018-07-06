@@ -478,6 +478,9 @@ class Publication < ActiveRecord::Base
       end
   end
 
+  def branch_exists?
+    return self.owner.repository.branches.include?(self.branch)
+  end
 
   def change_status(new_status)
     Rails.logger.info("change_status to #{new_status} for #{self.inspect}")
@@ -788,9 +791,15 @@ class Publication < ActiveRecord::Base
       # if there's an existing finalizer publication we need to copy
       # the publication between finalizers instead of copying it from
       # the board copy of the publication
-      if self.find_finalizer_publication
+      existing_finalizer_publication = self.find_finalizer_publication
+      if existing_finalizer_publication && existing_finalizer_publication.branch_exists?
+        Rails.logger.info("Publication#send_to_finalizer: finalizer already exists for #{self.id}, calling Publication#change_finalizer")
         self.change_finalizer(finalizer)
       else
+        if existing_finalizer_publication
+          Rails.logger.info("Publication#send_to_finalizer: finalizer already exists for #{self.id} but branch is in inconsistent state, destroying #{existing_finalizer_publication.id} before sending to #{finalizer.name} from board copy")
+          existing_finalizer_publication.destroy
+        end
         finalizing_publication = copy_to_owner(finalizer)
 
         approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
