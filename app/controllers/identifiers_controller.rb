@@ -2,7 +2,7 @@
 # - contains methods common to these identifiers
 class IdentifiersController < ApplicationController
   rescue_from Exceptions::CommitError, :with => :commit_failed
-  rescue_from Java::JavaLang::NullPointerException, :with => :retrieve_failed
+  rescue_from 'Java::JavaLang::NullPointerException', :with => :retrieve_failed
   # - GET /publications/1/xxx_identifiers/1/editxml
   # - edit the XML file from the repository of the associated identifier
   def editxml
