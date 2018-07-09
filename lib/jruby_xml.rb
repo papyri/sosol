@@ -85,13 +85,23 @@ module JRubyXML
       else
         raise "Unknown extension in schema url #{@schema_url}, unable to construct verifier factory"
       end
-      @schema = @verifier_factory.compileSchema(@schema_url)
+      @schema = @verifier_factory.compileSchema(self.cached_schema_path())
     end
     
     def validate(input_source_xml_stream)
       verifier = @schema.newVerifier()
       verifier.setErrorHandler(ParseErrorHandler.new())
       verifier.verify(input_source_xml_stream)
+    end
+
+    def cached_schema_path
+      if @schema_url =~ /^http:\/\//
+        local_path = "#{Rails.root}/data/schemas/#{@schema_url.sub(/^http:\/\//,'')}"
+        if File.exist?(local_path)
+          return local_path
+        end
+      end
+      return @schema_url
     end
   end
   
