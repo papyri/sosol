@@ -69,7 +69,23 @@ module JRubyXML
     attr_reader :verifier_factory, :schema
 
     def initialize
-      @schema = verifier_factory.compileSchema(@schema_url)
+      case @schema_url.split('.').last
+      when 'rng'
+        @verifier_factory =
+          org.iso_relax.verifier.VerifierFactory.newInstance(
+            'http://relaxng.org/ns/structure/1.0')
+      when 'xsd'
+        @verifier_factory =
+          org.iso_relax.verifier.VerifierFactory.newInstance(
+            "http://www.w3.org/2001/XMLSchema")
+      when 'dtd'
+        @verifier_factory =
+          org.iso_relax.verifier.VerifierFactory.newInstance(
+            "http://www.w3.org/XML/1998/namespace")
+      else
+        raise "Unknown extension in schema url #{@schema_url}, unable to construct verifier factory"
+      end
+      @schema = @verifier_factory.compileSchema(@schema_url)
     end
     
     def validate(input_source_xml_stream)
@@ -81,9 +97,6 @@ module JRubyXML
   
   class TEIAValidator < JARVValidator
     def initialize
-      @verifier_factory = 
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://relaxng.org/ns/structure/1.0")
       @schema_url =
         "#{Rails.root}/data/templates/tei-xl.rng"
       super
@@ -92,9 +105,6 @@ module JRubyXML
   
   class TEIAPSGValidator < JARVValidator
     def initialize
-      @verifier_factory = 
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://relaxng.org/ns/structure/1.0")
       @schema_url =
         "#{Rails.root}/data/templates/tei-xl-psg.rng"
       super
@@ -103,9 +113,6 @@ module JRubyXML
 
  class RDFValidator < JARVValidator
     def initialize
-      @verifier_factory = 
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://relaxng.org/ns/structure/1.0")
       @schema_url =
         "http://www.w3.org/TR/REC-rdf-syntax/rdfxml.rng"
       super
@@ -114,9 +121,6 @@ module JRubyXML
   
   class EpiDocP5Validator < JARVValidator
     def initialize
-      @verifier_factory = 
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://relaxng.org/ns/structure/1.0")
       @schema_url =
         "http://www.stoa.org/epidoc/schema/8.16/tei-epidoc.rng"
       super
@@ -125,9 +129,6 @@ module JRubyXML
 
   class EpiDocP4Validator < JARVValidator
     def initialize
-      @verifier_factory = 
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://www.w3.org/XML/1998/namespace")
       @schema_url =
         "http://www.stoa.org/epidoc/dtd/6/tei-epidoc.dtd"
       super
@@ -136,9 +137,6 @@ module JRubyXML
   
   class HGVEpiDocValidator < JARVValidator
     def initialize
-      @verifier_factory =
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://relaxng.org/ns/structure/1.0")
       @schema_url =
         "http://www.stoa.org/epidoc/schema/8.13/tei-epidoc.rng"
       super
@@ -147,9 +145,6 @@ module JRubyXML
 
   class APISEpiDocValidator < JARVValidator
     def initialize
-      @verifier_factory =
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://relaxng.org/ns/structure/1.0")
       @schema_url =
         "http://www.stoa.org/epidoc/schema/8.13/tei-epidoc.rng"
       super
@@ -158,9 +153,6 @@ module JRubyXML
 
   class PerseusTreebankValidator < JARVValidator
     def initialize
-      @verifier_factory =
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://www.w3.org/2001/XMLSchema")
       @schema_url =
         "http://nlp.perseus.tufts.edu/syntax/treebank/treebank-1.6.xsd"
       super
@@ -169,9 +161,6 @@ module JRubyXML
   
   class AlpheiosAlignmentValidator < JARVValidator
     def initialize
-      @verifier_factory =
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://www.w3.org/2001/XMLSchema")
       @schema_url =
         "http://svn.code.sf.net/p/alpheios/code/xml_ctl_files/schemas/trunk/aligned-text.xsd"
       super
@@ -181,9 +170,6 @@ module JRubyXML
   
    class SimpleMarkdownCiteValidator < JARVValidator
     def initialize
-    @verifier_factory = 
-        org.iso_relax.verifier.VerifierFactory.newInstance(
-          "http://relaxng.org/ns/structure/1.0")
       @schema_url =
         "#{Rails.root}/data/templates/smdcite.rng"
       super
