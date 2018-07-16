@@ -3,7 +3,7 @@ Sosol::Application.config.middleware.use Rack::Attack
 class Rack::Attack
   # Block suspicious requests for '/etc/password' or wordpress specific paths.
   # After 1 blocked request in 10 minutes, block all requests from that IP for 60 minutes.
-  Rack::Attack.blocklist('fail2ban pentesters') do |req|
+  Rack::Attack.blacklist('fail2ban pentesters') do |req|
     # `filter` returns truthy value if request fails, or if it's from a previously banned IP
     # so the request is blocked
     Rack::Attack::Fail2Ban.filter("pentesters-#{req.ip}", :maxretry => 1, :findtime => 10.minutes, :bantime => 60.minutes) do
