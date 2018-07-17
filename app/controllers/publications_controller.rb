@@ -328,7 +328,7 @@ class PublicationsController < ApplicationController
     @publication = Publication.find(params[:id].to_s)
     @identifier = @publication.controlled_identifiers.last
     if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
-      flash[:notice] = "This publication is currently being finalized. Check back in a few minutes."
+      flash.now[:notice] = "This publication is currently being finalized. Check back in a few minutes."
     elsif @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}")
       flash[:notice] = "Someone is already performing a make-me-finalizer action with this publication. Please check back in a few minutes."
       redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.parent.owner.id
@@ -336,13 +336,24 @@ class PublicationsController < ApplicationController
 
     @diff = @publication.diff_from_canon
     if @diff.blank?
-      flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
+      flash.now[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
+    elsif @publication.needs_rename?
+      identifiers_needing_rename = @publication.identifiers_needing_rename
+      flash.now[:notice] =  "Publication has one or more identifiers which need to be renamed before finalizing: #{identifiers_needing_rename.map{|i| i.name}.join(', ')}"
     end
     @is_editor_view = true
   end
 
   def finalize
     @publication = Publication.find(params[:id].to_s)
+
+    if @publication.needs_rename?
+      identifiers_needing_rename = @publication.identifiers_needing_rename
+      flash[:error] = "Publication has one or more identifiers which need to be renamed before finalizing: #{identifiers_needing_rename.map{|i| i.name}.join(', ')}"
+      redirect_to @publication
+      return
+    end
+
     if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
       flash[:error] = "Finalization is already running for this publication. Please check back in a few minutes."
       redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.parent.owner.id
