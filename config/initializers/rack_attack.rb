@@ -1,6 +1,15 @@
 Sosol::Application.config.middleware.use Rack::Attack
 
 class Rack::Attack
+	# Always allow requests from localhost
+	# (blacklist & throttles are skipped)
+	# This is helpful if Tomcat isn't correctly picking up the real IP address
+  # from Apache ProxyPass proxying. See discussion at: https://github.com/sosol/sosol/issues/234
+	Rack::Attack.whitelist('allow from localhost') do |req|
+		# Requests are allowed if the return value is truthy
+		'127.0.0.1' == req.ip || '::1' == req.ip || '0:0:0:0:0:0:0:1' == req.ip
+	end
+
   # Block suspicious requests for '/etc/password' or wordpress specific paths.
   # After 1 blocked request in 10 minutes, block all requests from that IP for 60 minutes.
   Rack::Attack.blacklist('fail2ban pentesters') do |req|
