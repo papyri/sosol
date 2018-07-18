@@ -260,8 +260,13 @@ class DdbIdentifiersController < IdentifiersController
   def preview
     find_identifier
 
-    @identifier[:html_preview] = @identifier.preview
-    
+    begin
+      @identifier[:html_preview] = @identifier.preview
+    rescue JRubyXML::ParseError => parse_error
+      flash[:error] = "Error parsing XML for preview. #{parse_error.to_s}"
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :editxml)
+    end
     @is_editor_view = true
   end
   
