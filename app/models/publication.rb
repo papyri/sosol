@@ -783,48 +783,50 @@ class Publication < ActiveRecord::Base
   #- +finalizer+ user who will become the finalizer. If no finalizer given, a board member will be randomly choosen.
   #
   def send_to_finalizer(finalizer = nil)
-    board_members = self.owner.users
-    if finalizer.nil?
-      # select a random board member to be the finalizer
-      finalizer = board_members[rand(board_members.length)]
-    end
-    if board_members.include?(finalizer)
-      # if there's an existing finalizer publication we need to copy
-      # the publication between finalizers instead of copying it from
-      # the board copy of the publication
-      existing_finalizer_publication = self.find_finalizer_publication
-      if existing_finalizer_publication && existing_finalizer_publication.branch_exists?
-        Rails.logger.info("Publication#send_to_finalizer: finalizer already exists for #{self.id}, calling Publication#change_finalizer")
-        self.change_finalizer(finalizer)
-      else
-        if existing_finalizer_publication
-          Rails.logger.info("Publication#send_to_finalizer: finalizer already exists for #{self.id} but branch is in inconsistent state, destroying #{existing_finalizer_publication.id} before sending to #{finalizer.name} from board copy")
-          existing_finalizer_publication.destroy
-        end
-        finalizing_publication = copy_to_owner(finalizer)
+    self.transaction do
+      board_members = self.owner.users
+      if finalizer.nil?
+        # select a random board member to be the finalizer
+        finalizer = board_members[rand(board_members.length)]
+      end
+      if board_members.include?(finalizer)
+        # if there's an existing finalizer publication we need to copy
+        # the publication between finalizers instead of copying it from
+        # the board copy of the publication
+        existing_finalizer_publication = self.find_finalizer_publication
+        if existing_finalizer_publication && existing_finalizer_publication.branch_exists?
+          Rails.logger.info("Publication#send_to_finalizer: finalizer already exists for #{self.id}, calling Publication#change_finalizer")
+          self.change_finalizer(finalizer)
+        else
+          if existing_finalizer_publication
+            Rails.logger.info("Publication#send_to_finalizer: finalizer already exists for #{self.id} but branch is in inconsistent state, destroying #{existing_finalizer_publication.id} before sending to #{finalizer.name} from board copy")
+            existing_finalizer_publication.destroy
+          end
+          finalizing_publication = copy_to_owner(finalizer)
 
-        approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
-        approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
-        approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
-        approve_members = approve_votes.map {|v| v.user}
+          approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
+          approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
+          approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
+          approve_members = approve_votes.map {|v| v.user}
 
-        self.flatten_commits(finalizing_publication, finalizer, approve_members)
+          self.flatten_commits(finalizing_publication, finalizer, approve_members)
 
-        #should we clear the modified flag so we can tell if the finalizer has done anything
-        # that way we will know in the future if we can change finalizersedidd
-        finalizing_publication.change_status('finalizing')
-        retries = 0
-        begin
-          finalizing_publication.save!
-        rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
-          Rails.logger.warn(e.message)
-          retries += 1
-          if retries <= 3
-            sleep(2 ** retries)
-            Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
-            retry
-          else
-            raise e
+          #should we clear the modified flag so we can tell if the finalizer has done anything
+          # that way we will know in the future if we can change finalizersedidd
+          finalizing_publication.change_status('finalizing')
+          retries = 0
+          begin
+            finalizing_publication.save!
+          rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+            Rails.logger.warn(e.message)
+            retries += 1
+            if retries <= 3
+              sleep(2 ** retries)
+              Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
+              retry
+            else
+              raise e
+            end
           end
         end
       end
