@@ -1,6 +1,6 @@
 lib/rxsugar:
   :type: git
-  :repository: git://github.com/papyri/xsugar.git
+  :repository: https://github.com/papyri/xsugar.git
   :revision: rails-3-nfd
 
 data/xslt/epidoc:
@@ -15,24 +15,24 @@ data/xslt/perseus/epidoc:
 
 data/xslt/pn/navigator:
   :type: git
-  :repository: git://github.com/papyri/navigator.git
+  :repository: https://github.com/papyri/navigator.git
   :revision: c03dd1a2a21ca2cfe72eb0b2cc4306a02db5b4fa
 
 public/javascripts/texAce:
   :type: git
-  :repository: git://github.com/perseids-project/texAce.git
+  :repository: https://github.com/perseids-project/texAce.git
   :revision: 7582bdf9950b6eef8fba5b9738a364bdbe9ca884
   :git_enable_submodules: true
   :git_submodules_recursive: true
 
 public/javascripts/imgspect:
   :type: git
-  :repository: git://github.com/perseids-project/imgspect.git
+  :repository: https://github.com/perseids-project/imgspect.git
   :revision: 596630d1c74282b195a5f534453f349120c6ff20
   :git_enable_submodules: true
   :git_submodules_recursive: true
 
 data/xslt/syriaca:
   :type: git
-  :repository: git://github.com/srophe/srophe-eXist-app.git
+  :repository: https://github.com/srophe/srophe-eXist-app.git
   :revision: 9f66a7e94fd4b58aaaa0bd3a40b1d118e718f49c
