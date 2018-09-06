@@ -105,13 +105,13 @@ class IdentifiersController < ApplicationController
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
     rescue JRubyXML::ParseError => parse_error
-      flash.now[:error] = parse_error.to_str[0,1000] + ". This file was NOT SAVED."
+      flash.now[:error] = parse_error.to_str[0,512] + ". This file was NOT SAVED."
       new_content = insert_error_here(xml_content, parse_error.line, parse_error.column)
       @identifier[:xml_content] = new_content
       @is_editor_view = true
       render :template => 'identifiers/editxml'
     rescue RuntimeError => runtime_error
-      flash.now[:error] = runtime_error.message + ". This file was NOT SAVED."
+      flash.now[:error] = runtime_error.message.to_s[0,512] + ". This file was NOT SAVED."
       @identifier[:xml_content] = xml_content
       @is_editor_view = true
       render :template => 'identifiers/editxml'
