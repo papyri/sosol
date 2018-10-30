@@ -33,6 +33,7 @@ class Board < ActiveRecord::Base
   
   validates_uniqueness_of :title, :case_sensitive => false, :scope => [:community_id]
   validates_presence_of :title
+  validates_format_of :title, :without => Repository::BASH_SPECIAL_CHARACTERS_REGEX, :message => "Board title cannot contain any of the following special characters: #{Repository::BASH_SPECIAL_CHARACTERS_REGEX.source[1..-2]}"
   
   has_repository
   
@@ -139,12 +140,11 @@ class Board < ActiveRecord::Base
   #- +when_to_send+ the new status of the publication.
   #- +publication+ the publication whose status has just changed.
   def send_status_emails(when_to_send, publication)
-
-  	#search emailer for status
-  	if self.emailers == nil
-  	  return
-  	end
-    
+    #search emailer for status
+    if self.emailers == nil
+      return
+    end
+   
     #find identifiers for email
     email_identifiers = Array.new
     publication.identifiers.each do |identifier|
@@ -152,14 +152,12 @@ class Board < ActiveRecord::Base
         email_identifiers << identifier      
       end
     end
-    
-    
-  	self.emailers.each do |mailer|
-  	
-  		if mailer.when_to_send == when_to_send
-  			#send the email
-  			addresses = Array.new	
-  			#--addresses
+
+    self.emailers.each do |mailer|
+      if mailer.when_to_send == when_to_send
+        #send the email
+        addresses = Array.new	
+  	#--addresses
   			
         #board members
         if mailer.send_to_all_board_members
@@ -186,80 +184,23 @@ class Board < ActiveRecord::Base
         end
         
         #owner address
-  			if mailer.send_to_owner
-  				if publication && publication.creator && publication.creator.email
-  					addresses << publication.creator.email
-  				end
-  			end
-  			
-  			#--document content
-  			if mailer.include_document
-          document_content = ""
-          email_identifiers.each do |ec|
-            unless ec.nil?
-              #document_content += ec.content || ""
-              document_content += Identifier.find(ec[:id]).content || ""
-            end
-          end
-  			else
-  				document_content = nil
-  			end
-  			
-  			body = mailer.message
-  			
-  			#TODO parse the message to add local vars
-  			#votes
-  			#comments        
-        if mailer.include_comments  
-          comment_text = ""       
-          begin
-            comments = Comment.find_all_by_publication_id(publication.origin.id)    
-          rescue
-            #do nothing no comments found
-          end                        
-            if comments
-              comments.each do |comment|
-                if comment.comment
-                  comment_text += comment.comment 
-                end
-                comment_text += "("
-                if comment.reason
-                  comment_text += comment.reason 
-                end
-                if comment.identifier
-                  comment_text += " on #{comment.identifier.title} (#{comment.identifier.class::FRIENDLY_NAME})"
-                end
-                if comment.user && comment.user.name
-                  comment_text += " by " + comment.user.name 
-                end
-                comment_text += " " + comment.created_at.to_formatted_s(:db)
-                comment_text += ")"
-                comment_text += "\n"
-              end            
-              body += "\n"
-              body += "Comments:\n"
-              body += comment_text
-            end          
+  	if mailer.send_to_owner
+  	  if publication && publication.creator && publication.creator.email
+  	    addresses << publication.creator.email
+  	  end
+  	end
+        # the board publication should be the one owned by the board initiating the mail 
+        # it may or may not be the same as the publication that is the subject of the mail as that
+        # depends upon what when_to_send status is.  Traversing all the children of the original publication
+        # and selecting the last one which has the current board as its owner should work.
+        board_publication = email_identifiers[0].publication.origin.all_children.select {|p| p.owner == self}.last
+        begin
+          EmailerMailer.identifier_email(when_to_send,email_identifiers,board_publication,addresses,mailer.include_document,mailer.include_comments,mailer.message,mailer.subject).deliver
+        rescue Exception => e
+          Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
         end
-  			#owner
-  			#status
-        identifier_titles = email_identifiers.collect{|ei| ei.title}.join('; ')
-        
-        subject_line = publication.title + " " + identifier_titles + "-" + when_to_send
-  			
-  			addresses.each do |address|
-  				if address && address.strip != ""
-            begin
-              EmailerMailer.general_email(address, subject_line, body, document_content).deliver
-            rescue Exception => e
-              Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
-            end
-  				end
-  			end
-  			
-  		end
-  	end	
-  	
+      end	
+    end
   end
 
 

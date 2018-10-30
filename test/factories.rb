@@ -112,9 +112,11 @@ FactoryGirl.define do
 
   factory :emailer do |f|
     f.association :board
-    f.extra_addresses 'MyText'
+    f.extra_addresses ''
     f.include_document 'false'
+    f.include_comments 'false'
     f.message 'MyText'
+    f.subject 'MySubject'
   end
 
   factory :event do |f|

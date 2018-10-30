@@ -11,5 +11,5 @@
       = render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier}
     #edit
       %ul
-        - for commit in @identifier.get_commits
+        - for commit in @commits
           %li= link_to html_escape(commit[:message].split("\n").first), url_for(:action => 'show_commit', :commit_id => commit[:id], :id => @identifier.id, :publication_id => @identifier.publication.id)

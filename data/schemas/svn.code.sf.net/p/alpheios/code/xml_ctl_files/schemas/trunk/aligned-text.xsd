@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2009 Cantus Foundation
+  http://alpheios.net
+  
+  This file is part of Alpheios.
+  
+  Alpheios is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  Alpheios is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!--
+  Schema describing text alignment
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xml="http://www.w3.org/XML/1998/namespace"
+            attributeFormDefault="unqualified"
+            xmlns:align="http://alpheios.net/namespaces/aligned-text"
+           targetNamespace="http://alpheios.net/namespaces/aligned-text"
+   elementFormDefault="qualified">
+
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+             schemaLocation="xml-1998.xsd"/>
+
+  <xs:annotation>
+    <xs:documentation>Structure of aligned translation data</xs:documentation>
+  </xs:annotation>
+
+  <!-- Top-level element -->
+  <xs:element name="aligned-text">
+    <xs:annotation>
+      <xs:documentation>
+        Alignment data for a set of sentences
+          comment = optional comments
+          language = description of languages used in the text
+          sentence = sentences in the text
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="comment" type="xs:anyType"/>
+          <xs:element name="language" type="align:LanguageType"/>
+        </xs:choice>
+        <xs:element name="sentence" type="align:SentenceType" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Language -->
+  <xs:complexType name="LanguageType">
+    <xs:annotation>
+      <xs:documentation>
+        Association of logical language number with actual language
+          @lnum = the logical language function
+            ('L1'=original language, 'L2'=translated language)
+          @xml:lang = the actual language
+          @dir = optional text direction (rtl or ltr)
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="lnum" type="align:LanguageNumberType" use="required"/>
+    <xs:attribute ref="xml:lang" use="required"/>
+    <xs:attribute name="dir" type="align:LanguageDirType" use="optional"/>
+  </xs:complexType>
+
+  <!-- Sentence -->
+  <xs:complexType name="SentenceType">
+    <xs:annotation>
+      <xs:documentation>
+        Alignment data for a single sentence
+        Typically consists of two word sets:
+          wds[@lnum='L1'] = words from original text
+          wds[@lnum='L2'] = words from translated text
+        Optional comments may be interspersed in the word sets
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice maxOccurs="unbounded">
+      <xs:element name="comment" type="xs:anyType"/>
+      <xs:element name="wds" type="align:WordSetType"/>
+    </xs:choice>
+    <xs:attribute name="document_id" type="xs:string" use="required"/>
+    <xs:attribute name="id" type="xs:positiveInteger"/>
+    <xs:attribute name="one-to-one" type="xs:boolean"/>
+  </xs:complexType>
+
+  <!-- Set of words from a language -->
+  <xs:complexType name="WordSetType">
+    <xs:annotation>
+      <xs:documentation>
+        Set of words from a language
+          @lnum = the logical language function
+          comment = optional comments
+          w = words
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice maxOccurs="unbounded">
+      <xs:element name="comment" type="xs:anyType"/>
+      <xs:element name="w" type="align:WordType"/>
+    </xs:choice>
+    <xs:attribute name="lnum" use="required" type="align:LanguageNumberType"/>
+  </xs:complexType>
+
+  <!-- Single word -->
+  <xs:complexType name="WordType">
+    <xs:annotation>
+      <xs:documentation>
+        Single word
+          @n = word id
+          text = the actual word
+          comment = optional comments
+          refs = list of aligned words
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="text" type="xs:string"/>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="comment" type="xs:anyType"/>
+        <xs:element name="refs" type="align:RefType"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="n" use="required" type="align:WordIdType"/>
+  </xs:complexType>
+
+  <!-- List of word references -->
+  <xs:complexType name="RefType" mixed="true">
+    <xs:annotation>
+      <xs:documentation>
+        List of word references
+          @lnum = language number of references
+          @nrefs = list of word ids
+
+        If @lnum is missing, there must be exactly two word sets and
+        lnum is inferred to be that of the word set not containing
+        this element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="lnum" type="align:LanguageNumberType"/>
+    <xs:attribute name="nrefs" type="align:WordListType" use="required"/>
+  </xs:complexType>
+
+  <!-- Language number attribute -->
+  <xs:simpleType name="LanguageNumberType">
+    <xs:annotation>
+      <xs:documentation>
+        Type of language number attribute: L&lt;number&gt;
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="L[1-9][0-9]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  
+  <!-- Language direction attribute -->
+  <xs:simpleType name="LanguageDirType">
+    <xs:annotation>
+      <xs:documentation>
+        Type of language direction attribute: rtl or ltr
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="rtl"></xs:pattern>
+      <xs:pattern value="ltr"></xs:pattern>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Word id attribute -->
+  <xs:simpleType name="WordIdType">
+    <xs:annotation>
+      <xs:documentation>
+        Type of word id attribute: &lt;sentenceNumber&gt;-&lt;wordNumber&gt;
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <!--  <xs:pattern value="[1-9][0-9]*[a-z]?-[1-9][0-9]*[a-z]?"/> -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Word list attribute -->
+  <xs:simpleType name="WordListType">
+    <xs:annotation>
+      <xs:documentation>
+        Type of word list attribute: space-separated list of word ids
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[^ ]+( [^ ]+)*"/>
+      <!--  <xs:pattern value=
+        "[1-9][0-9]*[a-z]?-[1-9][0-9]*[a-z]?( [1-9][0-9]*[a-z]?-[1-9][0-9]*[a-z]?)*"
+      /> -->
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

@@ -145,9 +145,11 @@ class RpxController < ApplicationController
 
   def create_submit
     identifier = session[:identifier]
-    @name = params[:new_user][:name]
-    @email = params[:new_user][:email]
-    @full_name = params[:new_user][:full_name]
+    if params[:new_user]
+      @name = params[:new_user][:name]
+      @email = params[:new_user][:email]
+      @full_name = params[:new_user][:full_name]
+    end
 
     if @name.empty?
       flash.now[:error] = "Nickname must not be empty"

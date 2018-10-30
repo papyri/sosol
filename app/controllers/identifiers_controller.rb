@@ -2,6 +2,7 @@
 # - contains methods common to these identifiers
 class IdentifiersController < ApplicationController
   rescue_from Exceptions::CommitError, :with => :commit_failed
+  rescue_from 'Java::JavaLang::NullPointerException', :with => :retrieve_failed
   # - GET /publications/1/xxx_identifiers/1/editxml
   # - edit the XML file from the repository of the associated identifier
   def editxml
@@ -15,18 +16,17 @@ class IdentifiersController < ApplicationController
   #   of them with URL's to click to git a 'diff' view of each commit
   def history
     find_identifier
-    @identifier.get_commits
-    @identifier.get_commits.each do |commit|
-      if commit[:message].empty?
-        commit[:message] = '(no commit message)'
-      end
-      commit[:url] = Sosol::Application.config.gitweb_base_url +
-                     ["#{@identifier.publication.owner.repository.path.sub(/^#{Sosol::Application.config.repository_root}/,'db/git')}",
-                      "a=commitdiff",
-                      "h=#{commit[:id]}"].join(';')
-    end
     @is_editor_view = true
+    @commits = @identifier.get_commits(20).map{|c| @identifier.commit_id_to_hash(c)}
     render :template => 'identifiers/history'
+  end
+
+  # GET /publications/1/xxx_identifiers/1/
+  # - redirect to edit
+  def show
+    find_identifier
+    redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :edit) and return
   end
   
   # POST /identifiers
@@ -113,6 +113,11 @@ class IdentifiersController < ApplicationController
       @identifier[:xml_content] = new_content
       @is_editor_view = true
       render :template => 'identifiers/editxml'
+    rescue RuntimeError => runtime_error
+      flash.now[:error] = runtime_error.message + ". This file was NOT SAVED."
+      @identifier[:xml_content] = xml_content
+      @is_editor_view = true
+      render :template => 'identifiers/editxml'
     end
   end
   
@@ -120,22 +125,20 @@ class IdentifiersController < ApplicationController
   # - Show the diff view of a specific get repository commit
   def show_commit
     find_identifier
-    @identifier.get_commits
-    commit_index = @identifier.get_commits.find_index {|c| c[:id] == params[:commit_id].to_s}
-    @commit = @identifier.get_commits()[commit_index]
-    @prev_commit = commit_index > 0 ? @identifier.get_commits()[commit_index-1] : nil
-    @next_commit = commit_index < (@identifier.get_commits.length - 1) ? @identifier.get_commits()[commit_index+1] : nil
+    identifier_commits = @identifier.get_commits(20)
+    commit_index = identifier_commits.find_index {|c| c == params[:commit_id].to_s}
+    @commit = @identifier.commit_id_to_hash(identifier_commits[commit_index])
+    @prev_commit = commit_index > 0 ? identifier_commits[commit_index-1] : nil
+    @next_commit = commit_index < (identifier_commits.length - 1) ? identifier_commits[commit_index+1] : nil
     
-    @diff = `git --git-dir="#{@identifier.owner.repository.path}" diff --unified=5000 #{params[:commit_id]}^ #{params[:commit_id]} -- "#{@identifier.to_path}"`
-    # @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id],"--",@identifier.to_path)
+    @diff = Repository.run_command("#{@identifier.owner.repository.git_command_prefix} diff --unified=5000 #{params[:commit_id]}^ #{params[:commit_id]} -- \"#{@identifier.to_path}\"")
     if @diff.blank?
       # empty diff, probably pre-rename; go ahead and show the whole diff
       # TODO: actually track down renames? If an identifier is modified by
       # a repo-wide commit and then renamed, this will currently load the
       # entire (giant) commit. But most of our renames will be from new
       # texts coming in with no prior history.
-      @diff = `git --git-dir="#{@identifier.owner.repository.path}" diff --unified=5000 #{params[:commit_id]}^ #{params[:commit_id]}`
-      # @diff = @identifier.owner.repository.repo.git.diff({:unified => 5000}, "#{params[:commit_id]}^",params[:commit_id])
+      @diff = Repository.run_command("#{@identifier.owner.repository.git_command_prefix} diff --unified=5000 #{params[:commit_id]}^ #{params[:commit_id]}")
     end
     Rails.logger.info(@commit.inspect)
     @is_editor_view = true
@@ -203,7 +206,11 @@ class IdentifiersController < ApplicationController
       flash.keep
       redirect_to polymorphic_path([@identifier.publication,@identifier],
                               :action => :edit) and return
-    
     end
 
+    def retrieve_failed(null_pointer_error)
+      flash[:error] = "Error retrieving file content from repository. This error has been logged for review by an administrator."
+      notify_airbrake(null_pointer_error, params)
+      redirect_to dashboard_url
+    end
 end
