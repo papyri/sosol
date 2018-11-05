@@ -2,14 +2,14 @@ require 'test_helper'
 
 class EmailerMailerTest < ActionMailer::TestCase
 
-  def test_generail_email
-     user = 'dummyuser@emailserver.com' 
-     email = EmailerMailer.general_email(user,'test subject','test body').deliver   
+  def test_general_email
+     user = 'dummyuser@emailserver.com'
+     email = EmailerMailer.general_email(user, 'test subject', "test\n\nbody").deliver
      assert !ActionMailer::Base.deliveries.empty?
 
      assert_equal [user], email.to
      assert_equal "test subject", email.subject
-     assert_match(/test body/, email.encoded)
+     assert_match(/<body>\s+<p>test<\/p>\s+<p>body<\/p>\s+<\/body>/, email.encoded)
   end
 
   def test_withdraw_note

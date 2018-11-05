@@ -528,17 +528,26 @@ Developer:
   def email_everybody
     if !@current_user.admin
       flash[:error] = "Only Admin Users can create an email to all SoSOL users."
+
       redirect_to dashboard_url
       return
     end
+
     if params[:email_subject].gsub(/^\s+|\s+$/, '') == "" || params[:email_content].gsub(/^\s+|\s+$/, '') == ""
       flash[:notice] = 'Email subject and content are both required.'
-      #redirect_to :controller => "user", :action => "create_email_everybody"
-      redirect_to sendmsg_url
+
+      render :create_email_everybody
       return
     end
 
-    User.compose_email(params[:email_subject], params[:email_content])
+    if params[:is_test_email]
+      @current_user.compose_email(params[:email_subject], params[:email_content])
+
+      render :create_email_everybody
+      return
+    end
+
+    User.compose_email_for_all_users(params[:email_subject], params[:email_content])
 
     flash[:notice] = 'Email to all users was successfully sent.'
     redirect_to dashboard_url

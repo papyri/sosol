@@ -173,22 +173,11 @@ class User < ActiveRecord::Base
   #*Args*
   #- +subject_line+ the email's subject
   #- +email_content+ the email's body
-  def self.compose_email(subject_line, email_content)
-    #get email addresses from all users that have them
-    #users = User.find(:all, :select => "email", :conditions => ["email != ?", ""])
-    users = User.find_by_sql("SELECT email From users WHERE email is not null")
+  def self.compose_email_for_all_users(subject_line, email_content)
+    #get users that have email addresses
+    users = User.where("email is not null")
 
-    users.each do |toaddress|
-      if toaddress.email.strip != ""
-        EmailerMailer.general_email(toaddress.email, subject_line, email_content).deliver
-      end
-    end
-
-    #can use below if want to send to all addresses in 1 email
-    #format 'to' addresses for actionmailer
-    #addresses = users.map{|c| c.email}.join(", ")
-    #EmailerMailer.deliver_send_email_out(addresses, subject_line, email_content)
-
+    users.each { |user| user.compose_email(subject_line, email_content) }
   end
 
   def self.stats(user_id)
@@ -213,6 +202,12 @@ class User < ActiveRecord::Base
       collection = CollectionsHelper::create_user_collection(user)
     end
     return collection.id
+  end
+
+  def compose_email(subject_line, email_content)
+    if email.strip != ""
+      EmailerMailer.general_email(email, subject_line, email_content).deliver
+    end
   end
 
   private

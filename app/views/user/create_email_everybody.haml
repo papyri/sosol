@@ -14,13 +14,16 @@
         = label_tag "Email Subject - Required:"
         %br
         %br
-        = text_field_tag 'email_subject', "", :size => 105, :class => "greek text_box"
+        = text_field_tag 'email_subject', params[:email_subject], :size => 105, :class => "greek text_box"
         %br
         %br
         = label_tag "Email Content - Required:"
         %br
         %br
-        = text_area_tag 'email_content', "", :onkeyup => "insertGapStart()", :cols => 102, :rows => 20, :class => "greek text_box"
+        = text_area_tag 'email_content', params[:email_content], :onkeyup => "insertGapStart()", :cols => 102, :rows => 20, :class => "greek text_box"
         %br
         %br
         = submit_tag "Send Email", :class => 'submit', :id => "submit_button"
+        %br
+        = check_box_tag 'is_test_email', '1', params[:is_test_email]
+        Send test email to self instead of emailing everyone
