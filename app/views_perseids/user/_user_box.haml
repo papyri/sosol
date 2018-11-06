@@ -55,6 +55,11 @@
         = link_to 'Manage Boards', boards_url
       %li
         = link_to 'Email Users', sendmsg_url
+    - if @current_user.is_master_admin
+      %li
+        = link_to 'Manage Users', index_users_by_email_url
+      %li
+        = link_to 'Manage Admins', index_user_admins_url
     - if @current_user.developer
       %li
         = link_to 'developer', developer_url

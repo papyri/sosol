@@ -128,6 +128,7 @@ Sosol::Application.routes.draw do
   match 'help' => 'user#help', :as => :help
   match 'usage' => 'user#usage_stats', :as => :usage
   match 'all_users_links' => 'user#all_users_links', :as => :all_users_links
+  match 'index_users_by_email' => 'user#index_users_by_email', :as => :index_users_by_email
   match 'index_user_admins' => 'user#index_user_admins', :as => :index_user_admins
   match 'dashboard' => 'user#dashboard', :as => :dashboard
   match 'developer' => 'user#developer', :as => :developer

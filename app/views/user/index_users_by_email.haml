@@ -4,14 +4,16 @@
 %table{ :class => "users_all_by_email" }
   %tr
     %th Email
-    %th Name
+    %th Username
+    %th Full Name
     %th Actions
   - for user in @users
     %tr
-      %td.user_name
-        = h user.name
       %td.user_email
         = h user.email
+      %td.user_name
+        = h user.name
+      %td.user_full_name
+        = h user.full_name
       %td
         = link_to "Delete", :controller=> :user, :action => :confirm_delete, :user_id => user.id
-
