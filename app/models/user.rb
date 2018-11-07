@@ -16,6 +16,9 @@ class User < ActiveRecord::Base
     property :email do
       key :type, :string
     end
+    property :email_opt_out do
+      key :type, :boolean
+    end
     property :full_name do
       key :type, :string
     end
@@ -175,7 +178,7 @@ class User < ActiveRecord::Base
   #- +email_content+ the email's body
   def self.compose_email_for_all_users(subject_line, email_content)
     #get users that have email addresses
-    users = User.where("email is not null")
+    users = User.where(email_opt_out: false).where("email IS NOT NULL")
 
     users.each { |user| user.compose_email(subject_line, email_content) }
   end
@@ -205,8 +208,8 @@ class User < ActiveRecord::Base
   end
 
   def compose_email(subject_line, email_content)
-    if email.strip != ""
-      EmailerMailer.general_email(email, subject_line, email_content).deliver
+    if email.strip != "" && !email_opt_out
+      EmailerMailer.announcement_email(email, subject_line, email_content).deliver
     end
   end
 

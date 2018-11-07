@@ -13,6 +13,11 @@
       = f.text_field :affiliation
       = f.label :email
       = f.text_field :email
+      = f.label :email_opt_out
+      .checkbox
+        = f.check_box :email_opt_out
+        Do not receive Perseids announcement emails
+      %br
       = f.submit "Update", {:class => 'btn revert'}
 
     %ul.unstyled

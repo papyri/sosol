@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <%= simple_format(@content) %>
+    <br />
+    <p>
+    If you no longer wish to receive messages from us, visit <%= link_to 'your account', account_url %> and select <em>Email opt out</em>.
+    If you have any other issues, please contact us at <%= Sosol::Application.config.site_email_from %>.
+    </p>
+  </body>
+</html>

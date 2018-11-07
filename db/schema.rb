@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170430182007) do
+ActiveRecord::Schema.define(:version => 20181107152354) do
 
   create_table "assignments", :force => true do |t|
     t.integer  "user_id"
@@ -26,14 +26,16 @@ ActiveRecord::Schema.define(:version => 20170430182007) do
     t.string   "title"
     t.string   "category"
     t.integer  "decree_id"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.integer  "finalizer_user_id"
     t.text     "identifier_classes"
     t.decimal  "rank"
     t.string   "friendly_name"
     t.integer  "community_id"
-    t.boolean  "skip_finalize",      :default => false
+    t.boolean  "skip_finalize",       :default => false
+    t.integer  "max_assignable",      :default => 0
+    t.boolean  "requires_assignment", :default => false
   end
 
   create_table "boards_users", :id => false, :force => true do |t|
@@ -71,7 +73,6 @@ ActiveRecord::Schema.define(:version => 20170430182007) do
     t.boolean  "is_default",         :default => false,              :null => false
     t.string   "type",               :default => "EndUserCommunity", :null => false
     t.string   "pass_to"
-    t.integer  "allows_assignment",  :default => 0
   end
 
   create_table "communities_admins", :id => false, :force => true do |t|
@@ -97,24 +98,6 @@ ActiveRecord::Schema.define(:version => 20170430182007) do
     t.datetime "updated_at",                                 :null => false
     t.string   "tally_method"
   end
-
-  create_table "docos", :force => true do |t|
-    t.decimal  "line",        :precision => 7, :scale => 2
-    t.string   "category"
-    t.string   "description"
-    t.string   "preview"
-    t.string   "leiden"
-    t.string   "xml"
-    t.string   "url"
-    t.datetime "created_at",                                                    :null => false
-    t.datetime "updated_at",                                                    :null => false
-    t.string   "urldisplay"
-    t.text     "note"
-    t.string   "docotype",                                  :default => "text", :null => false
-  end
-
-  add_index "docos", ["docotype"], :name => "index_docos_on_docotype"
-  add_index "docos", ["id", "docotype"], :name => "index_docos_on_id_and_docotype"
 
   create_table "emailers", :force => true do |t|
     t.integer  "board_id"
@@ -248,6 +231,7 @@ ActiveRecord::Schema.define(:version => 20170430182007) do
     t.boolean  "is_community_master_admin", :default => false
     t.boolean  "is_master_admin",           :default => false
     t.integer  "accepted_terms",            :default => 0
+    t.boolean  "email_opt_out",             :default => false
   end
 
   create_table "votes", :force => true do |t|

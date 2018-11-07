@@ -12,6 +12,18 @@ class EmailerMailerTest < ActionMailer::TestCase
      assert_match(/<body>\s+<p>test<\/p>\s+<p>body<\/p>\s+<\/body>/, email.encoded)
   end
 
+  def test_announcement_email
+     user = 'dummyuser@emailserver.com'
+     email = EmailerMailer.announcement_email(user, 'test subject', "test\n\nbody").deliver
+     assert !ActionMailer::Base.deliveries.empty?
+
+     assert_equal [user], email.to
+     assert_equal "test subject", email.subject
+     assert_match(/<p>test<\/p>\s+<p>body<\/p>/, email.encoded)
+     assert_match(/If you no longer wish to receive messages from us, visit <a href="http:\/\/localhost\/account">your account<\/a> and select <em>Email opt out<\/em>\./, email.encoded)
+     assert_match(/If you have any other issues, please contact us at admin@localhost\./, email.encoded)
+  end
+
   def test_withdraw_note
      user = 'dummyuser@emailserver.com' 
      title = 'dummy title'
