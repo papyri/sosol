@@ -48,6 +48,7 @@
 
           %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
           %span.move{:title => I18n.t('tooltip.multiMove')} o
+          %hr
 
     :javascript
       Sortable.create('multiItems_edition', {overlap: 'horizontal', constraint: false, handle: 'move'});

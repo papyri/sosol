@@ -109,9 +109,6 @@ class Publication < ActiveRecord::Base
   def populate_identifiers_from_identifiers(identifiers, original_title = nil)
 
     self.repository.update_master_from_canonical
-    if identifiers.class == String && identifiers.include?('/dclp/') #cl: circumvent the number server for dclp stuff
-      identifiers = {'dclp' => [identifiers]}
-    else
     # Coming in from an identifier, build up a publication
     if identifiers.class == String
       # have a string, need to build relation
@@ -124,8 +121,9 @@ class Publication < ActiveRecord::Base
     end
     # identifiers is now (or was always) a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)
     # as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
-    end
 
+    # get rid of HGV and DDB when dealing with DCLP stuff
+    identifiers = identifiers.select{|key, identifier| !identifiers.has_key?('dclp') || (key != 'ddbdp' && key != 'hgv')}
 
     #title is first identifier in list
     #but added the option to set the title to whatever the caller wants
@@ -1589,7 +1587,9 @@ class Publication < ActiveRecord::Base
     end
 
     # add comments hash from each of the publication's identifiers XML file to array
-    identifiers.each do |i|
+    # in the case of DCLP, only one of its twin identifiers (DCLPMetaIdentifier and DCLPTextIdentifier) needs to be processed
+    identifiers.select{|i|i.class != DCLPTextIdentifier || !identifiers.find_index{|i| i.class == DCLPMetaIdentifier}}.each do |i|
+      puts i.class
       where_from = i.class::FRIENDLY_NAME
       ident_title = i.title
 
@@ -1633,7 +1633,7 @@ class Publication < ActiveRecord::Base
   end
 
   def creatable_identifiers
-    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES).select{ |identifier| identifier != 'DCLPMetaIdentifier' && identifier != 'DCLPTextIdentifier'}
 
     #WARNING hardcoded identifier dependency hack
     #enforce creation order

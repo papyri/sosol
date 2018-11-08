@@ -1901,7 +1901,7 @@ module HgvMetaIdentifierHelper
     #   - format +String+ or +nil+ if it cannot be converted
     # e.g. HgvFormat.formatMonth 8 => "Aug."
     def HgvFormat.formatMonth month
-      months = ['', 'Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.']
+      months = ['', 'Jan.', 'Febr.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.']
       month && month.to_i > 0 && month.to_i < 13 ? months[month.to_i] : nil
     end
     
