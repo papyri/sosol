@@ -222,7 +222,9 @@ class BoardsController < ApplicationController
     end
 
     respond_to do |format|
-      if @board.update_attributes(params[:board])
+      board_params = params[:board].slice(:friendly_name, :skip_finalize, :requires_assignment, :max_assignable)
+
+      if @board.update_attributes(board_params)
         flash[:notice] = 'Board was successfully updated.'
         format.html { redirect_to(@board) }
         format.xml  { head :ok }
