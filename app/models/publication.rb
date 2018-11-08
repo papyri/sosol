@@ -122,8 +122,6 @@ class Publication < ActiveRecord::Base
     # identifiers is now (or was always) a hash with IDENTIFIER_NAMESPACE (hgv, tm, ddbdp etc)
     # as the keys and the string papyri.info/ddbdp/bgu;7;1504 as the value
 
-    # get rid of HGV and DDB when dealing with DCLP stuff
-    identifiers = identifiers.select{|key, identifier| !identifiers.has_key?('dclp') || (key != 'ddbdp' && key != 'hgv')}
 
     #title is first identifier in list
     #but added the option to set the title to whatever the caller wants
