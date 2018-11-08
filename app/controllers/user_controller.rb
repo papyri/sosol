@@ -329,7 +329,9 @@ class UserController < ApplicationController
     @user = User.find(params[:id])
 
     begin
-      @user.update_attributes(params[:user])
+      user_params = params[:user].slice(:full_name, :affiliation, :email, :email_opt_out)
+
+      @user.update_attributes(user_params)
       flash[:notice] = 'User was successfully updated.'
       redirect_to :controller => "user", :action => "account"
     rescue Exception => e
@@ -414,7 +416,9 @@ Developer:
       @user = User.find(params[:id])
 
       begin
-        @user.update_attributes(params[:user])
+        user_params = params[:user].slice(:is_master_admin, :is_community_master_admin, :admin, :developer)
+
+        @user.update_attributes(user_params)
         flash[:notice] = 'User was successfully updated.'
         redirect_to :controller => "user", :action => "index_user_admins"
       rescue Exception => e
