@@ -7,42 +7,24 @@
           = link_to 'Finalize', finalize_review_publication_path(@identifier.publication)
       %li{ :class => ((params[:controller] == 'publications') && (params[:action] == 'show')) ? 'active' : ''}
         = link_to 'Overview', publication_path(@identifier.publication)
-      - if @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}.length > 0
-        %li{ :class => params[:controller] == 'ddb_identifiers' ? 'active' : ''}
+      - if @identifier.publication.identifiers.select{|i| i.class.in?([DDBIdentifier, DCLPTextIdentifier])}.length > 0
+        %li{ :class => (params[:controller].in?(['ddb_identifiers', 'dclp_text_identifiers']) ? 'active' : '')}
           = link_to 'Text', edit_text_publication_path(@identifier.publication)
-          - texts = @identifier.publication.identifiers.select{|i| i.class == DDBIdentifier}
+          - texts = @identifier.publication.identifiers.select{|i| i.class.in?([DDBIdentifier, DCLPTextIdentifier])}
           - if texts.length > 1
             %ul
               - for text in texts
                 %li
                   = link_to text.titleize, edit_polymorphic_path([@identifier.publication, text])
-      - if @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}.length > 0
-        %li{ :class => params[:controller] == 'hgv_meta_identifiers' ? 'active' : ''}
-          = link_to 'HGV', edit_meta_publication_path(@identifier.publication)
-          - metas = @identifier.publication.identifiers.select{|i| i.class == HGVMetaIdentifier}
+      - if @identifier.publication.identifiers.select{|i| i.class.in?([HGVMetaIdentifier, DCLPMetaIdentifier])}.length > 0
+        %li{ :class => (params[:controller].in?(['hgv_meta_identifiers', 'dclp_meta_identifiers']) ? 'active' : '')}
+          = link_to 'Meta', edit_meta_publication_path(@identifier.publication)
+          - metas = @identifier.publication.identifiers.select{|i| i.class.in?([HGVMetaIdentifier, DCLPMetaIdentifier])}
           - if metas.length > 1
             %ul
               - for meta in metas
                 %li
                   = link_to meta.titleize, edit_polymorphic_path([@identifier.publication, meta])
-      - identifierList = @identifier.publication.identifiers.select{|i| i.class == DCLPTextIdentifier}
-      - if identifierList.length > 0
-        %li{ :class => params[:controller] == 'dclp_text_identifiers' ? 'active' : ''}
-          = link_to 'Text', edit_text_publication_path(@identifier.publication)
-          - if identifierList.length > 1
-            %ul
-              - for identifierItem in identifierList
-                %li
-                  = link_to identifierItem.titleize, edit_polymorphic_path([@identifier.publication, text])
-      - identifierList = @identifier.publication.identifiers.select{|i| i.class == DCLPMetaIdentifier}
-      - if identifierList.length > 0
-        %li{ :class => params[:controller] == 'dclp_meta_identifiers' ? 'active' : ''}
-          = link_to 'Meta', edit_meta_publication_path(@identifier.publication)
-          - if identifierList.length > 1
-            %ul
-              - for identifierItem in identifierList
-                %li
-                  = link_to identifierItem.titleize, edit_polymorphic_path([@identifier.publication, meta])
       - if @identifier.publication.identifiers.select{|i| i.class == APISIdentifier}.length > 0
         %li{ :class => params[:controller] == 'apis_identifers' ? 'active' : ''}
           = link_to 'APIS (beta)', edit_apis_publication_path(@identifier.publication)
