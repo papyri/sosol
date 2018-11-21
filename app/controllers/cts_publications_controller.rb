@@ -358,7 +358,7 @@ class CtsPublicationsController < PublicationsController
           end
         end
         if (ok_to_add)
-          new_cts = identifier_class.new_from_supplied(@publication,collection,urn,pubtype,doc[:lang],doc[:contents])
+          new_cts = identifier_class.new_from_supplied(@publication, agent, doc[:contents], 'Created from Supplied content')
           added = added + 1
           # normally on creation of new publication this should be done with publication.populate_identifiers_from_identifers
           # but we're circumventing that method here
