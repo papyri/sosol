@@ -33,24 +33,29 @@ class IdentifiersController < ApplicationController
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     identifier_type = params[:identifier_type].constantize
-    if params[:apis_collection]
-      @identifier = APISIdentifier.new_from_template(@publication, params[:apis_collection].to_s)
-    else
-      begin
-        @identifier = identifier_type.new_from_template(@publication)
-      rescue Exception => e
-        flash[:error] = e.message
-        redirect_to publication_path(@publication.id) and return
+    if @publication.mutable?
+      if params[:apis_collection]
+        @identifier = APISIdentifier.new_from_template(@publication, params[:apis_collection].to_s)
+      else
+        begin
+          @identifier = identifier_type.new_from_template(@publication)
+        rescue Exception => e
+          flash[:error] = e.message
+          redirect_to publication_path(@publication.id) and return
+        end
       end
-    end
-    if @identifier.nil?
-      flash[:error] = "Publication already has identifiers of this type, cannot create new file from templates."
-      redirect_to publication_path(@publication.id) and return
+      if @identifier.nil?
+        flash[:error] = "Publication already has identifiers of this type, cannot create new file from templates."
+        redirect_to publication_path(@publication.id) and return
+      else
+        flash[:notice] = "File created."
+        expire_publication_cache
+        redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                     :action => :edit) and return
+      end
     else
-      flash[:notice] = "File created."
-      expire_publication_cache
-      redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                   :action => :edit) and return
+      flash[:error] = "Publication is not modifiable in its current status."
+      redirect_to publication_path(@publications.id) and return
     end
   end
   

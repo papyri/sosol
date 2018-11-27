@@ -389,12 +389,12 @@ class Publication < ActiveRecord::Base
     retval
   end
 
-  #Determines if publication is in 'editing' status and is able to be changed
+  #Determines if publication is in 'editing' or 'new' status and is able to be changed
   #*Returns*
   #- +true+ if the publication should be changed by some user.
   #- +false+ otherwise.
   def mutable?
-    if (self.status != "editing") || self.advisory_lock_exists?("finalize_#{self.id}")  # && self.status != "new"
+    if (!%w{editing new}.include?(self.status)) || self.advisory_lock_exists?("finalize_#{self.id}") || self.advisory_lock_exists?("submit_#{self.id}")
       return false
     else
       return true
@@ -1607,66 +1607,70 @@ class Publication < ActiveRecord::Base
   end
 
   def creatable_identifiers
-    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    if !self.mutable?
+      return []
+    else
+      creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
 
-    #WARNING hardcoded identifier dependency hack
-    #enforce creation order
-    has_meta = false
-    has_text = false
-    has_biblio = false
-    has_cts = false
-    has_apis = false
+      #WARNING hardcoded identifier dependency hack
+      #enforce creation order
+      has_meta = false
+      has_text = false
+      has_biblio = false
+      has_cts = false
+      has_apis = false
 
-    self.identifiers.each do |i|
-      if i.class.to_s == "BiblioIdentifier"
-        has_biblio = true
-      end
-      if i.class.to_s == "HGVMetaIdentifier"
-        has_meta = true
-      end
-      if i.class.to_s == "DDBIdentifier"
-       has_text = true
-      end
-      if i.class.to_s =~ /CTSIdentifier/
-        has_cts = true
-      end
-      if i.class.to_s == "APISIdentifier"
-        has_apis = true
-      end
-    end
-    if !has_text
-      #cant create trans
-      creatable_identifiers.delete("HGVTransIdentifier")
-    end
-    if !has_meta
-      #cant create text
-      creatable_identifiers.delete("DDBIdentifier")
-      #cant create trans
-      creatable_identifiers.delete("HGVTransIdentifier")
-    end
-    creatable_identifiers.delete("BiblioIdentifier")
-    # Not allowed to create any other record in association with a BiblioIdentifier publication
-    if has_biblio
-      creatable_identifiers = []
-    end
-    #  BALMAS Creating other records in association with a CTSIdentifier publication will be enabled elsewhere
-    if has_cts
-      creatable_identifiers = []
-    end
-    if has_apis
-      creatable_identifiers.delete("APISIdentifier")
-    end
-
-    #only let user create new for non-existing
-    self.identifiers.each do |i|
-      creatable_identifiers.each do |ci|
-        if ci == i.class.to_s
-          creatable_identifiers.delete(ci)
+      self.identifiers.each do |i|
+        if i.class.to_s == "BiblioIdentifier"
+          has_biblio = true
+        end
+        if i.class.to_s == "HGVMetaIdentifier"
+          has_meta = true
+        end
+        if i.class.to_s == "DDBIdentifier"
+         has_text = true
+        end
+        if i.class.to_s =~ /CTSIdentifier/
+          has_cts = true
+        end
+        if i.class.to_s == "APISIdentifier"
+          has_apis = true
         end
       end
-    end
+      if !has_text
+        #cant create trans
+        creatable_identifiers.delete("HGVTransIdentifier")
+      end
+      if !has_meta
+        #cant create text
+        creatable_identifiers.delete("DDBIdentifier")
+        #cant create trans
+        creatable_identifiers.delete("HGVTransIdentifier")
+      end
+      creatable_identifiers.delete("BiblioIdentifier")
+      # Not allowed to create any other record in association with a BiblioIdentifier publication
+      if has_biblio
+        creatable_identifiers = []
+      end
+      #  BALMAS Creating other records in association with a CTSIdentifier publication will be enabled elsewhere
+      if has_cts
+        creatable_identifiers = []
+      end
+      if has_apis
+        creatable_identifiers.delete("APISIdentifier")
+      end
 
-    return creatable_identifiers
+      #only let user create new for non-existing
+      self.identifiers.each do |i|
+        creatable_identifiers.each do |ci|
+          if ci == i.class.to_s
+            creatable_identifiers.delete(ci)
+          end
+        end
+      end
+
+      return creatable_identifiers
+    end
   end
 
   def related_text
