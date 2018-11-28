@@ -55,7 +55,7 @@ class IdentifiersController < ApplicationController
       end
     else
       flash[:error] = "Publication is not modifiable in its current status."
-      redirect_to publication_path(@publications.id) and return
+      redirect_to publication_path(@publication.id) and return
     end
   end
   
