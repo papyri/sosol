@@ -867,20 +867,22 @@ module HgvMetaIdentifierHelper
       end
     end
     
-    # Get ISO formatted month (DD)
+    # Get ISO formatted day (DD)
     # - *Args*  :
     #   - +day+ +String+ or +Integer+, that contains a number, e.g. 31, may be +nil+
     #   - +month+ +String+ or +Integer+, that contains a number, e.g. 5, may be +nil+
+    #   - +year+ +String+ or +Integer+, that contains a number, e.g. 200, may be +nil+
     #   - +monthQualifier+ → qualifies which part of the year is of interest, e.g. +:beginning+, may be +nil+
     #   - +chron+ → +:chronMin+ or +:chronMax+
     # - *Returns* :
     #   - +String+, e.g. +31+
     # e.g. HgvDate.getDayIso(nil, 7, :end, :chronMax) => "31"
-    def HgvDate.getDayIso day, month, monthQualifier, chron
+    def HgvDate.getDayIso day, month, year, monthQualifier, chron
       if day
         day.to_s.rjust(2, '0')
       else
         m = month.to_i
+        y = year.to_i
         day_max = m ? (m != 2 ? (m < 8 ? ((m % 2) == 0 ? 30 : 31) : ((m % 2) == 0 ? 31 : 30) ) : (y && ((y % 4) == 0) && (((y % 100) != 0) || ((y % 400) == 0)) ? 29 : 28)) : 31
 
         {
@@ -1464,7 +1466,7 @@ module HgvMetaIdentifierHelper
       else
         y = {nil => '', 0 => '-'}[date_item[:y] =~ /-/] + date_item[:y].sub('-', '').rjust(4, '0')
         m = HgvDate.getMonthIso date_item[:m], date_item[:yx], :chronMin
-        d = HgvDate.getDayIso date_item[:d], date_item[:m], date_item[:mx], :chronMin
+        d = HgvDate.getDayIso date_item[:d], date_item[:m], y, date_item[:mx], :chronMin
         
         date = y + (m ? '-' + m + (d ? '-' + d : '') : '')
         
@@ -1477,7 +1479,7 @@ module HgvMetaIdentifierHelper
           
           y2 = date_item[:y2] ? {nil => '', 0 => '-'}[date_item[:y2] =~ /-/] + date_item[:y2].sub('-', '').rjust(4, '0') : y
           m2 = HgvDate.getMonthIso((date_item[:m2] ? date_item[:m2] : (date_item[:d2] ? date_item[:m] : nil)), (date_item[:yx2] ? date_item[:yx2] : (y2 == y ? date_item[:yx] : nil)), :chronMax)
-          d2 = HgvDate.getDayIso date_item[:d2], (date_item[:m] ? date_item[:m] : nil), (date_item[:mx] ? date_item[:mx] : date_item[:mx2]), :chronMax
+          d2 = HgvDate.getDayIso date_item[:d2], (date_item[:m] ? date_item[:m] : nil), y2, (date_item[:mx] ? date_item[:mx] : date_item[:mx2]), :chronMax
           
           date2 = y2 + (m2 ? '-' + m2 + (d2 ? '-' + d2 : '') : '')
           
