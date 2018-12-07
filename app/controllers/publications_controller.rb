@@ -312,7 +312,7 @@ class PublicationsController < ApplicationController
       flash[:notice] = "Another user is currently making themselves the finalizer of this publication."
       redirect_to show
     else
-      if @publication.advisory_lock_exists?("finalize_#{@publication.id}")}
+      if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
         flash[:error] = "Cen't change finalizer - finalizer's copy is already in the process of being finalized."
         redirect_to show
       else
