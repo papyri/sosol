@@ -312,7 +312,7 @@ class PublicationsController < ApplicationController
       flash[:notice] = "Another user is currently making themselves the finalizer of this publication."
       redirect_to show
     else
-      if @publication.children.any?{|c| c.advisory_lock_exists?("finalize_#{c.id}")}
+      if @publication.advisory_lock_exists?("finalize_#{@publication.id}")}
         flash[:error] = "Cen't change finalizer - finalizer's copy is already in the process of being finalized."
         redirect_to show
       else
@@ -327,7 +327,7 @@ class PublicationsController < ApplicationController
   def finalize_review
     @publication = Publication.find(params[:id].to_s)
     @identifier = @publication.controlled_identifiers.last
-    if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
+    if @publication.advisory_lock_exists?("finalize_#{@publication.parent.id}")
       flash.now[:notice] = "This publication is currently being finalized. Check back in a few minutes."
     elsif @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}")
       flash[:notice] = "Someone is already performing a make-me-finalizer action with this publication. Please check back in a few minutes."
@@ -354,7 +354,7 @@ class PublicationsController < ApplicationController
       return
     end
 
-    if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
+    if @publication.advisory_lock_exists?("finalize_#{@publication.parent.id}")
       flash[:error] = "Finalization is already running for this publication. Please check back in a few minutes."
       redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.parent.owner.id
     elsif @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}")
