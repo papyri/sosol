@@ -1205,6 +1205,12 @@ class Publication < ActiveRecord::Base
         # the finalizer will have a parent that is a board whose status must be set
         # check that parent is board, then archive the board publication and send status emails
         if self.parent && self.parent.owner_type == "Board"
+          # destroy any sibling publications, in case another finalizer somehow got a copy of the
+          # publication, to avoid double-finalization
+          (self.parent.children - [self]).each do |sibling|
+            sibling.destroy
+          end
+
           self.parent.archive
           self.parent.owner.send_status_emails("committed", self)
         #else #the user is a super user
