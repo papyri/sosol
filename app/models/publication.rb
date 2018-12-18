@@ -1631,7 +1631,7 @@ class Publication < ActiveRecord::Base
   end
 
   def creatable_identifiers
-    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES).select{ |identifier| identifier != 'DCLPMetaIdentifier' && identifier != 'DCLPTextIdentifier'}
+    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
 
     #WARNING hardcoded identifier dependency hack
     #enforce creation order
@@ -1664,8 +1664,6 @@ class Publication < ActiveRecord::Base
     end
 
     if has_dclp
-      creatable_identifiers.delete("DDBIdentifier")
-      creatable_identifiers.delete("HGVMetaIdentifier")
     end
     if !has_text
       #cant create trans
