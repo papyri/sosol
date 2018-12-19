@@ -394,7 +394,7 @@ class Publication < ActiveRecord::Base
   #- +true+ if the publication should be changed by some user.
   #- +false+ otherwise.
   def mutable?
-    if (!%w{editing new}.include?(self.status)) || self.advisory_lock_exists?("finalize_#{self.parent.id}") || self.advisory_lock_exists?("submit_#{self.id}")
+    if (!%w{editing new}.include?(self.status)) || (self.parent && self.advisory_lock_exists?("finalize_#{self.parent.id}")) || self.advisory_lock_exists?("submit_#{self.id}")
       return false
     else
       return true
