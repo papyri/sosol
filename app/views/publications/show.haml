@@ -168,7 +168,7 @@
       %br
 
 
-    - if %w{editing new}.include?(@publication.status)
+    - if @publication.mutable?
       - for class_type in @creatable_identifiers
         - link_type = class_type.constantize::FRIENDLY_NAME
         - create_type = 'Create new ' + link_type
