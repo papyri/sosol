@@ -8,8 +8,7 @@ jdk:
 rvm:
   - jruby-1.7.26
 before_install:
-  - gem install bundler
-  - gem update bundler
+  - gem install bundler --version '<2.0'
 before_script:
   - gem pristine executable-hooks
   - gem pristine gem-wrappers
