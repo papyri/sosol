@@ -71,6 +71,12 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
       }
   end
 
+  def self.new_from_template(publication)
+    dclp_meta = super
+    DCLPTextIdentifier.new_from_dclp_meta_identifier(dclp_meta) unless dclp_meta.nil?
+    return dclp_meta
+  end
+
   def to_string
    serialization_string = ''
    @configuration.scheme.each_key do |key|

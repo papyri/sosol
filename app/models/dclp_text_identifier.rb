@@ -87,6 +87,11 @@ class DCLPTextIdentifier < DDBIdentifier
     return meta ? meta.n_attribute : (text ? text.n_attribute : nil)
   end
   
+  def self.new_from_template(publication)
+    DCLPMetaIdentifier.new_from_template(publication)
+    return DCLPTextIdentifier.find_by_publication_id(new_publication.id)
+  end
+
   # ?
   def xml_title_text
     return "Description of document"
