@@ -1309,7 +1309,8 @@ class Publication < ActiveRecord::Base
   def origin
     # walk the parent list until we encounter one with no parent
     origin_publication = self
-    while (origin_publication.parent != nil) do
+    origin_publication.reload
+    while ((!origin_publication.nil?) && (!origin_publication.parent.nil?)) do
       origin_publication = origin_publication.parent
     end
     return origin_publication
