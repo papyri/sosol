@@ -89,7 +89,7 @@ class DCLPTextIdentifier < DDBIdentifier
   
   def self.new_from_template(publication)
     DCLPMetaIdentifier.new_from_template(publication)
-    return DCLPTextIdentifier.find_by_publication_id(new_publication.id)
+    return DCLPTextIdentifier.find_by_publication_id(publication.id)
   end
 
   # ?
