@@ -178,10 +178,8 @@ class Identifier < ActiveRecord::Base
       if (self.class == DDBIdentifier) || (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
         collection_name, volume_number, document_number =
           self.to_components.last.split(';')
-        unless collection_name == self.class::TEMPORARY_COLLECTION
-          collection_name =
-            self.class.collection_names_hash[collection_name]
-        end
+        collection_name =
+          self.class.collection_names_hash[collection_name.downcase]
 
         # strip leading zeros
         document_number.sub!(/^0*/,'')
