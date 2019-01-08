@@ -1674,7 +1674,11 @@ class Publication < ActiveRecord::Base
          has_dclp = true
         end
       end
-      
+     
+      unless self.identifiers.map{|i| i.class.to_s}.include('HGVMetaIdentifier')
+        #cant create DDB text
+        creatable_identifiers.delete("DDBIdentifier")
+      end
       if has_dclp
       end
       if !has_text
@@ -1682,8 +1686,6 @@ class Publication < ActiveRecord::Base
         creatable_identifiers.delete("HGVTransIdentifier")
       end
       if !has_meta
-        #cant create text
-        creatable_identifiers.delete("DDBIdentifier")
         #cant create trans
         creatable_identifiers.delete("HGVTransIdentifier")
       end
