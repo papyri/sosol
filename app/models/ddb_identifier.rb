@@ -5,7 +5,7 @@
 class DDBIdentifier < Identifier  
   PATH_PREFIX = 'DDB_EpiDoc_XML'
   
-  FRIENDLY_NAME = "Text"
+  FRIENDLY_NAME = "DDbDP Text"
   
   IDENTIFIER_NAMESPACE = 'ddbdp'
   TEMPORARY_COLLECTION = 'sosol'

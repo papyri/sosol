@@ -5,7 +5,7 @@ class HGVMetaIdentifier < HGVIdentifier
 
   PATH_PREFIX = 'HGV_meta_EpiDoc'
 
-  FRIENDLY_NAME = "HGV"
+  FRIENDLY_NAME = "HGV Meta"
 
   # Generates HTML preview for hgv metadata using EpiDoc transformation file *start-edition.xsl*
   # - *Args*  :
