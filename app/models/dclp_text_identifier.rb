@@ -20,6 +20,10 @@ class DCLPTextIdentifier < DDBIdentifier
     '/' + DCLPTextIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+|SoSOL;\d{4};\d{4})$/, 1]
   end
 
+  def self.collection_names_hash
+    super.merge(TEMPORARY_COLLECTION => TEMPORARY_COLLECTION)
+  end
+
   # Generates HTML preview for hgv metadata using EpiDoc transformation file *start-edition.xsl*
   # - *Args*  :
   #   - +parameters+ → xsl parameter hash, e.g. +{:leiden-style => 'ddb'}+, defaults to empty hash

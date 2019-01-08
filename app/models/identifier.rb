@@ -179,7 +179,7 @@ class Identifier < ActiveRecord::Base
         collection_name, volume_number, document_number =
           self.to_components.last.split(';')
         collection_name =
-          self.class.collection_names_hash[collection_name.downcase]
+          self.class.collection_names_hash[collection_name]
 
         # strip leading zeros
         document_number.sub!(/^0*/,'')
