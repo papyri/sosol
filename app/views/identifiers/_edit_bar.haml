@@ -15,7 +15,7 @@
             %ul
               - for text in texts
                 %li
-                  = link_to "#{text.class::FRIENDLY_NAME}: #{text.titleize}, edit_polymorphic_path([@identifier.publication, text])
+                  = link_to "#{text.class::FRIENDLY_NAME}: #{text.titleize}", edit_polymorphic_path([@identifier.publication, text])
       - if @identifier.publication.identifiers.select{|i| i.class.in?([HGVMetaIdentifier, DCLPMetaIdentifier])}.length > 0
         %li{ :class => (params[:controller].in?(['hgv_meta_identifiers', 'dclp_meta_identifiers']) ? 'active' : '')}
           = link_to 'Meta', edit_meta_publication_path(@identifier.publication)
