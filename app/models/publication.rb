@@ -1675,7 +1675,7 @@ class Publication < ActiveRecord::Base
         end
       end
      
-      unless self.identifiers.map{|i| i.class.to_s}.include('HGVMetaIdentifier')
+      unless self.identifiers.map{|i| i.class.to_s}.include?('HGVMetaIdentifier')
         #cant create DDB text
         creatable_identifiers.delete("DDBIdentifier")
       end
