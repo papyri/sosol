@@ -400,6 +400,7 @@ styled_button_show {
       background: #d0d0d0;
       float: right; }
     #identifier_menu ul li {
+      width: 100%;
       background: #dadada;
       float: left;
       list-style-type: none;
