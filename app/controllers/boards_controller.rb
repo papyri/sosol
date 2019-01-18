@@ -101,7 +101,7 @@ class BoardsController < ApplicationController
     #  @available_identifier_classes -= b.identifier_classes
     #end
     
-    if params[:community_id].to_s
+    if params[:community_id]
       @board.community_id =  params[:community_id].to_s
     end
      
@@ -208,7 +208,7 @@ class BoardsController < ApplicationController
   #If community_id is given then the returned boards are only for that community.
   #If no community_id is given then the "sosol" boards are returned. 
   def rank
-    if params[:community_id].to_s
+    if params[:community_id]
       @boards = Board.ranked_by_community_id( params[:community_id].to_s )
       @community_id = params[:community_id].to_s 
     else
@@ -221,7 +221,7 @@ class BoardsController < ApplicationController
   #Sorts board rankings by given array of board id's and saves new rankings.
   def update_rankings
 
-    if params[:community_id].to_s
+    if params[:community_id]
       @boards = Board.ranked_by_community_id( params[:community_id].to_s )
     else
       #default to sosol boards
@@ -245,7 +245,7 @@ class BoardsController < ApplicationController
     end
     
     
-    if params[:community_id].to_s
+    if params[:community_id]
       redirect_to :controller => 'communities', :action => 'edit',  :id => params[:community_id].to_s
       return
     else

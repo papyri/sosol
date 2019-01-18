@@ -25,15 +25,15 @@
 
 
 %ul#board_elements
-  -for board in @boards
+  - for board in @boards
     %li{:id => "board_element_#{board.id}", :class => 'sortable_board' }
-      =  board.title + "( " + board.friendly_name + " )"
+      = board.title + "( " + board.friendly_name + " )"
 
 
 
 = form_tag  'update_rankings', { :onSubmit => 'getRankings()'} do
-  =hidden_field_tag  'ranking',  'no value', { :id => 'form_board_rankings' }
-  =hidden_field_tag 'community_id', @community_id
-  =submit_tag  "Update Rankings"
+  = hidden_field_tag  'ranking',  'no value', { :id => 'form_board_rankings' }
+  = hidden_field_tag 'community_id', @community_id
+  = submit_tag  "Update Rankings"
 
 
