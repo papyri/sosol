@@ -19,10 +19,14 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
       uri = URI('http://localhost:8080/exist/apps/papyrillio/snippet.html?biblio=' + params[:biblio])
       # @update = Net::HTTP.get(uri).gsub(/(<html[^>]*>|<[^>]*html>)/, '')
 
-      response = Net::HTTP.get_response(uri)
-      if response.code == '200'
-        @update = response.body.gsub(/(<html[^>]*>|<[^>]*html>)/, '')
-      else
+      begin
+        response = Net::HTTP.get_response(uri)
+        if response.code == '200'
+          @update = response.body.gsub(/(<html[^>]*>|<[^>]*html>)/, '')
+        else
+          @update = 'No preview available for ' + params[:biblio]
+        end
+      rescue Errno::ECONNREFUSED => e
         @update = 'No preview available for ' + params[:biblio]
       end
     end
@@ -59,12 +63,17 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
   end
 
   def exist url
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Get.new(uri.request_uri)
-    request.basic_auth("admin", "papy")
-    response = http.request(request)
-    JSON.parse(response.body)
+    begin
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      request = Net::HTTP::Get.new(uri.request_uri)
+      request.basic_auth("admin", "papy")
+      response = http.request(request)
+      return JSON.parse(response.body)
+    rescue StandardError => e
+      Rails.logger.error e.inspect
+      return {}
+    end
   end
 
   # - GET /publications/123/dclp_text_identifiers/456/preview
