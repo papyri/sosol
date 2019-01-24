@@ -30,7 +30,7 @@ namespace :rpx do
       
         puts "Current mappings for #{user.name}:"
         user.user_identifiers.each{|i| puts i.identifier}
-      rescue Exception => e
+      rescue StandardError => e
         puts "An error occurred: #{e.inspect}"
       end
     end
