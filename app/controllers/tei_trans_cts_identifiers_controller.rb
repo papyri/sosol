@@ -37,7 +37,7 @@ class TeiTransCtsIdentifiersController < IdentifiersController
     else
       begin
         @identifier = TeiTransCTSIdentifier.new_from_inventory(publication,collection,edition,'translation')
-      rescue Exception => e
+      rescue StandardError => e
         flash[:notice] = e.to_s
         redirect_to dashboard_url
         return

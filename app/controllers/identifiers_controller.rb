@@ -39,7 +39,7 @@ class IdentifiersController < ApplicationController
       else
         begin
           @identifier = identifier_type.new_from_template(@publication)
-        rescue Exception => e
+        rescue StandardError => e
           flash[:error] = e.message
           redirect_to publication_path(@publication.id) and return
         end

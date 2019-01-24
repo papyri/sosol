@@ -325,7 +325,7 @@ def send_board_reminder_emails
       if address && address.strip != ""
         begin
           EmailerMailer.general_email(address, subject_line, body_text).deliver
-        rescue Exception => e
+        rescue StandardError => e
           Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
         end
       end

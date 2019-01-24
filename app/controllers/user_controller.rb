@@ -334,7 +334,7 @@ class UserController < ApplicationController
       @user.update_attributes(user_params)
       flash[:notice] = 'User was successfully updated.'
       redirect_to :controller => "user", :action => "account"
-    rescue Exception => e
+    rescue StandardError => e
       flash[:error] = 'Error occured - user was not updated.'
       redirect_to :controller => "user", :action => "account"
     end
@@ -421,7 +421,7 @@ Developer:
         @user.update_attributes(user_params)
         flash[:notice] = 'User was successfully updated.'
         redirect_to :controller => "user", :action => "index_user_admins"
-      rescue Exception => e
+      rescue StandardError => e
         flash[:error] = 'Error occured - user was not updated.'
         redirect_to :controller => "user", :action => "index_user_admins"
       end

@@ -113,7 +113,7 @@ class RpxController < ApplicationController
             user.save!
           end
         end
-      rescue Exception => e
+      rescue StandardError => e
         if user_identifier
           user_identifier.destroy
         end
@@ -174,7 +174,7 @@ class RpxController < ApplicationController
       # created with no identifier associated with it.
       user.user_identifiers << UserIdentifier.create(:identifier => identifier)
       user.save!
-    rescue Exception => e
+    rescue StandardError => e
       user.destroy
       flash.now[:error] = "An error occurred when attempting to create your account; try again. #{e.inspect}"
       render :action => "login_return"

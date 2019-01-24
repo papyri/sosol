@@ -672,7 +672,7 @@ class PublicationsController < ApplicationController
     if address && address.strip != ""
       begin
         EmailerMailer.withdraw_note(address, @publication.title ).deliver
-      rescue Exception => e
+      rescue StandardError => e
         Rails.logger.error("Error sending withdraw email: #{e.class.to_s}, #{e.to_s}")
       end
     end
