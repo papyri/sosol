@@ -84,7 +84,7 @@ class OACIdentifier < Identifier
       if ! REXML::XPath.first(self.rdf, xpath).nil?
         hasany = true
       end
-    rescue Exception => e
+    rescue StandardError => e
       ## TODO?
       Rails.logger.error("Error checking for annotation #{e.to_s}")
     end      

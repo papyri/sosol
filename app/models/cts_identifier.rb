@@ -23,7 +23,7 @@ class CTSIdentifier < Identifier
         else
           title = CTS::CTSLib.versionTitleForUrn(self.inventory,self.urn_attribute)
         end
-      rescue Exception => e
+      rescue StandardError => e
         Rails.logger.error("Error retrieving title: #{e.class.to_s}, #{e.to_s}")
       end
     end

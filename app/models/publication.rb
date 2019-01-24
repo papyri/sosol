@@ -9,7 +9,7 @@
 #
 #This class contains many of the methods that controls the workflow for the publication.
 #Examples are:
-#- publicaiton creation
+#- publication creation
 #- copying of a publication
 #- changeing the status of a publication
 #- determining which board examines the publication
@@ -1134,7 +1134,7 @@ class Publication < ActiveRecord::Base
                 end
               end
             end
-          rescue Exception => e
+          rescue StandardError => e
             raise "Error preprocessing finalization copy. #{e.to_s}"
           end # end iteration through identifiers
           # we need to rerun preprocessing until no more changes are made because a preprocessing step
