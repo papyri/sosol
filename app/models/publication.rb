@@ -225,21 +225,23 @@ class Publication < ActiveRecord::Base
   #
   #When there are no more identifiers to be submitted, then the publication is marked as committed.
   def submit_to_next_board
-
+    Rails.logger.info("Publication#submit_to_next_board called for: #{self.id}")
     #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
     @recent_submit_sha = ''
 
     #determine which ids are ready to be submitted (modified, editing...)
     submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
-
-    Rails.logger.info "---Submittable identifiers are: "
-    submittable_identifiers.each do |log_si|
-      Rails.logger.info "     " + log_si.class.to_s + "   " + log_si.title
+    
+    if submittable_identifiers.length == 0
+      Rails.logger.warn("Publication#submit_to_next_board for #{self.id}: no submittable identifiers")
+      Rails.logger.info("Publication#submit_to_next_board for #{self.id} identifier state: #{self.identifiers.inspect}")
+    else
+      submittable_identifiers.each do |log_si|
+        Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable identifier: " + log_si.class.to_s + "   " + log_si.title
+      end
     end
 
-
     #check if we are part of a community
-
     if is_community_publication?
       boards = Board.ranked_by_community_id( self.community.id )
     else
@@ -248,60 +250,50 @@ class Publication < ActiveRecord::Base
 
     #check each board in order by priority rank
     boards.each do |board|
-
-    #if board.community == publication.community
-    boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
-    if boards_identifiers.length > 0
-      #submit to that board
-      Rails.logger.info "---Submittable Board identifiers are: "
-      boards_identifiers.each do |log_sbi|
-        Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
-      end
-
-      # submit each submitting_identifier
-      boards_identifiers.each do |submitting_identifier|
-            submitting_identifier.status = "submitted"
-            submitting_identifier.save!
-
-            #make the most recent sha for the identifier available...is this the one we want?
-            @recent_submit_sha = submitting_identifier.get_recent_commit_sha
-          end
-
-          #copy the repo, models, etc... to the board
-          boards_copy = copy_to_owner(board)
-          boards_copy.status = "voting"
-          boards_copy.save!
-
-
-
-          #trigger emails
-          board.send_status_emails("submitted", self)
-
-          #update status on user copy
-          self.change_status("submitted")
-          self.save!
-
-          #problem here in that comment will be added to the returned id, but there may be many ids.....
-          #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
-          return '', boards_identifiers[0].id
+      #if board.community == publication.community
+      boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+      if boards_identifiers.length > 0
+        #submit to that board
+        boards_identifiers.each do |log_sbi|
+          Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable board identifier (Board: #{board.friendly_name}): " + log_sbi.class.to_s + "   " + log_sbi.title
         end
-      #end
-    end
+        # submit each submitting_identifier
+        boards_identifiers.each do |submitting_identifier|
+          submitting_identifier.status = "submitted"
+          submitting_identifier.save!
 
+          #make the most recent sha for the identifier available...is this the one we want?
+          @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+        end
 
-    Rails.logger.debug " no more parts to submit "
+        #copy the repo, models, etc... to the board
+        boards_copy = copy_to_owner(board)
+        boards_copy.status = "voting"
+        boards_copy.save!
+
+        #trigger emails
+        board.send_status_emails("submitted", self)
+
+        #update status on user copy
+        self.change_status("submitted")
+        self.save!
+
+        #problem here in that comment will be added to the returned id, but there may be many ids.....
+        #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
+        return '', boards_identifiers[0].id
+      end # boards_identifiers.length > 0
+    end # boards.each
+
+    Rails.logger.debug "Publication#submit_to_next_board for #{self.id}: no more parts to submit"
     #if we get to this point, there are no more boards to submit to, thus we are done
     if is_community_publication?
       if self.community.end_user.nil?
         #no end user has been set, so warn them and then what?
         #user can't submit to community if no end user, so this should not happen
-
+        Rails.logger.warn("Publication#submit_to_next_board for #{self.id} reached community publication logic with no community end user")
       else
-
-
         #copy to  space
-        Rails.logger.debug "----end user to get it"
-        Rails.logger.debug self.community.end_user.name
+        Rails.logger.debug "Publication#submit_to_next_board for #{self.id} being assigned to community end user: #{self.community.end_user.name}"
 
         #community_copy = copy_to_owner( self.community.end_user)
         community_copy = copy_to_end_user()
@@ -327,14 +319,12 @@ class Publication < ActiveRecord::Base
         #mark as committed
         self.origin.change_status("committed")
         self.save
-      end
-
-    else
-      #mark as committed
+      end # community end user
+    else # not a community publication
+      Rails.logger.info("Publication#submit_to_next_board for #{self.id}: marking as committed")
       self.origin.change_status("committed")
       self.save
     end
-
 
     #TODO need to return something here to prevent flash error from showing true?
     return "", nil
@@ -600,6 +590,7 @@ class Publication < ActiveRecord::Base
     #vote action is determined by votes on the publication
     #any modified identifiers that the board controlls will have the change desc added.
     #Future changes may be made here if the voting logic is to be separated per identifier
+    Rails.logger.info("Publication#tally_votes called for #{self.id}: #{user_votes.inspect}")
 
     #check that we are still taking votes
     if self.status != "voting"
@@ -615,7 +606,7 @@ class Publication < ActiveRecord::Base
       decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
     end
 
-    Rails.logger.info("Publication#tally_votes for #{self.id} got decree_action #{decree_action}")
+    Rails.logger.info("Publication#tally_votes for #{self.id} (origin: #{self.origin.id}) got decree_action: #{decree_action}")
 
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
