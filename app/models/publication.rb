@@ -416,18 +416,19 @@ class Publication < ActiveRecord::Base
   #*Args*
   #- +status_in+ the status to be set
   def set_origin_identifier_status(status_in)
-      #finalizer is a user so they dont have a board, must go up until we find a board
-      board = self.find_first_board
-      if board
-
-        self.identifiers.each do |i|
-          if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
-            i.origin.status = status_in
-            i.origin.save
-          end
+    #finalizer is a user so they dont have a board, must go up until we find a board
+    board = self.find_first_board
+    if board
+      Rails.logger.debug("Publication#set_origin_identifier_status called for #{self.id} (Board: #{board.id}, Origin: #{origin.id}")
+      self.identifiers.each do |i|
+        Rails.logger.debug("Publication#set_origin_identifier_status for #{self.id}, checking identifier: #{i.inspect}")
+        if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
+          Rails.logger.debug("Publication#set_origin_identifier_status for #{self.id}, changing identifier status to '#{status_in}' for #{i.id} origin identifier: #{i.origin.inspect}")
+          i.origin.status = status_in
+          i.origin.save
         end
-
       end
+    end
   end
 
 
@@ -436,18 +437,15 @@ class Publication < ActiveRecord::Base
   #*Args*
   #- +status_in+ the status to be set
   def set_local_identifier_status(status_in)
-
-      board = self.find_first_board
-      if board
-
-        self.identifiers.each do |i|
-          if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
-            i.status = status_in
-            i.save
-          end
+    board = self.find_first_board
+    if board
+      self.identifiers.each do |i|
+        if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
+          i.status = status_in
+          i.save
         end
-
       end
+    end
   end
 
   #Convenience method to combine  set_origin_identifier_status & set_local_identifier_status methods.
