@@ -1388,8 +1388,6 @@ class Publication < ActiveRecord::Base
     return nil
   end
 
-  #finds the closest parent publication whose owner is a board and returns that publication
-
   #Finds the closest parent(or self) publication whose owner is a board. Returns that publication.
   #
   #*Returns*
