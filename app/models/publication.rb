@@ -446,8 +446,10 @@ class Publication < ActiveRecord::Base
         Rails.logger.debug("Publication#set_origin_identifier_status for #{self.id}, checking identifier: #{i.inspect}")
         if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
           Rails.logger.debug("Publication#set_origin_identifier_status for #{self.id}, changing identifier status to '#{status_in}' for #{i.id} origin identifier: #{i.origin.inspect}")
-          i.origin.status = status_in
-          i.origin.save
+          i_origin = i.origin
+          i_origin.status = status_in
+          i_origin.save
+          Rails.logger.debug("Publication#set_origin_identifier_status for #{self.id}, changed identifier status to '#{status_in}' for #{i.id} origin identifier: #{i.origin.inspect}")
         end
       end
     end
