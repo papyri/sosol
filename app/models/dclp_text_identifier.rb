@@ -32,6 +32,7 @@ class DCLPTextIdentifier < DDBIdentifier
   #   - result of transformation operation as provided by +JRubyXML.apply_xsl_transform+
   def preview parameters = {}, xsl = nil
     parameters.reverse_merge!(
+      "apparatus-style" => "ddbdp",
       "leiden-style" => "dclp"
     )
     JRubyXML.apply_xsl_transform(
