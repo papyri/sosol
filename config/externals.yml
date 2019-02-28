@@ -5,7 +5,7 @@ lib/rxsugar:
 
 data/xslt/epidoc:
   :type: git
-  :repository: https://github.com/EpiDoc/Stylesheets
+  :repository: git://github.com/EpiDoc/Stylesheets.git
   :revision: 0dfe7677566e86e26b539f84219e0631b1568abb
 
 data/xslt/pn/navigator:
