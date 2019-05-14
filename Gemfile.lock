@@ -86,6 +86,9 @@ GEM
       railties (>= 3.0.0)
     haml (4.0.6)
       tilt
+    handle_invalid_percent_encoding_requests (1.0.2)
+      rack-utf8_sanitizer
+      rails (>= 3.1)
     highline (1.7.2)
     hike (1.2.3)
     hitimes (1.2.3-java)
@@ -129,6 +132,8 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    rack-utf8_sanitizer (1.6.0)
+      rack (>= 1.0, < 3.0)
     rails (3.2.22.5)
       actionmailer (= 3.2.22.5)
       actionpack (= 3.2.22.5)
@@ -206,6 +211,7 @@ DEPENDENCIES
   factory_girl (>= 2.6.4)
   factory_girl_rails (>= 1.2)
   haml (= 4.0.6)
+  handle_invalid_percent_encoding_requests
   jdbc-sqlite3 (>= 3.7.2)
   jquery-rails
   jruby-jars (= 1.7.26)
@@ -233,4 +239,4 @@ RUBY VERSION
    ruby 2.0.0p598 (jruby 1.7.26)
 
 BUNDLED WITH
-   1.16.2
+   1.16.3

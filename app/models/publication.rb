@@ -491,6 +491,30 @@ class Publication < ActiveRecord::Base
       end
   end
 
+  def similar_branches
+    branch_leaf = self.branch.split('/').last
+    return self.repository.branches.select{|owner_branch| owner_branch =~ /#{branch_leaf}/}
+  end
+
+  def recover_branch
+    similar_branches = self.similar_branches
+    if self.similar_branches.length == 1
+      Rails.logger.info("Recovering branch: #{similar_branches.first} -> #{self.branch}")
+      self.identifiers.each do |check_identifier|
+        if self.repository.get_file_from_branch(check_identifier.to_path, similar_branches.first).nil?
+          Rails.logger.info("Unable to retrieve #{check_identifier.to_path} in branch #{similar_branches.first}")
+          Rails.logger.info("Please check/recover branch manually.")
+          return nil
+        end
+      end
+      return self.repository.rename_branch(similar_branches.first, self.branch)
+    else
+      Rails.logger.info("Multiple/zero similiar branches found for branch #{self.branch}: #{similar_branches.inspect}")
+      Rails.logger.info("Please check/recover branch manually.")
+      Return nil
+    end
+  end
+
   def branch_exists?
     return self.owner.repository.branches.include?(self.branch)
   end
