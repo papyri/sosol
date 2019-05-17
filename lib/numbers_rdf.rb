@@ -6,7 +6,7 @@ module NumbersRDF
   NAMESPACE_IDENTIFIER = 'papyri.info'
   
   # Actual server address for the Numbers Server, could in theory be different from NAMESPACE_IDENTIFIER
-  NUMBERS_SERVER_DOMAIN = 'litpap.info'
+  NUMBERS_SERVER_DOMAIN = 'papyri.info'
   NUMBERS_SERVER_PORT = 80
 
   class Timeout < ::Timeout::Error; end
