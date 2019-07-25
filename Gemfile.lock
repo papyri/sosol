@@ -76,6 +76,7 @@ GEM
     coffee-script-source (1.9.1.1)
     concurrent-ruby (1.1.3)
     database_cleaner (1.4.1)
+    docile (1.3.2)
     dynamic_form (1.1.4)
     erubis (2.7.0)
     execjs (2.5.2)
@@ -165,6 +166,11 @@ GEM
     shoulda-matchers (2.8.0)
       activesupport (>= 3.0.0)
     silencer (1.0.1)
+    simplecov (0.17.0)
+      docile (~> 1.1)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
     sprockets (2.2.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -229,6 +235,7 @@ DEPENDENCIES
   shoulda (>= 2.11.3)
   shoulda-matchers (>= 2.0.0)
   silencer
+  simplecov
   sucker_punch (~> 1.0)
   test_after_commit (= 0.4.1)
   uglifier (>= 1.0.3)

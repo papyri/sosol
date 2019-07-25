@@ -10,6 +10,9 @@ require 'test/unit'
 require 'database_cleaner'
 require 'sucker_punch/testing/inline'
 
+require 'simplecov'
+SimpleCov.start
+
 class Test::Unit::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method
   # in a transaction that's rolled back on completion.  This ensures that the
