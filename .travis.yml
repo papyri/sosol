@@ -4,7 +4,7 @@ dist: trusty
 sudo: false
 env:
   global:
-    - CC_TEST_REPORTER="2b10927b7a2a4686f655b304c477803d33f8a3e406b1820ccc432306ededf0c3"
+    - CC_TEST_REPORTER_ID="2b10927b7a2a4686f655b304c477803d33f8a3e406b1820ccc432306ededf0c3"
     - JRUBY_OPTS="-J-Xmx1g --2.0"
 jdk:
   - oraclejdk8
