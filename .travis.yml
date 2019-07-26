@@ -2,7 +2,9 @@ language: ruby
 cache: bundler
 sudo: false
 env:
-  - JRUBY_OPTS="-J-Xmx1g --2.0"
+  global:
+    - CC_TEST_REPORTER="2b10927b7a2a4686f655b304c477803d33f8a3e406b1820ccc432306ededf0c3"
+    - JRUBY_OPTS="-J-Xmx1g --2.0"
 jdk:
   - oraclejdk8
   - openjdk7
@@ -11,6 +13,10 @@ rvm:
 before_install:
   - gem install bundler --version '<2.0'
 before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+  - gem --version
   - gem pristine executable-hooks
   - gem pristine gem-wrappers
   - gem pristine jruby-launcher
@@ -21,3 +27,5 @@ before_script:
   - bundle exec rake db:migrate
 after_failure:
   - curl --upload-file log/test.log https://transfer.sh/test.log
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
