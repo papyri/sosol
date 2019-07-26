@@ -15,7 +15,6 @@ end
 group :test do
   gem 'rake'
   gem 'mocha'
-  gem 'simplecov', require: false
 end
 
 gem 'jquery-rails'
