@@ -512,8 +512,8 @@ Developer:
   #Collects and downloads zip file with all of the publications of the given status and community (or PE if no community).
   def download_by_status
 
-    require 'zip/zip'
-    require 'zip/zipfilesystem'
+    require 'zip'
+    require 'zip/filesystem'
 
     status_wanted = params[:status] || "unknown" #"committed"
     #only let them download status that are accessable
@@ -533,7 +533,7 @@ Developer:
 
     t = Tempfile.new("publication_download_#{@current_user.name}-#{request.remote_ip}")
 
-    Zip::ZipOutputStream.open(t.path) do |zos|
+    Zip::OutputStream.open(t.path) do |zos|
         @publications.each do |publication|
           publication.identifiers.each do |id|
             #raise id.title + " ... " + id.name + " ... " + id.title.gsub(/\s/,'_')
@@ -566,8 +566,8 @@ Developer:
   #Combines all of the user's publications (for PE or the given board, regardless of status) into one download.
   def download_user_publications
 
-    require 'zip/zip'
-    require 'zip/zipfilesystem'
+    require 'zip'
+    require 'zip/filesystem'
 
 
     cid = params[:community_id]
@@ -581,7 +581,7 @@ Developer:
     @publications = @submitted_publications + @editing_publications  + @new_publications + @committed_publications
     t = Tempfile.new("publication_download_#{@current_user.name}-#{request.remote_ip}")
 
-    Zip::ZipOutputStream.open(t.path) do |zos|
+    Zip::OutputStream.open(t.path) do |zos|
         @publications.each do |publication|
           publication.identifiers.each do |id|
             #full path as used in repo
