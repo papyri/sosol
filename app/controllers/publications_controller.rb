@@ -8,8 +8,8 @@ class PublicationsController < ApplicationController
 
   def download
 
-    require 'zip/zip'
-    require 'zip/zipfilesystem'
+    require 'zip'
+    require 'zip/filesystem'
     require 'pp'
 
     @publication = Publication.find(params[:id].to_s)
@@ -19,7 +19,7 @@ class PublicationsController < ApplicationController
    # raise file_friendly_name
     t = Tempfile.new("publication_download_#{file_friendly_name}-#{request.remote_ip}")
 
-    Zip::ZipOutputStream.open(t.path) do |zos|
+    Zip::OutputStream.open(t.path) do |zos|
         @publication.identifiers.each do |id|
           #raise id.title + " ... " + id.name + " ... " + id.title.gsub(/\s/,'_')
 
