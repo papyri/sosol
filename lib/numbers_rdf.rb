@@ -124,7 +124,7 @@ module NumbersRDF
       # e.g. 'papyri.info/ddbdp' => ["papyri.info/ddbdp/bgu", "papyri.info/ddbdp/c.ep.lat", ...] 
       def identifier_to_parts(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description[@rdf:about='http://#{identifier}']/dcterms:hasPart/@rdf:resource", identifier)
+          "/rdf:RDF/rdf:Description[@rdf:about='http://#{identifier}']/dcterms:hasPart/rdf:Description/@rdf:about", identifier)
         if results.nil?
           return nil
         else
