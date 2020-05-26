@@ -203,6 +203,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug "-identifier-"
           Rails.logger.debug "title is: " +  pi.title
           Rails.logger.debug "was it modified?: " + pi.modified?.to_s
+          Rails.logger.debug "class: " + pi.class.to_s
           Rails.logger.debug "xml:"
           Rails.logger.debug pi.xml_content
         end
