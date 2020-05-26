@@ -14,7 +14,7 @@ end
 
 group :test do
   gem 'rake'
-  gem 'mocha'
+  gem 'mocha', '~> 1.1.0'
 end
 
 gem 'jquery-rails'
