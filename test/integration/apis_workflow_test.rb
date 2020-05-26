@@ -182,7 +182,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
           #publication_session.post 'publications/create_from_templates', :session => { :user_id => @creator_user.id }
 
           publication_session.post 'publications/create_from_identifier' + '?test_user_id=' + @creator_user.id.to_s, \
-            :id => 'papyri.info/ddbdp/p.nyu;1;1'
+            :id => 'papyri.info/apis/nyu.apis.4782'
 
           Rails.logger.debug "--flash is: " + publication_session.flash.inspect
 
