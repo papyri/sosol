@@ -46,3 +46,4 @@ gem 'with_advisory_lock', '~> 3.0.0'
 gem 'silencer'
 
 gem 'test_after_commit', '= 0.4.1', :group => :test
+gem 'test-unit-rails', '= 1.0.4', :group => :test
