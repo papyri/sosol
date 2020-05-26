@@ -18,4 +18,4 @@ before_script:
   - bundle exec rake git:db:canonical:clone
   - bundle exec rake db:migrate
 after_failure:
-  - curl --upload-file log/test.log https://transfer.sh/test.log
+  - curl --upload-file log/test.log https://transfer.sh/test.log | cat && echo
