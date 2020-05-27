@@ -1,0 +1,235 @@
+# attributes for elements
+#
+# :xpath (mandatory)
+# :multiple -> true | false (optional, defaults to false)
+# :optional -> true | false (optional, defaults to true)
+# :default -> default value as string, multiple entries do not support default values (optional)
+# :pattern -> ruby style regular expression /\A0(\.\d)?|1\Z/ (optional) 
+# :children -> recursive element structure
+#
+# attributes for attributes
+#
+# :name (mandatory) 
+# :optional (same as above)
+# :default (same as above)
+# :pattern (same as above)
+# :split -> value is list of items separated by a delimiter, e.g. a space (' ') to separate several urls within a @ref attribute
+
+:dclp:
+  :fragment:
+    :collectionInventoryNumber:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno/idno[@type='invNo']
+      :multiple: true
+      :attributes:
+        :id:
+          :name: xml:id
+          :pattern: /\AFR\d+\Z/
+  :inventory:
+    :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msPart
+    :multiple: true
+    :children:
+      :settlement:
+        :xpath: placeName/settlement
+      :collection:
+        :xpath: collection
+      :inventoryNumber:
+        :xpath: idno[@type='invNo']
+        :attributes:
+          :id:
+            :name: xml:id
+  :metadata:
+    :publication:
+    :publicationTitle:
+    :publicationExtra:
+    :otherPublications:
+    :citedLiterature:
+    :sammelbuchBibliography:
+    :collectionPlaceName:
+    :collectionInventoryNumber:
+    :collectionTemporaryNotes:
+    :collectionTemporaryInventoryNumber:
+    :figures:
+    :illustrations:
+    :translationsDe:
+    :translationsEn:
+    :translationsIt:
+    :translationsEs:
+    :translationsLa:
+    :translationsFr:
+    :citedLiterature:
+    :bl:
+    :plannedForFuturePrintRelease:
+    :collection:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno[@type='invNo']
+    :collectionList:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/idno/idno[@type='invNo']
+      :multiple: true
+    :archiveName:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/collection[@type='ancient']
+    :archiveLink:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/msIdentifier/collection[@type='ancient']/@ref
+    :bookForm:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/@form
+    :columns:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@columns
+    :writtenLines:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/@writtenLines
+    :layout:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/layoutDesc/layout/p
+    :scriptType:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/handDesc/p/term
+    :pagination:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/foliation/dim[@type='pagination']
+    :width:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/dimensions/width[@unit='cm']
+    :height:
+      :xpath: /TEI/teiHeader/fileDesc/sourceDesc/msDesc/physDesc/objectDesc/supportDesc/support/dimensions/height[@unit='cm']
+    :ldab:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='LDAB']
+      :pattern: /\A\d+\Z/
+    :mp3:
+      :xpath: /TEI/teiHeader/fileDesc/publicationStmt/idno[@type='MP3']
+      :pattern: /\A\d+(\.\d+)?\Z/
+    :work:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='ancientEdition']/listBibl/bibl[@type='publication']
+      :multiple: true
+      :attributes:
+        :subtype:
+          :name: subtype
+          :pattern: /\Aancient|ancientQuote\Z/
+        :corresp:
+          :name: corresp
+          :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+        :id:
+          :name: 'xml:id'
+          :pattern: '/\Awork_\d+\Z/'
+        :exclude:
+          :name: exclude
+          :pattern: '/\A#work_\d+( #work_\d+)*\Z/' 
+      :children:
+        :author:
+          :xpath: author
+          :attributes:
+            :language:
+              :name: xml:lang
+              :pattern: /\Agrc|la\Z/
+            :ref:
+              :name: ref
+              :pattern: /\Ahttp:\/\//
+              # sample patterns and languages for tm, tlg, stoa and cwkb
+              # phi: http://data.perseus.org/catalog/urn:cts:latinLit:phi2200 (Latin)
+              # tlg: http://data.perseus.org/catalog/urn:cts:greekLit:tlg2200 (Greek)
+              # stoa: http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040 (Latin)
+              # cwkb: http://cwkb.org/author/id/2402/rdf
+              :split: ' '
+          :children:
+            :certainty:
+              :xpath: certainty[@cert='low'][@locus='value']/@target
+              :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+        :title:
+          :xpath: title[@type='main'][@level='m']
+          :attributes:
+            :language:
+              :name: xml:lang
+              :pattern: /\Agrc|la\Z/
+            :ref:
+              :name: ref
+              :pattern: /\Ahttp:\/\//
+              # patterns and languages for tm, tlg, stoa and cwkb
+              # tm: http://www.trismegistos.org/authorwork/1146
+              # tlg: http://catalog.perseus.org/catalog/urn:cts:greekLit:tlg0059.tlg018 (Greek)
+              # stoa: http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040.stoa016 (Latin)
+              # cwkb: http://cwkb.org/work/id/1411/rdf
+              :split: ' '
+          :children:
+            :date:
+              :xpath: date
+              :attributes:
+                :when:
+                  :name: when
+                  :pattern: '/\A\d\d\d\d\Z/'
+                :from:
+                  :name: from
+                  :pattern: '/\A\d\d\d\d\Z/'
+                :to:
+                  :name: to
+                  :pattern: '/\A\d\d\d\d\Z/'
+            :certainty:
+              :xpath: certainty[@cert='low'][@locus='value']/@target
+              :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+        :extra:
+          :xpath: biblScope
+          :multiple: true
+          :attributes:
+            :unit:
+              :name: unit
+              :pattern: /\Abook|chapter|column|fascicle|folio|fragment|generic|inventory|issue|line|number|page|part|plate|poem|side|tome|volume\Z/
+            :from:
+              :name: from
+              :pattern: /\A\d+\Z/
+            :to:
+              :name: to
+              :pattern: /\A\d+\Z/
+          :children:
+            :certainty:
+              :xpath: certainty[@cert='low'][@locus='value']/@target
+              :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+    :contentText:
+      :xpath: /TEI/teiHeader/profileDesc/textClass/keywords/term
+      :multiple: true
+      :attributes:
+        :class:
+          :name: type
+          :pattern: /\A(culture|religion|description|overview)\Z/
+    :printedIllustration:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='illustrations']/listBibl/bibl[@type='printed']
+      :multiple: true
+    :onlineResource:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='illustrations']/listBibl/bibl[@type='online']
+      :multiple: true
+      :children:
+        :link:
+          :xpath: ptr
+          :attributes:
+            :target:
+              :name: target
+              :pattern: '/\Ahttp:\/\//'
+    :edition:
+      :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl
+      :multiple: true
+      :attributes:
+        :type:
+          :name: type
+          :pattern: /\A(publication|reference)\Z/
+        :subtype:
+          :name: subtype
+          :pattern: /\A(principal|partial|previous|readings|translation|study|catalogue|palaeo)\Z/
+        :language:
+          :name: xml:lang
+          :pattern: /\A(de|en|it|es|la|fr)\Z/
+      :children:
+        :title: # CROMULENT TITLE HACK
+          :xpath: title
+          :attributes:
+            :level:
+              :name: level
+            :type:
+              :name: type
+        :link:
+          :xpath: ptr/@target
+        :extra:
+          :xpath: biblScope
+          :multiple: true
+          :attributes:
+            :unit:
+              :name: unit
+              :pattern: /\Abook|chapter|column|fascicle|folio|fragment|generic|inventory|issue|line|number|page|part|plate|poem|side|tome|volume\Z/
+            :corresp:
+              :name: corresp
+              :pattern: '/\A#FR\d+( #FR\d+)*\Z/'
+            :from:
+              :name: from
+              :pattern: /\A\d+\Z/
+            :to:
+              :name: to
+              :pattern: /\A\d+\Z/

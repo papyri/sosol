@@ -1,0 +1,107 @@
+= stylesheet_link_tag 'meta' 
+
+#main
+  .site.metaSite
+    = render :partial => 'identifiers/header'
+    %span.swifty.expandAll#expandAll=I18n.t('label.expandAll')
+    %span.swifty.collapseAll#collapseAll=I18n.t('label.collapseAll')
+
+    #edit
+      = form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f|
+        = f.error_messages
+
+        %h4.category.edition
+          %a{:name => 'Edition'}=I18n.t('dclp.legend.edition')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'dclp_meta_identifiers/edition'
+
+          .clear
+          
+          = render :partial => 'dclp_meta_identifiers/illustration'
+          .clear
+          
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.addEdition=I18n.t('dclp.label.addEdition')
+
+        %h4.category.work
+          %a{:name => 'Edition'}=I18n.t('dclp.legend.work')
+        .editbox{:style => 'display: block;'}
+
+          = label_tag 'titleStmt', I18n.t('dclp.label.titleStmt'), :class => 'meta titleStmt displayName', :title => @identifier.configuration.xpath(:titleStmt)
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt }
+          .clear
+          
+          = label_tag 'archiveName', I18n.t('dclp.label.archiveName'), :class => 'meta archiveName', :title => @identifier.configuration.xpath(:archiveName)
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :archiveName }
+          .clear
+          
+          = label_tag 'archiveLink', I18n.t('dclp.label.archiveLink'), :class => 'meta archiveLink', :title => @identifier.configuration.xpath(:archiveLink)
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :archiveLink }
+          .clear
+          
+          = render :partial => 'dclp_meta_identifiers/contentText'
+          .clear
+
+          = render :partial => 'dclp_meta_identifiers/work'
+          .clear
+
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.addWork=I18n.t('dclp.label.addWork')
+
+        %h4.category.object
+          %a{:name => 'Edition'}=I18n.t('dclp.legend.object')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'dclp_meta_identifiers/object'
+          .clear
+
+          
+          .swifty.quickSave=I18n.t('label.quickSave')
+
+        %h4.category.general
+          %a{:name => 'General<'}=I18n.t('dclp.legend.general')
+        .editbox{:style => 'display: none;'}
+          = label_tag 'mp3', I18n.t('dclp.label.mp3'), :class => 'meta mp3', :title => @identifier.configuration.xpath(:mp3)
+          = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :mp3 }
+          .clear
+          = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
+          .clear
+          .swifty.quickSave=I18n.t('label.quickSave')
+
+        %h4.category.date
+          %a{:name => 'Date'}=I18n.t('meta.legend.date')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'hgv_meta_identifiers/date'
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.datePreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_date_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.datePreview')
+
+        %h4.category.mentionedDate
+          %a{:name => 'mentionedDate'}=I18n.t('meta.legend.mentionedDate')
+        .editbox{:style => 'display: none;'}
+          = render :partial => 'hgv_meta_identifiers/mentioned_date'
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+
+        %h4.category.provenance
+          %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
+        .editbox{:style => 'display: none;'}
+          %p#geoPreview
+            = @identifier[:origPlace]
+          %span.swifty.geoPreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.geoPreview')
+
+          %hr
+          = render :partial => 'hgv_meta_identifiers/provenance'
+
+          .clear
+          %span.swifty.quickSave=I18n.t('label.quickSave')
+          %span.swifty.addProvenance=I18n.t('meta.label.addProvenance')
+          %span.swifty.showReferenceList#toggleReferenceList=I18n.t('meta.label.showReferenceList')
+
+        .controlPanel
+          = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom }
+          = hidden_field_tag 'expansionSet', flash[:expansionSet]
+
+= javascript_include_tag 'edit_mask'
+= javascript_include_tag 'meta'
+= javascript_include_tag 'dclp'
+= javascript_include_tag 'confirm'

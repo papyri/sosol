@@ -2,6 +2,7 @@
 # - contains methods common to these identifiers
 class IdentifiersController < ApplicationController
   rescue_from Exceptions::CommitError, :with => :commit_failed
+  rescue_from 'Java::JavaLang::NullPointerException', :with => :retrieve_failed
   # - GET /publications/1/xxx_identifiers/1/editxml
   # - edit the XML file from the repository of the associated identifier
   def editxml
@@ -32,24 +33,29 @@ class IdentifiersController < ApplicationController
   def create
     @publication = Publication.find(params[:publication_id].to_s)
     identifier_type = params[:identifier_type].constantize
-    if params[:apis_collection]
-      @identifier = APISIdentifier.new_from_template(@publication, params[:apis_collection].to_s)
-    else
-      begin
-        @identifier = identifier_type.new_from_template(@publication)
-      rescue Exception => e
-        flash[:error] = e.message
-        redirect_to publication_path(@publication.id) and return
+    if @publication.mutable?
+      if params[:apis_collection]
+        @identifier = APISIdentifier.new_from_template(@publication, params[:apis_collection].to_s)
+      else
+        begin
+          @identifier = identifier_type.new_from_template(@publication)
+        rescue StandardError => e
+          flash[:error] = e.message
+          redirect_to publication_path(@publication.id) and return
+        end
       end
-    end
-    if @identifier.nil?
-      flash[:error] = "Publication already has identifiers of this type, cannot create new file from templates."
-      redirect_to publication_path(@publication.id) and return
+      if @identifier.nil?
+        flash[:error] = "Publication already has identifiers of this type, cannot create new file from templates."
+        redirect_to publication_path(@publication.id) and return
+      else
+        flash[:notice] = "File created."
+        expire_publication_cache
+        redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                     :action => :edit) and return
+      end
     else
-      flash[:notice] = "File created."
-      expire_publication_cache
-      redirect_to polymorphic_path([@identifier.publication, @identifier],
-                                   :action => :edit) and return
+      flash[:error] = "Publication is not modifiable in its current status."
+      redirect_to publication_path(@publication.id) and return
     end
   end
   
@@ -58,6 +64,9 @@ class IdentifiersController < ApplicationController
   def rename_review
     #TODO - does this need to be locked down somehow so not get to it via URL entry?
     find_identifier
+    if @identifier.class == DCLPTextIdentifier
+      redirect_to polymorphic_path([@identifier.publication, @identifier.correspondingDclpMetaIdentifier], :action => :rename_review) and return
+    end
     @is_editor_view = true
     render :template => 'identifiers/rename_review'
   end
@@ -67,7 +76,7 @@ class IdentifiersController < ApplicationController
   def rename
     find_identifier
     begin
-      @identifier.rename(params[:new_name], :update_header => true, :set_dummy_header => params[:set_dummy_header])
+      @identifier.rename(params[:new_name], :update_header => true, :set_dummy_header => params[:set_dummy_header], :new_hybrid => params[:new_hybrid])
       flash[:notice] = "Identifier renamed."
     rescue RuntimeError => e
       flash[:error] = e.to_s
@@ -104,9 +113,14 @@ class IdentifiersController < ApplicationController
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                  :action => :editxml) and return
     rescue JRubyXML::ParseError => parse_error
-      flash.now[:error] = parse_error.to_str[0,1000] + ". This file was NOT SAVED."
+      flash.now[:error] = parse_error.to_str[0,512] + ". This file was NOT SAVED."
       new_content = insert_error_here(xml_content, parse_error.line, parse_error.column)
       @identifier[:xml_content] = new_content
+      @is_editor_view = true
+      render :template => 'identifiers/editxml'
+    rescue RuntimeError => runtime_error
+      flash.now[:error] = runtime_error.message.to_s[0,512] + ". This file was NOT SAVED."
+      @identifier[:xml_content] = xml_content
       @is_editor_view = true
       render :template => 'identifiers/editxml'
     end
@@ -197,7 +211,11 @@ class IdentifiersController < ApplicationController
       flash.keep
       redirect_to polymorphic_path([@identifier.publication,@identifier],
                               :action => :edit) and return
-    
     end
 
+    def retrieve_failed(null_pointer_error)
+      flash[:error] = "Error retrieving file content from repository. This error has been logged for review by an administrator."
+      notify_airbrake(null_pointer_error, params)
+      redirect_to dashboard_url
+    end
 end

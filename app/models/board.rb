@@ -33,7 +33,7 @@ class Board < ActiveRecord::Base
   
   validates_uniqueness_of :title, :case_sensitive => false, :scope => [:community_id]
   validates_presence_of :title
-  validates_format_of :title, :without => Repository::BASH_SPECIAL_CHARACTERS_REGEX, :message => 'Board title cannot contain any of the following special characters: $!`"'
+  validates_format_of :title, :without => Repository::BASH_SPECIAL_CHARACTERS_REGEX, :message => "Board title cannot contain any of the following special characters: #{Repository::BASH_SPECIAL_CHARACTERS_REGEX.source[1..-2]}"
   
   has_repository
   
@@ -196,7 +196,7 @@ class Board < ActiveRecord::Base
         board_publication = email_identifiers[0].publication.origin.all_children.select {|p| p.owner == self}.last
         begin
           EmailerMailer.identifier_email(when_to_send,email_identifiers,board_publication,addresses,mailer.include_document,mailer.include_comments,mailer.message,mailer.subject).deliver
-        rescue Exception => e
+        rescue StandardError => e
           Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
         end
       end	

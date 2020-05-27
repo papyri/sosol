@@ -148,7 +148,7 @@
                   :name: match
                 :relation:
                   :name: given
-                  :pattern: /\A#dateAlternative[XYZ]\Z/
+                  :pattern: '/\A#dateAlternative[XYZ]\Z/'
                 :degree:
                   :name: degree
                   :optional: false

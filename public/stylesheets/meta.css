@@ -110,10 +110,23 @@ div#edit input#hgv_meta_identifier_publicationExtra_2_value,
 div#edit input#hgv_meta_identifier_publicationExtra_3_value {
   width: 7.5em; }
 
-div#edit input#hgv_meta_identifier_titleStmt {
+div#edit input#hgv_meta_identifier_titleStmt,
+div#edit input#hgv_meta_identifier_overview,
+div#edit input#hgv_meta_identifier_layout,
+div#edit input#hgv_meta_identifier_archiveName,
+div#edit input#hgv_meta_identifier_archiveLink,
+div#edit ul#multiItems_collectionList input
+ {
   width: 27em; }
 
-div#edit input#hgv_meta_identifier_material {
+div#edit input#hgv_meta_identifier_material,
+div#edit input#hgv_meta_identifier_bookForm,
+div#edit input#hgv_meta_identifier_columns,
+div#edit input#hgv_meta_identifier_writtenLines,
+div#edit input#hgv_meta_identifier_scriptType,
+div#edit input#hgv_meta_identifier_pagination,
+div#edit input#hgv_meta_identifier_width,
+div#edit input#hgv_meta_identifier_height {
   width: 10em; }
 
 div#edit div.editbox label#publicationExtraFullTitle {
@@ -489,3 +502,64 @@ div.metaSite div#edit div#dateContainer p {
 
 div#edit p#multiPlus_publicationExtra label {
   width: 7em; }
+
+/* DCLP */
+
+div.genre, div.religion, div.culture {
+  float: left;
+}
+
+div.keywords {
+  clear: both;
+  display: block;
+  width: auto;
+  position: relative;
+}
+
+div#edit div.keywords li {
+  width: auto;
+  float: left;
+  clear: none;
+}
+
+div#edit ul#multiItems_printedIllustration input,
+div#edit ul#multiItems_onlineResource input,
+div#edit p#multiPlus_printedIllustration input,
+div#edit p#multiPlus_onlineResource input {
+  width: 42em;
+}
+
+
+div#edit input.workExtraAnd{
+  border: none;
+  background: transparent;
+  color: black;
+}
+
+div#edit input.workCertainty,
+div#edit input.workCorresp,
+div#edit div.ref input {
+  width: 32em;
+}
+
+div#edit label.displayName,
+div#edit label.archiveName,
+div#edit label.archiveLink {
+  width: 14em;
+}
+
+div#edit label.workDateTo {
+  width: 2em;
+}
+
+div#edit label.workDateFrom {
+  width: 8em;
+}
+
+div#edit div.multi {
+  width: auto;
+}
+
+div#edit textarea#hgv_meta_identifier_notes{
+  height: 10em;
+}

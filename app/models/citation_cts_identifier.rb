@@ -50,7 +50,7 @@ class CitationCTSIdentifier < CTSIdentifier
       passage_xml = CTS::CTSLib.getPassageFromRepo(inventory,document,new_identifier.urn_attribute,uuid)
       new_identifier.set_xml_content(passage_xml, :comment => "extracted passage")
       return new_identifier
-    rescue Exception => e
+    rescue StandardError => e
       new_identifier.destroy
       raise e
     end
@@ -87,7 +87,7 @@ class CitationCTSIdentifier < CTSIdentifier
       document = self.related_text.content
       begin
         updated = CTS::CTSLib.proxyUpdatePassage(self.content,self.related_text.related_inventory.xml_content,self.related_text.content,self.urn_attribute,get_recent_commit_sha())
-      rescue Exception => e
+      rescue StandardError => e
         # TODO if we are unable to merge the citation back into the source document, 
         # we should support submitting it on its own? 
         Rails.logger.error(e)

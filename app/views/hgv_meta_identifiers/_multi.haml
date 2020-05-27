@@ -1,12 +1,16 @@
-.multi{:id => 'multi_' + key.to_s}
+- valueList = defined?(multiList) ? multiList : @identifier[key]
+- cssClass = /\A([a-zA-Z\d_]*?)(?<partOfKey>[a-zA-Z]+)[\d_]*?\Z/ =~ key.to_s ? partOfKey : 'default' 
+.multi{:id => 'multi_' + key.to_s, :class => cssClass}
   %ul.items{:id => 'multiItems_' + key.to_s}
-    - @identifier[key].each_index do |index|
+    - valueList.each_index do |index|
       %li
-        = text_field_tag 'hgv_meta_identifier[' + key.to_s + '][' + index.to_s + ']', @identifier[key][index], :disabled => !@identifier.mutable?, :class => 'observechange'
+        - id = 'hgv_meta_identifier[' + key.to_s.gsub(/_/, '][') + '][' + index.to_s + ']' + (defined?(pathToActualValue) ? '[' + pathToActualValue.join('][') + ']' : '') 
+        - value = defined?(pathToActualValue) ? HgvMetaIdentifierHelper::getValueFromHashByMultidimensionalKey(valueList[index], pathToActualValue) : valueList[index]
+        = text_field_tag id, value, :disabled => !@identifier.mutable?, :class => 'observechange'
         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
         %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + key.to_s}
     %input.observechange
-    %span{:onclick => "multiAdd('" + key.to_s + "')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+    %span{:onclick => "multiAdd('" + key.to_s + "'" + (defined?(pathToActualValue) ? ", 0, '" + pathToActualValue.join('_') + "'" : '') + ")", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
   = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"

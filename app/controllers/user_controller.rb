@@ -208,6 +208,57 @@ class UserController < ApplicationController
     @show_events = true
   end
 
+  # /peep_user_dashboard/1              dashboard for user with user id #1
+  # /peep_user_dashboard/1/submitted    dashboard for all submitted publications of user with user id #1
+  # /peep_user_dashboard/1/11           dashboard for publication with id 11 of user with user id #1
+  def peep_user_dashboard
+    if current_user_is_master_admin?
+      user_id = params[:user_id]
+      status = nil
+      publication_id = nil
+
+      if /\A\d+\Z/ =~ params[:publication]
+        publication_id = params[:publication]
+      else
+        if /\A[^\d]+\Z/ =~ params[:publication]
+          status = params[:publication]
+        end
+      end
+
+      if status
+        case status
+        when 'submitted'
+          @submitted_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        when 'editing'
+          @editing_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        when 'new'
+          @new_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        when 'committed'
+          @committed_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        when 'finalizing'
+          @finalizing_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        end
+      else
+        if publication_id
+          @submitted_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:id => publication_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        else
+          @submitted_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @editing_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @new_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @committed_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @finalizing_publications =  Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'finalizing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+        end
+      end
+
+      @show_events = true
+
+      render "user_dashboard"
+    else
+      flash[:warning] = "Invalid Access."
+      redirect_to(dashboard_url)
+    end
+  end
+
   #Finds publications created by the current user and are part of the specified community.
   def user_community_dashboard
     cid = params[:community_id]
@@ -329,10 +380,12 @@ class UserController < ApplicationController
     @user = User.find(params[:id])
 
     begin
-      @user.update_attributes(params[:user])
+      user_params = params[:user].slice(:full_name, :affiliation, :email, :email_opt_out)
+
+      @user.update_attributes(user_params)
       flash[:notice] = 'User was successfully updated.'
       redirect_to :controller => "user", :action => "account"
-    rescue Exception => e
+    rescue StandardError => e
       flash[:error] = 'Error occured - user was not updated.'
       redirect_to :controller => "user", :action => "account"
     end
@@ -414,10 +467,12 @@ Developer:
       @user = User.find(params[:id])
 
       begin
-        @user.update_attributes(params[:user])
+        user_params = params[:user].slice(:is_master_admin, :is_community_master_admin, :admin, :developer)
+
+        @user.update_attributes(user_params)
         flash[:notice] = 'User was successfully updated.'
         redirect_to :controller => "user", :action => "index_user_admins"
-      rescue Exception => e
+      rescue StandardError => e
         flash[:error] = 'Error occured - user was not updated.'
         redirect_to :controller => "user", :action => "index_user_admins"
       end

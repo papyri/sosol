@@ -168,13 +168,16 @@ class Identifier < ActiveRecord::Base
         self.name.sub(/trans/,''))
     elsif self.class == APISIdentifier
       title = self.name.split('/').last
+    elsif ((self.class == DCLPMetaIdentifier) || (self.class == DCLPTextIdentifier))
+      unless (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
+        title = self.name.split('/').last
+      end
     end
 
     if title.nil?
       if (self.class == DDBIdentifier) || (self.name =~ /#{self.class::TEMPORARY_COLLECTION}/)
         collection_name, volume_number, document_number =
           self.to_components.last.split(';')
-        #puts "#{collection_name}, #{volume_number}, #{document_number}"
         collection_name =
           self.class.collection_names_hash[collection_name]
 
@@ -364,6 +367,7 @@ class Identifier < ActiveRecord::Base
   def rename(new_name, options = {})
     original = self.dup
     options[:original] = original
+    options[:new_name] = new_name
 
     original_name = self.name
     original_path = self.to_path
@@ -539,6 +543,16 @@ class Identifier < ActiveRecord::Base
   ## get a link to the catalog for this identifier
   def get_catalog_link
     NumbersRDF::NumbersHelper.identifier_to_url(self.name)
+  end
+
+  def get_hybrid type = null
+    doc = REXML::Document.new self.content
+    if hybrid_idno = doc.elements["/TEI/teiHeader/fileDesc/publicationStmt/idno[@type='" + (type ? type.to_s + '-' : '') + "hybrid']"]
+        if hybrid_idno.text
+          return hybrid_idno.text.to_s.strip
+        end
+    end
+    return ''
   end
 
 end

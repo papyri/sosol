@@ -13,6 +13,46 @@
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
               %td=@identifier[:titleStmt]
+          - if @identifier[:work] && !@identifier[:work].empty?
+            %tr
+              %th=I18n.t('dclp.legend.work')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
+              %td
+                %ul
+                  - @identifier[:work].each do |work|
+                    %li
+                      - work = DclpWork::Work.new(work)
+                      - if work.author
+                        = work.author.name
+                        - if work.author.language && !work.author.language.empty?
+                          = '(' + I18n.t('language.' + work.author.language) + ')'
+                      - if work.title
+                        = work.title.name
+                        - if work.title.language && !work.title.language.empty?
+                          = '(' + I18n.t('language.' + work.title.language) + ')'
+                        - if work.extraList
+                          - work.extraList.each do |extra|
+                            = extra.value
+          - if @identifier[:edition] && !@identifier[:edition].empty?
+            %tr
+              %th=I18n.t('dclp.legend.edition')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
+              %td
+                %ul
+                  - @identifier[:edition].each do |edition|
+                    %li
+                      - edition = DclpEdition::Edition.new(:edition => edition)
+                      - if edition.biblioId
+                        %a{:href => 'http://papyri.info/biblio/' + edition.biblioId}
+                          = edition.biblioId
+                      - if edition.title
+                        = edition.title
+                        = '(' + I18n.t('edition.ubertype.' + edition.ubertype) + ')'
+                      - if edition.extraList
+                        - edition.extraList.each do |extra|
+                          = extra.value
           - if @identifier[:publicationTitle]
             %tr
               %th=I18n.t('meta.label.publications')
@@ -36,7 +76,7 @@
                 = @identifier[:collection] ? @identifier[:collection] : ''
                 = @identifier[:collectionInventoryNumber]
                 = @identifier[:collectionTemporaryInventoryNumber] ? '(' + (@identifier[:collectionTemporaryNotes] ? @identifier[:collectionTemporaryNotes] + ' ' : '') + @identifier[:collectionTemporaryInventoryNumber] + ')' : ''
-          - if !@identifier[:translationsDe].empty? || !@identifier[:translationsEn].empty? || !@identifier[:translationsIt].empty? || !@identifier[:translationsEs].empty? || !@identifier[:translationsLa].empty? || !@identifier[:translationsFr].empty?
+          - if (@identifier[:translationsDe] && !@identifier[:translationsDe].empty?) || (@identifier[:translationsEn] && !@identifier[:translationsEn].empty?) || (@identifier[:translationsIt] && !@identifier[:translationsIt].empty?) || (@identifier[:translationsEs] && !@identifier[:translationsEs].empty?) || (@identifier[:translationsLa] && !@identifier[:translationsLa].empty?) || (@identifier[:translationsFr] && !@identifier[:translationsFr].empty?)
             %tr
               %th=I18n.t('meta.legend.translation')
               %td.edit
@@ -48,7 +88,7 @@
                       - translation.each do |trans|
                         %li=trans
                 
-          - if !@identifier[:bl].empty?
+          - if @identifier[:bl] && !@identifier[:bl].empty?
             %tr
               %th=I18n.t('meta.label.bls')
               %td.edit
@@ -84,7 +124,7 @@
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
               %td=@identifier[:notes]
-          - if !@identifier[:illustrations].empty?
+          - if @identifier[:illustrations] && !@identifier[:illustrations].empty?
             %tr
               %th=I18n.t('meta.label.printIllustrations')
               %td.edit
@@ -95,8 +135,10 @@
               %th=I18n.t('meta.label.subjects')
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
-              %td=@identifier[:contentText].join('; ')
-          - if !@identifier[:figures].empty?
+              %td
+                - simpleArray = Array.new(@identifier[:contentText].length){|index| @identifier[:contentText][index].kind_of?(Hash) && @identifier[:contentText][index][:value] ? @identifier[:contentText][index][:value] : @identifier[:contentText][index]}
+                = simpleArray.join('; ')
+          - if @identifier[:figures] && !@identifier[:figures].empty?
             %tr
               %th=I18n.t('meta.label.images')
               %td.edit
@@ -119,3 +161,60 @@
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
               %td=@identifier[:plannedForFuturePrintRelease]
+          -# DCLP
+          - collections = DclpObject::Collection.new(@identifier[:collection], @identifier[:collectionList])
+          - if collections.list
+            %tr
+              %th=I18n.t('dclp.label.collection')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
+              %td
+                %ul
+                  - collections.list.each do |collectionItem|
+                    %li
+                      =collectionItem
+          - if @identifier[:archiveName] || @identifier[:archiveLink]
+            %tr
+              %th=I18n.t('dclp.label.archive')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
+              %td
+                -if @identifier[:archiveLink]
+                  %a
+                    -if @identifier[:archiveName]
+                      =@identifier[:archiveName]
+                    -else
+                      ???
+                -else
+                  =@identifier[:archiveName]
+          - if @identifier[:layout]
+            %tr
+              %th=I18n.t('meta.label.layout')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
+              %td=@identifier[:layout]
+          - if @identifier[:scriptType]
+            %tr
+              %th=I18n.t('meta.label.scriptType')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
+              %td=@identifier[:scriptType]
+          - if @identifier[:printedIllustration]
+            %tr
+              %th=I18n.t('dclp.label.illustrationPrinted')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
+              %td
+                - @identifier[:printedIllustration].each do |printedIllustrationItem|
+                  = printedIllustrationItem
+          - if @identifier[:onlineResource] && !@identifier[:onlineResource].empty?
+            %tr
+              %th=I18n.t('dclp.label.illustrationOnline')
+              %td.edit
+                %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier])
+              %td
+                %ul
+                  - @identifier[:onlineResource].each do |onlineResource|
+                    %li
+                      %a{:href => onlineResource[:children][:link][:attributes][:target]}
+                        = (onlineResource[:children][:link][:attributes][:target][/^http:\/\/[^\/]+/] ? onlineResource[:children][:link][:attributes][:target][/^http:\/\/[^\/]+/] : onlineResource[:children][:link][:attributes][:target])

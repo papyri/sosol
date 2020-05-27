@@ -23,11 +23,13 @@ gem 'haml', '= 4.0.6'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
-gem 'jdbc-sqlite3', '>= 3.6.3.054', :platform => :jruby
-gem 'activerecord-jdbc-adapter', '>= 0.9.2', :platform => :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '>= 0.9.2', :platform => :jruby
-gem 'activerecord-jdbcmysql-adapter', '>= 0.9.2', :platform => :jruby
+gem 'jdbc-sqlite3', '>= 3.7.2', :platform => :jruby
+gem 'activerecord-jdbc-adapter', '~> 1.3.25', :platform => :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '~> 1.3.25', :platform => :jruby
+gem 'activerecord-jdbcmysql-adapter', '~> 1.3.25', :platform => :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '~> 1.3.25', :platform => :jruby
 gem 'rack', '>= 1.1.0'
+gem 'handle_invalid_percent_encoding_requests'
 gem 'shoulda-matchers', '>= 2.0.0'
 gem 'shoulda', '>= 2.11.3'
 gem "factory_girl_rails", ">= 1.2"
@@ -44,6 +46,7 @@ gem 'database_cleaner'
 gem 'sucker_punch', '~> 2.0'
 gem 'with_advisory_lock', '~> 3.0.0'
 gem 'silencer'
+gem 'rack-attack', '~> 4.0'
 
 gem 'test_after_commit', '= 0.4.1', :group => :test
 gem 'test-unit-rails', '= 1.0.4', :group => :test

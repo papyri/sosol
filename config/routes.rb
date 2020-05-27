@@ -138,6 +138,37 @@ Sosol::Application.routes.draw do
     
     end
 
+    resources :dclp_meta_identifiers do
+
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    end
+
+    end
+
+    resources :dclp_text_identifiers do
+
+        member do
+    get :history
+    get :preview
+    get :editxml
+    put :updatexml
+    get :rename_review
+    put :rename
+    get :commentary
+    put :update_commentary
+    put :update_frontmatter_commentary
+    delete :delete_commentary
+    delete :delete_frontmatter_commentary
+    end
+
+    end
+
     resources :apis_identifiers do
     
         member do
@@ -325,6 +356,7 @@ Sosol::Application.routes.draw do
 
   match 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
   match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/
+  match 'peep_user_dashboard/:user_id(/:publication)' => 'user#peep_user_dashboard', :user_id => /\d+/, :publication => /(submitted|editing|new|committed|finalizing|\d+)/
   match 'editor/user/info' => 'user#info'
   match 'publications/:publication_id/:controller/:id/show_commit/:commit_id' => '(?-mix:.*_?identifiers)#show_commit', :commit_id => /[0-9a-fA-F]{40}/
   match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/

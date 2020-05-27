@@ -3,12 +3,10 @@ cache: bundler
 dist: trusty
 sudo: false
 env:
-  - JRUBY_OPTS="-J-Xmx1g --2.0"
+  global:
+    - JRUBY_OPTS="-J-Xmx1g --2.0"
 jdk:
   - oraclejdk8
-  - oraclejdk9
-  - oraclejdk11
-  - openjdk7
   - openjdk8
 rvm:
   - jruby-9.1.17.0

@@ -1,0 +1,41 @@
+- base = 'hgv_meta_identifier[contentText]'
+- contentText = DclpWork::ContentText.new(:contentText => @identifier[:contentText])
+
+-if !contentText.overview || !contentText.overview.empty?
+  %div
+    = label_tag 'overview', I18n.t('dclp.label.overview'), :class => 'meta displayName overview', :title => @identifier.configuration.xpath(:contentText)
+    = text_field_tag 'hgv_meta_identifier[overview]', contentText.overview, :disabled => !@identifier.mutable?, :class => 'observechange displayName'
+    %span{ :title => 'delete', :onclick => "if(confirm('Are you sure you want to delete the legacy display name?')){console.log($(this).up().select('input')); $(this).up().select('input')[0].setValue(''); $(this).up().hide(); }", :class => 'delete'}x
+  .clear
+
+.contentText.genre
+  %h5.contentText=I18n.t('dclp.label.contentTextGenre')
+  = text_field_tag base + '[0]', contentText.genre[0] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  .clear
+  = text_field_tag base + '[1]', contentText.genre[1] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+.contentText.religion
+  %h5.contentText=I18n.t('dclp.label.contentTextReligion')
+  = text_field_tag base + '[2]', contentText.religion[0] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  .clear
+  = text_field_tag base + '[3]', contentText.religion[1] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+.contentText.culture
+  %h5.contentText=I18n.t('dclp.label.contentTextCulture')
+  = text_field_tag base + '[4]', contentText.culture[0] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+  .clear
+  = text_field_tag base + '[5]', contentText.culture[1] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText'
+.clear
+.contentText.keywords
+  %h5.contentText=I18n.t('dclp.label.contentTextKeywords')
+  .multi{:id => 'multi_contentText'}
+    %ul.items{:id => 'multiItems_contentText'}
+      - contentText.keywords.each_index do |index|
+        - itemIndex = index + 6
+        %li
+          = text_field_tag base + '[' + itemIndex.to_s + ']', contentText.keywords[index], :disabled => !@identifier.mutable?, :class => 'observechange'
+          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('tooltip.multiMove')} o
+    %p.add{:id => 'multiPlus_contentText'}
+      %input.observechange
+      %span{:onclick => "multiAdd('contentText', 6)", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
+
+    = javascript_tag "Sortable.create('multiItems_contentText', {overlap: 'horizontal', constraint: false, handle: 'move'});"
