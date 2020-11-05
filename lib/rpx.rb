@@ -72,16 +72,27 @@ module Rpx
         "#{CGI::escape k.to_s}=#{CGI::escape v.to_s}"
       }.join('&')
 
-      resp = http.post(url.path, data)
-
-      if resp.code == '200'
-        begin
-          data = JSON.parse(resp.body.force_encoding('UTF-8'))
-        rescue JSON::ParserError => err
-          raise RpxException.new(resp), 'Unable to parse JSON response'
+      resp = nil
+      resp_body = ''
+      begin
+        resp = http.post(url.path, data)
+        if resp.code != '200'
+          raise RpxException.new(resp), "Unexpected HTTP status code from server: #{resp.code}: #{resp.body}"
+        else
+          resp_body = resp.body
         end
-      else
-        raise RpxException.new(resp), "Unexpected HTTP status code from server: #{resp.code}: #{resp.body}"
+      rescue OpenSSL::SSL::SSLError => e
+        Rails.logger.debug("OpenSSL::SSL::SSLError in RpxHelper#api_call, falling back to curl: #{e.inspect}")
+        resp_body = `curl -s -X POST -d '#{data}' '#{url.to_s}'`
+        unless $?.success?
+          raise RpxException.new(resp), "Error in fallback curl command: #{$?.inspect}"
+        end
+      end
+
+      begin
+        data = JSON.parse(resp_body.force_encoding('UTF-8'))
+      rescue JSON::ParserError => err
+        raise RpxException.new(resp), 'Unable to parse JSON response'
       end
 
       if data['stat'] != 'ok'
