@@ -83,7 +83,7 @@ module Rpx
         end
       rescue OpenSSL::SSL::SSLError => e
         Rails.logger.debug("OpenSSL::SSL::SSLError in RpxHelper#api_call, falling back to curl: #{e.inspect}")
-        resp_body = `curl -X POST -d '#{data}' '#{url.to_s}'`
+        resp_body = `curl -s -X POST -d '#{data}' '#{url.to_s}'`
         unless $?.success?
           raise RpxException.new(resp), "Error in fallback curl command: #{$?.inspect}"
         end
