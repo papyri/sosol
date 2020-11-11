@@ -24,7 +24,7 @@ class BoardsController < ApplicationController
       finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions =>  { :status => 'finalizing'} )    
 
       if finalizing_publications
-        @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p :nil}.compact
+        @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p : nil}.compact
       else
        @finalizing_publications = nil
       end

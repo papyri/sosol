@@ -56,7 +56,7 @@
         Boards
       - @boards.each do |board| 
         - finalizing_publications =  @board_final_pubs.collect{|p| ((p.parent.owner == board)) ? p : nil}.compact
-        - approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+        - approved_publications = board.publications.collect{|p| p.status == "approved" ? p : nil}.compact
         -#remove approved publications if in the finalizer list
         - finalizing_publications.each do |fp|
           -#remove it from the list of approved publications
@@ -68,13 +68,13 @@
           #{board.friendly_name} 
           -#= link_to board.title, :id => board.id, :controller => "boards", :action => "overview"
           Publications 
-        - board_publications = board.publications.collect{|p| p.status == "voting" ? p :nil}.compact
+        - board_publications = board.publications.collect{|p| p.status == "voting" ? p : nil}.compact
         - if board_publications.length > 0        
           %h3== Voting Publications
           = render :partial => "publications/list", :object => board_publications
           %br
         
-        -#- approved_publications = board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+        -#- approved_publications = board.publications.collect{|p| p.status == "approved" ? p : nil}.compact
         - if approved_publications.length > 0        
           %h3== Approved Publications
           = render :partial => "publications/list", :object => approved_publications
@@ -87,7 +87,7 @@
           %br        
         -#this is all commented out because board publication no longer go to committed status - straight from approved to archived
         -#left in just in case this changes
-        -#- board_publications = board.publications.collect{|p| p.status == "committed" ? p :nil}.compact
+        -#- board_publications = board.publications.collect{|p| p.status == "committed" ? p : nil}.compact
         -#- if board_publications.length > 0
         -#  - status = "committed"
         -#  %h3== Committed Publications
@@ -101,7 +101,7 @@
         -#      Less...
         -#  %br
 
-        - archived_publications = board.publications.collect{|p| p.status == "archived" ? p :nil}.compact
+        - archived_publications = board.publications.collect{|p| p.status == "archived" ? p : nil}.compact
         - if archived_publications.length > 0
           = link_to "Archived", :controller => 'user', :action => 'archives',  :id => @current_user.id, :board_id => board.id
           %br

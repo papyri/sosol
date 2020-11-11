@@ -302,7 +302,7 @@ class UserController < ApplicationController
       @finalizing_publications =  @board_final_pubs.collect{|p| ((! p.parent.nil? && p.parent.owner == @board)) ? p : nil}.compact
 
       #get publications that have been approved
-      #@approved_publications = @board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+      #@approved_publications = @board.publications.collect{|p| p.status == "approved" ? p : nil}.compact
       @approved_publications = Publication.find_all_by_owner_id(@board.id, :conditions => {:owner_type => "Board", :status => "approved" }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"  )
 
       #remove approved publications if in the finalizer list
@@ -335,7 +335,7 @@ class UserController < ApplicationController
             needs_review = true
           end
         end
-        needs_review ? p :nil
+        needs_review ? p : nil
      }.compact
 
      if @needs_reviewing_publications.nil?
