@@ -79,6 +79,12 @@ class AjaxProxyController < ApplicationController
             }
           )
         end
+      rescue OpenSSL::SSL::SSLError => e
+        Rails.logger.info("AjaxProxyController#get_xsugar_response SSLError (#{e.inspect}), falling back to plain HTTP")
+        parsed_uri = URI.parse(Sosol::Application.config.xsugar_standalone_url)
+        parsed_uri.scheme = 'http'
+        Sosol::Application.config.xsugar_standalone_url = parsed_uri.to_s
+        retry
       rescue EOFError
         get_xsugar_response(params)
       end
