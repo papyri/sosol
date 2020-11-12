@@ -4,7 +4,7 @@
 
 * Java SE 8 (1.8+)
 * JRuby (9.1.17.0) - Preferably managed through {rbenv}[https://github.com/sstephenson/rbenv].
-* Bundler (2.1.4+) (gem install bundler)
+* Bundler (1.17.3+) (gem install bundler)
 * Git (1.7.1+)
 
 == Initial setup steps for development
