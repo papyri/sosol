@@ -104,7 +104,7 @@ class CtsPublicationsController < PublicationsController
         begin
           # first the inventory record
           CTSInventoryIdentifier.new_from_template(@publication,sourceCollection,versionIdentifier,versionUrn)
-        rescue Exception => e
+        rescue StandardError => e
           @publication.destroy
           flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
           redirect_to dashboard_url
@@ -125,7 +125,7 @@ class CtsPublicationsController < PublicationsController
           begin
             # first the inventory record
             CTSInventoryIdentifier.new_from_template(@publication,sourceCollection,versionIdentifier,versionUrn)
-          rescue Exception => e
+          rescue StandardError => e
             @publication.destroy
             flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
             redirect_to dashboard_url
@@ -194,7 +194,7 @@ class CtsPublicationsController < PublicationsController
           # TODO this needs to support direction creation from a translation as well as an edition?
           citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn].to_s,'edition')
         end
-      rescue Exception => e
+      rescue StandardError => e
         @publication.destroy
         flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
         redirect_to dashboard_url
@@ -273,7 +273,7 @@ class CtsPublicationsController < PublicationsController
             # TODO this needs to support direction creation from a translation as well as an edition?
             citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn].to_s,'edition')
           end
-        rescue Exception => e
+        rescue StandardError => e
           @publication.destroy
           flash[:notice] = 'Error creating publication (during creation of inventory excerpt):' + e.to_s
           redirect_to dashboard_url

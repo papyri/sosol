@@ -9,7 +9,7 @@
 #
 #This class contains many of the methods that controls the workflow for the publication.
 #Examples are:
-#- publicaiton creation
+#- publication creation
 #- copying of a publication
 #- changeing the status of a publication
 #- determining which board examines the publication
@@ -190,8 +190,9 @@ class Publication < ActiveRecord::Base
     end
   end
 
-  after_destroy do |publication|
-    publication.owner.repository.delete_branch(publication.branch)
+  after_commit :delete_associated_branch, on: :destroy
+  def delete_associated_branch
+    self.owner.repository.delete_branch(self.branch)
   end
 
   #Outputs publication information and content to the Rails logger.
@@ -224,21 +225,23 @@ class Publication < ActiveRecord::Base
   #
   #When there are no more identifiers to be submitted, then the publication is marked as committed.
   def submit_to_next_board
-
+    Rails.logger.info("Publication#submit_to_next_board called for: #{self.id}")
     #note: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
     @recent_submit_sha = ''
 
     #determine which ids are ready to be submitted (modified, editing...)
     submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
-
-    Rails.logger.info "---Submittable identifiers are: "
-    submittable_identifiers.each do |log_si|
-      Rails.logger.info "     " + log_si.class.to_s + "   " + log_si.title
+    
+    if submittable_identifiers.length == 0
+      Rails.logger.warn("Publication#submit_to_next_board for #{self.id}: no submittable identifiers")
+      Rails.logger.info("Publication#submit_to_next_board for #{self.id} identifier state: #{self.identifiers.inspect}")
+    else
+      submittable_identifiers.each do |log_si|
+        Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable identifier: " + log_si.class.to_s + "   " + log_si.title
+      end
     end
 
-
     #check if we are part of a community
-
     if is_community_publication?
       boards = Board.ranked_by_community_id( self.community.id )
     else
@@ -247,60 +250,50 @@ class Publication < ActiveRecord::Base
 
     #check each board in order by priority rank
     boards.each do |board|
-
-    #if board.community == publication.community
-    boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
-    if boards_identifiers.length > 0
-      #submit to that board
-      Rails.logger.info "---Submittable Board identifiers are: "
-      boards_identifiers.each do |log_sbi|
-        Rails.logger.info "     " + log_sbi.class.to_s + "   " + log_sbi.title
-      end
-
-      # submit each submitting_identifier
-      boards_identifiers.each do |submitting_identifier|
-            submitting_identifier.status = "submitted"
-            submitting_identifier.save!
-
-            #make the most recent sha for the identifier available...is this the one we want?
-            @recent_submit_sha = submitting_identifier.get_recent_commit_sha
-          end
-
-          #copy the repo, models, etc... to the board
-          boards_copy = copy_to_owner(board)
-          boards_copy.status = "voting"
-          boards_copy.save!
-
-
-
-          #trigger emails
-          board.send_status_emails("submitted", self)
-
-          #update status on user copy
-          self.change_status("submitted")
-          self.save!
-
-          #problem here in that comment will be added to the returned id, but there may be many ids.....
-          #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
-          return '', boards_identifiers[0].id
+      #if board.community == publication.community
+      boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+      if boards_identifiers.length > 0
+        #submit to that board
+        boards_identifiers.each do |log_sbi|
+          Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable board identifier (Board: #{board.friendly_name}): " + log_sbi.class.to_s + "   " + log_sbi.title
         end
-      #end
-    end
+        # submit each submitting_identifier
+        boards_identifiers.each do |submitting_identifier|
+          submitting_identifier.status = "submitted"
+          submitting_identifier.save!
 
+          #make the most recent sha for the identifier available...is this the one we want?
+          @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+        end
 
-    Rails.logger.debug " no more parts to submit "
+        #copy the repo, models, etc... to the board
+        boards_copy = copy_to_owner(board)
+        boards_copy.status = "voting"
+        boards_copy.save!
+
+        #trigger emails
+        board.send_status_emails("submitted", self)
+
+        #update status on user copy
+        self.change_status("submitted")
+        self.save!
+
+        #problem here in that comment will be added to the returned id, but there may be many ids.....
+        #todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
+        return '', boards_identifiers[0].id
+      end # boards_identifiers.length > 0
+    end # boards.each
+
+    Rails.logger.debug "Publication#submit_to_next_board for #{self.id}: no more parts to submit"
     #if we get to this point, there are no more boards to submit to, thus we are done
     if is_community_publication?
       if self.community.end_user.nil?
         #no end user has been set, so warn them and then what?
         #user can't submit to community if no end user, so this should not happen
-
+        Rails.logger.warn("Publication#submit_to_next_board for #{self.id} reached community publication logic with no community end user")
       else
-
-
         #copy to  space
-        Rails.logger.debug "----end user to get it"
-        Rails.logger.debug self.community.end_user.name
+        Rails.logger.debug "Publication#submit_to_next_board for #{self.id} being assigned to community end user: #{self.community.end_user.name}"
 
         #community_copy = copy_to_owner( self.community.end_user)
         community_copy = copy_to_end_user()
@@ -326,14 +319,12 @@ class Publication < ActiveRecord::Base
         #mark as committed
         self.origin.change_status("committed")
         self.save
-      end
-
-    else
-      #mark as committed
+      end # community end user
+    else # not a community publication
+      Rails.logger.info("Publication#submit_to_next_board for #{self.id}: marking as committed")
       self.origin.change_status("committed")
       self.save
     end
-
 
     #TODO need to return something here to prevent flash error from showing true?
     return "", nil
@@ -376,6 +367,28 @@ class Publication < ActiveRecord::Base
     return new_publication
   end
 
+  def self.new_from_dclp_template(creator)
+    new_publication = Publication.new(:owner => creator, :creator => creator)
+
+    # fetch a title without creating from template
+    new_publication.title = DCLPMetaIdentifier.new(:name => DCLPMetaIdentifier.next_temporary_identifier).titleize
+
+    new_publication.status = "new" #TODO add new flag else where or flesh out new status#"new"
+    new_publication.save!
+
+    # branch from master so we aren't just creating an empty branch
+    new_publication.branch_from_master
+
+    #create the required meta data and transcriptions
+    new_dclp_meta = DCLPMetaIdentifier.new_from_template(new_publication)
+    # new_dclp_text = DCLPTextIdentifier.find_by_publication_id(new_publication.id)
+
+    # go ahead and create the third so we can get rid of the create button
+    #new_hgv_trans = HGVTransIdentifier.new_from_template(new_publication)
+
+    return new_publication
+  end
+
   #*Returns*
   #- +true+ if any of the identifiers in the publication have been modified.
   #- +false+ if none of the identifiers in the publication have been modified.
@@ -388,12 +401,12 @@ class Publication < ActiveRecord::Base
     retval
   end
 
-  #Determines if publication is in 'editing' status and is able to be changed
+  #Determines if publication is in 'editing' or 'new' status and is able to be changed
   #*Returns*
   #- +true+ if the publication should be changed by some user.
   #- +false+ otherwise.
   def mutable?
-    if (self.status != "editing") || self.advisory_lock_exists?("finalize_#{self.id}")  # && self.status != "new"
+    if (!%w{editing new}.include?(self.status)) || (self.parent && self.advisory_lock_exists?("finalize_#{self.parent.id}")) || self.advisory_lock_exists?("submit_#{self.id}")
       return false
     else
       return true
@@ -425,18 +438,21 @@ class Publication < ActiveRecord::Base
   #*Args*
   #- +status_in+ the status to be set
   def set_origin_identifier_status(status_in)
-      #finalizer is a user so they dont have a board, must go up until we find a board
-      board = self.find_first_board
-      if board
-
-        self.identifiers.each do |i|
-          if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
-            i.origin.status = status_in
-            i.origin.save
-          end
+    #finalizer is a user so they dont have a board, must go up until we find a board
+    board = self.find_first_board
+    if board
+      Rails.logger.debug("Publication#set_origin_identifier_status called for #{self.id} (Board: #{board.id}, Origin: #{origin.id}")
+      self.identifiers.each do |i|
+        Rails.logger.debug("Publication#set_origin_identifier_status for #{self.id}, checking identifier: #{i.inspect}")
+        if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
+          Rails.logger.debug("Publication#set_origin_identifier_status for #{self.id}, changing identifier status to '#{status_in}' for #{i.id} origin identifier: #{i.origin.inspect}")
+          i_origin = i.origin
+          i_origin.status = status_in
+          i_origin.save
+          Rails.logger.debug("Publication#set_origin_identifier_status for #{self.id}, changed identifier status to '#{status_in}' for #{i.id} origin identifier: #{i.origin.inspect}")
         end
-
       end
+    end
   end
 
 
@@ -445,18 +461,15 @@ class Publication < ActiveRecord::Base
   #*Args*
   #- +status_in+ the status to be set
   def set_local_identifier_status(status_in)
-
-      board = self.find_first_board
-      if board
-
-        self.identifiers.each do |i|
-          if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
-            i.status = status_in
-            i.save
-          end
+    board = self.find_first_board
+    if board
+      self.identifiers.each do |i|
+        if board.identifier_classes && board.identifier_classes.include?(i.class.to_s)
+          i.status = status_in
+          i.save
         end
-
       end
+    end
   end
 
   #Convenience method to combine  set_origin_identifier_status & set_local_identifier_status methods.
@@ -478,6 +491,33 @@ class Publication < ActiveRecord::Base
       end
   end
 
+  def similar_branches
+    branch_leaf = self.branch.split('/').last
+    return self.repository.branches.select{|owner_branch| owner_branch =~ /#{branch_leaf}/}
+  end
+
+  def recover_branch
+    similar_branches = self.similar_branches
+    if self.similar_branches.length == 1
+      Rails.logger.info("Recovering branch: #{similar_branches.first} -> #{self.branch}")
+      self.identifiers.each do |check_identifier|
+        if self.repository.get_file_from_branch(check_identifier.to_path, similar_branches.first).nil?
+          Rails.logger.info("Unable to retrieve #{check_identifier.to_path} in branch #{similar_branches.first}")
+          Rails.logger.info("Please check/recover branch manually.")
+          return nil
+        end
+      end
+      return self.repository.rename_branch(similar_branches.first, self.branch)
+    else
+      Rails.logger.info("Multiple/zero similiar branches found for branch #{self.branch}: #{similar_branches.inspect}")
+      Rails.logger.info("Please check/recover branch manually.")
+      Return nil
+    end
+  end
+
+  def branch_exists?
+    return self.owner.repository.branches.include?(self.branch)
+  end
 
   def change_status(new_status)
     Rails.logger.info("change_status to #{new_status} for #{self.inspect}")
@@ -574,6 +614,7 @@ class Publication < ActiveRecord::Base
     #vote action is determined by votes on the publication
     #any modified identifiers that the board controlls will have the change desc added.
     #Future changes may be made here if the voting logic is to be separated per identifier
+    Rails.logger.info("Publication#tally_votes called for #{self.id}: #{user_votes.inspect}")
 
     #check that we are still taking votes
     if self.status != "voting"
@@ -589,7 +630,7 @@ class Publication < ActiveRecord::Base
       decree_action = self.owner.tally_votes(user_votes) #since board has decrees let them figure out the vote results
     end
 
-    Rails.logger.info("Publication#tally_votes for #{self.id} got decree_action #{decree_action}")
+    Rails.logger.info("Publication#tally_votes for #{self.id} (origin: #{self.origin.id}) got decree_action: #{decree_action}")
 
     # create an event if anything happened
     if !decree_action.nil? && decree_action != ''
@@ -614,7 +655,7 @@ class Publication < ActiveRecord::Base
       self.change_status("approved")
 
       #set up for finalizing
-      SendToFinalizerJob.new.async.perform(self.id)
+      SendToFinalizerJob.perform_async(self.id)
   #----reject-----
     elsif decree_action == "reject"
 
@@ -779,42 +820,50 @@ class Publication < ActiveRecord::Base
   #- +finalizer+ user who will become the finalizer. If no finalizer given, a board member will be randomly choosen.
   #
   def send_to_finalizer(finalizer = nil)
-    board_members = self.owner.users
-    if finalizer.nil?
-      # select a random board member to be the finalizer
-      finalizer = board_members[rand(board_members.length)]
-    end
-    if board_members.include?(finalizer)
-      # if there's an existing finalizer publication we need to copy
-      # the publication between finalizers instead of copying it from
-      # the board copy of the publication
-      if self.find_finalizer_publication
-        self.change_finalizer(finalizer)
-      else
-        finalizing_publication = copy_to_owner(finalizer)
+    self.transaction do
+      board_members = self.owner.users
+      if finalizer.nil?
+        # select a random board member to be the finalizer
+        finalizer = board_members[rand(board_members.length)]
+      end
+      if board_members.include?(finalizer)
+        # if there's an existing finalizer publication we need to copy
+        # the publication between finalizers instead of copying it from
+        # the board copy of the publication
+        existing_finalizer_publication = self.find_finalizer_publication
+        if existing_finalizer_publication && existing_finalizer_publication.branch_exists?
+          Rails.logger.info("Publication#send_to_finalizer: finalizer already exists for #{self.id}, calling Publication#change_finalizer")
+          self.change_finalizer(finalizer)
+        else
+          if existing_finalizer_publication
+            Rails.logger.info("Publication#send_to_finalizer: finalizer already exists for #{self.id} but branch is in inconsistent state, destroying #{existing_finalizer_publication.id} before sending to #{finalizer.name} from board copy")
+            existing_finalizer_publication.destroy
+          end
+          finalizing_publication = copy_to_owner(finalizer)
 
-        approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
-        approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
-        approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
-        approve_members = approve_votes.map {|v| v.user}
+          approve_decrees = self.owner.decrees.select {|d| d.action == 'approve'}
+          approve_choices = approve_decrees.map {|d| d.choices.split(' ')}.flatten
+          approve_votes = self.votes.select {|v| approve_choices.include?(v.choice) }
+          approve_members = approve_votes.map {|v| v.user}
 
-        self.flatten_commits(finalizing_publication, finalizer, approve_members)
+          self.flatten_commits(finalizing_publication, finalizer, approve_members)
 
-        #should we clear the modified flag so we can tell if the finalizer has done anything
-        # that way we will know in the future if we can change finalizersedidd
-        finalizing_publication.change_status('finalizing')
-        retries = 0
-        begin
-          finalizing_publication.save!
-        rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
-          Rails.logger.warn(e.message)
-          retries += 1
-          if retries <= 3
-            sleep(2 ** retries)
-            Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
-            retry
-          else
-            raise e
+          #should we clear the modified flag so we can tell if the finalizer has done anything
+          # that way we will know in the future if we can change finalizersedidd
+          finalizing_publication.change_status('finalizing')
+          retries = 0
+          begin
+            finalizing_publication.save!
+          rescue ActiveRecord::StatementInvalid, ActiveRecord::JDBCError => e
+            Rails.logger.warn(e.message)
+            retries += 1
+            if retries <= 3
+              sleep(2 ** retries)
+              Rails.logger.info("Publication#send_to_finalizer #{self.id} retry: #{retries}")
+              retry
+            else
+              raise e
+            end
           end
         end
       end
@@ -1059,7 +1108,7 @@ class Publication < ActiveRecord::Base
         end
 
         # finalized, try to repack
-        RepackCanonicalJob.new.async.perform()
+        RepackCanonicalJob.perform_async()
       else
         # nothing under canon control, just say it's committed
         self.change_status('committed')
@@ -1072,146 +1121,154 @@ class Publication < ActiveRecord::Base
   end
 
   def finalize(finalization_comment_string = '')
-    self.with_advisory_lock("finalize_#{self.id}") do
-      # check if any identifiers need renaming before proceeding
-      if self.needs_rename?
-        raise "Publication has one or more identifiers which need to be renamed before finalizing: #{self.identifiers_needing_rename.map{|i| i.name}.join(', ')}"
-      end
+    unless self.advisory_lock_exists?("finalize_#{self.parent.id}")
+      self.with_advisory_lock("finalize_#{self.parent.id}") do
+        # check if any identifiers need renaming before proceeding
+        if self.needs_rename?
+          raise "Publication has one or more identifiers which need to be renamed before finalizing: #{self.identifiers_needing_rename.map{|i| i.name}.join(', ')}"
+        end
 
-      # Pre-process identifiers for finalization
-      # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
-      # if something goes wrong
-      max_loops = self.identifiers.size
-      loop_count = 0
-      done_preprocessing = false
-      while (! done_preprocessing) do
-        loop_count = loop_count + 1
-        any_preprocessed = false
-        begin
-          #find all modified identiers in the publication and run any necessary preprocessing
-          self.identifiers.each do |id|
-            #board controls this id and it has been modified
-            if id.modified? && self.find_first_board.controls_identifier?(id)
-              modified = id.preprocess_for_finalization
-              if (modified)
-                id.save
-                any_preprocessed = true
+        # Pre-process identifiers for finalization
+        # limit the loop to the number of identifiers so that we don't accidentally enter an infinite loop
+        # if something goes wrong
+        max_loops = self.identifiers.size
+        loop_count = 0
+        done_preprocessing = false
+        while (! done_preprocessing) do
+          loop_count = loop_count + 1
+          any_preprocessed = false
+          begin
+            #find all modified identiers in the publication and run any necessary preprocessing
+            self.identifiers.each do |id|
+              #board controls this id and it has been modified
+              if id.modified? && self.find_first_board.controls_identifier?(id)
+                modified = id.preprocess_for_finalization
+                if (modified)
+                  id.save
+                  any_preprocessed = true
+                end
               end
             end
+          rescue StandardError => e
+            raise "Error preprocessing finalization copy. #{e.to_s}"
+          end # end iteration through identifiers
+          # we need to rerun preprocessing until no more changes are made because a preprocessing step
+          # can modify a related identifier, e.g. as in the case of the citations which are edit artifacts
+          done_preprocessing = ! any_preprocessed
+          if (!done_preprocessing && loop_count == max_loops)
+            raise "Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing."
           end
-        rescue Exception => e
-          raise "Error preprocessing finalization copy. #{e.to_s}"
-        end # end iteration through identifiers
-        # we need to rerun preprocessing until no more changes are made because a preprocessing step
-        # can modify a related identifier, e.g. as in the case of the citations which are edit artifacts
-        done_preprocessing = ! any_preprocessed
-        if (!done_preprocessing && loop_count == max_loops)
-          raise "Error preprocessing finalization copy. Max loop iterations exceeded for preprocessing."
+        end # done preprocessing
+
+        # to prevent a community publication from being finalized if there is no end_user to get the final version
+        if self.is_community_publication? && self.community.end_user.nil?
+          raise "Error finalizing. No End User for the community."
         end
-      end # done preprocessing
 
-      # to prevent a community publication from being finalized if there is no end_user to get the final version
-      if self.is_community_publication? && self.community.end_user.nil?
-        raise "Error finalizing. No End User for the community."
-      end
-
-      # find all modified identiers in the publication so we can set the votes into the xml
-      # NOTE: DCLP needs special logic for this
-      self.identifiers.each do |id|
-        #board controls this id and it has been modified
-        if id.modified? && self.find_first_board.controls_identifier?(id) && (id.class.to_s != "BiblioIdentifier")
-          id.update_revision_desc(finalization_comment_string.to_s, self.owner);
-          id.save
+        # find all modified identiers in the publication so we can set the votes into the xml
+        # NOTE: DCLP needs special logic for this
+        self.identifiers.each do |id|
+          #board controls this id and it has been modified
+          if id.modified? && self.find_first_board.controls_identifier?(id) && (id.class.to_s != "BiblioIdentifier")
+            id.update_revision_desc(finalization_comment_string.to_s, self.owner);
+            id.save
+          end
         end
-      end
-      
-      # copy back to creator/origin in any case
-      self.copy_back_to_user(finalization_comment_string.to_s, self.owner)
+        
+        # copy back to creator/origin in any case
+        self.copy_back_to_user(finalization_comment_string.to_s, self.owner)
 
-      # if it is a community pub, we don't commit to canon
-      # instead we ONLY copy changes back to origin (done above)
-      canon_sha = ''
-      unless self.is_community_publication? # commit to canon
+        # if it is a community pub, we don't commit to canon
+        # instead we ONLY copy changes back to origin (done above)
+        canon_sha = ''
+        unless self.is_community_publication? # commit to canon
+          begin
+            canon_sha = self.commit_to_canon
+          rescue Errno::EACCES => git_permissions_error
+            raise "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+          end
+        end
+        # done committing to canon
+        
+        # store a comment on finalize even if the user makes no comment...so we have a record of the action
+        retries = 0
         begin
-          canon_sha = self.commit_to_canon
-        rescue Errno::EACCES => git_permissions_error
-          raise "Error finalizing. Error message was: #{git_permissions_error.message}. This is likely a filesystems permissions error on the canonical Git repository. Please contact your system administrator."
+          finalization_comment = Comment.new()
+
+          if finalization_comment_string && finalization_comment_string != ""
+            finalization_comment.comment = finalization_comment_string.to_s
+          else
+            finalization_comment.comment = "no comment"
+          end
+          finalization_comment.user = self.owner
+          finalization_comment.reason = "finalizing"
+          finalization_comment.git_hash = canon_sha
+          # associate comment with original identifier/publication
+          finalization_comment.identifier_id = self.controlled_identifiers.last
+          finalization_comment.publication = self.origin
+          finalization_comment.save!
+        rescue NoMethodError => e
+          Rails.logger.error(e.inspect)
+          if (retries += 1) < 4
+            sleep(1)
+            retry
+          else
+            raise e
+          end
         end
-      end
-      # done committing to canon
-      
-      # store a comment on finalize even if the user makes no comment...so we have a record of the action
-      retries = 0
-      begin
-        finalization_comment = Comment.new()
 
-        if finalization_comment_string && finalization_comment_string != ""
-          finalization_comment.comment = finalization_comment_string.to_s
-        else
-          finalization_comment.comment = "no comment"
+        # create an event to show up on dashboard
+        retries = 0
+        begin
+          finalization_event = Event.new()
+          finalization_event.owner = self.owner
+          finalization_event.target = self.parent #used parent so would match approve event
+          finalization_event.category = "committed"
+          finalization_event.save!
+        rescue NoMethodError => e
+          Rails.logger.error(e.inspect)
+          if (retries += 1) < 4
+            sleep(1)
+            retry
+          else
+            raise e
+          end
         end
-        finalization_comment.user = self.owner
-        finalization_comment.reason = "finalizing"
-        finalization_comment.git_hash = canon_sha
-        # associate comment with original identifier/publication
-        finalization_comment.identifier_id = self.controlled_identifiers.last
-        finalization_comment.publication = self.origin
-        finalization_comment.save!
-      rescue NoMethodError => e
-        Rails.logger.error(e.inspect)
-        if (retries += 1) < 4
-          sleep(1)
-          retry
-        else
-          raise e
+
+        # set status of identifiers
+        self.set_origin_and_local_identifier_status("committed")
+        self.set_board_identifier_status("committed")
+
+        # the finalizer will have a parent that is a board whose status must be set
+        # check that parent is board, then archive the board publication and send status emails
+        if self.parent && self.parent.owner_type == "Board"
+          # destroy any sibling publications, in case another finalizer somehow got a copy of the
+          # publication, to avoid double-finalization
+          (self.parent.children - [self]).each do |sibling|
+            sibling.destroy
+          end
+
+          self.parent.archive
+          self.parent.owner.send_status_emails("committed", self)
+        #else #the user is a super user
         end
-      end
 
-      # create an event to show up on dashboard
-      retries = 0
-      begin
-        finalization_event = Event.new()
-        finalization_event.owner = self.owner
-        finalization_event.target = self.parent #used parent so would match approve event
-        finalization_event.category = "committed"
-        finalization_event.save!
-      rescue NoMethodError => e
-        Rails.logger.error(e.inspect)
-        if (retries += 1) < 4
-          sleep(1)
-          retry
-        else
-          raise e
+        # send publication to the next board
+        error_text, identifier_for_comment = self.origin.submit_to_next_board
+        if error_text != ""
+          raise error_text
         end
-      end
+        self.change_status('finalized')
 
-      # set status of identifiers
-      self.set_origin_and_local_identifier_status("committed")
-      self.set_board_identifier_status("committed")
-
-      # the finalizer will have a parent that is a board whose status must be set
-      # check that parent is board, then archive the board publication and send status emails
-      if self.parent && self.parent.owner_type == "Board"
-        self.parent.archive
-        self.parent.owner.send_status_emails("committed", self)
-      #else #the user is a super user
-      end
-
-      # send publication to the next board
-      error_text, identifier_for_comment = self.origin.submit_to_next_board
-      if error_text != ""
-        raise error_text
-      end
-      self.change_status('finalized')
-
-      # 2012-08-24 BALMAS this seems as if it might be a bug in the original papyri sosol code
-      # but I am not sure ... I can't find any place the 'finalized' publication owned by the board
-      # ever gets archived, so the next time the same finalizer tries to finalize the same publication
-      # you get an error because the title is already taken. I'm going to add the date time to the title
-      # of the finalized publication as a workaround
-      self.title = self.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
-      self.save!
-    end # end lock
+        # 2012-08-24 BALMAS this seems as if it might be a bug in the original papyri sosol code
+        # but I am not sure ... I can't find any place the 'finalized' publication owned by the board
+        # ever gets archived, so the next time the same finalizer tries to finalize the same publication
+        # you get an error because the title is already taken. I'm going to add the date time to the title
+        # of the finalized publication as a workaround
+        self.title = self.title + Time.now.strftime(" (%Y/%m/%d-%H.%M.%S)")
+        self.save!
+      end # end lock
+    end # end lock check
   end
 
   def branch_from_master
@@ -1289,7 +1346,8 @@ class Publication < ActiveRecord::Base
   def origin
     # walk the parent list until we encounter one with no parent
     origin_publication = self
-    while (origin_publication.parent != nil) do
+    origin_publication.reload
+    while ((!origin_publication.nil?) && (!origin_publication.parent.nil?)) do
       origin_publication = origin_publication.parent
     end
     return origin_publication
@@ -1356,8 +1414,6 @@ class Publication < ActiveRecord::Base
     return nil
   end
 
-  #finds the closest parent publication whose owner is a board and returns that publication
-
   #Finds the closest parent(or self) publication whose owner is a board. Returns that publication.
   #
   #*Returns*
@@ -1395,6 +1451,25 @@ class Publication < ActiveRecord::Base
       end #if
     end #children do
     return vote_total, vote_ddb, vote_meta, vote_trans
+  end
+
+  # This is a helper method for moving publications between two user accounts,
+  # for the purposes of merging one account with another.
+  def change_owner_and_creator(new_owner)
+    new_owner.repository.copy_branch_from_repo(
+      self.branch, self.branch, self.owner.repository
+    )
+    self.all_children.each do |child|
+      if child.creator == self.owner
+        child.creator = new_owner
+        child.save!
+      end
+    end
+    if self.creator == self.owner
+      self.creator = new_owner
+    end
+    self.owner = new_owner
+    self.save!
   end
 
   #Creates a new publication for the new_owner that is a separate copy of this publication,
@@ -1532,7 +1607,9 @@ class Publication < ActiveRecord::Base
     end
 
     # add comments hash from each of the publication's identifiers XML file to array
-    identifiers.each do |i|
+    # in the case of DCLP, only one of its twin identifiers (DCLPMetaIdentifier and DCLPTextIdentifier) needs to be processed
+    identifiers.select{|i|i.class != DCLPTextIdentifier || !identifiers.find_index{|i| i.class == DCLPMetaIdentifier}}.each do |i|
+      puts i.class
       where_from = i.class::FRIENDLY_NAME
       ident_title = i.title
 
@@ -1576,69 +1653,82 @@ class Publication < ActiveRecord::Base
   end
 
   def creatable_identifiers
-    creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
+    if !self.mutable?
+      return []
+    else
+      creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
 
-    #WARNING hardcoded identifier dependency hack
-    #enforce creation order
-    has_meta = false
-    has_text = false
-    has_biblio = false
-    has_cts = false
-    has_apis = false
+      #WARNING hardcoded identifier dependency hack
+      #enforce creation order
+      has_meta = false
+      has_text = false
+      has_biblio = false
+      has_cts = false
+      has_apis = false
+      has_dclp = false
 
-    self.identifiers.each do |i|
-      if i.class.to_s == "BiblioIdentifier"
-        has_biblio = true
-      end
-      if i.class.to_s == "HGVMetaIdentifier"
-        has_meta = true
-      end
-      if i.class.to_s == "DDBIdentifier"
-       has_text = true
-      end
-      if i.class.to_s =~ /CTSIdentifier/
-        has_cts = true
-      end
-      if i.class.to_s == "APISIdentifier"
-        has_apis = true
-      end
-    end
-    if !has_text
-      #cant create trans
-      creatable_identifiers.delete("HGVTransIdentifier")
-    end
-    if !has_meta
-      #cant create text
-      creatable_identifiers.delete("DDBIdentifier")
-      #cant create trans
-      creatable_identifiers.delete("HGVTransIdentifier")
-    end
-    creatable_identifiers.delete("BiblioIdentifier")
-    # Not allowed to create any other record in association with a BiblioIdentifier publication
-    if has_biblio
-      creatable_identifiers = []
-    end
-    #  BALMAS Creating other records in association with a CTSIdentifier publication will be enabled elsewhere
-    if has_cts
-      creatable_identifiers = []
-    end
-    if has_apis
-      creatable_identifiers.delete("APISIdentifier")
-    end
-
-    #only let user create new for non-existing
-    self.identifiers.each do |i|
-      creatable_identifiers.each do |ci|
-        if ci == i.class.to_s
-          creatable_identifiers.delete(ci)
+      self.identifiers.each do |i|
+        if i.class.to_s == "BiblioIdentifier"
+          has_biblio = true
+        end
+        if i.class.to_s == "HGVMetaIdentifier" || i.class.to_s == "DCLPMetaIdentifier" || i.class.to_s == "DCLPTextIdentifier"
+          has_meta = true
+        end
+        if i.class.to_s == "DDBIdentifier" || i.class.to_s == "DCLPMetaIdentifier" || i.class.to_s == "DCLPTextIdentifier"
+         has_text = true
+        end
+        if i.class.to_s =~ /CTSIdentifier/
+          has_cts = true
+        end
+        if i.class.to_s == "APISIdentifier"
+          has_apis = true
+        end
+        if i.class.to_s == "DCLPMetaIdentifier" || i.class.to_s == "DCLPTextIdentifier"
+         has_dclp = true
         end
       end
-    end
+     
+      unless self.identifiers.map{|i| i.class.to_s}.include?('HGVMetaIdentifier')
+        #cant create DDB text
+        creatable_identifiers.delete("DDBIdentifier")
+      end
+      if has_dclp
+      end
+      if !has_text
+        #cant create trans
+        creatable_identifiers.delete("HGVTransIdentifier")
+      end
+      if !has_meta
+        #cant create trans
+        creatable_identifiers.delete("HGVTransIdentifier")
+      end
+      creatable_identifiers.delete("BiblioIdentifier")
+      # Not allowed to create any other record in association with a BiblioIdentifier publication
+      if has_biblio
+        creatable_identifiers = []
+      end
+      #  BALMAS Creating other records in association with a CTSIdentifier publication will be enabled elsewhere
+      if has_cts
+        creatable_identifiers = []
+      end
+      if has_apis
+        creatable_identifiers.delete("APISIdentifier")
+      end
 
-    return creatable_identifiers
+      #only let user create new for non-existing
+      self.identifiers.each do |i|
+        creatable_identifiers.each do |ci|
+          if ci == i.class.to_s
+            creatable_identifiers.delete(ci)
+          end
+        end
+      end
+
+      return creatable_identifiers
+    end
   end
 
   def related_text
-    self.identifiers.select{|i| (i.class == DDBIdentifier) && !i.is_reprinted?}.last
+    self.identifiers.select{|i| ((i.class == DDBIdentifier || i.class == DCLPTextIdentifier) && !i.is_reprinted?)  || i.class == DCLPMetaIdentifier }.last
   end
 end

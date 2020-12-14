@@ -12,6 +12,131 @@ module HgvMetaIdentifierHelper
     prefix + (rand * 1000000).floor.to_s.tr('0123456789', 'ABCDEFGHIJ')
   end
   
+  def getValueFromHashByMultidimensionalKey(hsh, key)
+    #key = key.dup
+    if !hsh.kind_of?(Hash) || !key.kind_of?(Array) || !hsh.length || !key.length || !defined?(hsh[key[0]])
+      return hsh
+    end
+    if key.length == 1
+      return hsh[key[0]]
+    else
+      return getValueFromHashByMultidimensionalKey(hsh[key[0]], key[1..-1])
+    end
+  end
+
+    # Reads out config/hgv.yml and stores all configuration parameters in an instance variable called +@scheme+. Adds defaults and prunes invalid configuration entries.
+  class HgvMetaConfiguration
+
+    attr_reader :scheme, :keys, :toplevel_standalone_attributes;
+
+    # Constructor laods and complements HGV configuration from +config/hgv.yml+ and prepares a list that contains all valid HGV keys
+    # Assumes the existenz of configuration file +config/hgv.yml+, for further information about expected values and format see there
+    # Side effect on +@scheme+ and +@keys+
+    def initialize modifier = nil
+      @scheme = YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
+
+      if modifier.class == Symbol
+        @scheme = @scheme.merge(YAML::load_file(File.join(Rails.root, ['config', modifier.to_s + '.yml']))[modifier][:metadata])
+      end
+      
+      @scheme.delete_if{|key, value| value == nil}
+
+      add_meta_information! @scheme
+
+      @keys = @scheme.keys
+      @scheme.each_value {|item|
+        @keys += retrieve_all_keys item
+      }
+
+      @toplevel_standalone_attributes = {}
+      @scheme.each {|key, config|
+        if config[:xpath] =~ /\/(\w+)(\[.+\])*?\/@(\w+)\Z/
+          @toplevel_standalone_attributes[key] = {:element_name => $1, :attribute_name => $3}
+        end
+      }
+    end
+
+    # Recursivle retrieves all valid keys (element key, attribute keys, child keys)
+    # - *Args*  :
+    #   - +configuration_node+ → a single element node of the hgv configuration
+    # - *Returns* :
+    #   - +Array+ of string values, containing all valid keys for HGV meta data nodes, such as [:type, :subtype, :date, :place, ...] for HGV configuration node :provenance
+    def retrieve_all_keys configuration_node
+      keys = configuration_node[:attributes] ? configuration_node[:attributes].keys : []
+      if configuration_node[:children]
+        configuration_node[:children].each_pair {|key, value|
+          keys += [key]
+          keys += retrieve_all_keys value
+        }
+      end
+      return keys
+    end
+
+    # Recursively adds optional attributes to configuration
+    # e.g. +:optional+ defaults to +true+ whereas +:multiple+ defaults to false
+    # - *Args*  :
+    #   - +configuration+ → initially the complete HGV configuration, during recursion it contains the content of the children attribute
+    # Side effect on +configuration+ (adds default values and missing attributes)
+    def add_meta_information! configuration
+      configuration.each_value {|element|
+
+        add_defaults! element
+
+        if element.keys.include? :attributes
+          element[:attributes].each_value{|attribute|
+            add_defaults! attribute
+          }
+        end
+
+        if element.keys.include? :children
+          add_meta_information! element[:children]
+        end
+
+      }
+    end
+
+    # Adds optional attributes (suchs as mulplicity or default values) to a configuration item
+    # - *Args*  :
+    #   - +item+ → may be an element or an attribute
+    # Side effect on +item+ (sets default values, adds missing attributes)
+    def add_defaults! item
+      if item.keys.include? :multiple
+        item[:multiple] = item[:multiple] ? true : false
+      else
+        item[:multiple] = false
+      end
+
+      if item.keys.include? :optional
+          item[:optional] = !item[:optional] ? false : true
+      else
+        item[:optional] = true
+      end
+
+      if !item.keys.include? :default
+        item[:default] = nil
+      end
+
+      if !item.keys.include? :pattern
+        item[:pattern] = nil
+      end
+
+    end
+
+    # Retrieves the xpath for a specified HGV key if the key belongs to a top level HGV configuration node, i.e. for HGV key +:textDate+, but not for HGV key +:when+ which is a child node of +:textDate+
+    # - *Args*  :
+    #   - +key+ → key, e.g. +:provenance+
+    # - *Returns* :
+    #   - String xpath, string will be empty if xpath cannot be given for the requested key
+    # Assumes that +config/hgv.yml+ has been loaded into +@scheme+
+    def xpath key
+      if @scheme.keys.include? key
+        @scheme[key][:xpath]
+      else
+        ''
+      end
+    end
+  end
+  
   # Module for HGV geo data class definitions (provenance, place and geo)
   module HgvGeo
 
@@ -867,20 +992,22 @@ module HgvMetaIdentifierHelper
       end
     end
     
-    # Get ISO formatted month (DD)
+    # Get ISO formatted day (DD)
     # - *Args*  :
     #   - +day+ +String+ or +Integer+, that contains a number, e.g. 31, may be +nil+
     #   - +month+ +String+ or +Integer+, that contains a number, e.g. 5, may be +nil+
+    #   - +year+ +String+ or +Integer+, that contains a number, e.g. 200, may be +nil+
     #   - +monthQualifier+ → qualifies which part of the year is of interest, e.g. +:beginning+, may be +nil+
     #   - +chron+ → +:chronMin+ or +:chronMax+
     # - *Returns* :
     #   - +String+, e.g. +31+
     # e.g. HgvDate.getDayIso(nil, 7, :end, :chronMax) => "31"
-    def HgvDate.getDayIso day, month, monthQualifier, chron
+    def HgvDate.getDayIso day, month, year, monthQualifier, chron
       if day
         day.to_s.rjust(2, '0')
       else
         m = month.to_i
+        y = year.to_i
         day_max = m ? (m != 2 ? (m < 8 ? ((m % 2) == 0 ? 30 : 31) : ((m % 2) == 0 ? 31 : 30) ) : (y && ((y % 4) == 0) && (((y % 100) != 0) || ((y % 400) == 0)) ? 29 : 28)) : 31
 
         {
@@ -1438,8 +1565,9 @@ module HgvMetaIdentifierHelper
         return t
       end
 
-      # centuries
-      if date_item[:c]
+      if date_item[:c] # centuries
+        date_item.delete :precision # centuries may not have a precision
+        date_item.delete :precision2
         t[:attributes][:notBefore] = HgvDate.getYearIso date_item[:c], date_item[:cx], :chronMin
         if date_item[:c2]
           t[:attributes][:notAfter] = HgvDate.getYearIso date_item[:c2], date_item[:cx2], :chronMax
@@ -1461,10 +1589,10 @@ module HgvMetaIdentifierHelper
         else
           t[:attributes][:precision] = 'low'
         end
-      else
+      else # year, month, day
         y = {nil => '', 0 => '-'}[date_item[:y] =~ /-/] + date_item[:y].sub('-', '').rjust(4, '0')
         m = HgvDate.getMonthIso date_item[:m], date_item[:yx], :chronMin
-        d = HgvDate.getDayIso date_item[:d], date_item[:m], date_item[:mx], :chronMin
+        d = HgvDate.getDayIso date_item[:d], date_item[:m], y, date_item[:mx], :chronMin
         
         date = y + (m ? '-' + m + (d ? '-' + d : '') : '')
         
@@ -1477,7 +1605,7 @@ module HgvMetaIdentifierHelper
           
           y2 = date_item[:y2] ? {nil => '', 0 => '-'}[date_item[:y2] =~ /-/] + date_item[:y2].sub('-', '').rjust(4, '0') : y
           m2 = HgvDate.getMonthIso((date_item[:m2] ? date_item[:m2] : (date_item[:d2] ? date_item[:m] : nil)), (date_item[:yx2] ? date_item[:yx2] : (y2 == y ? date_item[:yx] : nil)), :chronMax)
-          d2 = HgvDate.getDayIso date_item[:d2], (date_item[:m] ? date_item[:m] : nil), (date_item[:mx] ? date_item[:mx] : date_item[:mx2]), :chronMax
+          d2 = HgvDate.getDayIso date_item[:d2], (date_item[:m] ? date_item[:m] : nil), y2, (date_item[:mx] ? date_item[:mx] : date_item[:mx2]), :chronMax
           
           date2 = y2 + (m2 ? '-' + m2 + (d2 ? '-' + d2 : '') : '')
           
@@ -1775,7 +1903,7 @@ module HgvMetaIdentifierHelper
     #   - format +String+ or +nil+ if it cannot be converted
     # e.g. HgvFormat.formatMonth 8 => "Aug."
     def HgvFormat.formatMonth month
-      months = ['', 'Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.']
+      months = ['', 'Jan.', 'Febr.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.']
       month && month.to_i > 0 && month.to_i < 13 ? months[month.to_i] : nil
     end
     

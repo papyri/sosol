@@ -1,12 +1,20 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   def rpx_signin_url(signin_method='signin')
-    dest = url_for :controller => :rpx, :action => :login_return, :only_path => false
+    if ENV['RAILS_ENV'] == 'production'
+      dest = url_for :controller => :rpx, :action => :login_return, :only_path => false, :protocol => 'https'
+    else
+      dest = url_for :controller => :rpx, :action => :login_return, :only_path => false
+    end
     @rpx.signin_url(dest, signin_method)
   end
 
   def rpx_associate_url(signin_method='signin')
-    dest = url_for :controller => :rpx, :action => :associate_return, :only_path => false
+    if ENV['RAILS_ENV'] == 'production'
+      dest = url_for :controller => :rpx, :action => :associate_return, :only_path => false, :protocol => 'https'
+    else
+      dest = url_for :controller => :rpx, :action => :associate_return, :only_path => false
+    end
     @rpx.signin_url(dest, signin_method)
   end
 
@@ -134,7 +142,7 @@ class REXML::Element
   #   - +REXML::Element+ tip object of the xpath
   def self.bulldoze_path element, xpath, value = nil
     if !REXML::XPath::fully_qualified_and_simple? xpath
-      raise Exception.new 'invalid xpath for bulldozing (' + xpath + ')'
+      raise 'invalid xpath for bulldozing (' + xpath + ')'
     end
 
     if xpath.include? '/@'
@@ -148,7 +156,7 @@ class REXML::Element
       if element
         return element
       else
-        raise Exception.new "Unable to get element for #{xpath}"
+        raise "Unable to get element for #{xpath}"
       end
     end
     
@@ -176,7 +184,7 @@ class REXML::Element
     if head
       return head
     else
-      raise Exception.new "Unable to create element from #{xpath}"
+      raise "Unable to create element from #{xpath}"
     end
   end
 

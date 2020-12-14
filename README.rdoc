@@ -3,8 +3,8 @@
 == Requirements
 
 * Java SE 8 (1.8+)
-* JRuby (1.7.26) - Preferably managed through {rbenv}[https://github.com/sstephenson/rbenv]. Must be run in Ruby 2.0 compatibility mode (pass JRUBY_OPTS="--2.0" or use {rbenv-vars}[https://github.com/rbenv/rbenv-vars] to load this from the included .rbenv-vars file).
-* Bundler (1.15.1+) (gem install bundler)
+* JRuby (9.1.17.0) - Preferably managed through {rbenv}[https://github.com/sstephenson/rbenv].
+* Bundler (1.17.3+) (gem install bundler)
 * Git (1.7.1+)
 
 == Initial setup steps for development

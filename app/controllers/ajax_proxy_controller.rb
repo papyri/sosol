@@ -66,12 +66,13 @@ class AjaxProxyController < ApplicationController
   
   protected
     def get_xsugar_response(params)
+      xsugar_url = Sosol::Application.config.xsugar_standalone_url if Sosol::Application.config.respond_to?(:xsugar_standalone_url)
       begin
         if !Sosol::Application.config.respond_to?(:xsugar_standalone_url)
           Rails.logger.info("Returning nil for XSugar proxy request as XSugar standalone url is not set")
           return nil
         else
-          return Net::HTTP.post_form(URI.parse(Sosol::Application.config.xsugar_standalone_url),
+          return Net::HTTP.post_form(URI.parse(xsugar_url),
             {
               :content => params[:content].to_s,
               :type => params[:type].to_s,
@@ -79,6 +80,12 @@ class AjaxProxyController < ApplicationController
             }
           )
         end
+      rescue OpenSSL::SSL::SSLError => e
+        Rails.logger.info("AjaxProxyController#get_xsugar_response SSLError (#{e.inspect}), falling back to plain HTTP")
+        parsed_uri = URI.parse(xsugar_url)
+        parsed_uri.scheme = 'http'
+        xsugar_url = parsed_uri.to_s
+        retry
       rescue EOFError
         get_xsugar_response(params)
       end

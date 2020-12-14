@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:tei="http://www.tei-c.org/ns/1.0" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0" version="2.0">
 
   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
   
@@ -9,15 +9,7 @@
   <xsl:strip-space elements="tei:publicationStmt"/>
   
   <xsl:param name="filename_text"/>
-  <!--
-  <xsl:param name="title_text"/>
-  <xsl:param name="TM_text"/>
-  <xsl:param name="HGV_text"/>
-  -->
-  
-  <!-- params for reprint -->
-  <!-- <xsl:param name="reprint_from_text"/>
-  <xsl:param name="reprint_ref_attribute"/> -->
+  <xsl:param name="hybrid" as="xs:string"/> <!-- optional, something like »publication;volume;number«, e.g. »p.grenf;2;33« -->
 
   <!-- ||||||||||||||||||||||||||||||||||||||||||||||| -->
   <!-- |||||||||  copy all existing elements ||||||||| -->
@@ -39,14 +31,12 @@
   <!-- Suppress <TEI> @xml:id -->
   <xsl:template match="/tei:TEI/@xml:id"/>
 
-  <!-- Update <title> -->
-  <!--
-  <xsl:template match="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title">
-    <xsl:element name="title" namespace="http://www.tei-c.org/ns/1.0">
-      <xsl:value-of select="$title_text"/>
-    </xsl:element>
-  </xsl:template>
-  -->
+  <!-- Suppress deprecated HGV and HGV-deprecated idnos -->
+  <xsl:template match="tei:idno[@type='HGV']"/>
+  <xsl:template match="tei:idno[@type='HGV-deprecated']"/>
+
+  <!-- Suppress <idno type='ddb-perseus-style'> -->
+  <xsl:template match="tei:idno[@type='ddb-perseus-style']"/>
 
   <!-- Update <idno type='filename'> -->
   <xsl:template match="tei:idno[@type='filename']">
@@ -65,45 +55,33 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- Suppress deprecated HGV and HGV-deprecated idnos -->
-  <xsl:template match="tei:idno[@type='HGV']"/>
-  <xsl:template match="tei:idno[@type='HGV-deprecated']"/>
-
-  <!-- Update <idno type='HGV'> -->
-  <!--
-  <xsl:template match="tei:idno[@type='HGV']">
+  <!-- Update <idno type='dclp'> -->
+  <!-- We assume that a dclp file comes along with a <idno type='dclp'> tag -->
+  <xsl:template match="tei:idno[@type='dclp']">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:value-of select="$HGV_text"/>
+      <xsl:value-of select="$filename_text"/>
     </xsl:copy>
   </xsl:template>
-  -->
-  
-  <!-- Suppress <idno type='ddb-perseus-style'> -->
-  <xsl:template match="tei:idno[@type='ddb-perseus-style']"/>
-  
-  <!-- Update <sourceDesc> bibl -->
-  <!-- <xsl:template match="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:sourceDesc/tei:p">
-    <xsl:element name="p" namespace="http://www.tei-c.org/ns/1.0">
-      <xsl:element name="bibl" namespace="http://www.tei-c.org/ns/1.0">
-        <xsl:value-of select="$human_title_text"/>
-      </xsl:element>
-    </xsl:element>
-  </xsl:template> -->
-  
-  <!-- Add <ref> to point to reprint-from -->
-  <!-- <xsl:template match="/tei:TEI/tei:text/tei:body/tei:head[@xml:lang='en']">
+
+  <!-- Update dclp-hybrid -->
+  <!-- We assume that a dclp file comes along with a <idno type='dclp-hybrid'> tag -->
+  <xsl:template match="tei:idno[@type='dclp-hybrid']">
+    <xsl:variable name="hybrid-regex" select="'^[^;]+;[^;]*;[^;]+( [^;]+;[^;]*;[^;]+)*$'"/>
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates/>
-      <xsl:if test="$ddb_hybrid_ref_attribute != ''">
-        <xsl:element name="ref" namespace="http://www.tei-c.org/ns/1.0">
-          <xsl:attribute name="n"><xsl:value-of select="$reprint_ref_attribute"/></xsl:attribute>
-          <xsl:attribute name="type">reprint-from</xsl:attribute>
-          <xsl:value-of select="$reprint_from_text"/>
-        </xsl:element>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="matches($hybrid, $hybrid-regex)">
+          <xsl:value-of select="$hybrid"/>
+        </xsl:when>
+        <xsl:when test="not(starts-with(., 'na;;')) and matches(., $hybrid-regex)">
+          <xsl:value-of select="$hybrid"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="concat('na;;', $filename_text)"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:copy>
-  </xsl:template> -->
+  </xsl:template>
 
 </xsl:stylesheet>

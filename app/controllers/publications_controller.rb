@@ -96,8 +96,13 @@ class PublicationsController < ApplicationController
     end
 
     identifier = params[:id]
+    related_identifiers = nil
 
-    related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    if !(/papyri\.info\/dclp/ =~ identifier) # cromulent dclp hack to circumvent number server
+      related_identifiers = NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
+    else
+      related_identifiers = [identifier]
+    end
 
     publication_from_identifier(identifier, related_identifiers)
   end
@@ -136,6 +141,22 @@ class PublicationsController < ApplicationController
     @publication = new_publication
 
     flash[:notice] = 'Publication was successfully created.'
+    expire_publication_cache
+    redirect_to @publication
+  end
+
+  def create_from_dclp_template
+    @publication = Publication.new_from_dclp_template(@current_user)
+
+    # create event
+    e = Event.new
+    e.category = "created"
+    e.target = @publication
+    e.owner = @current_user
+    e.save!
+
+    flash[:notice] = 'Publication was successfully created.'
+    #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
     expire_publication_cache
     redirect_to @publication
   end
@@ -312,11 +333,11 @@ class PublicationsController < ApplicationController
       flash[:notice] = "Another user is currently making themselves the finalizer of this publication."
       redirect_to show
     else
-      if @publication.children.any?{|c| c.advisory_lock_exists?("finalize_#{c.id}")}
+      if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
         flash[:error] = "Cen't change finalizer - finalizer's copy is already in the process of being finalized."
         redirect_to show
       else
-        SendToFinalizerJob.new.async.perform(@publication.id, @current_user.id)
+        SendToFinalizerJob.perform_async(@publication.id, @current_user.id)
       end
     end
 
@@ -327,8 +348,8 @@ class PublicationsController < ApplicationController
   def finalize_review
     @publication = Publication.find(params[:id].to_s)
     @identifier = @publication.controlled_identifiers.last
-    if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
-      flash[:notice] = "This publication is currently being finalized. Check back in a few minutes."
+    if @publication.advisory_lock_exists?("finalize_#{@publication.parent.id}")
+      flash.now[:notice] = "This publication is currently being finalized. Check back in a few minutes."
     elsif @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}")
       flash[:notice] = "Someone is already performing a make-me-finalizer action with this publication. Please check back in a few minutes."
       redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.parent.owner.id
@@ -336,14 +357,25 @@ class PublicationsController < ApplicationController
 
     @diff = @publication.diff_from_canon
     if @diff.blank?
-      flash[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
+      flash.now[:error] = "WARNING: Diff from canon is empty. Something may be wrong."
+    elsif @publication.needs_rename?
+      identifiers_needing_rename = @publication.identifiers_needing_rename
+      flash.now[:notice] =  "Publication has one or more identifiers which need to be renamed before finalizing: #{identifiers_needing_rename.map{|i| i.name}.join(', ')}"
     end
     @is_editor_view = true
   end
 
   def finalize
     @publication = Publication.find(params[:id].to_s)
-    if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
+
+    if @publication.needs_rename?
+      identifiers_needing_rename = @publication.identifiers_needing_rename
+      flash[:error] = "Publication has one or more identifiers which need to be renamed before finalizing: #{identifiers_needing_rename.map{|i| i.name}.join(', ')}"
+      redirect_to @publication
+      return
+    end
+
+    if @publication.advisory_lock_exists?("finalize_#{@publication.parent.id}")
       flash[:error] = "Finalization is already running for this publication. Please check back in a few minutes."
       redirect_to :controller => 'user', :action => 'dashboard', :board_id => @publication.parent.owner.id
     elsif @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}")
@@ -355,7 +387,7 @@ class PublicationsController < ApplicationController
         # @publication.finalize(params[:comment])
         # flash[:notice] = 'Publication finalized.'
         # Asynchronous finalization, errors get sent to Airbrake
-        FinalizeJob.new.async.perform(@publication.id, params[:comment])
+        FinalizeJob.perform_async(@publication.id, params[:comment])
         flash[:notice] = "Finalization running. Check back in a few minutes."
         # Need a way to do this at the correct time for async finalization?
         expire_publication_cache(@publication.creator.id)
@@ -661,7 +693,7 @@ class PublicationsController < ApplicationController
     if address && address.strip != ""
       begin
         EmailerMailer.withdraw_note(address, @publication.title ).deliver
-      rescue Exception => e
+      rescue StandardError => e
         Rails.logger.error("Error sending withdraw email: #{e.class.to_s}, #{e.to_s}")
       end
     end

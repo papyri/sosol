@@ -4,9 +4,11 @@ require 'rails/test_help'
 require 'factory_girl_rails'
 require 'factory_girl'
 require 'shoulda'
+require 'shoulda/matchers'
+require 'test/unit'
+require 'test/unit/active_support'
 require 'active_support'
 require 'active_support/test_case'
-require 'test/unit'
 require 'database_cleaner'
 require 'sucker_punch/testing/inline'
 
@@ -24,7 +26,7 @@ class Test::Unit::TestCase
   # don't care one way or the other, switching from MyISAM to InnoDB tables
   # is recommended.
   #
-  # The only drawback to using transactional fixtures is when you actually 
+  # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
   # any transactions started in your code will be automatically rolled back.
   # self.use_transactional_fixtures = true
@@ -53,9 +55,9 @@ class ActiveSupport::TestCase
     if (!File.directory?(Sosol::Application.config.canonical_repository)) && File.directory?(Sosol::Application.config.canonical_canonical_repository)
       clone_command = ["git clone --bare",
                     Sosol::Application.config.canonical_canonical_repository,
-                    Sosol::Application.config.canonical_repository].join(' ')
+                    Sosol::Application.config.canonical_repository, '>/dev/null', '2>&1'].join(' ')
 
-      puts `#{clone_command}`
+      `#{clone_command}`
       return $?.success?
     else
       return true

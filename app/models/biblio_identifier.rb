@@ -553,8 +553,8 @@ class BiblioIdentifier < HGVIdentifier
         unless element.nil?
           if attribute
             element.attributes[attribute] = self[key]
-            if key == :paginationTo
-              element.text = self[key] + (self[:paginationFrom] && !self[:paginationFrom].strip.empty? ? '-' + self[:paginationFrom] : '' )
+            if key == :paginationFrom
+              element.text = self[key] + (self[:paginationTo] && !self[:paginationTo].strip.empty? ? '-' + self[:paginationTo] : '' )
             end
           else
             element.text = self[key]
@@ -714,7 +714,7 @@ class BiblioIdentifier < HGVIdentifier
           ptr.attributes['target'] = relatedItem.pointer
           element.add ptr
           REXML::Comment.new(' ignore - start, i.e. SoSOL users may not edit this ', element)
-          getRelatedItemElements(relatedItem.pointer).each{|ignore|
+          self.class.getRelatedItemElements(relatedItem.pointer).each{|ignore|
             element.add ignore
           }
           REXML::Comment.new(' ignore - stop ', element)
@@ -729,14 +729,15 @@ class BiblioIdentifier < HGVIdentifier
   #   - +biblioId+ → id of biblio record of interest
   # - *Returns* :
   #   - +Array+ of +REXML::Element+s or emtpy array if the requested record cannot be found
-  def getRelatedItemElements biblioId
+  def self.getRelatedItemElements biblioId
     result = []
 
     begin
       biblioId = biblioId[/\A[^\d]*([\d\-]+)\Z/, 1] # expecting sth like http://papyri.info/biblio/12345 or like http://papyri.info/biblio/2010-123345 or just the id, i.e. 12345 or 2010-12345
-  
-      biblio_data = Repository.new.get_file_from_branch(getBiblioPath(biblioId))
-      relatedItem = REXML::Document.new(biblio_data)
+
+      git = Grit::Repo.new(Sosol::Application.config.canonical_repository).commits.first.tree
+      biblio = git / getBiblioPath(biblioId)
+      relatedItem = REXML::Document.new(biblio.data)
 
       result[result.length] = if relatedItem.elements["//title[starts-with(@type, 'short')]"]
         relatedItem.elements["//title[starts-with(@type, 'short')]"]
@@ -761,7 +762,7 @@ class BiblioIdentifier < HGVIdentifier
   #   - +biblioId+ → biblioId, e.g. +12345+ for xwalked biblio records or +54321-2012+ for records created via SoSOL interface
   # - *Returns* :
   #   - +String+ file path, like +Biblio/13/12345.xml+ or +Biblio/2012/54321.xml+
-  def getBiblioPath biblioId
+  def self.getBiblioPath biblioId
     if biblioId.include?('-')
       biblioId = biblioId[/\A(\d+)-(\d+)\Z/, 1]
       folder = $2

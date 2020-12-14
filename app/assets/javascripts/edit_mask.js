@@ -1,17 +1,24 @@
 /**** multi ****/
 
-function multiAdd(id) {
-  var value = $$('#multiPlus_' + id + ' > input')[0].value;
+function multiAdd(id, minimumIndex = 0, pathToActualValue = null) {
+  if($$('#multiPlus_' + id + ' > input') && $$('#multiPlus_' + id + ' > input').length){
+    var value = $$('#multiPlus_' + id + ' > input')[0].value;
+    var idSuffix   = typeof pathToActualValue == 'string' ? '_' + pathToActualValue : '';
+    var nameSuffix = typeof pathToActualValue == 'string' ? '[' + pathToActualValue.replace(/_/g, '][') + ']' : '';
 
-  var index = multiGetNextIndex(id);
+    var index = multiGetNextIndex(id);
+    if((typeof minimumIndex == 'number') && (index < minimumIndex)){
+      index = minimumIndex;
+    }
 
-  var item = '<li>' +
-             '  <input type="text" value="' + value + '" name="hgv_meta_identifier[' + id + '][' + index + ']" id="hgv_meta_identifier_' + id + '_' + index + '" class="observechange">' +
-             '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
-             '  <span class="move">o</span>' +
-             '</li>';
+    var item = '<li>' +
+               '  <input type="text" value="' + value + '" name="hgv_meta_identifier[' + id + '][' + index + ']' + nameSuffix + '" id="hgv_meta_identifier_' + id + '_' + index + idSuffix + '" class="observechange">' +
+               '  <span onclick="multiRemove(this.parentNode)" class="delete">x</span>' +
+               '  <span class="move">o</span>' +
+               '</li>';
 
-  multiUpdate(id, item);
+    multiUpdate(id, item);
+  }
 }
 
 function multiGetNextIndex(id) {
@@ -70,8 +77,10 @@ function rememberToggledView(){
       })[0] + ';';
     }
   });
-  
+
   $('expansionSet').value = expansionSet;
+
+  return expansionSet;
 }
 
 function showExpansions(){
@@ -93,6 +102,7 @@ function showExpansions(){
     }
   });
   $('expansionSet').value = '';
+  return flash;
 }
 
 

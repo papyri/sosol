@@ -1,7 +1,7 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'https://rubygems.org'
-ruby "2.0.0", :engine => "jruby", :engine_version => "1.7.26"
+ruby "2.3.3", :engine => "jruby", :engine_version => "9.1.17.0"
 
 gem 'rails', '~> 3.2.22'
 
@@ -15,7 +15,7 @@ end
 
 group :test do
   gem 'rake'
-  gem 'mocha'
+  gem 'mocha', '~> 1.1.0'
 end
 
 gem 'jquery-rails'
@@ -24,25 +24,30 @@ gem 'haml', '= 4.0.6'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
-gem 'jdbc-sqlite3', '>= 3.6.3.054', :platform => :jruby
-gem 'activerecord-jdbc-adapter', '>= 0.9.2', :platform => :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '>= 0.9.2', :platform => :jruby
-gem 'activerecord-jdbcmysql-adapter', '>= 0.9.2', :platform => :jruby
+gem 'jdbc-sqlite3', '>= 3.7.2', :platform => :jruby
+gem 'activerecord-jdbc-adapter', '~> 1.3.25', :platform => :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '~> 1.3.25', :platform => :jruby
+gem 'activerecord-jdbcmysql-adapter', '~> 1.3.25', :platform => :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '~> 1.3.25', :platform => :jruby
 gem 'rack', '>= 1.1.0'
+gem 'handle_invalid_percent_encoding_requests'
 gem 'shoulda-matchers', '>= 2.0.0'
 gem 'shoulda', '>= 2.11.3'
 gem "factory_girl_rails", ">= 1.2"
 gem 'factory_girl', '>= 2.6.4'
 gem 'airbrake', '~> 5.6.1'
-gem 'rubyzip', '~> 0.9.0', :require => 'zip/zip'
+gem 'rubyzip', '~> 1.0'
+gem 'zip-zip'
 gem 'prototype-rails'
 gem 'dynamic_form'
 gem 'capistrano', '~> 2.15.0'
-gem 'warbler', '~> 1.4.0'
+gem 'warbler', '~> 2.0'
 gem 'puma'
 gem 'database_cleaner'
-gem 'sucker_punch', '~> 1.0'
+gem 'sucker_punch', '~> 2.0'
 gem 'with_advisory_lock', '~> 3.0.0'
 gem 'silencer'
+gem 'rack-attack', '~> 4.0'
 
 gem 'test_after_commit', '= 0.4.1', :group => :test
+gem 'test-unit-rails', '= 1.0.4', :group => :test

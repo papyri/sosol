@@ -16,7 +16,7 @@ namespace :git do
     namespace :canonical do
       desc "Clone Canonical idp.data Git database"
       task :clone => :environment do
-        require 'config/boot'
+        require File.expand_path('../../../config/boot', __FILE__)
         
         if ENV['RAILS_ENV'] == "test"
           CANONICAL_CLONE_URL = "git://github.com/ryanfb/idp.data.test.git"
@@ -29,6 +29,9 @@ namespace :git do
                           CANONICAL_CLONE_URL,
                           "\"#{Sosol::Application.config.canonical_repository}\""].join(' ')
           
+          if ENV['RAILS_ENV'] == "test"
+            clone_command += ' >/dev/null 2>&1'
+          end
           system(clone_command)
         end
       end

@@ -26,7 +26,7 @@ class Vote < ActiveRecord::Base
 
       related_votes = self.publication.votes(true)
       Rails.logger.info("Vote#tally called for #{self.publication.id} with votes #{related_votes.inspect}")
-      TallyVotesJob.new.async.perform(self.publication.id, related_votes)
+      TallyVotesJob.perform_async(self.publication.id, related_votes)
     end
     return nil
   end

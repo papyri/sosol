@@ -35,6 +35,10 @@ class DdbIdentifiersController < IdentifiersController
 
           # get div type=edition from XML in string format for conversion
           abs = DDBIdentifier.get_div_edition(original_xml).join('')
+          # if there’s only an empty stub, add a single line to make it valid for xsugar grammar and add default language if there is none
+          if /\A<div[^>]+\/>\Z/ =~ abs then
+            abs = abs[0..-3] + (/xml:lang/ =~ abs ? '' : ' xml:lang="grc"') + '><ab><lb n="1"/></ab></div>'
+          end
           
           if @identifier.get_broken_leiden.nil?  
             @identifier[:leiden_plus] = abs
@@ -56,10 +60,6 @@ class DdbIdentifiersController < IdentifiersController
       flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
       new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
       @identifier[:leiden_plus] = new_content
-    rescue Java::JavaLang::NullPointerException => null_pointer_error
-      flash[:error] = "Error retrieving file content from repository. This error has been logged for review by an administrator."
-      notify_airbrake(null_pointer_error)
-      redirect_to dashboard_url
     end
     @is_editor_view = true
   end
@@ -264,8 +264,13 @@ class DdbIdentifiersController < IdentifiersController
   def preview
     find_identifier
 
-    @identifier[:html_preview] = @identifier.preview
-    
+    begin
+      @identifier[:html_preview] = @identifier.preview
+    rescue JRubyXML::ParseError => parse_error
+      flash[:error] = "Error parsing XML for preview. #{parse_error.to_str}"
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                 :action => :editxml)
+    end
     @is_editor_view = true
   end
   

@@ -47,18 +47,18 @@
 
   %br
     
-    - approved_publications = @board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+    - approved_publications = @board.publications.collect{|p| p.status == "approved" ? p : nil}.compact
              
     %h2
       #{@board.title} 
       Publications 
-    - board_publications = @board.publications.collect{|p| p.status == "voting" ? p :nil}.compact
+    - board_publications = @board.publications.collect{|p| p.status == "voting" ? p : nil}.compact
     - if board_publications.length > 0        
       %h3== Voting Publications
       = render :partial => "publications/list", :object => board_publications
       %br
       
-    -#- approved_publications = @board.publications.collect{|p| p.status == "approved" ? p :nil}.compact
+    -#- approved_publications = @board.publications.collect{|p| p.status == "approved" ? p : nil}.compact
     - if approved_publications.length > 0        
       %h3== Approved Publications
       = render :partial => "publications/list", :object => approved_publications
@@ -70,13 +70,13 @@
       = render :partial => "publications/list", :object => @finalizing_publications
       %br
       
-    - board_publications = @board.publications.collect{|p| p.status == "committed" ? p :nil}.compact
+    - board_publications = @board.publications.collect{|p| p.status == "committed" ? p : nil}.compact
     - if board_publications.length > 0        
       %h3== Committed Publications
       = render :partial => "publications/list", :object => board_publications
       %br
       
-    - board_publications = @board.publications.collect{|p| p.status == "archived" ? p :nil}.compact
+    - board_publications = @board.publications.collect{|p| p.status == "archived" ? p : nil}.compact
     - if board_publications.length > 0        
       %h3== Archived Publications
       = render :partial => "publications/list", :object => board_publications

@@ -24,7 +24,7 @@ class BoardsController < ApplicationController
       finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions =>  { :status => 'finalizing'} )    
 
       if finalizing_publications
-        @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p :nil}.compact
+        @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p : nil}.compact
       else
        @finalizing_publications = nil
       end
@@ -101,7 +101,7 @@ class BoardsController < ApplicationController
     #  @available_identifier_classes -= b.identifier_classes
     #end
     
-    if params[:community_id].to_s
+    if params[:community_id]
       @board.community_id =  params[:community_id].to_s
     end
      
@@ -179,7 +179,9 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id].to_s)
 
     respond_to do |format|
-      if @board.update_attributes(params[:board])
+      board_params = params[:board].slice(:friendly_name, :skip_finalize, :requires_assignment, :max_assignable)
+
+      if @board.update_attributes(board_params)
         flash[:notice] = 'Board was successfully updated.'
         format.html { redirect_to(@board) }
         format.xml  { head :ok }
@@ -206,7 +208,7 @@ class BoardsController < ApplicationController
   #If community_id is given then the returned boards are only for that community.
   #If no community_id is given then the "sosol" boards are returned. 
   def rank
-    if params[:community_id].to_s
+    if params[:community_id]
       @boards = Board.ranked_by_community_id( params[:community_id].to_s )
       @community_id = params[:community_id].to_s 
     else
@@ -219,7 +221,7 @@ class BoardsController < ApplicationController
   #Sorts board rankings by given array of board id's and saves new rankings.
   def update_rankings
 
-    if params[:community_id].to_s
+    if !params[:community_id].blank?
       @boards = Board.ranked_by_community_id( params[:community_id].to_s )
     else
       #default to sosol boards
@@ -243,7 +245,7 @@ class BoardsController < ApplicationController
     end
     
     
-    if params[:community_id].to_s
+    if !params[:community_id].blank?
       redirect_to :controller => 'communities', :action => 'edit',  :id => params[:community_id].to_s
       return
     else
@@ -323,7 +325,7 @@ def send_board_reminder_emails
       if address && address.strip != ""
         begin
           EmailerMailer.general_email(address, subject_line, body_text).deliver
-        rescue Exception => e
+        rescue StandardError => e
           Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
         end
       end
