@@ -6,7 +6,7 @@ div.metaSite select,
 div.metaSite input {
   font-size: 0.846em; }
 
-/*** *** */
+/**** *** */
 span.quickHelp {
   float: left;
   height: 1.6em;
@@ -15,7 +15,7 @@ span.quickHelp {
   z-index: 100; }
 
 span.quickHelp span.hook {
-  color: #162a5c;
+  color: #162A5C;
   cursor: pointer;
   font-weight: bold;
   padding: 0.1em;
@@ -23,9 +23,9 @@ span.quickHelp span.hook {
 
 span.quickHelp span.message {
   background-color: lightgrey;
-  border: 0.1em solid #162a5c;
+  border: 0.1em solid #162A5C;
   bottom: 0.8em;
-  color: #162a5c;
+  color: #162A5C;
   font-variant: normal;
   font-weight: normal;
   left: 1.6em;
@@ -33,7 +33,7 @@ span.quickHelp span.message {
   position: absolute;
   width: 16em; }
 
-/*** quicksave / expand / collapse / showDateTabs *** */
+/**** quicksave / expand / collapse / showDateTabs *** */
 .showDateTabs {
   position: absolute;
   right: 2em;
@@ -42,7 +42,7 @@ span.quickHelp span.message {
 div#edit label.apis {
   width: 8em; }
 
-/*** special *** */
+/**** special *** */
 li.facsimile span.delete {
   position: absolute;
   right: 1.1em;
@@ -110,23 +110,10 @@ div#edit input#hgv_meta_identifier_publicationExtra_2_value,
 div#edit input#hgv_meta_identifier_publicationExtra_3_value {
   width: 7.5em; }
 
-div#edit input#hgv_meta_identifier_titleStmt,
-div#edit input#hgv_meta_identifier_overview,
-div#edit input#hgv_meta_identifier_layout,
-div#edit input#hgv_meta_identifier_archiveName,
-div#edit input#hgv_meta_identifier_archiveLink,
-div#edit ul#multiItems_collectionList input
- {
+div#edit input#hgv_meta_identifier_titleStmt {
   width: 27em; }
 
-div#edit input#hgv_meta_identifier_material,
-div#edit input#hgv_meta_identifier_bookForm,
-div#edit input#hgv_meta_identifier_columns,
-div#edit input#hgv_meta_identifier_writtenLines,
-div#edit input#hgv_meta_identifier_scriptType,
-div#edit input#hgv_meta_identifier_pagination,
-div#edit input#hgv_meta_identifier_width,
-div#edit input#hgv_meta_identifier_height {
+div#edit input#hgv_meta_identifier_material {
   width: 10em; }
 
 div#edit div.editbox label#publicationExtraFullTitle {
@@ -140,14 +127,14 @@ div#edit input#apis_identifier_textLang,
 div#edit input#apis_identifier_origDate,
 div#edit input#apis_identifier_origPlace,
 div#edit input#apis_identifier_figHead,
-div#edit input#apis_identifier_figUrl,
-div#edit input#apis_identifier_facsUrl,
-div#edit input#apis_identifier_facsUrl2,
+div#edit input.apis_identifier_figUrl,
+div#edit input.apis_identifier_facsUrl,
+div#edit input.apis_identifier_facsUrl2,
 div#edit input#apis_identifier_citation,
 div#edit input#apis_identifier_originalRecord {
   width: 45.7em; }
 
-div#edit input#apis_identifier_surfaceType {
+div#edit input.apis_identifier_surfaceType {
   width: 15em; }
 
 div#edit textarea.apis {
@@ -189,10 +176,7 @@ div#edit div.editbox label#apis_identifier_genre_label,
 div#edit div.editbox label#apis_identifier_figHead_label,
 div#edit div.editbox label#apis_identifier_figDesc_label,
 div#edit div.editbox label#apis_identifier_figUrl_label,
-div#edit div.editbox label#apis_identifier_surfaceGrpId_label,
-div#edit div.editbox label#apis_identifier_surfaceType1_label,
-div#edit div.editbox label#apis_identifier_surfaceType2_label,
-div#edit div.editbox label#apis_identifier_facsUrl_label,
+div#edit div.editbox li.facsimile label,
 div#edit div.editbox label#apis_identifier_citeNote_label,
 div#edit div.editbox label#apis_identifier_citeType_label {
   clear: left; }
@@ -260,7 +244,7 @@ span.quickHelp_meta_help_mentionedDateNotAfter,
 span.quickHelp_meta_help_collection {
   z-index: 400; }
 
-/*** multi special *** */
+/**** multi special *** */
 div#edit div.multi ul#multiItems_contentText li {
   float: left;
   width: 14em;
@@ -363,7 +347,7 @@ div#edit p#multiPlus_translationsEn input,
 div#edit p#multiPlus_translationsIt input {
   width: 44em; }
 
-/*** provenance *** */
+/**** provenance *** */
 .clear {
   float: none;
   clear: both;
@@ -410,7 +394,7 @@ div#edit div.multi.geoSpot div.multi.geoReference p input {
   width: 40em;
   margin: 0; }
 
-/*** date *** */
+/**** date *** */
 div#edit div#dateContainer {
   position: relative;
   height: 36em;
@@ -422,9 +406,9 @@ div#edit div#dateContainer div.dateItem {
   top: 4em; }
 
 div#edit div#dateContainer div.dateItem div.dateTab {
-  border-top: solid 0.1em silver;
-  border-right: solid 0.1em silver;
-  border-left: solid 0.1em silver;
+  border-top: solid 0.1em #c0c0c0;
+  border-right: solid 0.1em #c0c0c0;
+  border-left: solid 0.1em #c0c0c0;
   width: 3em;
   height: 3em;
   position: absolute;
@@ -446,12 +430,12 @@ div#edit div#dateContainer div.dateItem div.dateTab span {
 
 div#edit div#dateContainer div.dateItem div.dateInfo {
   display: none;
-  border: solid 0.1em silver;
+  border: solid 0.1em #c0c0c0;
   padding: 0.4em;
   width: 48em; }
 
 div#edit div#dateContainer div.dateItemActive div.dateTab {
-  background-color: silver; }
+  background-color: #c0c0c0; }
 
 div#edit div#dateContainer div.dateItemActive div.dateInfo {
   display: block; }
@@ -483,8 +467,8 @@ div#edit div.dateItem div.dateInfo p select.certainty {
 div#edit div.dateItem div.dateInfo hr,
 div#edit div.editbox hr {
   border: 0;
-  color: silver;
-  background-color: silver;
+  color: #c0c0c0;
+  background-color: #c0c0c0;
   height: 1px;
   margin: 0.8em 0 0.8em 0;
   width: 100%;
@@ -503,63 +487,8 @@ div.metaSite div#edit div#dateContainer p {
 div#edit p#multiPlus_publicationExtra label {
   width: 7em; }
 
-/* DCLP */
+/**** DCLP meta editor *** */
+div.contentText {
+  float: left; }
 
-div.genre, div.religion, div.culture {
-  float: left;
-}
-
-div.keywords {
-  clear: both;
-  display: block;
-  width: auto;
-  position: relative;
-}
-
-div#edit div.keywords li {
-  width: auto;
-  float: left;
-  clear: none;
-}
-
-div#edit ul#multiItems_printedIllustration input,
-div#edit ul#multiItems_onlineResource input,
-div#edit p#multiPlus_printedIllustration input,
-div#edit p#multiPlus_onlineResource input {
-  width: 42em;
-}
-
-
-div#edit input.workExtraAnd{
-  border: none;
-  background: transparent;
-  color: black;
-}
-
-div#edit input.workCertainty,
-div#edit input.workCorresp,
-div#edit div.ref input {
-  width: 32em;
-}
-
-div#edit label.displayName,
-div#edit label.archiveName,
-div#edit label.archiveLink {
-  width: 14em;
-}
-
-div#edit label.workDateTo {
-  width: 2em;
-}
-
-div#edit label.workDateFrom {
-  width: 8em;
-}
-
-div#edit div.multi {
-  width: auto;
-}
-
-div#edit textarea#hgv_meta_identifier_notes{
-  height: 10em;
-}
+/*# sourceMappingURL=meta.css.map */

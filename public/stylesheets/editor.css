@@ -35,7 +35,7 @@
   #edit_header #submit select {
     font-family: helvetica, arial, clean, sans-serif;
     font-size: 1.25em;
-    color: #3c2217;
+    color: #3C2217;
     padding: 0.25em;
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -46,14 +46,14 @@
     #edit_header #submit select:hover {
       background: #dadada; }
     #edit_header #submit select:active {
-      background: silver;
+      background: #c0c0c0;
       border-style: inset; }
     #edit_header #submit select:disabled {
       color: #c8aea3; }
   #edit_header #submit #vote_submit {
     font-family: helvetica, arial, clean, sans-serif;
     font-size: 1.25em;
-    color: #3c2217;
+    color: #3C2217;
     padding: 0.25em;
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -64,7 +64,7 @@
     #edit_header #submit #vote_submit:hover {
       background: #dadada; }
     #edit_header #submit #vote_submit:active {
-      background: silver;
+      background: #c0c0c0;
       border-style: inset; }
     #edit_header #submit #vote_submit:disabled {
       color: #c8aea3; }
@@ -75,7 +75,7 @@
 styled_button {
   font-family: helvetica, arial, clean, sans-serif;
   font-size: 1.25em;
-  color: #3c2217;
+  color: #3C2217;
   padding: 0.25em;
   padding-left: 0.5em;
   padding-right: 0.5em;
@@ -86,7 +86,7 @@ styled_button {
   styled_button:hover {
     background: #dadada; }
   styled_button:active {
-    background: silver;
+    background: #c0c0c0;
     border-style: inset; }
   styled_button:disabled {
     color: #c8aea3; }
@@ -108,7 +108,7 @@ styled_button {
 input.submit {
   font-family: helvetica, arial, clean, sans-serif;
   font-size: 1.25em;
-  color: #3c2217;
+  color: #3C2217;
   padding: 0.25em;
   padding-left: 0.5em;
   padding-right: 0.5em;
@@ -119,7 +119,7 @@ input.submit {
   input.submit:hover {
     background: #dadada; }
   input.submit:active {
-    background: silver;
+    background: #c0c0c0;
     border-style: inset; }
   input.submit:disabled {
     color: #c8aea3; }
@@ -134,7 +134,7 @@ p.show {
 styled_button_show {
   font-family: helvetica, arial, clean, sans-serif;
   font-size: 1.25em;
-  color: #3c2217;
+  color: #3C2217;
   padding: 0.25em;
   padding-left: 0.5em;
   padding-right: 0.5em;
@@ -151,7 +151,7 @@ styled_button_show {
   styled_button_show:hover {
     background: #dadada; }
   styled_button_show:active {
-    background: silver;
+    background: #c0c0c0;
     border-style: inset; }
   styled_button_show:disabled {
     color: #c8aea3; }
@@ -242,13 +242,13 @@ styled_button_show {
 
 .flash.warning {
   color: red;
-  background: #ffff99;
+  background: #FFFF99;
   border-color: yellow; }
 
 .site form input.save {
   font-family: helvetica, arial, clean, sans-serif;
   font-size: 1.25em;
-  color: #3c2217;
+  color: #3C2217;
   padding: 0.25em;
   padding-left: 0.5em;
   padding-right: 0.5em;
@@ -259,7 +259,7 @@ styled_button_show {
   .site form input.save:hover {
     background: #dadada; }
   .site form input.save:active {
-    background: silver;
+    background: #c0c0c0;
     border-style: inset; }
   .site form input.save:disabled {
     color: #c8aea3; }
@@ -278,6 +278,7 @@ styled_button_show {
 
 #rename form div.new_name_new_hybrid input.comment {
   width: 12em; }
+
 #edit form textarea {
   width: 100%;
   height: 50em;
@@ -290,7 +291,7 @@ styled_button_show {
 #edit form input.save {
   font-family: helvetica, arial, clean, sans-serif;
   font-size: 1.25em;
-  color: #3c2217;
+  color: #3C2217;
   padding: 0.25em;
   padding-left: 0.5em;
   padding-right: 0.5em;
@@ -303,14 +304,14 @@ styled_button_show {
   #edit form input.save:hover {
     background: #dadada; }
   #edit form input.save:active {
-    background: silver;
+    background: #c0c0c0;
     border-style: inset; }
   #edit form input.save:disabled {
     color: #c8aea3; }
 #edit form input.brokenbottom {
   font-family: helvetica, arial, clean, sans-serif;
   font-size: 1.25em;
-  color: #3c2217;
+  color: #3C2217;
   padding: 0.25em;
   padding-left: 0.5em;
   padding-right: 0.5em;
@@ -324,7 +325,7 @@ styled_button_show {
   #edit form input.brokenbottom:hover {
     background: #dadada; }
   #edit form input.brokenbottom:active {
-    background: silver;
+    background: #c0c0c0;
     border-style: inset; }
   #edit form input.brokenbottom:disabled {
     color: #c8aea3; }
@@ -335,7 +336,7 @@ styled_button_show {
 #edit form input.savetop {
   font-family: helvetica, arial, clean, sans-serif;
   font-size: 1.25em;
-  color: #3c2217;
+  color: #3C2217;
   padding: 0.25em;
   padding-left: 0.5em;
   padding-right: 0.5em;
@@ -349,14 +350,14 @@ styled_button_show {
   #edit form input.savetop:hover {
     background: #dadada; }
   #edit form input.savetop:active {
-    background: silver;
+    background: #c0c0c0;
     border-style: inset; }
   #edit form input.savetop:disabled {
     color: #c8aea3; }
 #edit form input.brokentop {
   font-family: helvetica, arial, clean, sans-serif;
   font-size: 1.25em;
-  color: #3c2217;
+  color: #3C2217;
   padding: 0.25em;
   padding-left: 0.5em;
   padding-right: 0.5em;
@@ -371,7 +372,7 @@ styled_button_show {
   #edit form input.brokentop:hover {
     background: #dadada; }
   #edit form input.brokentop:active {
-    background: silver;
+    background: #c0c0c0;
     border-style: inset; }
   #edit form input.brokentop:disabled {
     color: #c8aea3; }
@@ -421,7 +422,6 @@ styled_button_show {
         background: white;
         left: auto; }
         #identifier_menu ul li ul li {
-          width: 100%;
           background: white;
           clear: both;
           float: left; }
@@ -458,11 +458,11 @@ styled_button_show {
   text-align: left; }
 
 #sub_menu_2 {
-  background-color: silver;
+  background-color: #c0c0c0;
   text-align: left; }
   #sub_menu_2 a:hover {
     text-decoration: none;
-    background-color: #aaaaaa; }
+    background-color: #aaa; }
 
 ul.publications a.modified {
   font-weight: bold; }
@@ -556,7 +556,7 @@ ul.publications li ul li.last:after {
     .commentary#edition ul li.input div.form input.save_commentary {
       font-family: helvetica, arial, clean, sans-serif;
       font-size: 1.25em;
-      color: #3c2217;
+      color: #3C2217;
       padding: 0.25em;
       padding-left: 0.5em;
       padding-right: 0.5em;
@@ -568,7 +568,7 @@ ul.publications li ul li.last:after {
       .commentary#edition ul li.input div.form input.save_commentary:hover {
         background: #dadada; }
       .commentary#edition ul li.input div.form input.save_commentary:active {
-        background: silver;
+        background: #c0c0c0;
         border-style: inset; }
       .commentary#edition ul li.input div.form input.save_commentary:disabled {
         color: #c8aea3; }
@@ -590,7 +590,7 @@ ul.publications li ul li.last:after {
   .frontmatter_container div.form input.save_commentary {
     font-family: helvetica, arial, clean, sans-serif;
     font-size: 1.25em;
-    color: #3c2217;
+    color: #3C2217;
     padding: 0.25em;
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -602,7 +602,7 @@ ul.publications li ul li.last:after {
     .frontmatter_container div.form input.save_commentary:hover {
       background: #dadada; }
     .frontmatter_container div.form input.save_commentary:active {
-      background: silver;
+      background: #c0c0c0;
       border-style: inset; }
     .frontmatter_container div.form input.save_commentary:disabled {
       color: #c8aea3; }
@@ -637,18 +637,18 @@ ul.publications li ul li.last:after {
       color: #979797; }
 
 .comment_partial {
-  background-color: #bbbbbb;
+  background-color: #BBBBBB;
   clear: both;
   border-style: solid;
   border-width: 1px; }
   .comment_partial .meta_comment {
-    background-color: #99ff99; }
+    background-color: #99FF99; }
   .comment_partial .model_comment {
-    background-color: #72fff4; }
+    background-color: #72FFF4; }
   .comment_partial .text_comment {
-    background-color: #ffffc0; }
+    background-color: #FFFFC0; }
   .comment_partial .translation_comment {
-    background-color: #ffcd81; }
+    background-color: #FFCD81; }
   .comment_partial .name {
     float: left; }
   .comment_partial .time {
@@ -660,7 +660,7 @@ ul.publications li ul li.last:after {
     float: right; }
   .comment_partial .comment {
     clear: both;
-    background-color: #e7e7e7; }
+    background-color: #E7E7E7; }
 
 #editing_trans_text_view {
   border-width: 1px;
@@ -726,8 +726,7 @@ div.nav {
 }
 
 div.nav li ul {
-  z-index: 103; 
-}
+  z-index: 103; }
 
 div.editor_nav {
   display: none;
@@ -738,12 +737,12 @@ div.editor_nav {
       padding-left: 5px;
       text-decoration: none;
       display: block;
-      color: #5c0303; }
+      color: #5C0303; }
       div.editor_nav ul a:hover {
-        background-color: #f8f6f4; }
+        background-color: #F8F6F4; }
 
 li.editor_menu {
-  color: #5c0303;
+  color: #5C0303;
   cursor: pointer; }
   li.editor_menu:hover {
     background-color: white; }
@@ -771,15 +770,15 @@ ul.sign_in_out {
     ul.sign_in_out li a {
       text-decoration: none; }
       ul.sign_in_out li a:link {
-        color: #f8f6f4; }
+        color: #F8F6F4; }
       ul.sign_in_out li a:visited {
-        color: #f8f6f4; }
+        color: #F8F6F4; }
       ul.sign_in_out li a:hover {
         color: black;
-        background-color: #f8f6f4; }
+        background-color: #F8F6F4; }
 
 div.votes {
-  background-color: #f8f6f4;
+  background-color: #F8F6F4;
   border-style: solid;
   border-color: black;
   border-width: 1px; }
@@ -787,7 +786,7 @@ div.votes {
     text-align: left; }
 
 div.batch_box {
-  background-color: #f8f6f4;
+  background-color: #F8F6F4;
   border-style: solid;
   border-color: black;
   border-width: 1px; }
@@ -799,8 +798,9 @@ div.batch_box {
 div.preview_commentary {
   margin-left: 3em; }
 
-form.edit_dclp_meta_identifier label{
+form.edit_dclp_meta_identifier label {
   display: block;
   float: left;
-  width: 12em;
-}
+  width: 12em; }
+
+/*# sourceMappingURL=editor.css.map */
