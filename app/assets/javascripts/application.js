@@ -1,10 +1,10 @@
+//= require jquery
+//= require jquery_ujs
 //= require prototype
+//= require rails
 //= require effects
 //= require dragdrop
 //= require controls
-//= require jquery
-//= require jquery_ujs
-//= require rails
 //= require_self
 
 // Place your application-specific JavaScript functions and classes here
@@ -27,7 +27,7 @@ function showHide(id)
 // See:  http://weblog.rubyonrails.org/2011/2/8/csrf-protection-bypass-in-ruby-on-rails
 /*
  * Registers a callback which copies the csrf token into the
- * X-CSRF-Token header with each ajax request.  Necessary to 
+ * X-CSRF-Token header with each ajax request.  Necessary to
  * work with rails applications which have fixed
  * CVE-2011-0447
 */
