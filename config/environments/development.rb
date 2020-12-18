@@ -29,5 +29,10 @@ Sosol::Application.configure do
   require File.join(File.dirname(__FILE__), 'development_secret')
   # configure email parameters
   config.site_email_from='admin@localhost'
+
+  # Don't compress assets in development mode
+  config.assets.compress = false
+  # Expands the lines which load the assets
+  config.assets.debug = true
 end
 

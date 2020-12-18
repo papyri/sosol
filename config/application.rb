@@ -68,7 +68,6 @@ module Sosol
 
     config.assets.enabled = true
     config.assets.version = '1.0'
-    config.assets.compress = false
     config.assets.precompile += ['*.css', '*.css.scss', '*.css.sass']
   end
 end
