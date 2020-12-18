@@ -94,7 +94,16 @@ class UserController < ApplicationController
   end
 
   def signin
-
+    if (ENV['RAILS_ENV'] == 'development') && @current_user.nil? && params[:developer]
+      developer = User.find_by_name('developer')
+      if developer.nil?
+        developer = User.create(:name => 'developer', :email => 'developer@example.com', :full_name => 'Development User')
+        developer.save!
+      end
+      session[:user_id] = developer.id
+      session[:identifier] = nil
+      redirect_to :controller => "welcome", :action => "index"
+    end
   end
 
   def developer
