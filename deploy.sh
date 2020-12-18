@@ -9,8 +9,8 @@ if [ $? -eq 0 ]; then
 sudo -u tomcat JRUBY_OPTS="-J-Xmx4g" jruby -S bundle install
 sudo -u tomcat jruby -S bundle exec cap local externals:setup
 sudo -u tomcat jruby -S bundle exec rake db:migrate RAILS_ENV="production"
-# Only needed for asset pipeline in future versions of Rails:
-# sudo -u tomcat jruby -S bundle exec rake assets:precompile RAILS_ENV=production
+# Needed for asset pipeline:
+sudo -u tomcat jruby -S bundle exec rake assets:precompile RAILS_ENV=production
 sudo -u tomcat jruby -S bundle exec warble war
 BACKUP_WAR="editor.war.bak$(date +"%Y%m%d.%H.%M.%S")"
 sudo cp -v /usr/local/tomcat-sosol/webapps/editor.war ${BACKUP_WAR}
