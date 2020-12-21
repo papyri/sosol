@@ -74,5 +74,25 @@ module Sosol
     config.assets.enabled = true
     config.assets.version = '1.0'
     config.assets.precompile += ['*.css', '*.css.scss', '*.css.sass']
+    config.assets.precompile += %w[
+      apis-mapping.js
+      apis.js
+      biblio.js
+      clipboard.js
+      commentary.js
+      confirm.js
+      dashboard.js
+      dclp.js
+      docos.js
+      edit_mask.js
+      formX.js
+      helper.js
+      leiden.js
+      menu-for-applications.js
+      meta.js
+      overlib/overlib.js
+      translation_helper.js
+      translation_leiden.js
+    ]
   end
 end
