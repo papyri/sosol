@@ -1,12 +1,12 @@
 # Disable automatic framework detection by uncommenting/setting to false
 # Warbler.framework_detection = false
 
-require 'sass/plugin'
+# require 'sass/plugin'
 
 # Warbler web application assembly configuration file
 Warbler::Config.new do |config|
   # Update stylesheets before doing anything
-  Sass::Plugin.update_stylesheets
+  # Sass::Plugin.update_stylesheets
   
   # Temporary directory where the application is staged
   # config.staging_dir = "tmp/war"
@@ -64,10 +64,10 @@ Warbler::Config.new do |config|
 
   # Files to be included in the root of the webapp.  Note that files in public
   # will have the leading 'public/' part of the path stripped during staging.
-  # config.public_html = FileList["public/**/*", "doc/**/*"]
+  config.public_html = FileList["public/**/*"] # , "doc/**/*"]
 
   # Pathmaps for controlling how public HTML files are copied into the .war
-  # config.pathmaps.public_html = ["%{public/,}p"]
+  config.pathmaps.public_html = ["%{public/,}p"]
 
   # Name of the war file (without the .war) -- defaults to the basename
   # of RAILS_ROOT
