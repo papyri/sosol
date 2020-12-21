@@ -1,6 +1,8 @@
 /**** multi ****/
 
-function multiAdd(id, minimumIndex = 0, pathToActualValue = null) {
+function multiAdd(id, minimumIndex, pathToActualValue) {
+  var minimumIndex = (typeof minimumIndex !== 'undefined') ?  minimumIndex : 0;
+  var pathToActualValue = (typeof pathToActualValue !== 'undefined') ?  pathToActualValue : null;
   if($$('#multiPlus_' + id + ' > input') && $$('#multiPlus_' + id + ' > input').length){
     var value = $$('#multiPlus_' + id + ' > input')[0].value;
     var idSuffix   = typeof pathToActualValue == 'string' ? '_' + pathToActualValue : '';
