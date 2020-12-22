@@ -85,7 +85,7 @@ input.new_lang_button {
 	width:12px;
 	background-repeat:no-repeat;
 	background-position:center center;
-	background-image: image-url("menu_strip_down_arrow.png");
+  background-image: url("<%= asset_path("menu_strip_down_arrow.png") %>");
 	margin:0px;
 	margin-right:-1px;
 	/* ma\rgin-right:-3px;	/* Size of padding-right of top menu items - used to get the arrow to apear at the right of the menu item */
@@ -113,7 +113,7 @@ input.new_lang_button {
 	padding-left:3px;
 	padding-right:3px;
 	background-repeat:repeat-y;
-	background-image: image-url("menu_strip_separator-gray.gif");
+  background-image: url("<%= asset_path("menu_strip_separator-gray.gif") %>");
 	
 }
 
@@ -170,7 +170,7 @@ input.new_lang_button {
 	
 }
 .Custom_menuItem_sub_arrowShowSub{	/* Arrow div for sub elements (Right pointing arrow ) */
-	background-image: image-url("menu-bar-right-arrow.png");
+  background-image: url("<%= asset_path("menu-bar-right-arrow.png") %>");
 	width:18px;
 	height:18px;
 	text-align:right;
