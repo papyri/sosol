@@ -73,7 +73,7 @@ module Sosol
 
     config.assets.enabled = true
     config.assets.version = '1.0'
-    config.assets.precompile += ['*.css', '*.css.scss', '*.css.sass']
+    config.assets.precompile += ['*.css', '*.css.scss', '*.css.sass', '*.sass.erb', '*.scss.erb']
     config.assets.precompile += %w[
       apis-mapping.js
       apis.js
