@@ -371,7 +371,7 @@ class Publication < ActiveRecord::Base
     new_publication = Publication.new(:owner => creator, :creator => creator)
 
     # fetch a title without creating from template
-    new_publication.title = DCLPMetaIdentifier.new(:name => DCLPMetaIdentifier.next_temporary_identifier).titleize
+    new_publication.title = "DCLP #{DCLPMetaIdentifier.new(:name => DCLPMetaIdentifier.next_temporary_identifier).titleize}"
 
     new_publication.status = "new" #TODO add new flag else where or flesh out new status#"new"
     new_publication.save!
