@@ -14,6 +14,10 @@ gem 'therubyrhino'
 group :test do
   gem 'rake'
   gem 'mocha', '~> 1.1.0'
+  gem 'shoulda-matchers', '>= 2'
+  gem 'shoulda', '>= 2'
+  gem "factory_girl_rails", ">= 1.2"
+  gem 'factory_girl', '>= 2.6.4'
 end
 
 gem 'jquery-rails'
@@ -29,10 +33,6 @@ gem 'activerecord-jdbcmysql-adapter', '~> 1.3.25', :platform => :jruby
 gem 'activerecord-jdbcpostgresql-adapter', '~> 1.3.25', :platform => :jruby
 gem 'rack', '>= 1.1.0'
 gem 'handle_invalid_percent_encoding_requests'
-gem 'shoulda-matchers', '>= 2.0.0'
-gem 'shoulda', '>= 2.11.3'
-gem "factory_girl_rails", ">= 1.2"
-gem 'factory_girl', '>= 2.6.4'
 gem 'airbrake', '~> 5.6.1'
 gem 'rubyzip', '~> 1.0'
 gem 'zip-zip'
