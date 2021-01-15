@@ -3,12 +3,12 @@
 source 'https://rubygems.org'
 ruby "2.3.3", :engine => "jruby", :engine_version => "9.1.17.0"
 
-gem 'rails', '~> 3.2.22'
+gem 'rails', '~> 4.0.13'
 
 # Needed for the new asset pipeline
 group :assets do
-  gem 'sass-rails', '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
+  gem 'sass-rails', '~> 4'
+  gem 'coffee-rails', '~> 4'
   gem 'uglifier', '>= 1.0.3'
   gem 'therubyrhino'
 end
