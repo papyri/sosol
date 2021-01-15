@@ -6,12 +6,10 @@ ruby "2.3.3", :engine => "jruby", :engine_version => "9.1.17.0"
 gem 'rails', '~> 4.0.13'
 
 # Needed for the new asset pipeline
-group :assets do
-  gem 'sass-rails', '~> 4'
-  gem 'coffee-rails', '~> 4'
-  gem 'uglifier', '>= 1.0.3'
-  gem 'therubyrhino'
-end
+gem 'sass-rails', '~> 4'
+gem 'coffee-rails', '~> 4'
+gem 'uglifier', '>= 1.0.3'
+gem 'therubyrhino'
 
 group :test do
   gem 'rake'
