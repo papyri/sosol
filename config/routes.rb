@@ -354,7 +354,7 @@ Sosol::Application.routes.draw do
     end
   end
 
-  match 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
+  get 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
   match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/, :via => :get
   match 'peep_user_dashboard/:user_id(/:publication)' => 'user#peep_user_dashboard', :user_id => /\d+/, :publication => /(submitted|editing|new|committed|finalizing|\d+)/, :via => :get
   match 'editor/user/info' => 'user#info', :via => :get
