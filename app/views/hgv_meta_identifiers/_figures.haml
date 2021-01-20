@@ -1,7 +1,7 @@
 .multi#multi_figures
   %ul.items#multiItems_figures
-    - @identifier[:figures].each_index do |index|
-      - url = @identifier[:figures][index][:children] && @identifier[:figures][index][:children][:graphic] && @identifier[:figures][index][:children][:graphic][:attributes] && @identifier[:figures][index][:children][:graphic][:attributes][:url] ? @identifier[:figures][index][:children][:graphic][:attributes][:url] : ''
+    - @identifier.non_database_attribute[:figures].each_index do |index|
+      - url = @identifier.non_database_attribute[:figures][index][:children] && @identifier.non_database_attribute[:figures][index][:children][:graphic] && @identifier.non_database_attribute[:figures][index][:children][:graphic][:attributes] && @identifier.non_database_attribute[:figures][index][:children][:graphic][:attributes][:url] ? @identifier.non_database_attribute[:figures][index][:children][:graphic][:attributes][:url] : ''
     
       %li
         = text_field_tag 'hgv_meta_identifier[figures][' + index.to_s + '][children][graphic][attributes][url]', url, :disabled => !@identifier.mutable?, :class => 'observechange'

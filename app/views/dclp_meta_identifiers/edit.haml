@@ -63,7 +63,7 @@
           = label_tag 'mp3', I18n.t('dclp.label.mp3'), :class => 'meta mp3', :title => @identifier.configuration.xpath(:mp3)
           = render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :mp3 }
           .clear
-          = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier.non_database_attribute[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
           .clear
           .swifty.quickSave=I18n.t('label.quickSave')
 
@@ -86,7 +86,7 @@
           %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
         .editbox{:style => 'display: none;'}
           %p#geoPreview
-            = @identifier[:origPlace]
+            = @identifier.non_database_attribute[:origPlace]
           %span.swifty.geoPreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.geoPreview')
 
           %hr

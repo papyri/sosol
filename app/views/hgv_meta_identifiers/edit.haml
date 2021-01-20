@@ -39,7 +39,7 @@
           .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :notes }
-          = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier.non_database_attribute[:notes], :disabled => !@identifier.mutable?, :class => 'observechange'
           .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :plannedForFuturePrintRelease }
@@ -65,23 +65,23 @@
           .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationVolume }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][0][value]', HgvPublication.getVolume(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_field_tag 'hgv_meta_identifier[publicationExtra][0][value]', HgvPublication.getVolume(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][0][attributes][type]', :volume
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationVolume' }
           
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationFascicle }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][1][value]', HgvPublication.getFascicle(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_field_tag 'hgv_meta_identifier[publicationExtra][1][value]', HgvPublication.getFascicle(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][1][attributes][type]', :fascicle
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationFascicle' }
           .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationNumbers }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][2][value]', HgvPublication.getNumbers(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_field_tag 'hgv_meta_identifier[publicationExtra][2][value]', HgvPublication.getNumbers(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][2][attributes][type]', :numbers
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationNumbers' }
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationSide }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][3][value]', HgvPublication.getSide(@identifier[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_field_tag 'hgv_meta_identifier[publicationExtra][3][value]', HgvPublication.getSide(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][3][attributes][type]', :side
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationSide' }
           .clear
@@ -121,7 +121,7 @@
           %a{:name => 'Provenance'}=I18n.t('meta.legend.provenance')
         .editbox{:style => 'display: none;'}
           %p#geoPreview
-            = @identifier[:origPlace]
+            = @identifier.non_database_attribute[:origPlace]
           %span.swifty.geoPreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.geoPreview')
 
           %hr
@@ -137,9 +137,9 @@
         .editbox{:style => 'display: none;'}
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliography }
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyTarget }
-          = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pointer][attributes][target]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pointer] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes] && @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] ? @identifier[:sammelbuchBibliography][:children][:pointer][:attributes][:target] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyTarget'
+          = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pointer][attributes][target]', @identifier.non_database_attribute[:sammelbuchBibliography] && @identifier.non_database_attribute[:sammelbuchBibliography][:children] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pointer] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pointer][:attributes] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pointer][:attributes][:target] ? @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pointer][:attributes][:target] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyTarget'
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyPagination }
-          = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pagination][value]', @identifier[:sammelbuchBibliography] && @identifier[:sammelbuchBibliography][:children] && @identifier[:sammelbuchBibliography][:children][:pagination] && @identifier[:sammelbuchBibliography][:children][:pagination][:value] ? @identifier[:sammelbuchBibliography][:children][:pagination][:value] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyPagination'
+          = text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pagination][value]', @identifier.non_database_attribute[:sammelbuchBibliography] && @identifier.non_database_attribute[:sammelbuchBibliography][:children] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pagination] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pagination][:value] ? @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pagination][:value] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyPagination'
           
           .clear
           

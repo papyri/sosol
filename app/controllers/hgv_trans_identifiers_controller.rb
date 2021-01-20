@@ -10,19 +10,19 @@ class HgvTransIdentifiersController < IdentifiersController
     
     #get leiden
     begin
-      @identifier[:leiden_trans] = @identifier.leiden_trans
-      if @identifier[:leiden_trans].nil?
+      @identifier.non_database_attribute[:leiden_trans] = @identifier.leiden_trans
+      if @identifier.non_database_attribute[:leiden_trans].nil?
         flash.now[:error] = "File loaded from broken Leiden"
-        @identifier[:leiden_trans] = @identifier.get_broken_leiden
+        @identifier.non_database_attribute[:leiden_trans] = @identifier.get_broken_leiden
       end
     rescue RXSugar::XMLParseError => parse_error
       flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
       new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
-      @identifier[:leiden_trans] = new_content
+      @identifier.non_database_attribute[:leiden_trans] = new_content
     end
     
     #find text for preview
-    @identifier[:text_html_preview] = @identifier.related_text.preview
+    @identifier.non_database_attribute[:text_html_preview] = @identifier.related_text.preview
     
     @is_editor_view = true
   end
@@ -63,12 +63,12 @@ class HgvTransIdentifiersController < IdentifiersController
       @bad_leiden = true
       flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
       expire_publication_cache
-        @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans].to_s
+        @identifier.non_database_attribute[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans].to_s
         
         @is_editor_view = true
         
         #find text for preview
-        @identifier[:text_html_preview] = @identifier.related_text.preview
+        @identifier.non_database_attribute[:text_html_preview] = @identifier.related_text.preview
         
         render :template => 'hgv_trans_identifiers/edit'
     
@@ -95,13 +95,13 @@ class HgvTransIdentifiersController < IdentifiersController
       rescue RXSugar::NonXMLParseError => parse_error
         flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}.  This file was NOT SAVED."
         new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
-        @identifier[:leiden_trans] = new_content
+        @identifier.non_database_attribute[:leiden_trans] = new_content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
         @is_editor_view = true
         
         #find text for preview
-        @identifier[:text_html_preview] = @identifier.related_text.preview
+        @identifier.non_database_attribute[:text_html_preview] = @identifier.related_text.preview
         
         render :template => 'hgv_trans_identifiers/edit'
       
@@ -109,13 +109,13 @@ class HgvTransIdentifiersController < IdentifiersController
       rescue JRubyXML::ParseError => parse_error
         flash.now[:error] = parse_error.to_str + 
                         ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED.  "
-        @identifier[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
-        #@identifier[:leiden_plus] = parse_error.message
+        @identifier.non_database_attribute[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]
+        #@identifier.non_database_attribute[:leiden_plus] = parse_error.message
         
         @is_editor_view = true
         
         #find text for preview
-        @identifier[:text_html_preview] = @identifier.related_text.preview
+        @identifier.non_database_attribute[:text_html_preview] = @identifier.related_text.preview
         
         render :template => 'hgv_trans_identifiers/edit'
         

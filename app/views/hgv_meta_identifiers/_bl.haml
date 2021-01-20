@@ -1,8 +1,8 @@
 .multi#multi_bl
   %ul.items#multiItems_bl
-    - @identifier[:bl].each_index do |index|
-    - volume = @identifier[:bl][index][:children] && @identifier[:bl][index][:children][:volume] && @identifier[:bl][index][:children][:volume][:value] ? @identifier[:bl][index][:children][:volume][:value] : ''
-    - page = @identifier[:bl][index][:children] && @identifier[:bl][index][:children][:page] && @identifier[:bl][index][:children][:page][:value] ? @identifier[:bl][index][:children][:page][:value] : ''
+    - @identifier.non_database_attribute[:bl].each_index do |index|
+    - volume = @identifier.non_database_attribute[:bl][index][:children] && @identifier.non_database_attribute[:bl][index][:children][:volume] && @identifier.non_database_attribute[:bl][index][:children][:volume][:value] ? @identifier.non_database_attribute[:bl][index][:children][:volume][:value] : ''
+    - page = @identifier.non_database_attribute[:bl][index][:children] && @identifier.non_database_attribute[:bl][index][:children][:page] && @identifier.non_database_attribute[:bl][index][:children][:page][:value] ? @identifier.non_database_attribute[:bl][index][:children][:page][:value] : ''
       %li
         = text_field_tag 'hgv_meta_identifier[bl][' + index.to_s + '][children][volume][value]', volume, :disabled => !@identifier.mutable?, :class => 'observechange volume'
         = text_field_tag 'hgv_meta_identifier[bl][' + index.to_s + '][children][page][value]', page, :disabled => !@identifier.mutable?, :class => 'observechange page'

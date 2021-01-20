@@ -8,11 +8,11 @@
   .multi.edition{:id => 'multi_edition'}
     Search bibliography on
     %a{:href => 'http://papyri.info/bibliosearch', :target => '_blank'} Papyri.info
-    - if @identifier[:tmNo] && !@identifier[:tmNo].empty?
+    - if @identifier.non_database_attribute[:tmNo] && !@identifier.non_database_attribute[:tmNo].empty?
       or view this record in
-      %a{:href => 'http://www.trismegistos.org/text/' + @identifier[:tmNo], :target => '_blank'} Trismegistos
+      %a{:href => 'http://www.trismegistos.org/text/' + @identifier.non_database_attribute[:tmNo], :target => '_blank'} Trismegistos
 
-    - bibliographicalItems = @identifier[:edition]
+    - bibliographicalItems = @identifier.non_database_attribute[:edition]
     %hr
     %ul.items{:id => 'multiItems_edition'}
       - bibliographicalItems.each_index do |editionIndex|

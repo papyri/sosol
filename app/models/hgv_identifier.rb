@@ -17,7 +17,13 @@ class HGVIdentifier < Identifier
     components = trimmed_name.split(';')
     return File.join(self.class::PATH_PREFIX, components[0..-2], "#{components[-1]}.xml")
   end
-  
+
+  # Used as a workaround for e.g. @identifier[:arbitrarySymbol] non-database attributes,
+  # which were removed in Rails 4
+  def non_database_attribute
+    @non_database_attribute ||= {}
+  end
+ 
   # Creates a hash of the names of all the HGV Collections available in SoSOL replacing '_' with space
   # - used in selector
   def self.collection_names_hash

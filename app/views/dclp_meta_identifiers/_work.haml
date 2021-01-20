@@ -3,9 +3,9 @@
   .clear
   .multi.work{:id => 'multi_work'}
     = label_tag 'hgv_meta_identifier[workAlternative]', I18n.t('dclp.label.workAlternative'), :class => 'meta workAlternative', :title => @identifier.configuration.xpath(:work)
-    = check_box_tag 'hgv_meta_identifier[workAlternative]', 'alternative', DclpWork::Work.alternative?(@identifier[:work]), disabled: !@identifier.mutable?, :class => 'observechange workAlternative'
+    = check_box_tag 'hgv_meta_identifier[workAlternative]', 'alternative', DclpWork::Work.alternative?(@identifier.non_database_attribute[:work]), disabled: !@identifier.mutable?, :class => 'observechange workAlternative'
     %ul.items{:id => 'multiItems_work'}
-      - @identifier[:work].each_with_index do |work, workIndex|
+      - @identifier.non_database_attribute[:work].each_with_index do |work, workIndex|
         - work = DclpWork::Work.new(work)
         - base = 'hgv_meta_identifier[work][' + workIndex.to_s + ']'
         - baseAttributes = base + '[attributes]'

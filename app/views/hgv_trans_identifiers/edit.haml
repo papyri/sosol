@@ -7,7 +7,7 @@
     #edit  
     
       #editing_trans_text_view
-        = @identifier[:text_html_preview].html_safe
+        = @identifier.non_database_attribute[:text_html_preview].html_safe
       = render :partial => 'translation_leiden_helpers', :locals => { :identifier => @identifier}
       = form_for @identifier, :url => { :action => :update } do |f| 
         = f.error_messages 
