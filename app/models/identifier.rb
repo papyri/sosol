@@ -20,6 +20,8 @@ class Identifier < ActiveRecord::Base
     record.errors.add attr, "Identifier must be one of #{Sosol::Application.config.site_identifiers}" unless Sosol::Application.config.site_identifiers.split(',').include?(value)
   end
 
+  attr_accessor :unsaved_xml_content
+
   require 'jruby_xml'
 
 
@@ -326,7 +328,7 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - the content of the associated identifier's XML file
   def xml_content
-    return self.content
+    self.unsaved_xml_content.presence || self.content
   end
 
   # Commits identifier XML to the repository vis set_content
@@ -350,6 +352,8 @@ class Identifier < ActiveRecord::Base
     if options[:validate] && is_valid_xml?(content)
       commit_sha = self.set_content(content, options)
     end
+
+    self.unsaved_xml_content = nil
 
     return commit_sha
   end
