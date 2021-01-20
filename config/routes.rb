@@ -18,7 +18,7 @@ Sosol::Application.routes.draw do
   resources :hgv_trans_glossaries do
   
     member do
-  put :update
+  patch :update
   end
   
   end
@@ -113,12 +113,12 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     get :commentary
-    put :update_commentary
-    put :update_frontmatter_commentary
+    patch :update_commentary
+    patch :update_frontmatter_commentary
     delete :delete_commentary
     delete :delete_frontmatter_commentary
     end
@@ -131,9 +131,9 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     end
     
     end
@@ -144,9 +144,9 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     end
 
     end
@@ -157,12 +157,12 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     get :commentary
-    put :update_commentary
-    put :update_frontmatter_commentary
+    patch :update_commentary
+    patch :update_frontmatter_commentary
     delete :delete_commentary
     delete :delete_frontmatter_commentary
     end
@@ -176,9 +176,9 @@ Sosol::Application.routes.draw do
     get :preview
     get :xml
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     end
     
     end
@@ -190,9 +190,9 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     end
     
     end
@@ -202,9 +202,9 @@ Sosol::Application.routes.draw do
         member do
     get :history
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     get :preview
     end
     
@@ -216,12 +216,12 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     get :commentary
-    put :update_commentary
-    put :update_frontmatter_commentary
+    patch :update_commentary
+    patch :update_frontmatter_commentary
     delete :delete_commentary
     delete :delete_frontmatter_commentary
     get :link_translation
@@ -235,9 +235,9 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     post :create
     end
     
@@ -249,9 +249,9 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :rename_review
-    put :rename
+    patch :rename
     get :create
     post :edit_or_create
     post :select
@@ -265,13 +265,13 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :exportxml
     get :rename_review
-    put :rename
+    patch :rename
     get :commentary
-    put :update_commentary
-    put :update_frontmatter_commentary
+    patch :update_commentary
+    patch :update_frontmatter_commentary
     delete :delete_commentary
     delete :delete_frontmatter_commentary
     get :link_translation
@@ -287,13 +287,13 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :exportxml
     get :rename_review
-    put :rename
+    patch :rename
     get :commentary
-    put :update_commentary
-    put :update_frontmatter_commentary
+    patch :update_commentary
+    patch :update_frontmatter_commentary
     delete :delete_commentary
     delete :delete_frontmatter_commentary
     end
@@ -307,13 +307,13 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :exportxml
     get :rename_review
-    put :rename
+    patch :rename
     get :commentary
-    put :update_commentary
-    put :update_frontmatter_commentary
+    patch :update_commentary
+    patch :update_frontmatter_commentary
     delete :delete_commentary
     delete :delete_frontmatter_commentary
     end
@@ -327,12 +327,12 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :exportxml
     post :edit_or_create
     post :append
     get :rename_review
-    put :rename
+    patch :rename
     end
     
     end
@@ -344,11 +344,11 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
-    put :updatexml
+    patch :updatexml
     get :exportxml
     post :edit_or_create
     post :append
-    put :delete_annotation
+    patch :delete_annotation
     end
     
     end
