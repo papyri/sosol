@@ -14,8 +14,9 @@ gem 'therubyrhino'
 group :test do
   gem 'rake'
   gem 'mocha', '~> 1.1.0'
-  gem 'shoulda-matchers', '>= 2'
-  gem 'shoulda', '>= 2'
+  gem 'shoulda-context'
+  gem 'shoulda-matchers'
+  gem 'shoulda'
   gem "factory_girl_rails", ">= 1.2"
   gem 'factory_girl', '>= 2.6.4'
 end

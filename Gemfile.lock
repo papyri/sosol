@@ -63,7 +63,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    concurrent-ruby (1.1.7)
+    concurrent-ruby (1.1.8)
     database_cleaner (1.4.1)
     dynamic_form (1.1.4)
     erubis (2.7.0)
@@ -242,8 +242,9 @@ DEPENDENCIES
   rubyzip (~> 1.0)
   sass
   sass-rails (~> 4)
-  shoulda (>= 2)
-  shoulda-matchers (>= 2)
+  shoulda
+  shoulda-context
+  shoulda-matchers
   silencer
   sucker_punch (~> 2.0)
   test-unit-rails (= 1.0.4)
