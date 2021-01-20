@@ -1,7 +1,7 @@
 include HgvMetaIdentifierHelper
 
 class HGVMetaIdentifier < HGVIdentifier
-  attr_accessor :configuration, :valid_epidoc_attributes
+  attr_accessor :configuration, :valid_epidoc_attributes, :archiveLink, :archiveName, :bl, :citedLiterature, :collectionInventoryNumber, :collectionList, :collectionPlaceName, :collectionTemporaryInventoryNumber, :collectionTemporaryNotes, :collection, :contentText, :edition, :figures, :illustrations, :layout, :material, :mentionedDate, :notes, :onlineResource, :origPlace, :otherPublications, :plannedForFuturePrintRelease, :printedIllustration, :provenance, :publicationExtra, :publicationTitle, :sammelbuchBibliography, :scriptType, :textDate, :text_html_preview, :titleStmt, :tmNo, :translationsDe, :translationsEn, :translationsEs, :translationsFr, :translationsIt, :translationsLa, :work
 
   PATH_PREFIX = 'HGV_meta_EpiDoc'
 
