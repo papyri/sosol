@@ -135,7 +135,7 @@ class HgvTransIdentifiersController < IdentifiersController
       return
     end
     @is_editor_view = true
-    @identifier[:html_preview] = @identifier.preview
+    @identifier_html_preview = @identifier.preview
   end
   
   

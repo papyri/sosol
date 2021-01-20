@@ -181,7 +181,7 @@ class CitationCtsIdentifiersController < IdentifiersController
     # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     # xslt.serve()
 
-    @identifier[:html_preview] = @identifier.preview
+    @identifier_html_preview = @identifier.preview
   end
   
   protected

@@ -87,7 +87,7 @@ class EpiTransCtsIdentifiersController < IdentifiersController
       return
     end
     
-    @identifier[:html_preview] = @identifier.preview
+    @identifier_html_preview = @identifier.preview
   end
   
   

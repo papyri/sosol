@@ -28,7 +28,7 @@ class OacIdentifiersController < IdentifiersController
     if (@identifier.publication.status != 'finalizing')
       params[:creator_uri] = @identifier.make_creator_uri()
     end
-    @identifier[:html_preview] = @identifier.preview(params)
+    @identifier_html_preview = @identifier.preview(params)
     @identifier[:annotation_uri] = params[:annotation_uri]
   end
   

@@ -80,7 +80,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
   # - Provides preview of what the XML from the repository will look like with PN Stylesheets applied
   def preview
     find_identifier
-    @identifier[:html_preview] = @identifier.preview
+    @identifier_html_preview = @identifier.preview
     @is_editor_view = true
     render :template => 'ddb_identifiers/preview'
   end
