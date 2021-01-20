@@ -159,6 +159,6 @@
         %br
         = text_area_tag 'ddb_identifier_leiden_plus', nil, :disabled => !@identifier.mutable?, :lang => 'grc', 'xml:lang' => 'grc', :cols => 80, :rows => 40, :wrap => 'off', :class => 'greek observechange'
         = render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :bad_leiden => @bad_leiden, :original_commit_comment => @original_commit_comment, :where_at => :bottom }
-      = text_area_tag 'original_leiden_plus', @identifier[:leiden_plus].force_encoding('UTF-8'), :class => 'invisible'
+      = text_area_tag 'original_leiden_plus', @leiden_plus.force_encoding('UTF-8'), :class => 'invisible'
 
 = javascript_include_tag 'confirm'
