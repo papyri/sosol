@@ -1,3 +1,3 @@
 # Be sure to restart your server when you modify this file.
-
-Rails.application.config.action_dispatch.cookies_serializer = :marshal
+# See: https://guides.rubyonrails.org/upgrading_ruby_on_rails.html#cookies-serializer
+Rails.application.config.action_dispatch.cookies_serializer = :hybrid
