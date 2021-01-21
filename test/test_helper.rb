@@ -85,3 +85,10 @@ class ActiveSupport::TestCase
   teardown :teardown_database_cleaner
   teardown :teardown_flock
 end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :test_unit
+    with.library :rails
+  end
+end
