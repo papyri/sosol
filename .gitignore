@@ -7,6 +7,7 @@ doc/app
 doc/guides
 doc/plugins
 db/*.sqlite3
+db/*.sqlite3-journal
 protosite.war
 lib/rxsugar
 .sass-cache

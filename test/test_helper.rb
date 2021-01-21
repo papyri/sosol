@@ -1,7 +1,6 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-# require 'rails/test_help'
-require 'test/unit/rails/test_help'
+require 'rails/test_help'
 require 'factory_girl_rails'
 require 'factory_girl'
 require 'shoulda'
@@ -10,8 +9,6 @@ require 'active_support'
 require 'active_support/test_case'
 require 'database_cleaner'
 require 'sucker_punch/testing/inline'
-require 'test/unit'
-require 'test/unit/active_support'
 
 class ActiveSupport::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method
@@ -89,7 +86,7 @@ end
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
-    with.test_framework :test_unit
+    with.test_framework :minitest
     with.library :rails
   end
 end
