@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20160208190521) do
 
-  create_table "boards", force: true do |t|
+  create_table "boards", force: :cascade do |t|
     t.string   "title"
     t.string   "category"
     t.integer  "decree_id"
@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 20160208190521) do
     t.integer  "community_id"
   end
 
-  create_table "boards_users", id: false, force: true do |t|
+  create_table "boards_users", id: false, force: :cascade do |t|
     t.integer  "board_id"
     t.integer  "user_id"
     t.datetime "created_at"
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20160208190521) do
 
   add_index "boards_users", ["board_id", "user_id"], name: "index_boards_users_on_board_id_and_user_id", unique: true
 
-  create_table "comments", force: true do |t|
+  create_table "comments", force: :cascade do |t|
     t.text     "comment"
     t.integer  "user_id"
     t.integer  "identifier_id"
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 20160208190521) do
     t.integer  "publication_id"
   end
 
-  create_table "communities", force: true do |t|
+  create_table "communities", force: :cascade do |t|
     t.string   "name"
     t.string   "friendly_name"
     t.integer  "members"
@@ -59,21 +59,21 @@ ActiveRecord::Schema.define(version: 20160208190521) do
     t.integer  "end_user_id"
   end
 
-  create_table "communities_admins", id: false, force: true do |t|
+  create_table "communities_admins", id: false, force: :cascade do |t|
     t.integer  "community_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "communities_members", id: false, force: true do |t|
+  create_table "communities_members", id: false, force: :cascade do |t|
     t.integer  "community_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "decrees", force: true do |t|
+  create_table "decrees", force: :cascade do |t|
     t.string   "action"
     t.decimal  "trigger",      precision: 5, scale: 2
     t.string   "choices"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 20160208190521) do
     t.string   "tally_method"
   end
 
-  create_table "emailers", force: true do |t|
+  create_table "emailers", force: :cascade do |t|
     t.integer  "board_id"
     t.integer  "user_id"
     t.text     "extra_addresses"
@@ -98,7 +98,7 @@ ActiveRecord::Schema.define(version: 20160208190521) do
     t.string   "subject"
   end
 
-  create_table "emailers_users", id: false, force: true do |t|
+  create_table "emailers_users", id: false, force: :cascade do |t|
     t.string   "emailer_id"
     t.integer  "user_id"
     t.datetime "created_at"
@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(version: 20160208190521) do
 
   add_index "emailers_users", ["emailer_id", "user_id"], name: "index_emailers_users_on_emailer_id_and_user_id", unique: true
 
-  create_table "events", force: true do |t|
+  create_table "events", force: :cascade do |t|
     t.string   "category"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -117,7 +117,7 @@ ActiveRecord::Schema.define(version: 20160208190521) do
     t.string   "target_type"
   end
 
-  create_table "identifiers", force: true do |t|
+  create_table "identifiers", force: :cascade do |t|
     t.string   "name"
     t.string   "type"
     t.datetime "created_at"
@@ -130,7 +130,7 @@ ActiveRecord::Schema.define(version: 20160208190521) do
     t.integer  "board_id"
   end
 
-  create_table "publications", force: true do |t|
+  create_table "publications", force: :cascade do |t|
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -144,14 +144,14 @@ ActiveRecord::Schema.define(version: 20160208190521) do
     t.integer  "community_id"
   end
 
-  create_table "user_identifiers", force: true do |t|
+  create_table "user_identifiers", force: :cascade do |t|
     t.string   "identifier"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "users", force: true do |t|
+  create_table "users", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -167,7 +167,7 @@ ActiveRecord::Schema.define(version: 20160208190521) do
     t.boolean  "is_master_admin",           default: false
   end
 
-  create_table "votes", force: true do |t|
+  create_table "votes", force: :cascade do |t|
     t.string   "choice"
     t.integer  "user_id"
     t.datetime "created_at"
