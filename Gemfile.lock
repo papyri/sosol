@@ -214,8 +214,8 @@ GEM
     test-unit-rr (1.0.5)
       rr (>= 1.1.1)
       test-unit (>= 2.5.2)
-    test_after_commit (0.4.1)
-      activerecord (>= 3.2)
+    test_after_commit (1.2.2)
+      activerecord (>= 3.2, < 5.0)
     therubyrhino (2.0.4)
       therubyrhino_jar (>= 1.7.3)
     therubyrhino_jar (1.7.6)
@@ -280,7 +280,7 @@ DEPENDENCIES
   silencer
   sucker_punch (~> 2.0)
   test-unit-rails (= 1.0.4)
-  test_after_commit (= 0.4.1)
+  test_after_commit
   therubyrhino
   tzinfo-data
   uglifier (>= 1.0.3)
