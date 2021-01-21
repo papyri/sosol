@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 ruby "2.3.3", :engine => "jruby", :engine_version => "9.1.17.0"
 
-gem 'rails', '~> 4.1.16'
+gem 'rails', '~> 4.2.11.3'
 
 # Needed for the new asset pipeline
 gem 'sass-rails', '~> 4'
