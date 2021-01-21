@@ -119,11 +119,11 @@ class HGVMetaIdentifier < HGVIdentifier
 
     @configuration.scheme.each_pair do |key, config|
       if config[:children] || config[:attributes]
-        self[key] = get_epidoc_attributes_tree doc, config
+        self.non_database_attribute[key] = get_epidoc_attributes_tree doc, config
       elsif config[:multiple]
-        self[key] = get_epidoc_attributes_list doc, config
+        self.non_database_attribute[key] = get_epidoc_attributes_list doc, config
       else 
-        self[key] = get_epidoc_attributes_value doc, config
+        self.non_database_attribute[key] = get_epidoc_attributes_value doc, config
       end
     end
   end
