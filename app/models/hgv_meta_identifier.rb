@@ -96,10 +96,10 @@ class HGVMetaIdentifier < HGVIdentifier
   #   - date item X, Y or Z OR nil if the requested date item does not exist
   # If there is only one date item available this date item might not have any id, so if the callers asks for date item with date id +X+ the first date item will be returned, no matter whether the id machtes or not
   def get_date_item date_id    
-    self[:textDate].each{|dateItem|
+    self.non_database_attribute[:textDate].each{|dateItem|
       if dateItem[:attributes] && dateItem[:attributes][:id] && dateItem[:attributes][:id].include?(date_id)
         return dateItem
-      elsif date_id.include?('X') && self[:textDate].first == dateItem
+      elsif date_id.include?('X') && self.non_database_attribute[:textDate].first == dateItem
         return dateItem
       end
     }
@@ -324,11 +324,11 @@ class HGVMetaIdentifier < HGVIdentifier
           populate_tree_from_attributes_hash attributes_hash[key], config      
         end
 
-        self[key] = result  
+        self.non_database_attribute[key] = result  
       elsif config[:multiple]
-        self[key] = attributes_hash[key] ? attributes_hash[key].values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip } : []
+        self.non_database_attribute[key] = attributes_hash[key] ? attributes_hash[key].values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip } : []
       else 
-        self[key] = attributes_hash[key] ? attributes_hash[key].strip : nil
+        self.non_database_attribute[key] = attributes_hash[key] ? attributes_hash[key].strip : nil
       end
     end
   end
@@ -470,7 +470,7 @@ class HGVMetaIdentifier < HGVIdentifier
 
       if config[:multiple]
 
-        if self[key].empty?
+        if self.non_database_attribute[key].empty?
           if parent = doc.elements[xpath_parent]
             parent.elements.delete_all xpath_child
             if !parent.has_elements? && parent.texts.join.strip.empty?
@@ -484,11 +484,11 @@ class HGVMetaIdentifier < HGVIdentifier
             parent = doc.bulldozePath xpath_parent
           end
 
-          set_epidoc_attributes_tree parent, xpath_child, self[key], config
+          set_epidoc_attributes_tree parent, xpath_child, self.non_database_attribute[key], config
         end
 
       else
-        value = self[key] && !self[key].empty? ? (config[:children] || config[:attributes] ? self[key][:value] : self[key]) : nil
+        value = self.non_database_attribute[key] && !self.non_database_attribute[key].empty? ? (config[:children] || config[:attributes] ? self.non_database_attribute[key][:value] : self.non_database_attribute[key]) : nil
         
         if config[:split] && value.kind_of?(Hash)
           value = value.values.join(!config[:split].empty? ? config[:split] : ' ');
@@ -504,15 +504,15 @@ class HGVMetaIdentifier < HGVIdentifier
           end
           if config[:attributes]
             config[:attributes].each_pair {|attribute_key, attribute_config|
-              element.attributes[attribute_config[:name]] = self[key][:attributes][attribute_key]
+              element.attributes[attribute_config[:name]] = self.non_database_attribute[key][:attributes][attribute_key]
             }
           end
           
           if config[:children] # CL: Biblio patch
             config[:children].each_pair {|child_key, child_config|
               element.elements.delete_all child_config[:xpath]
-              if  self[key][:children] && self[key][:children].kind_of?(Hash) && self[key][:children][child_key]
-                set_epidoc_attributes_tree element, child_config[:xpath], [self[key][:children][child_key]], child_config
+              if  self.non_database_attribute[key][:children] && self.non_database_attribute[key][:children].kind_of?(Hash) && self.non_database_attribute[key][:children][child_key]
+                set_epidoc_attributes_tree element, child_config[:xpath], [self.non_database_attribute[key][:children][child_key]], child_config
               end
             }
           end
@@ -590,7 +590,7 @@ class HGVMetaIdentifier < HGVIdentifier
   #   - +true+ if there is a local attribute by the name of +key+
   #   - +false+ otherwise
   def attributeLegal? key
-   legal? self[key]
+    legal? self.non_database_attribute[key]
   end
   
   # Determines whether incoming user data contains any valid data or whether is consindered to be empty
@@ -732,7 +732,7 @@ class HGVMetaIdentifier < HGVIdentifier
     elsif value.kind_of? Hash
       value = value.values.compact.reject {|item| item.strip.empty? }.collect{|item| item.strip }
     end
-    self[key] = value    
+    self.non_database_attribute[key] = value    
   end
 
   # Uses post parameters to recursively populate an internal tree which can be used lateron for easy data access
