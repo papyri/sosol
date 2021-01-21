@@ -19,7 +19,7 @@ Each community board recieves the submit, votes on it, then sends it to the fina
 The finalizer finalizes it, which copies the changes back to the original submitter.
 =end
 
-class CommunityWorkflowTest < ActionController::IntegrationTest
+class CommunityWorkflowTest < ActionDispatch::IntegrationTest
   def compare_publications(a,b)
 
     pubs_are_matched = true
@@ -100,7 +100,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
   end
 end
 
-class CommunityWorkflowTest < ActionController::IntegrationTest
+class CommunityWorkflowTest < ActionDispatch::IntegrationTest
   context "for community" do
     context "community testing" do
       setup do

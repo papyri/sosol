@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'ddiff'
 
-class ApisWorkflowTest < ActionController::IntegrationTest
+class ApisWorkflowTest < ActionDispatch::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
     FactoryGirl.create(:vote,
                        :publication_id => identifier.publication.id,
@@ -85,7 +85,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
 end
 
 
-class ApisWorkflowTest < ActionController::IntegrationTest
+class ApisWorkflowTest < ActionDispatch::IntegrationTest
   context "for idp3" do
     context "apis testing" do
       setup do
