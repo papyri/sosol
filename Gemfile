@@ -51,4 +51,3 @@ gem 'silencer'
 gem 'rack-attack', '~> 4.0'
 
 gem 'test_after_commit', :group => :test
-gem 'test-unit-rails', :group => :test
