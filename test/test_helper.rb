@@ -7,7 +7,7 @@ require 'shoulda'
 require 'shoulda/matchers'
 require 'active_support'
 require 'active_support/test_case'
-require 'database_cleaner'
+require 'database_cleaner/active_record'
 require 'sucker_punch/testing/inline'
 
 class ActiveSupport::TestCase
@@ -61,7 +61,8 @@ class ActiveSupport::TestCase
   end
   
   def setup_database_cleaner
-    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.start
   end
 
