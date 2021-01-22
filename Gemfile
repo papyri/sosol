@@ -29,10 +29,10 @@ gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
 gem 'jdbc-sqlite3', '>= 3.7.2', :platform => :jruby
-gem 'activerecord-jdbc-adapter', '~> 1.3.25', :platform => :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '~> 1.3.25', :platform => :jruby
-gem 'activerecord-jdbcmysql-adapter', '~> 1.3.25', :platform => :jruby
-gem 'activerecord-jdbcpostgresql-adapter', '~> 1.3.25', :platform => :jruby
+gem 'activerecord-jdbc-adapter', '>= 1.3.25', '< 50', :platform => :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '< 50', :platform => :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
 gem 'activerecord-deprecated_finders', require: 'active_record/deprecated_finders'
 gem 'tzinfo-data', :platform => :jruby
 gem 'actionpack-page_caching'
