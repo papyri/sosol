@@ -13,7 +13,7 @@ gem 'therubyrhino'
 
 group :test do
   gem 'rake'
-  gem 'mocha', '~> 1.1.0'
+  gem 'mocha'
   gem 'shoulda-context'
   gem 'shoulda-matchers'
   gem 'shoulda'

@@ -9,6 +9,7 @@ require 'active_support'
 require 'active_support/test_case'
 require 'database_cleaner/active_record'
 require 'sucker_punch/testing/inline'
+require 'mocha/minitest'
 
 class ActiveSupport::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method
