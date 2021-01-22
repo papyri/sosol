@@ -19,6 +19,7 @@ group :test do
   gem 'shoulda'
   gem "factory_girl_rails", ">= 1.2"
   gem 'factory_girl', '>= 2.6.4'
+  gem 'database_cleaner-active_record'
 end
 
 gem 'jquery-rails'
@@ -44,7 +45,6 @@ gem 'dynamic_form'
 gem 'capistrano', '~> 2.15.0'
 gem 'warbler', '~> 2.0'
 gem 'puma'
-gem 'database_cleaner'
 gem 'sucker_punch', '~> 2.0'
 gem 'with_advisory_lock', '~> 3.0.0'
 gem 'silencer'

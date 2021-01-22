@@ -70,6 +70,9 @@ GEM
     concurrent-ruby (1.1.8)
     crass (1.0.6)
     database_cleaner (1.8.5)
+    database_cleaner-active_record (1.8.0)
+      activerecord
+      database_cleaner (~> 1.8.0)
     dynamic_form (1.1.4)
     erubis (2.7.0)
     execjs (2.7.0)
@@ -221,7 +224,7 @@ DEPENDENCIES
   airbrake (~> 5.6.1)
   capistrano (~> 2.15.0)
   coffee-rails (~> 4)
-  database_cleaner
+  database_cleaner-active_record
   dynamic_form
   factory_girl (>= 2.6.4)
   factory_girl_rails (>= 1.2)
