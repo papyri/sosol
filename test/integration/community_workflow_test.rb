@@ -204,8 +204,12 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
               count = count + 1
               #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
               unless entity.nil?
-                entity.reload
-                entity.destroy
+                begin
+                  entity.reload
+                  entity.destroy
+                rescue ActiveRecord::RecordNotFound => e
+                  Rails.logger.info(e.inspect)
+                end
               end
             end
           end
