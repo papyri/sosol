@@ -360,6 +360,7 @@ Sosol::Application.routes.draw do
   match 'editor/user/info' => 'user#info', :via => :get
   # match 'publications/:publication_id/:controller/:id/show_commit/:commit_id' => '(?-mix:.*_?identifiers)#show_commit', :commit_id => /[0-9a-fA-F]{40}/, :via => :get
   match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/, :via => :get
+  match 'publications/vote/:id' => 'publications#vote', :via => :post
   match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/, :via => :get
   match 'js/:query' => 'ajax_proxy#js', :query => /.*/, :via => :get
   match 'css/:query' => 'ajax_proxy#css', :query => /.*/, :via => :get
