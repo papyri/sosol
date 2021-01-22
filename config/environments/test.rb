@@ -32,6 +32,9 @@ Sosol::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 
+  # Changes to :random in Rails 5
+  config.active_support.test_order = :sorted
+
   # config/environments/test_secret.rb should set
   # RPX_API_KEY and RPX_REALM (site name) for RPX,
   # and possibly other unversioned secrets for development
