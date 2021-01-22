@@ -2,7 +2,7 @@ require 'test_helper'
 
 class EmailerMailerTest < ActionMailer::TestCase
 
-  def test_generail_email
+  def test_general_email
      user = 'dummyuser@emailserver.com' 
      email = EmailerMailer.general_email(user,'test subject','test body').deliver   
      assert !ActionMailer::Base.deliveries.empty?
