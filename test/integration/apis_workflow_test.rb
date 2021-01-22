@@ -181,8 +181,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
           Rails.logger.debug "---Create A New Publication---"
           #publication_session.post 'publications/create_from_templates', :session => { :user_id => @creator_user.id }
 
-          publication_session.post '/publications/create_from_identifier' + '?test_user_id=' + @creator_user.id.to_s, \
-            :id => 'papyri.info/apis/nyu.apis.4782'
+          publication_session.get '/publications/create_from_identifier/papyri.info/apis/nyu.apis.4782' + '?test_user_id=' + @creator_user.id.to_s
 
           Rails.logger.debug "--flash is: " + publication_session.flash.inspect
 
