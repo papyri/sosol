@@ -179,7 +179,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
           Rails.logger.debug "---Create A New Publication---"
           #publication_session.post 'publications/create_from_templates', :session => { :user_id => @creator_user.id }
 
-          publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
+          publication_session.post '/publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
 
           Rails.logger.debug "--flash is: " + publication_session.flash.inspect
 
@@ -207,7 +207,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         deliveries_before = ActionMailer::Base.deliveries.size
         open_session do |submit_session|
 
-          submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
+          submit_session.post '/publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
             :submit_comment => "I made a new pub"
 
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
@@ -259,7 +259,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.debug "Found meta identifier, will vote on it"
 
         open_session do |meta_session|
-          meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+          meta_session.post '/publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
             :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
             :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
 
@@ -305,7 +305,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.info(meta_final_identifier.inspect)
         # do rename
         open_session do |meta_rename_session|
-          meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
+          meta_rename_session.put '/publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/hgv/9999999999'
         end
 
@@ -320,7 +320,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
         open_session do |meta_finalize_session|
 
-          meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + meta_final_publication.owner.id.to_s, \
+          meta_finalize_session.post '/publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + meta_final_publication.owner.id.to_s, \
             :comment => 'I agree meta is great and now it is final'
 
           Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
@@ -382,7 +382,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
         open_session do |text_session|
 
-          text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+          text_session.post '/publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
             :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
             :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
           Rails.logger.debug "--flash is: " + text_session.flash.inspect
@@ -417,7 +417,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
         # try to finalize without rename
         open_session do |text_finalize_session|
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
+          text_finalize_session.post '/publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
@@ -430,7 +430,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
         # do rename
         open_session do |text_rename_session|
-          text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
+          text_rename_session.put '/publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
         end
 
@@ -443,7 +443,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         publication_head_original = text_final_publication.head()
         # do make-me-finalizer now that we've renamed
         open_session do |mmf_session|
-          mmf_session.post 'publications/' + text_publication.id.to_s + '/become_finalizer?test_user_id=' + other_finalizer.id.to_s
+          mmf_session.post '/publications/' + text_publication.id.to_s + '/become_finalizer?test_user_id=' + other_finalizer.id.to_s
           Rails.logger.debug "--MMF flash is: " + mmf_session.flash.inspect
           Rails.logger.debug "----MMF session data is: " + mmf_session.session.to_hash.inspect
           Rails.logger.debug mmf_session.body
@@ -461,7 +461,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         # actually finalize
         open_session do |text_finalize_session|
 
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
+          text_finalize_session.post '/publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
@@ -571,7 +571,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
               ActiveRecord::Base.connection_pool.with_connection do |conn|
                 open_session do |submit_session|
                   begin
-                    submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
+                    submit_session.post '/publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
                   rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                     Rails.logger.info("#{e.class} inside submission thread 1")
                   end
@@ -592,7 +592,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
               ActiveRecord::Base.connection_pool.with_connection do |conn|
                 open_session do |submit_session|
                   begin
-                    submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
+                    submit_session.post '/publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
                   rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                     Rails.logger.info("#{e.class} inside submit thread 2")
                   end
@@ -674,7 +674,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
             Rails.logger.info("MMF on pub: #{@ddb_board.publications.first.inspect}")
             open_session do |make_me_finalizer_session|
-              make_me_finalizer_session.post 'publications/' + @ddb_board.publications.first.id.to_s + '/become_finalizer?test_user_id=' + different_finalizer.id.to_s
+              make_me_finalizer_session.post '/publications/' + @ddb_board.publications.first.id.to_s + '/become_finalizer?test_user_id=' + different_finalizer.id.to_s
             end
 
             mmf_finalizing_publication = @ddb_board.publications.first.children.first
@@ -719,7 +719,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                       assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 1'
                       assert User.exists?(different_finalizer), 'MMF finalizer should exist in thread 1'
                       assert Board.exists?(mmf_publication_owner_id), 'MMF board should exist in thread 1'
-                      make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
+                      make_me_finalizer_session.post '/publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
                     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                       Rails.logger.info("#{e.class} inside MMF thread 1")
                     end
@@ -744,7 +744,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                       assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 2'
                       assert User.exists?(different_finalizer_2), 'MMF finalizer should exist in thread 2'
                       assert Board.exists?(mmf_publication_owner_id), 'MMF board should exist in thread 2'
-                      make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
+                      make_me_finalizer_session.post '/publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
                     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                       Rails.logger.info("#{e.class} inside MMF thread 2")
                     end

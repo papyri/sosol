@@ -181,7 +181,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
           Rails.logger.debug "---Create A New Publication---"
           #publication_session.post 'publications/create_from_templates', :session => { :user_id => @creator_user.id }
 
-          publication_session.post 'publications/create_from_identifier' + '?test_user_id=' + @creator_user.id.to_s, \
+          publication_session.post '/publications/create_from_identifier' + '?test_user_id=' + @creator_user.id.to_s, \
             :id => 'papyri.info/apis/nyu.apis.4782'
 
           Rails.logger.debug "--flash is: " + publication_session.flash.inspect
@@ -215,7 +215,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
           modified_content = original_content.sub(/Bobst/, 'APIS Workflow Test')
           assert_not_equal original_content, modified_content, "Modified content should be modified"
 
-          edit_session.put "publications/#{@publication.id.to_s}/apis_identifiers/#{apis_identifier.id.to_s}/?test_user_id=#{@creator_user.id.to_s}",
+          edit_session.put "/publications/#{@publication.id.to_s}/apis_identifiers/#{apis_identifier.id.to_s}/?test_user_id=#{@creator_user.id.to_s}",
             :apis_identifier => {:xml_content => modified_content}, :comment => 'APIS Workflow Test'
 
           Rails.logger.debug "--APIS flash is: " + edit_session.flash.inspect
@@ -226,7 +226,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
 
         open_session do |submit_session|
 
-          submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
+          submit_session.post '/publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
             :submit_comment => "I edited an APIS pub"
 
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
@@ -270,7 +270,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.debug "Found apis identifier, will vote on it"
 
         open_session do |apis_session|
-          apis_session.post 'publications/vote/' + apis_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+          apis_session.post '/publications/vote/' + apis_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
             :comment => { :comment => "I agree apis is great", :user_id => @board_user.id, :publication_id => apis_identifier.publication.id, :identifier_id => apis_identifier.id, :reason => "vote" }, \
             :vote => { :publication_id => apis_identifier.publication.id.to_s, :identifier_id => apis_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @apis_board.id.to_s, :choice => "accept" }
 
@@ -318,7 +318,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
 
         open_session do |apis_finalize_session|
 
-          apis_finalize_session.post 'publications/' + apis_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          apis_finalize_session.post '/publications/' + apis_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
             :comment => 'I agree apis is great and now it is final'
 
           Rails.logger.debug "--flash is: " + apis_finalize_session.flash.inspect
