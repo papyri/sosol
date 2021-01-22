@@ -605,7 +605,7 @@ class PublicationsController < ApplicationController
     Vote.transaction do
       @publication.lock!
       #note that votes go to the publication's identifier
-      @vote = Vote.new(params[:vote])
+      @vote = Vote.new(vote_params)
       vote_identifier = @vote.identifier.lock!
       @vote.user_id = @current_user.id
       @vote.board_id = @publication.owner_id
@@ -895,5 +895,15 @@ class PublicationsController < ApplicationController
     def archive_pub(pub_id)
       @publication = Publication.find(pub_id)
       @publication.archive
+    end
+    
+    private
+
+    def publication_params
+      params.require(:publication)
+    end
+
+    def vote_params
+      params.require(:vote).permit(:publication_id, :identifier_id, :user_id, :board_id, :choice)
     end
 end
