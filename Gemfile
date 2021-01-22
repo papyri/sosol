@@ -46,7 +46,7 @@ gem 'capistrano', '~> 2.15.0'
 gem 'warbler', '~> 2.0'
 gem 'puma'
 gem 'sucker_punch', '~> 2.0'
-gem 'with_advisory_lock', '~> 3.0.0'
+gem 'with_advisory_lock'
 gem 'silencer'
 gem 'rack-attack', '~> 4.0'
 
