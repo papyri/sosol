@@ -190,7 +190,7 @@ class Publication < ActiveRecord::Base
 
   after_commit :delete_associated_branch, on: :destroy
   def delete_associated_branch
-    self.owner.repository.delete_branch(self.branch)
+    self.owner.present? && self.owner.repository.delete_branch(self.branch)
   end
 
   #Outputs publication information and content to the Rails logger.
