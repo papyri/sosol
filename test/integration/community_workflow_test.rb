@@ -307,8 +307,10 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
           
         end
         
+        Rails.logger.debug "---Reloading publication: #{meta_publication.inspect}"
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
+        Rails.logger.debug "---Reloaded publication: #{meta_publication.inspect}"
 
         vote_str = "Votes on meta are: "
         meta_publication.votes.each do |v|
