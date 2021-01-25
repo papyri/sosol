@@ -137,6 +137,6 @@ class EmailersController < ApplicationController
   private
 
     def emailer_params
-      params.require(:emailer).permit(:association,:extra_addresses,:include_document,:message)
+      params.require(:emailer).permit(:association,:extra_addresses,:include_document,:message,:board_id)
     end
 end
