@@ -105,6 +105,6 @@ class DecreesController < ApplicationController
   private
 
     def decree_params
-      params.require(:decree).permit(:association,:tally_method,:action,:trigger,:choices)
+      params.require(:decree).permit(:association,:tally_method,:action,:trigger,:choices,:board_id)
     end
 end
