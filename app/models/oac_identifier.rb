@@ -268,7 +268,7 @@ class OACIdentifier < Identifier
   
   # make a creator uri from the owner of the publication 
   def make_creator_uri()
-    ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => self.publication.creator.id, :only_path => false)
+    ActionDispatch::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => self.publication.creator.id, :only_path => false)
   end
   
   # create a dcterms:creator element
