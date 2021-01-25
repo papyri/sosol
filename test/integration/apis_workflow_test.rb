@@ -214,7 +214,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
           modified_content = original_content.sub(/Bobst/, 'APIS Workflow Test')
           assert_not_equal original_content, modified_content, "Modified content should be modified"
 
-          edit_session.put "/publications/#{@publication.id.to_s}/apis_identifiers/#{apis_identifier.id.to_s}/?test_user_id=#{@creator_user.id.to_s}",
+          edit_session.patch "/publications/#{@publication.id.to_s}/apis_identifiers/#{apis_identifier.id.to_s}/?test_user_id=#{@creator_user.id.to_s}",
             :apis_identifier => {:xml_content => modified_content}, :comment => 'APIS Workflow Test'
 
           Rails.logger.debug "--APIS flash is: " + edit_session.flash.inspect

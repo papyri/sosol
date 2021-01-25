@@ -305,7 +305,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.info(meta_final_identifier.inspect)
         # do rename
         open_session do |meta_rename_session|
-          meta_rename_session.put '/publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
+          meta_rename_session.patch '/publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/hgv/9999999999'
         end
 
@@ -430,7 +430,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
         # do rename
         open_session do |text_rename_session|
-          text_rename_session.put '/publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
+          text_rename_session.patch '/publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
         end
 
