@@ -240,13 +240,13 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
         assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
 
         #apis board should have 1 publication, others should have 0
-        apis_publications = Publication.find(:all, :conditions => { :owner_id => @apis_board.id, :owner_type => "Board" } )
+        apis_publications = Publication.where(owner_id: @apis_board.id, owner_type: 'Board')
         assert_equal 1, apis_publications.length, "APIS does not have 1 publication but rather, " + apis_publications.length.to_s + " publications"
 
-        text_publications = Publication.find(:all, :conditions => { :owner_id => @text_board.id, :owner_type => "Board" } )
+        text_publications = Publication.where(owner_id: @text_board.id, owner_type: 'Board')
         assert_equal 0, text_publications.length, "Text does not have 0 publication but rather, " + text_publications.length.to_s + " publications"
 
-        translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
+        translation_publications = Publication.where(owner_id: @translation_board.id, owner_type: 'Board')
         assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
 
         Rails.logger.debug "APIS Board has publication"
@@ -274,7 +274,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
             :vote => { :publication_id => apis_identifier.publication.id.to_s, :identifier_id => apis_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @apis_board.id.to_s, :choice => "accept" }
 
           Rails.logger.debug "--flash is: " + apis_session.flash.inspect
-      
+
         end
 
         #reload the publication to get the vote associations to go thru?
