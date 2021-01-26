@@ -295,7 +295,7 @@ class UserController < ApplicationController
 
       #get publications that have been approved
       #@approved_publications = @board.publications.collect{|p| p.status == "approved" ? p : nil}.compact
-      @approved_publications = Publication.where(owner_id: @board.id, :owner_type => "Board", :status => "approved").includes(identifiers: [:votes]), :order => "updated_at DESC"  )
+      @approved_publications = Publication.where(owner_id: @board.id, :owner_type => "Board", :status => "approved").includes(identifiers: [:votes]).order(updated_at: :desc)
 
       #remove approved publications if in the finalizer list
       @finalizing_publications.each do |fp|
