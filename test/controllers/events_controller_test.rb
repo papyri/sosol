@@ -2,8 +2,8 @@ require 'test_helper'
 
 class EventsControllerTest < ActionController::TestCase
   def setup
-    @event = FactoryGirl.create(:event)
-    @event_two = FactoryGirl.create(:event)
+    @event = FactoryBot.create(:event)
+    @event_two = FactoryBot.create(:event)
   end
   
   def teardown

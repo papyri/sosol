@@ -2,7 +2,7 @@ require 'test_helper'
 
 class WorkflowTest < ActiveSupport::TestCase
   def generate_board_vote_for_decree(board, decree, identifier, user)
-    FactoryGirl.create(:vote,
+    FactoryBot.create(:vote,
             :publication_id => identifier.publication.id,
             :identifier_id => identifier.id,
             :user => user,
@@ -30,37 +30,37 @@ end
 class WorkflowTest < ActiveSupport::TestCase
   context "for IDP2" do
     setup do
-      @ddb_board = FactoryGirl.create(:board, :title => 'DDbDP Editorial Board')
+      @ddb_board = FactoryBot.create(:board, :title => 'DDbDP Editorial Board')
     
       3.times do |i|
-        @ddb_board.users << FactoryGirl.create(:user)
+        @ddb_board.users << FactoryBot.create(:user)
       end
       
-      FactoryGirl.create(:percent_decree,
+      FactoryBot.create(:percent_decree,
               :board => @ddb_board,
               :trigger => 50.0,
               :action => "approve",
               :choices => "yes no defer")
-      FactoryGirl.create(:percent_decree,
+      FactoryBot.create(:percent_decree,
               :board => @ddb_board,
               :trigger => 50.0,
               :action => "reject",
               :choices => "reject")
-      FactoryGirl.create(:count_decree,
+      FactoryBot.create(:count_decree,
               :board => @ddb_board,
               :trigger => 1.0,
               :action => "graffiti",
               :choices => "graffiti")
       
-      @james = FactoryGirl.create(:user, :name => "James")
+      @james = FactoryBot.create(:user, :name => "James")
       
-      @hgv_meta_board = FactoryGirl.create(:hgv_meta_board, :title => 'HGV metadata')
-      @hgv_trans_board = FactoryGirl.create(:hgv_trans_board, :title => 'Translations')
+      @hgv_meta_board = FactoryBot.create(:hgv_meta_board, :title => 'HGV metadata')
+      @hgv_trans_board = FactoryBot.create(:hgv_trans_board, :title => 'Translations')
       
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
       
-      @submitter = FactoryGirl.create(:user, :name => "Submitter")
+      @submitter = FactoryBot.create(:user, :name => "Submitter")
     end
     
     teardown do
@@ -70,7 +70,7 @@ class WorkflowTest < ActiveSupport::TestCase
 
     context "a publication" do
       setup do
-        @publication = FactoryGirl.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
+        @publication = FactoryBot.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
         
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master

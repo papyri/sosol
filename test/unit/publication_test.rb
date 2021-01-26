@@ -5,11 +5,11 @@ require 'test_helper'
 class PublicationTest < ActiveSupport::TestCase
   context "a publication conflicting with an existing branch" do
     setup do
-      @user = FactoryGirl.create(:user)
+      @user = FactoryBot.create(:user)
       
       @branchname = "testpublication"
       @user.repository.create_branch(@branchname)
-      @publication = FactoryGirl.build(:publication, :owner => @user, :creator => @user, :title => @branchname)
+      @publication = FactoryBot.build(:publication, :owner => @user, :creator => @user, :title => @branchname)
     end
     
     teardown do
@@ -23,11 +23,11 @@ class PublicationTest < ActiveSupport::TestCase
 
   context "a publication with a title with an invalid Git ref" do
     setup do
-      @user = FactoryGirl.create(:user)
+      @user = FactoryBot.create(:user)
       
       @pubtitle = "P.Lond. Herm."
       @user.repository.create_branch(@branchname)
-      @publication = FactoryGirl.build(:publication, :owner => @user, :creator => @user, :title => @pubtitle)
+      @publication = FactoryBot.build(:publication, :owner => @user, :creator => @user, :title => @pubtitle)
     end
 
     teardown do
@@ -42,11 +42,11 @@ class PublicationTest < ActiveSupport::TestCase
  
   context "a publication with a title with a REALLY invalid Git ref" do
     setup do
-      @user = FactoryGirl.create(:user)
+      @user = FactoryBot.create(:user)
       
       @pubtitle = "P:.#{1.chr}~L..o[n^d?.\t He......r\\m."
       @user.repository.create_branch(@branchname)
-      @publication = FactoryGirl.build(:publication, :owner => @user, :creator => @user, :title => @pubtitle)
+      @publication = FactoryBot.build(:publication, :owner => @user, :creator => @user, :title => @pubtitle)
     end
 
     teardown do
@@ -61,7 +61,7 @@ class PublicationTest < ActiveSupport::TestCase
   
   context "a new publication from templates" do
     setup do
-      @user = FactoryGirl.create(:user)
+      @user = FactoryBot.create(:user)
       @publication = Publication.new_from_templates(@user)
     end
 
@@ -115,8 +115,8 @@ class PublicationTest < ActiveSupport::TestCase
   
   context "a publication copied to another owner" do
     setup do
-      @original_owner = FactoryGirl.create(:user)
-      @new_owner = FactoryGirl.create(:user)
+      @original_owner = FactoryBot.create(:user)
+      @new_owner = FactoryBot.create(:user)
       @publication = Publication.new_from_templates(@original_owner)
       @publication_copy = @publication.copy_to_owner(@new_owner)
     end
@@ -148,11 +148,11 @@ class PublicationTest < ActiveSupport::TestCase
   
   context "a publication with unicode in its title/branch" do
     setup do
-      @user = FactoryGirl.create(:user)
+      @user = FactoryBot.create(:user)
       @original_branches = @user.repository.branches
       
       @unicode_title = "P.Über βρεκεκεκέξ"
-      @publication = FactoryGirl.create(:publication, :owner => @user, :creator => @user, :title => @unicode_title)
+      @publication = FactoryBot.create(:publication, :owner => @user, :creator => @user, :title => @unicode_title)
       @publication.branch_from_master
       
       @new_ddb = DDBIdentifier.new_from_template(@publication)

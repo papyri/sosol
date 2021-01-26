@@ -17,8 +17,7 @@ group :test do
   gem 'shoulda-context'
   gem 'shoulda-matchers'
   gem 'shoulda'
-  gem "factory_girl_rails", ">= 1.2"
-  gem 'factory_girl', '>= 2.6.4'
+  gem 'factory_bot_rails', '~> 4'
   gem 'database_cleaner-active_record'
 end
 

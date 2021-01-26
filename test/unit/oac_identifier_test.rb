@@ -7,12 +7,12 @@ class OACIdentifierTest < ActiveSupport::TestCase
       @original_site_identifiers = Sosol::Application.config.site_identifiers
       Sosol::Application.config.site_identifiers = (@original_site_identifiers.split(',') | %w{OACIdentifier TeiCTSIdentifier}).join(',')
 
-      @creator = FactoryGirl.create(:user, :name => "Creator")
-      @creator2 = FactoryGirl.create(:user, :name => "Creator2")
-      @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
+      @creator = FactoryBot.create(:user, :name => "Creator")
+      @creator2 = FactoryBot.create(:user, :name => "Creator2")
+      @publication = FactoryBot.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
-      @parent = FactoryGirl.create(:TeiCTSIdentifier, :title => 'Test Text')
+      @parent = FactoryBot.create(:TeiCTSIdentifier, :title => 'Test Text')
       @oac_identifier = OACIdentifier.new_from_template(@publication,@parent)
       @test_uri1 = 'http://data.perseus.org/annotations/abcd'
       @test_uri2 = 'http://data.perseus.org/annotations/efgh'

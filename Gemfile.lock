@@ -76,10 +76,10 @@ GEM
     dynamic_form (1.1.4)
     erubis (2.7.0)
     execjs (2.7.0)
-    factory_girl (4.9.0)
+    factory_bot (4.11.1)
       activesupport (>= 3.0.0)
-    factory_girl_rails (4.9.0)
-      factory_girl (~> 4.9.0)
+    factory_bot_rails (4.11.1)
+      factory_bot (~> 4.11.1)
       railties (>= 3.0.0)
     ffi (1.14.2-java)
     globalid (0.4.2)
@@ -223,8 +223,7 @@ DEPENDENCIES
   coffee-rails (~> 4)
   database_cleaner-active_record
   dynamic_form
-  factory_girl (>= 2.6.4)
-  factory_girl_rails (>= 1.2)
+  factory_bot_rails (~> 4)
   haml (= 4.0.6)
   handle_invalid_percent_encoding_requests
   jdbc-sqlite3 (>= 3.7.2)

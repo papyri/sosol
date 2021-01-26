@@ -2,11 +2,11 @@ require 'test_helper'
 
 class EmailersControllerTest < ActionController::TestCase
   def setup
-    @admin = FactoryGirl.create(:admin)
+    @admin = FactoryBot.create(:admin)
     @request.session[:user_id] = @admin.id
-    @board = FactoryGirl.create(:board)
-    @emailer = FactoryGirl.create(:emailer, :board => @board)
-    @emailer_two = FactoryGirl.create(:emailer, :board => @board)
+    @board = FactoryBot.create(:board)
+    @emailer = FactoryBot.create(:emailer, :board => @board)
+    @emailer_two = FactoryBot.create(:emailer, :board => @board)
   end
   
   def teardown

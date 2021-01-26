@@ -2,10 +2,10 @@ require 'test_helper'
 
 class CommunitiesControllerTest < ActionController::TestCase
   def setup
-    @admin = FactoryGirl.create(:admin)
+    @admin = FactoryBot.create(:admin)
     @request.session[:user_id] = @admin.id
-    @community = FactoryGirl.create(:community)
-    @community_two = FactoryGirl.create(:community)
+    @community = FactoryBot.create(:community)
+    @community_two = FactoryBot.create(:community)
   end
   
   def teardown
@@ -28,7 +28,7 @@ class CommunitiesControllerTest < ActionController::TestCase
 
   test "should create community" do
     assert_difference('Community.count') do
-      post :create, :community => FactoryGirl.build(:community).attributes.merge({"admins"=>[],"members"=>[]})
+      post :create, :community => FactoryBot.build(:community).attributes.merge({"admins"=>[],"members"=>[]})
     end
 
     assert_redirected_to edit_community_path(assigns(:community))

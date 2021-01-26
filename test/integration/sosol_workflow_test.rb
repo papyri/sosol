@@ -4,7 +4,7 @@ require 'thwait'
 
 class SosolWorkflowTest < ActionDispatch::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
-    FactoryGirl.create(:vote,
+    FactoryBot.create(:vote,
                        :publication_id => identifier.publication.id,
                        :identifier_id => identifier.id,
                        :user => user,
@@ -93,21 +93,21 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.level = 0
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx sosol testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         #a user to put on the boards
-        @board_user = FactoryGirl.create(:user, :name => "board_man_bob", :email => "bob@example.com")
-        @board_user_2 = FactoryGirl.create(:user, :name => "board_man_alice")
+        @board_user = FactoryBot.create(:user, :name => "board_man_bob", :email => "bob@example.com")
+        @board_user_2 = FactoryBot.create(:user, :name => "board_man_alice")
         #a user to submit publications
-        @creator_user = FactoryGirl.create(:user, :name => "creator_bob", :email => "bobcreator@example.com")
+        @creator_user = FactoryBot.create(:user, :name => "creator_bob", :email => "bobcreator@example.com")
         #an end user to recieve the "finalized" publication
-        @end_user = FactoryGirl.create(:user, :name => "end_bob")
+        @end_user = FactoryBot.create(:user, :name => "end_bob")
 
         #set up the boards, and vote
-        @meta_board = FactoryGirl.create(:hgv_meta_board, :title => "meta")
+        @meta_board = FactoryBot.create(:hgv_meta_board, :title => "meta")
 
         #the board memeber
         @meta_board.users << @board_user
 
         #the vote
-        @meta_decree = FactoryGirl.create(:count_decree,
+        @meta_decree = FactoryBot.create(:count_decree,
                                           :board => @meta_board,
                                           :trigger => 1.0,
                                           :action => "approve",
@@ -115,29 +115,29 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         @meta_board.decrees << @meta_decree
 
         #the mailer
-        @mailer1 = FactoryGirl.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => true, :send_to_all_board_members => false, :message => 'Message Text', :subject => 'Submitted to Meta')
-        @mailer2 = FactoryGirl.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => false, :send_to_all_board_members => true, :message => 'Board Message Text', :subject => 'Board Member Alert')
+        @mailer1 = FactoryBot.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => true, :send_to_all_board_members => false, :message => 'Message Text', :subject => 'Submitted to Meta')
+        @mailer2 = FactoryBot.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => false, :send_to_all_board_members => true, :message => 'Board Message Text', :subject => 'Board Member Alert')
         @meta_board.emailers << @mailer1
         @meta_board.emailers << @mailer2
 
-        @text_board = FactoryGirl.create(:board, :title => "text")
+        @text_board = FactoryBot.create(:board, :title => "text")
         #the board memeber
         @text_board.users << @board_user
         @text_board.users << @board_user_2
         #the vote
-        @text_decree = FactoryGirl.create(:count_decree,
+        @text_decree = FactoryBot.create(:count_decree,
                                           :board => @text_board,
                                           :trigger => 1.0,
                                           :action => "approve",
                                           :choices => "ok")
         @text_board.decrees << @text_decree
 
-        @translation_board = FactoryGirl.create(:hgv_trans_board, :title => "translation")
+        @translation_board = FactoryBot.create(:hgv_trans_board, :title => "translation")
 
         #the board memeber
         @translation_board.users << @board_user
         #the vote
-        @translation_decree = FactoryGirl.create(:count_decree,
+        @translation_decree = FactoryBot.create(:count_decree,
                                                  :board => @translation_board,
                                                  :trigger => 1.0,
                                                  :action => "approve",
@@ -495,37 +495,37 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
   context "for IDP2" do
     setup do
-      @ddb_board = FactoryGirl.create(:board, :title => 'DDbDP Editorial Board')
+      @ddb_board = FactoryBot.create(:board, :title => 'DDbDP Editorial Board')
 
       3.times do |i|
-        @ddb_board.users << FactoryGirl.create(:user)
+        @ddb_board.users << FactoryBot.create(:user)
       end
 
-      FactoryGirl.create(:percent_decree,
+      FactoryBot.create(:percent_decree,
                          :board => @ddb_board,
                          :trigger => 50.0,
                          :action => "approve",
                          :choices => "yes no defer")
-      FactoryGirl.create(:percent_decree,
+      FactoryBot.create(:percent_decree,
                          :board => @ddb_board,
                          :trigger => 50.0,
                          :action => "reject",
                          :choices => "reject")
-      FactoryGirl.create(:count_decree,
+      FactoryBot.create(:count_decree,
                          :board => @ddb_board,
                          :trigger => 1.0,
                          :action => "graffiti",
                          :choices => "graffiti")
 
-      @james = FactoryGirl.create(:user, :name => "James")
+      @james = FactoryBot.create(:user, :name => "James")
 
-      @hgv_meta_board = FactoryGirl.create(:hgv_meta_board, :title => 'HGV metadata')
-      @hgv_trans_board = FactoryGirl.create(:hgv_trans_board, :title => 'Translations')
+      @hgv_meta_board = FactoryBot.create(:hgv_meta_board, :title => 'HGV metadata')
+      @hgv_trans_board = FactoryBot.create(:hgv_trans_board, :title => 'Translations')
 
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
 
-      @submitter = FactoryGirl.create(:user, :name => "Submitter", :email => "submitter@example.com")
+      @submitter = FactoryBot.create(:user, :name => "Submitter", :email => "submitter@example.com")
     end
 
     teardown do
@@ -539,7 +539,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
     context "a publication" do
       setup do
-        @publication = FactoryGirl.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
+        @publication = FactoryBot.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
 
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master

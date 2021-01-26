@@ -2,9 +2,9 @@ require 'test_helper'
 
 class DdbIdentifiersControllerTest < ActionController::TestCase
   def setup
-    @user = FactoryGirl.create(:user)
+    @user = FactoryBot.create(:user)
     @request.session[:user_id] = @user.id
-    @publication = FactoryGirl.create(:publication, :owner => @user, :creator => @user, :status => "new")
+    @publication = FactoryBot.create(:publication, :owner => @user, :creator => @user, :status => "new")
     @publication.branch_from_master
     @identifier = DDBIdentifier.new_from_template(@publication)
   end
