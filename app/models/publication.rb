@@ -229,7 +229,7 @@ class Publication < ActiveRecord::Base
 
     #determine which ids are ready to be submitted (modified, editing...)
     submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing')}
-    
+
     if submittable_identifiers.length == 0
       Rails.logger.warn("Publication#submit_to_next_board for #{self.id}: no submittable identifiers")
       Rails.logger.info("Publication#submit_to_next_board for #{self.id} identifier state: #{self.identifiers.inspect}")
@@ -937,7 +937,7 @@ class Publication < ActiveRecord::Base
   #*Returns* the finalizer's +publication+ or +nil+ if there is no finalizer.
   def find_finalizer_publication
   #returns the finalizer's publication or nil if finalizer does not exist
-    Publication.find_by_parent_id( self.id, :conditions => { :status => "finalizing" })
+    Publication.where(parent_id: self.id, status: 'finalizing').limit(1).first
   end
 
   def head
@@ -1055,7 +1055,7 @@ class Publication < ActiveRecord::Base
 
           Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
           Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-          
+
           # roll a tree SHA1 by reading the canonical master tree,
           # adding controlled path blobs, then writing the modified tree
           # (happens on the finalizer's repo)
@@ -1072,7 +1072,7 @@ class Publication < ActiveRecord::Base
           inserter.flush()
 
           tree_sha1 = jgit_tree.update_sha
-         
+
           Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
           commit_message = "Finalization merge of branch '#{self.branch}' into canonical master"
@@ -1172,7 +1172,7 @@ class Publication < ActiveRecord::Base
             id.save
           end
         end
-        
+
         # copy back to creator/origin in any case
         self.copy_back_to_user(finalization_comment_string.to_s, self.owner)
 
@@ -1187,7 +1187,7 @@ class Publication < ActiveRecord::Base
           end
         end
         # done committing to canon
-        
+
         # store a comment on finalize even if the user makes no comment...so we have a record of the action
         retries = 0
         begin
@@ -1335,7 +1335,7 @@ class Publication < ActiveRecord::Base
 
   #*Returns* comment object with the publication's submit comment.
   def submission_reason
-    reason = Comment.find_by_publication_id(self.origin.id, :conditions => "reason = 'submit'")
+    reason = Comment.where(publication_id: self.origin.id, reason: 'submit').limit(1).first
   end
 
   #Finds the publication with no parent. This will be the creators copy.
@@ -1685,7 +1685,7 @@ class Publication < ActiveRecord::Base
          has_dclp = true
         end
       end
-     
+
       unless self.identifiers.map{|i| i.class.to_s}.include?('HGVMetaIdentifier')
         #cant create DDB text
         creatable_identifiers.delete("DDBIdentifier")
