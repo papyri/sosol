@@ -193,7 +193,7 @@ class Board < ActiveRecord::Base
         # and selecting the last one which has the current board as its owner should work.
         board_publication = email_identifiers[0].publication.origin.all_children.select {|p| p.owner == self}.last
         begin
-          EmailerMailer.identifier_email(when_to_send,email_identifiers,board_publication,addresses,mailer.include_document,mailer.include_comments,mailer.message,mailer.subject).deliver
+          EmailerMailer.identifier_email(when_to_send,email_identifiers,board_publication,addresses,mailer.include_document,mailer.include_comments,mailer.message,mailer.subject).deliver_now
         rescue StandardError => e
           Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
         end

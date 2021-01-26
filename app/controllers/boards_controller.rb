@@ -322,7 +322,7 @@ def send_board_reminder_emails
     addresses.each do |address|
       if address && address.strip != ""
         begin
-          EmailerMailer.general_email(address, subject_line, body_text).deliver
+          EmailerMailer.general_email(address, subject_line, body_text).deliver_now
         rescue StandardError => e
           Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
         end

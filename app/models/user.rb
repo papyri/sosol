@@ -124,7 +124,7 @@ class User < ActiveRecord::Base
 
     users.each do |toaddress|
       if toaddress.email.strip != ""
-        EmailerMailer.general_email(toaddress.email, subject_line, email_content).deliver
+        EmailerMailer.general_email(toaddress.email, subject_line, email_content).deliver_now
       end
     end
 
