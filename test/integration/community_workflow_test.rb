@@ -469,7 +469,7 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
         # do rename
         open_session do |text_rename_session|
           text_rename_session.patch '/publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
-            :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
+            :new_name => 'papyri.info/ddbdp/bgu;1;987', :set_dummy_header => false
         end
 
         text_final_publication.reload
