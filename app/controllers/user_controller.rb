@@ -21,7 +21,7 @@ class UserController < ApplicationController
   end
 
   def all_users_links
-    @users = User.find(:all, :order => "full_name ASC")
+    @users = User.order(full_name: :asc)
   end
 
   #Gets info for the current user in json format.
@@ -111,7 +111,7 @@ class UserController < ApplicationController
       redirect_to dashboard_url
       return
     end
-    @boards = Board.find(:all)
+    @boards = Board.all
   end
 
 
