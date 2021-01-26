@@ -471,7 +471,7 @@ class Identifier < ActiveRecord::Base
     # assume context is from finalizing publication, so parent is board's copy
     parent_classes = self.parent.owner.identifier_classes
 
-    Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
+    Comment.where(publication_id: self.publication.origin.id).each do |c|
       if(parent_classes.include?(c.identifier.class.to_s))
         change_desc_content = add_change_desc( "#{c.reason.capitalize} - " + c.comment, c.user, change_desc_content, c.created_at.localtime.xmlschema )
         commit_message += " - #{c.reason.capitalize} - #{c.comment} (#{c.user.human_name})\n"
