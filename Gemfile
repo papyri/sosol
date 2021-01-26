@@ -17,7 +17,7 @@ group :test do
   gem 'shoulda-context'
   gem 'shoulda-matchers'
   gem 'shoulda'
-  gem 'factory_bot_rails', '~> 4'
+  gem 'factory_bot_rails'
   gem 'database_cleaner-active_record'
 end
 
