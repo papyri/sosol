@@ -456,7 +456,7 @@ Developer:
 
    def index_user_admins
     if current_user_is_master_admin?
-      @users = User.find(:all)
+      @users = User.all
     end
    end
 

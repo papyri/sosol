@@ -6,7 +6,7 @@ class DecreesController < ApplicationController
   # GET /decrees
   # GET /decrees.xml
   def index
-    @decrees = Decree.find(:all)
+    @decrees = Decree.all
 
     respond_to do |format|
       format.html # index.html.erb

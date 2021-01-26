@@ -724,7 +724,7 @@ class PublicationsController < ApplicationController
 
   def master_list
     if @current_user.developer
-      @publications = Publication.find(:all)
+      @publications = Publication.all
     else
       redirect_to dashboard_url
     end

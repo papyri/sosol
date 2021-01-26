@@ -11,7 +11,7 @@ class EmailersController < ApplicationController
   
   def find_sosol_users
     @emailer = Emailer.find(params[:id].to_s)
-    @sosol_users = User.find(:all)
+    @sosol_users = User.all
   end
   
   def add_member
@@ -46,7 +46,7 @@ class EmailersController < ApplicationController
   # GET /emailers
   # GET /emailers.xml
   def index
-    @emailers = Emailer.find(:all)
+    @emailers = Emailer.all
 
     respond_to do |format|
       format.html # index.html.erb

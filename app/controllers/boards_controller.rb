@@ -67,7 +67,7 @@ class BoardsController < ApplicationController
   # GET /boards
   # GET /boards.xml
   def index
-    #@boards = Board.find(:all)
+    #@boards = Board.all
     @boards = Board.ranked
 
     respond_to do |format|
@@ -96,7 +96,7 @@ class BoardsController < ApplicationController
     #don't let more than one board use the same identifier class
     @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
 
-    #existing_boards = Board.find(:all)
+    #existing_boards = Board.all
     #existing_boards.each do |b|
     #  @available_identifier_classes -= b.identifier_classes
     #end
@@ -226,7 +226,7 @@ class BoardsController < ApplicationController
       @boards = Board.ranked;  
     end
     
-    #@boards = Board.find(:all)
+    #@boards = Board.all
 
     rankings = params[:ranking].to_s.split(',');
     
