@@ -344,7 +344,7 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
         # do rename
         open_session do |meta_rename_session|
           meta_rename_session.patch '/publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
-            :new_name => 'papyri.info/hgv/9999999999'
+            :new_name => 'papyri.info/hgv/9898989898'
         end
 
         meta_final_publication.reload
