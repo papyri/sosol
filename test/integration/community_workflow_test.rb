@@ -338,6 +338,9 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
           end
         end
 
+        Rails.logger.info("---Meta publication before rename")
+        Rails.logger.info(meta_final_publication.inspect)
+        Rails.logger.info(meta_final_identifier.inspect)
         # do rename
         open_session do |meta_rename_session|
           meta_rename_session.patch '/publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
@@ -345,6 +348,10 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
         end
 
         meta_final_publication.reload
+        meta_final_identifier.reload
+        Rails.logger.info("---Meta publication after rename")
+        Rails.logger.info(meta_final_publication.inspect)
+        Rails.logger.info(meta_final_identifier.inspect)
         assert !meta_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
         #finalize the meta

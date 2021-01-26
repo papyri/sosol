@@ -79,6 +79,7 @@ class IdentifiersController < ApplicationController
       @identifier.rename(params[:new_name], :update_header => true, :set_dummy_header => params[:set_dummy_header], :new_hybrid => params[:new_hybrid])
       flash[:notice] = "Identifier renamed."
     rescue RuntimeError => e
+      Rails.logger.info("Error renaming (#{params.inspect}): #{e.inspect}")
       flash[:error] = e.to_s
     end
     redirect_to polymorphic_path([@identifier.publication, @identifier],
