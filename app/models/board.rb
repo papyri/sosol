@@ -19,11 +19,9 @@ class Board < ActiveRecord::Base
   #board rank determines workflow order for publication
   #ranked scopes returns the boards for a given community in order of their rank
   #ranked left as default for sosol ranks
-  scope :ranked, :order => 'rank ASC', :conditions => { 'community_id' => nil }
+  scope :ranked, -> { where(community_id: nil).order(rank: :asc) }
   
-  scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id = ?', id_in ] } }
-
-
+  scope :ranked_by_community_id, lambda { |id_in| { where(community_id: id_in).order(rank: :asc) } }
 
   # :identifier_classes is an array of identifier classes this board has
   # commit control over. This isn't done relationally because it's not a
