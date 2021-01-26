@@ -732,7 +732,7 @@ class PublicationsController < ApplicationController
 
   protected
     def find_publication
-      @publication ||= Publication.find(params[:id].to_s, :lock => true)
+      @publication ||= Publication.lock(true).find(params[:id].to_s)
     end
 
     def ownership_guard
