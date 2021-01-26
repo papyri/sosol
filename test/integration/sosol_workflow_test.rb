@@ -230,13 +230,13 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         assert_equal 'bob@example.com', board_email.to[0]
 
         #meta board should have 1 publication, others should have 0
-        meta_publications = Publication.find(:all, :conditions => { :owner_id => @meta_board.id, :owner_type => "Board" } )
+        meta_publications = Publication.where(owner_id: @meta_board.id, owner_type: 'Board')
         assert_equal 1, meta_publications.length, "Meta does not have 1 publication but rather, " + meta_publications.length.to_s + " publications"
 
-        text_publications = Publication.find(:all, :conditions => { :owner_id => @text_board.id, :owner_type => "Board" } )
+        text_publications = Publication.where(owner_id: @text_board.id, owner_type: 'Board')
         assert_equal 0, text_publications.length, "Text does not have 0 publication but rather, " + text_publications.length.to_s + " publications"
 
-        translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
+        translation_publications = Publication.where(owner_id: @translation_board.id, owner_type: 'Board')
         assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
 
         Rails.logger.debug "Meta Board has publication"
@@ -264,9 +264,9 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
             :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
 
           Rails.logger.debug "--flash is: " + meta_session.flash.inspect
-      
+
         end
-        
+
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -354,15 +354,15 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         #now text board should have it
 
         #meta board should have 1 publication
-        meta_publications = Publication.find(:all, :conditions => { :owner_id => @meta_board.id, :owner_type => "Board" } )
+        meta_publications = Publication.where(owner_id: @meta_board.id, owner_type: 'Board')
         assert_equal 1, meta_publications.length, "Meta does not have 1 publication but rather, " + meta_publications.length.to_s + " publications"
 
         #text board should have 1 publication
-        text_publications = Publication.find(:all, :conditions => { :owner_id => @text_board.id, :owner_type => "Board" } )
+        text_publications = Publication.where(owner_id: @text_board.id, owner_type: 'Board')
         assert_equal 1, text_publications.length, "Text does not have 0 publication but rather, " + text_publications.length.to_s + " publications"
 
         #translation board should have 0 publication
-        translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
+        translation_publications = Publication.where(owner_id: @translation_board.id, owner_type: 'Board')
         assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
 
         #vote on it
@@ -387,7 +387,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
             :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
           Rails.logger.debug "--flash is: " + text_session.flash.inspect
         end
-        
+
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
 
@@ -682,7 +682,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
             assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
             assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should only have one child after finalizer copy'
           end
-          
+
           should "not race during make-me-finalizer" do
             assert_not_nil @ddb_board
             @ddb_board.reload
