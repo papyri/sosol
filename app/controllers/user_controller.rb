@@ -351,7 +351,7 @@ class UserController < ApplicationController
       @board = Board.find_by_id(params[:board_id])
       @publications = @board.publications.where(:status => 'archived').includes(:identifiers).order(updated_at: :desc)
     else
-      @publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers.order(updated_at: :desc)
+      @publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil).includes(:identifiers).order(updated_at: :desc)
     end
 
 
