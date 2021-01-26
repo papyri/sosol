@@ -55,10 +55,7 @@ class APISIdentifier < HGVMetaIdentifier
   #   - temporary identifier name
   def self.next_temporary_identifier(apis_collection)
     year = Time.now.year
-    latest = self.find(:all,
-                       :conditions => ["name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{apis_collection}.apis.#{year}-%"],
-                       :order => "name DESC",
-                       :limit => 1).first
+    latest = self.where('name like ?', "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{apis_collection}.apis.#{year}-%").order(name: :desc).limit(1).first
     if latest.nil?
       # no constructed id's for this year/class
       document_number = 1
