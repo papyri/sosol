@@ -2,8 +2,8 @@ class CtsPublicationsController < PublicationsController
   layout Sosol::Application.config.site_layout
   before_filter :authorize
   before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
-  
-  
+
+
   ## Create/Update a CTS Publication from a linked URN
   def create_from_linked_urn
     if (params[:urn].blank? || params[:collection].blank?)
@@ -11,37 +11,37 @@ class CtsPublicationsController < PublicationsController
       redirect_to dashboard_url
       return
     end
-    
+
     urnObj = CTS::CTSLib.urnObj(params[:urn].to_s)
     sourceRepo = params[:src]
     sourceCollection = params[:collection]
-   
+
     # get the Parent version URN and publication type
     versionUrn = urnObj.getUrnWithoutPassage()
-    
+
     # if the version Urn is the same as the supplied urn then we don't have a citation specified
     citationUrn = (versionUrn == params[:urn]) ? nil :  params[:urn]
-    
+
     pubtype = CTS::CTSLib.versionTypeForUrn(sourceCollection,versionUrn)
     if pubtype.nil?
       flash[:error] = "No publication found for #{params[:urn]} in #{sourceCollection} inventory."
       redirect_to dashboard_url
       return
     end
-    
+
     versionIdentifier = sourceCollection + "/" + CTS::CTSLib.pathForUrn(versionUrn,pubtype)
-    
+
     # check to see if the user is already working on the parent publication
     @publication = nil
     existing_identifiers = []
-    possible_conflicts = Identifier.find_all_by_name(versionIdentifier, :include => :publication)
+    possible_conflicts = Identifier.where(name: versionIdentifier).includes(:publication)
     actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
     existing_identifiers += actual_conflicts
-        
+
     if existing_identifiers.length > 0
       conflicting_publication = existing_identifiers.first.publication
       conflicting_publications = existing_identifiers.collect {|ci| ci.publication}.uniq
-  
+
       if conflicting_publications.length > 1
         flash[:error] = 'Error creating publication: multiple conflicting publications'
         flash[:error] += '<ul>'
@@ -52,15 +52,15 @@ class CtsPublicationsController < PublicationsController
         redirect_to dashboard_url
         return
       end # end more than one conflicting publication
-  
+
       if (conflicting_publication.status == "committed")
         expire_publication_cache
         conflicting_publication.archive
       else
-        @publication = conflicting_publication 
+        @publication = conflicting_publication
       end
     end # end test of possible conflicts
-    
+
     if @publication.nil?
        # User doesn't have the parent publication yet so create it
        identifiers_hash = Hash.new
@@ -72,7 +72,7 @@ class CtsPublicationsController < PublicationsController
        @publication = Publication.new()
        @publication.owner = @current_user
        @publication.creator = @current_user
-       
+
       # HACK for IDigGreek to enable link in to create annotations on an edition that doesn't
       # exist in the master repo
       temp_id = nil
@@ -80,26 +80,26 @@ class CtsPublicationsController < PublicationsController
       Sosol::Application.config.site_identifiers.split(",").each do |identifier_name|
         ns = identifier_name.constantize::IDENTIFIER_NAMESPACE
         if CTS::CTSLib.getIdentifierKey(versionIdentifier) == ns
-        
+
           identifier_class = Object.const_get(identifier_name)
           temp_id = identifier_class.new(:name => versionIdentifier)
         end
       end
-      
+
       if (@publication.repository.get_file_from_branch(temp_id.to_path, 'master').blank?)
         fullurn = "urn:cts:#{versionUrn}"
         # fetch a title without creating from template
         @publication.title = identifier_class.new(:name => identifier_class.next_temporary_identifier(sourceCollection,fullurn,'edition','ed')).name
         @publication.status = "new"
         @publication.save!
-    
+
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master
         new_cts = identifier_class.new_from_template(@publication,sourceCollection,fullurn,'edition','ed')
-          
+
         # create the inventory metadata records
-        # we can't do this until the publication has already been branched from the master 
-        # because it doesn't exist in the master git repo 
+        # we can't do this until the publication has already been branched from the master
+        # because it doesn't exist in the master git repo
         # and is only carried along with the publication until it is finalized
         begin
           # first the inventory record
@@ -110,17 +110,17 @@ class CtsPublicationsController < PublicationsController
           redirect_to dashboard_url
           return
         end
-  
+
       else
         @publication.populate_identifiers_from_identifiers(
             identifiers_hash,CTS::CTSLib.versionTitleForUrn(sourceCollection,"urn:cts:#{versionUrn}"))
-                   
+
         if @publication.save!
           @publication.branch_from_master
-        
+
           # create the temporary CTS citation and inventory metadata records
-          # we can't do this until the publication has already been branched from the master 
-          # because they don't exist in the master git repo 
+          # we can't do this until the publication has already been branched from the master
+          # because they don't exist in the master git repo
           # and are only carried along with the publication until it is finalized
           begin
             # first the inventory record
@@ -140,16 +140,16 @@ class CtsPublicationsController < PublicationsController
           e.save!
         end # end saving new publication
       end # now we have a publication
-    end    
-    redirect_to(:controller => 'citation_cts_identifiers', 
-                :action => 'confirm_edit_or_annotate', 
+    end
+    redirect_to(:controller => 'citation_cts_identifiers',
+                :action => 'confirm_edit_or_annotate',
                 :publication_id => @publication.id,
                 :version_id => versionIdentifier,
                 :collection => sourceCollection,
                 :urn => citationUrn,
-                :src => sourceRepo)   
+                :src => sourceRepo)
   end
-  
+
   ###
   # Creates a new CTS identifier from the CTS selector element
   ###
@@ -158,7 +158,7 @@ class CtsPublicationsController < PublicationsController
     if (edition.nil?)
       # if no edition, just use a fake one for use in path processing
       edition = "urn:cts:" + params[:work_urn] + ".tempedition"
-    end    
+    end
     collection = params[:CTSIdentifierCollectionSelect]
     identifier = collection + "/" + CTS::CTSLib.pathForUrn(edition,'edition')
     identifier_class = Object.const_get(CTS::CTSLib.getIdentifierClassName(identifier))
@@ -174,22 +174,22 @@ class CtsPublicationsController < PublicationsController
       Rails.logger.info("Creating new title #{new_publication.title}")
       new_publication.status = "new"
       new_publication.save!
-    
+
       # branch from master so we aren't just creating an empty branch
       new_publication.branch_from_master
-    
+
       # create the new template
       new_cts = identifier_class.new_from_template(new_publication,collection,urn,'edition',lang)
       @publication = new_publication
-      
+
       # create the temporary CTS citation and inventory metadata records
-      # we can't do this until the publication has already been branched from the master 
-      # because they don't exist in the master git repo 
+      # we can't do this until the publication has already been branched from the master
+      # because they don't exist in the master git repo
       # and are only carried along with the publication until it is finalized
       begin
         # first the inventory record
         CTSInventoryIdentifier.new_from_template(@publication,collection,identifier,edition)
-        # now the citation identifier 
+        # now the citation identifier
         if params[:citation_urn]
           # TODO this needs to support direction creation from a translation as well as an edition?
           citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn].to_s,'edition')
@@ -205,24 +205,24 @@ class CtsPublicationsController < PublicationsController
       flash[:notice] = 'Publication was successfully created.'
       expire_publication_cache
       redirect_to @publication
-    
+
     # proceed to create from existing identifier file -- only if we have an identifier
     elsif (params[:edition_urn])
       related_identifiers = [identifier]
       conflicting_identifiers = []
-  
+
       # loop through related identifiers looking for conflicts
       related_identifiers.each do |relid|
-          possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
+          possible_conflicts = Identifier.where(name: relid).includes(:publication)
           actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
           conflicting_identifiers += actual_conflicts
         end # end loop through related identifiers
-  
+
         if conflicting_identifiers.length > 0
           Rails.logger.info("Conflicting identifiers: #{conflicting_identifiers.inspect}")
           conflicting_publication = conflicting_identifiers.first.publication
         conflicting_publications = conflicting_identifiers.collect {|ci| ci.publication}.uniq
-  
+
         if conflicting_publications.length > 1
           flash[:error] = 'Error creating publication: multiple conflicting publications'
           flash[:error] += '<ul>'
@@ -233,7 +233,7 @@ class CtsPublicationsController < PublicationsController
           redirect_to dashboard_url
           return
         end
-  
+
         if (conflicting_publication.status == "committed")
           expire_publication_cache
           conflicting_publication.archive
@@ -245,30 +245,30 @@ class CtsPublicationsController < PublicationsController
       end # end if conflicting identifiers
       # else
       identifiers_hash = Hash.new
-      
+
       related_identifiers.each do |relid|
         key = CTS::CTSLib.getIdentifierKey(relid)
         identifiers_hash[key] = Array.new() unless identifiers_hash.has_key?(key)
         identifiers_hash[key] << relid
       end
-      
+
       @publication = Publication.new()
       @publication.owner = @current_user
       @publication.creator = @current_user
       @publication.populate_identifiers_from_identifiers(
             identifiers_hash,CTS::CTSLib.versionTitleForUrn(collection,params[:edition_urn].to_s))
-                   
+
       if @publication.save!
         @publication.branch_from_master
-        
+
         # create the temporary CTS citation and inventory metadata records
-        # we can't do this until the publication has already been branched from the master 
-        # because they don't exist in the master git repo 
+        # we can't do this until the publication has already been branched from the master
+        # because they don't exist in the master git repo
         # and are only carried along with the publication until it is finalized
         begin
           # first the inventory record
           CTSInventoryIdentifier.new_from_template(@publication,collection,identifier,edition)
-          # now the citation identifier 
+          # now the citation identifier
           if params[:citation_urn]
             # TODO this needs to support direction creation from a translation as well as an edition?
             citation_identifier = CitationCTSIdentifier.new_from_template(@publication,collection,params[:citation_urn].to_s,'edition')
@@ -287,7 +287,7 @@ class CtsPublicationsController < PublicationsController
         e.target = @publication
         e.owner = @current_user
         e.save!
-  
+
         flash[:notice] = 'Publication was successfully created.'
         expire_publication_cache
         #redirect_to edit_polymorphic_path([@publication, @publication.entry_identifier])
@@ -300,7 +300,7 @@ class CtsPublicationsController < PublicationsController
         flash[:notice] = 'You must specify an edition.'
         redirect_to dashboard_url
     end # end if creating from inventory
-    
+
   end # end create_from_selector
-  
+
 end

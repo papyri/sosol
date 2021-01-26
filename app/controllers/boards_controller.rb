@@ -11,7 +11,7 @@ class BoardsController < ApplicationController
       render :file => 'public/403', :status => '403', :layout => false, :formats => [:html]
     end
   end
-  
+
   #Presents overview for publication.
   def overview
     @board = Board.find(params[:id].to_s)
@@ -19,9 +19,9 @@ class BoardsController < ApplicationController
     if @board.users.find_by_id(@current_user.id) || @current_user.developer
       # below is dangerous since it will expose publications to non owners
       #finalizing_publications = Publication.find(:all, :conditions => "status == 'finalizing'")
-      
+
       #return only owner publications
-      finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions =>  { :status => 'finalizing'} )    
+      finalizing_publications = Publication.where(owner_id: @current_user.id,  status: 'finalizing')
 
       if finalizing_publications
         @finalizing_publications = finalizing_publications.collect{|p| p.parent.owner == @board ? p : nil}.compact
@@ -33,9 +33,9 @@ class BoardsController < ApplicationController
       redirect_to dashboard_url
       return
     end
-    
+
   end
-  
+
   def find_member
     @board = Board.find(params[:id].to_s)
   end
@@ -45,7 +45,7 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id].to_s)
     user = User.find_by_name(params[:user_name].to_s)
 
-    if nil == @board.users.find_by_id(user.id) 
+    if nil == @board.users.find_by_id(user.id)
       @board.users << user
       @board.save
     end
@@ -90,9 +90,9 @@ class BoardsController < ApplicationController
   # GET /boards/new
   # GET /boards/new.xml
   def new
-    
-    @board = Board.new    
-    
+
+    @board = Board.new
+
     #don't let more than one board use the same identifier class
     @available_identifier_classes = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
 
@@ -100,11 +100,11 @@ class BoardsController < ApplicationController
     #existing_boards.each do |b|
     #  @available_identifier_classes -= b.identifier_classes
     #end
-    
+
     if params[:community_id]
       @board.community_id =  params[:community_id].to_s
     end
-     
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @board }
@@ -120,7 +120,7 @@ class BoardsController < ApplicationController
   # POST /boards.xml
   def create
     @board = Board.new(board_params)
-    
+
     @board.identifier_classes = []
 
     #let them choose as many ids as they want
@@ -136,15 +136,15 @@ class BoardsController < ApplicationController
     if @board.community_id
       @board.rank = Board.ranked_by_community_id( @board.community_id ).count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
     else
-      #@board.rank = Board.count()  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.  
+      #@board.rank = Board.count()  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
       @board.rank = Board.ranked.count  + 1 #+1 since ranks start at 1 not 0. Also new board has not been added to count until it gets saved.
     end
     #just let them choose one identifer class
     #@board.identifier_classes << params[:identifier_class]
-    
+
 
     mailers = YAML::load_file(File.join(Rails.root, %w{config board_mailers.yml}))[:mailers] || { :default => [] }
-    if @board.community && mailers[@board.community.type] 
+    if @board.community && mailers[@board.community.type]
       mailers =  mailers[@board.community.type]
     else
       mailers =  mailers[:default]
@@ -154,21 +154,21 @@ class BoardsController < ApplicationController
       e = Emailer.new(m)
       if e.save
         @board.emailers << e
-      else 
+      else
         flash[:warning]  = "Unable to save mailer"
       end
     end
-     
+
     if @board.save
       flash[:notice] = 'Board was successfully created.'
       redirect_to :action => "edit", :id => (@board).id
     else
-      @board.emailers.each do | m | 
+      @board.emailers.each do | m |
         m.destroy
       end
       flash[:error] = "Board creation failed. #{@board.errors.to_a}"
       redirect_to dashboard_url
-    end         
+    end
   end
 
   # PUT /boards/1
@@ -204,16 +204,16 @@ class BoardsController < ApplicationController
 
   #*Returns* array of boards sorted by rank. Lowest rank (highest priority) first.
   #If community_id is given then the returned boards are only for that community.
-  #If no community_id is given then the "sosol" boards are returned. 
+  #If no community_id is given then the "sosol" boards are returned.
   def rank
     if params[:community_id]
       @boards = Board.ranked_by_community_id( params[:community_id].to_s )
-      @community_id = params[:community_id].to_s 
+      @community_id = params[:community_id].to_s
     else
       #default to sosol boards
-      @boards = Board.ranked;  
+      @boards = Board.ranked;
     end
-    
+
   end
 
   #Sorts board rankings by given array of board id's and saves new rankings.
@@ -223,13 +223,13 @@ class BoardsController < ApplicationController
       @boards = Board.ranked_by_community_id( params[:community_id].to_s )
     else
       #default to sosol boards
-      @boards = Board.ranked;  
+      @boards = Board.ranked;
     end
-    
+
     #@boards = Board.all
 
     rankings = params[:ranking].to_s.split(',');
-    
+
     rank_count = 1
     rankings.each do |rank_id|
       @boards.each do |board|
@@ -241,8 +241,8 @@ class BoardsController < ApplicationController
       end
       rank_count+= 1
     end
-    
-    
+
+
     if !params[:community_id].blank?
       redirect_to :controller => 'communities', :action => 'edit',  :id => params[:community_id].to_s
       return
@@ -251,22 +251,22 @@ class BoardsController < ApplicationController
       redirect_to :action => "index"
       return
     end
-    
+
   end
 
 
 def send_board_reminder_emails
-    
-  addresses = Array.new 
-  
+
+  addresses = Array.new
+
   if (params[:community_id].to_s != '')
-    boards = Board.ranked_by_community_id(params[:community_id].to_s) 
-    community = Community.find_by_id(params[:community_id].to_s) 
+    boards = Board.ranked_by_community_id(params[:community_id].to_s)
+    community = Community.find_by_id(params[:community_id].to_s)
   else
     boards = Board.ranked
   end
-    
-    
+
+
   body_text = 'Greetings '
   if community
     body_text += community.name + " "
@@ -274,51 +274,49 @@ def send_board_reminder_emails
   time_str = Time.now.strftime("%Y-%m-%d")
   body_text += "Board Members, as of " + time_str  + ", "
   boards.each do |board|
-    #grab addresses for this board 
-    board.users.each do |board_user|          
-      addresses << board_user.email        
+    #grab addresses for this board
+    board.users.each do |board_user|
+      addresses << board_user.email
     end
-  
-    body_text += "\n" + board.name + " has " 
-      
-    #find all pubs that are still in voting phase         
+
+    body_text += "\n" + board.name + " has "
+
+    #find all pubs that are still in voting phase
     voting_publications = board.publications.collect{|p| p.status == 'voting' ? p : nil}.compact
-    #voting_publications = Publication.find_all_by_owner_id(board.id, :conditions => {:owner_type => 'Board', :status => "voting"}  )
     if voting_publications
       body_text += voting_publications.length.to_s
     else
       body_text += "no"
     end
     body_text += " publications requiring voting action, "
-    
+
     body_text += " and "
-  
+
     approved_publications = board.publications.collect{|p| p.status == 'approved' ? p : nil}.compact
-    #approved_publications = Publication.find_all_by_owner_id(board.id, :conditions => {:owner_type => "Board", :status => "approved" }  )
     if approved_publications
       body_text += approved_publications.length.to_s
     else
       body_text += "no"
     end
-    body_text += " approved publications waiting to be finalized.  "    
-    
-    
+    body_text += " approved publications waiting to be finalized.  "
+
+
     completed_publications = board.publications.collect{|p| (p.status == 'committed' || p.status == 'archived') ? p : nil}.compact
-    
+
     if completed_publications
       body_text += completed_publications.length.to_s
     else
       body_text += "No"
     end
     body_text += " publications have been committed."
-    
-    
+
+
     subject_line = ""
     if community
       subject_line += community.name + " "
-    end  
-    subject_line += "Board Publication Status Reminder " 
-    
+    end
+    subject_line += "Board Publication Status Reminder "
+
     addresses.each do |address|
       if address && address.strip != ""
         begin
@@ -327,11 +325,11 @@ def send_board_reminder_emails
           Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
         end
       end
-    end   
+    end
   end
-  
-  
-  if community 
+
+
+  if community
     flash[:notice] = "Notifications sent to all " + community.name + " board members."
   else
     flash[:notice] = "Notifications sent to all PE board members."
