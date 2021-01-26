@@ -46,7 +46,7 @@
 
 - if @current_user
 
-  - end_communities = Community.where( :end_user_id => @current_user.id} )
+  - end_communities = Community.where( :end_user_id => @current_user.id )
   - user_communities = @current_user.community_memberships
   - all_communities = end_communities | user_communities
 
