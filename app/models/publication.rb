@@ -52,7 +52,8 @@ class Publication < ActiveRecord::Base
       end
     end
   end
-  scope :other_users, -> (title, id) { where(title: title).not(creator_id: id).where(status: ['editing', 'submitted']) }
+
+  scope :other_users, -> (title, id) { where.not(creator_id: id).where(title: title, status: ['editing', 'submitted']) }
 
   #inelegant way to pass this info, but it works
   attr_accessor :recent_submit_sha
