@@ -33,9 +33,9 @@ Sosol::Application.configure do
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
 
-  # Disable Rails's static asset server
+  # Disable Rails's static file server
   # In production, Apache or nginx will already do this
-  config.serve_static_assets = false
+  config.serve_static_files = false
 
 	# Compress JavaScripts and CSS
 	config.assets.compress = true
