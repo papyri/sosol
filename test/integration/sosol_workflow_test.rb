@@ -725,6 +725,9 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                     end
                   end
                 end
+              rescue ActiveRecord::ConnectionTimeoutError => e
+                Rails.logger.debug("ActiveRecord::ConnectionTimeoutError in MMF race become_finalizer 1: #{e.inspect}")
+                retry
               ensure
                 # The new thread gets a new AR connection, so we should
                 # always close it and flush logs before we terminate
@@ -750,6 +753,9 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                     end
                   end
                 end
+              rescue ActiveRecord::ConnectionTimeoutError => e
+                Rails.logger.debug("ActiveRecord::ConnectionTimeoutError in MMF race become_finalizer 2: #{e.inspect}")
+                retry
               ensure
                 # The new thread gets a new AR connection, so we should
                 # always close it and flush logs before we terminate
