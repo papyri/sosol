@@ -13,7 +13,7 @@ class DropDocos < ActiveRecord::Migration
       t.string :xml
       t.string :url
 
-      t.timestamps
+      t.timestamps, null: true
     end
     add_column :docos, :urldisplay, :string
     add_column :docos, :note, :text

@@ -4,7 +4,7 @@ class CreateUserIdentifiers < ActiveRecord::Migration
       t.string :identifier
       t.integer :user_id
 
-      t.timestamps
+      t.timestamps, null: true
     end
   end
 

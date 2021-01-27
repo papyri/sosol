@@ -7,7 +7,7 @@ class CreateCommunities < ActiveRecord::Migration
       t.integer :admins
       t.string :description
 
-      t.timestamps
+      t.timestamps, null: true
     end
   end
 
