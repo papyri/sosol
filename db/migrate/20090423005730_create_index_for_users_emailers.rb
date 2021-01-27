@@ -4,7 +4,7 @@ class CreateIndexForUsersEmailers < ActiveRecord::Migration
       t.string :emailer_id
       t.integer :user_id
 
-      t.timestamps
+      t.timestamps null: true
     end
     
     add_index :emailers_users, [ :emailer_id, :user_id ], :unique => true

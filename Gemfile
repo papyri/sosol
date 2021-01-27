@@ -32,12 +32,12 @@ gem 'activerecord-jdbc-adapter', '>= 1.3.25', '< 50', :platform => :jruby
 gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '< 50', :platform => :jruby
 gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
 gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
-gem 'activerecord-deprecated_finders', require: 'active_record/deprecated_finders'
+gem 'jdbc-mysql', '< 8', require: false
 gem 'tzinfo-data', :platform => :jruby
 gem 'actionpack-page_caching'
 gem 'rack', '>= 1.1.0'
 gem 'handle_invalid_percent_encoding_requests'
-gem 'airbrake', '~> 5.6.1'
+gem 'airbrake'
 gem 'rubyzip', '~> 1.0'
 gem 'zip-zip'
 gem 'dynamic_form'

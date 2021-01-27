@@ -149,7 +149,7 @@ class UserController < ApplicationController
 
     #below selects publications to show in standard user data section of dashboard
     unless fragment_exist?(:action => 'dashboard', :part => "your_publications_#{@current_user.id}")
-      @publications = Publication.where(owner_id: @current_user.id, owner_type: 'User', owner_id: creator_id, parent_id: nil).not(status: 'archived').includes(identifiers: [:votes]).order(updated_at: :desc)
+      @publications = Publication.where.not(status: 'archived').where(owner_id: @current_user.id, owner_type: 'User', owner_id: creator_id, parent_id: nil).includes(identifiers: [:votes]).order(updated_at: :desc)
     end
 
     unless fragment_exist?(:action => 'dashboard', :part => "board_publications_#{@current_user.id}")
