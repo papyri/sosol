@@ -165,8 +165,7 @@ class UserController < ApplicationController
     end
 
     unless fragment_exist?(:action => 'dashboard', :part => 'events_list')
-      @events = Event.find(:all, :order => "created_at DESC", :limit => 25,
-                           :include => [:owner, :target])[0..24]
+      @events = Event.order(created_at: :desc).limit(25).includes(:owner, :target).load
     end
 
 
