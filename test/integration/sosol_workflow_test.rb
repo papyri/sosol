@@ -712,6 +712,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
             new_active_threads << Thread.new do
               begin
                 Rails.logger.info("Starting MMF race thread 1: #{Thread.current.object_id}")
+                Thread.current.report_on_exception = false
                 ActiveRecord::Base.connection_pool.clear_reloadable_connections!
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
@@ -737,6 +738,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
             new_active_threads << Thread.new do
               begin
                 Rails.logger.info("Starting MMF race thread 2: #{Thread.current.object_id}")
+                Thread.current.report_on_exception = false
                 ActiveRecord::Base.connection_pool.clear_reloadable_connections!
                 ActiveRecord::Base.connection_pool.with_connection do |conn|
                   open_session do |make_me_finalizer_session|
