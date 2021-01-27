@@ -1,7 +1,7 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'https://rubygems.org'
-ruby "2.3.3", :engine => "jruby", :engine_version => "9.1.17.0"
+ruby "2.5.7", :engine => "jruby", :engine_version => "9.2.14.0"
 
 gem 'rails', '~> 4.2.11.3'
 
