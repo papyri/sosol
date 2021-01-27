@@ -706,6 +706,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
             Rails.logger.info("MMF race on pub: #{mmf_publication.inspect}")
             Rails.logger.info("MMF race parent thread id: #{Thread.current.object_id}")
+            Thread.report_on_exception = false
 
             new_active_threads = []
 
