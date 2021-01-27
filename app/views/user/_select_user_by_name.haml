@@ -1,6 +1,5 @@
 - if li != nil
-  -# users = User.find(:all, :order => 'name ASC')
-  - users = User.find(:all, :order => "full_name ASC")
+  - users = User.order(full_name: :asc)
   - users.each do |user|
     .select_user_name
       -#= link_to user.name + "  ( " + user.human_name + " )", :controller => li.controller, :action => li.action, :id => li.id, :user_name => user.name,  :user_id => user.id

@@ -119,7 +119,6 @@ class User < ActiveRecord::Base
   #- +email_content+ the email's body
   def self.compose_email(subject_line, email_content)
     #get email addresses from all users that have them
-    #users = User.find(:all, :select => "email", :conditions => ["email != ?", ""])
     users = User.find_by_sql("SELECT email From users WHERE email is not null")
 
     users.each do |toaddress|
