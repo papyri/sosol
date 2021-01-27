@@ -112,10 +112,7 @@ class BiblioIdentifier < HGVIdentifier
   #   - temporary identifier name
   def self.next_temporary_identifier
     year = Time.now.year
-    latest = self.find(:all,
-                       :conditions => ["name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{year}-%"],
-                       :order => "name DESC",
-                       :limit => 1).first
+    latest = self.where('name like ?', "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{year}-%").order(name: :desc).limit(1).first
     if latest.nil?
       # no constructed id's for this year/class
       document_number = 1
