@@ -37,7 +37,7 @@ gem 'tzinfo-data', :platform => :jruby
 gem 'actionpack-page_caching'
 gem 'rack', '>= 1.1.0'
 gem 'handle_invalid_percent_encoding_requests'
-gem 'airbrake', '~> 5.6.1'
+gem 'airbrake'
 gem 'rubyzip', '~> 1.0'
 gem 'zip-zip'
 gem 'dynamic_form'
