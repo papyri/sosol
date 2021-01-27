@@ -5,7 +5,7 @@ class CreateVotes < ActiveRecord::Migration
       t.string :user_id
       # t.integer :article_id
 
-      t.timestamps, null: true
+      t.timestamps null: true
     end
   end
 

@@ -4,7 +4,7 @@ class AddBoardUsersTable < ActiveRecord::Migration
       t.string :board_id
       t.integer :user_id
 
-      t.timestamps, null: true
+      t.timestamps null: true
     end
     
     add_index :boards_users, [ :board_id, :user_id ], :unique => true

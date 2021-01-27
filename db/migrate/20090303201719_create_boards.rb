@@ -7,7 +7,7 @@ class CreateBoards < ActiveRecord::Migration
       t.integer :decree_id
       # t.integer :article_id
 
-      t.timestamps, null: true
+      t.timestamps null: true
     end
   end
 

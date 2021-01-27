@@ -4,7 +4,7 @@ class CreateCommunityMembers < ActiveRecord::Migration
       t.integer :community_id
       t.integer :user_id
 
-      t.timestamps, null: true
+      t.timestamps null: true
     end
   end
 

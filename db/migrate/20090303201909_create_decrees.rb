@@ -6,7 +6,7 @@ class CreateDecrees < ActiveRecord::Migration
       t.string :choices
       t.integer :board_id
 
-      t.timestamps, null: true
+      t.timestamps null: true
     end
   end
 

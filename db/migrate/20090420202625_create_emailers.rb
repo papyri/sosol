@@ -8,7 +8,7 @@ class CreateEmailers < ActiveRecord::Migration
       t.boolean :include_document
       t.text :message
 
-      t.timestamps, null: true
+      t.timestamps null: true
     end
   end
 

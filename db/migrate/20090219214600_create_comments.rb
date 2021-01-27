@@ -6,7 +6,7 @@ class CreateComments < ActiveRecord::Migration
       t.integer :article_id
       t.string :reason
 
-      t.timestamps, null: true
+      t.timestamps null: true
     end
   end
 
