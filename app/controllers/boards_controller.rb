@@ -17,9 +17,6 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id].to_s)
 
     if @board.users.find_by_id(@current_user.id) || @current_user.developer
-      # below is dangerous since it will expose publications to non owners
-      #finalizing_publications = Publication.find(:all, :conditions => "status == 'finalizing'")
-
       #return only owner publications
       finalizing_publications = Publication.where(owner_id: @current_user.id,  status: 'finalizing')
 
