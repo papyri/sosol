@@ -30,6 +30,6 @@
   = link_to "Archived", :controller => 'user', :action => 'archives',  :id => @current_user.id
 
 - if defined?(@show_events)
-  - @events = Event.find(:all, :order => "created_at DESC", :limit => 25, :include => [:owner, :target])[0..24]
+  - @events = Event.order(created_at: :desc).limit(25).includes(:owner, :target)
   %h2 News Feed
   = render :partial => "events/list", :object => @events

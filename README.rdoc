@@ -219,7 +219,7 @@ publications.
       * cd REPOSITORY_ROOT/canonical.git && git repack && echo "" > objects/info/alternates
       * can check integrity afterwards with "git fsck"
     * rm -rf REPOSITORY_ROOT/boards/*.git REPOSITORY_ROOT/users/*.git
-  * can also delete every model instance from the console with e.g. User.find(:all).each{|u| u.destroy} but this can be tedious if there are loose instances of other models that aren't dependent-destroyed
+  * can also delete every model instance from the console with e.g. User.all.each{|u| u.destroy} but this can be tedious if there are loose instances of other models that aren't dependent-destroyed
 
 = XSugar Standalone
 * to start a local XSugar standalone server:
