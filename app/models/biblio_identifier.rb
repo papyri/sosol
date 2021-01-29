@@ -223,6 +223,18 @@ class BiblioIdentifier < HGVIdentifier
     @epiDocX ||= REXML::Document.new(self.xml_content)
   end
 
+  def method_missing(method_id, *arguments, &block)
+    begin
+      super(method_id, *arguments, &block)
+    rescue NoMethodError => e
+      if (method_id.to_s !~ /=$/) && self.non_database_attribute.has_key?(method_id.to_sym)
+        return self.non_database_attribute[method_id.to_sym]
+      else
+        raise e
+      end
+    end
+  end
+
   after_find :after_find_retrieve
   # Retrieves data from xml or sets empty defaults
   # Side effect on +self+ attributes
