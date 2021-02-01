@@ -149,7 +149,7 @@ class UserController < ApplicationController
 
     #below selects publications to show in standard user data section of dashboard
     unless fragment_exist?(:action => 'dashboard', :part => "your_publications_#{@current_user.id}")
-      @publications = Publication.where.not(status: 'archived').where(owner_id: @current_user.id, owner_type: 'User', owner_id: creator_id, parent_id: nil).includes(identifiers: [:votes]).order(updated_at: :desc)
+      @publications = Publication.where.not(status: 'archived').where(owner_id: @current_user.id, creator_id: @current_user.id, owner_type: 'User', parent_id: nil).includes(identifiers: [:votes]).order(updated_at: :desc)
     end
 
     unless fragment_exist?(:action => 'dashboard', :part => "board_publications_#{@current_user.id}")
@@ -275,11 +275,11 @@ class UserController < ApplicationController
 
   #Shows all publications for the current user (excepting archived status).
   def user_complete_dashboard
-    @submitted_publications = Publication.where(owner_id: @current_user.id,  :owner_type => 'User', :owner_id => @current_user.id, :status => 'submitted').includes(identifiers: [:votes]).order(updated_at: :desc)
-    @editing_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :owner_id => @current_user.id, :status => 'editing').includes(identifiers: [:votes]).order(updated_at: :desc)
-    @new_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :owner_id => @current_user.id, :status => 'new').includes(identifiers: [:votes]).order(updated_at: :desc)
-    @committed_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :owner_id => @current_user.id, :status => 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
-    @finalizing_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :owner_id => @current_user.id, :status => 'finalizing').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @submitted_publications = Publication.where(owner_id: @current_user.id,  :owner_type => 'User', :status => 'submitted').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @editing_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :status => 'editing').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @new_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :status => 'new').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @committed_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :status => 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @finalizing_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :status => 'finalizing').includes(identifiers: [:votes]).order(updated_at: :desc)
 
     render 'user_dashboard'
   end
