@@ -384,4 +384,9 @@ Sosol::Application.routes.draw do
   match 'signout' => 'user#signout', :as => :signout, :via => :get
   match 'signin' => 'user#signin', :as => :signin, :via => :get
   match 'account' => 'user#account', :as => :account, :via => :get
+  post 'rpx/login_return', to: 'rpx#login_return'
+  post 'rpx/remove_openid', to: 'rpx#remove_openid'
+  post 'rpx/associate_return', to: 'rpx#associate_return'
+  post 'rpx/associate_really', to: 'rpx#associate_really'
+  post 'rpx/create_submit', to: 'rpx#create_submit'
 end
