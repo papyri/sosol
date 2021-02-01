@@ -2,6 +2,7 @@ log/*.log
 tmp/**/*
 .DS_Store
 public/cache/**/*
+public/stylesheets/*
 doc/api
 doc/app
 doc/guides
