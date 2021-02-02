@@ -430,4 +430,7 @@ Sosol::Application.routes.draw do
   get 'translation_helper/linebreak', to: 'translation_helper#linebreak'
   get 'translation_helper/division', to: 'translation_helper#division'
   get 'translation_helper/tryit', to: 'translation_helper#tryit'
+  get 'translation_leiden/xml_to_translation_leiden', to: 'translation_leiden#xml_to_translation_leiden'
+  get 'translation_leiden/get_language_translation_leiden', to: 'translation_leiden#get_language_translation_leiden'
+  get 'translation_leiden/translation_leiden_to_xml', to: 'translation_leiden#translation_leiden_to_xml'
 end
