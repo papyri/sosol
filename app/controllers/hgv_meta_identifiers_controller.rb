@@ -182,7 +182,7 @@ class HgvMetaIdentifiersController < IdentifiersController
         if params[:hgv_meta_identifier][:provenance]
           hgv = HGVMetaIdentifier.new
           hgv.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
-          params[:hgv_meta_identifier][:origPlace] = HgvProvenance.format hgv[:provenance]
+          params[:hgv_meta_identifier][:origPlace] = HgvProvenance.format hgv.non_database_attribute[:provenance]
 
         else
           params[:hgv_meta_identifier][:origPlace] = 'unbekannt'
