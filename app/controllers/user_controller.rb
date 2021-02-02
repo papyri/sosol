@@ -300,10 +300,13 @@ class UserController < ApplicationController
       @finalizing_publications.each do |fp|
         #remove it from the list of approved publications
         @approved_publications.each do |ap|
-         if fp.origin == ap.origin
-           @approved_publications.delete(ap)
-         end
-
+          begin
+            if fp.origin == ap.origin
+              @approved_publications.delete(ap)
+            end
+          rescue ActiveRecord::RecordNotFound => e
+            Rails.logger.debug("UserController#board_dashboard ActiveRecord::RecordNotFound while removing approved publications: #{e.inspect}")
+          end
         end
      end
 
