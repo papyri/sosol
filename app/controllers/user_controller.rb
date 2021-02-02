@@ -314,7 +314,7 @@ class UserController < ApplicationController
      else
        @offset = 0
      end
-     @count = Publication.count(:conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"})
+     @count = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").count
 
      #find all pubs that are still in voting phase
      board_voting_publications = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").includes(identifiers: [:votes]).order(updated_at: :desc).offset(@offset).limit(50)
