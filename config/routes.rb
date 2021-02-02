@@ -404,4 +404,8 @@ Sosol::Application.routes.draw do
   match 'user/email_everybody' => 'user#email_everybody', via: [:patch, :post]
   match 'user/refresh_usage' => 'user#refresh_usage', via: [:patch, :post]
   match 'user/leave_community' => 'user#leave_community', via: [:patch, :post]
+  get 'cross_site/footer', to: 'cross_site#footer'
+  get 'cross_site/header', to: 'cross_site#header'
+  get 'cross_site/advanced_create', to: 'cross_site#advanced_create'
+  get 'cross_site/sign_in_out', to: 'cross_site#sign_in_out'
 end
