@@ -390,4 +390,18 @@ Sosol::Application.routes.draw do
   post 'rpx/associate_really', to: 'rpx#associate_really'
   post 'rpx/create_submit', to: 'rpx#create_submit'
   post 'identifiers/create', to: 'identifiers#create'
+  get 'user/board_dashboard', to: 'user#board_dashboard'
+  get 'user/user_community_dashboard', to: 'user#user_community_dashboard'
+  get 'user/user_complete_dashbaord', to: 'user#user_complete_dashbaord'
+  get 'user/archives', to: 'user#archives'
+  get 'user/admin', to: 'user#admin'
+  get 'user/edit_user_admins', to: 'user#edit_user_admins'
+  get 'user/download_by_status', to: 'user#download_by_status'
+  get 'user/download_user_publications', to: 'user#download_user_publications'
+  get 'user/download_options', to: 'user#download_options'
+  patch 'user/update_personal', to: 'user#update_personal'
+  patch 'user/update_admins', to: 'user#update_admins'
+  match 'user/email_everybody' => 'user#email_everybody', via: [:patch, :post]
+  match 'user/refresh_usage' => 'user#refresh_usage', via: [:patch, :post]
+  match 'user/leave_community' => 'user#leave_community', via: [:patch, :post]
 end
