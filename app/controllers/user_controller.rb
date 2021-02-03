@@ -319,7 +319,7 @@ class UserController < ApplicationController
      @count = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").count
 
      #find all pubs that are still in voting phase
-     board_voting_publications = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").includes(identifiers: [:votes]).order(updated_at: :desc).offset(@offset).limit(50)
+     board_voting_publications = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").includes(identifiers: [:votes]).order(updated_at: :desc).offset(@offset).limit(50).to_a
      #find all pubs that the user needs to review
      @needs_reviewing_publications = board_voting_publications.collect{ |p|
         needs_review = false
