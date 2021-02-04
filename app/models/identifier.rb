@@ -313,7 +313,7 @@ class Identifier < ActiveRecord::Base
       end
 
     #let the finalizer edit the id the board owns
-    elsif self.publication.status == "finalizing" &&  self.publication.find_first_board.identifier_classes.include?(self.class.to_s)
+    elsif self.publication.status == "finalizing" &&  self.publication.find_first_board && self.publication.find_first_board.identifier_classes.include?(self.class.to_s)
       return true
 
     #they can edit any of their stuff if it is not submitted
