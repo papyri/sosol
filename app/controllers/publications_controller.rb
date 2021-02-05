@@ -894,7 +894,9 @@ class PublicationsController < ApplicationController
 
     def archive_pub(pub_id)
       @publication = Publication.find(pub_id)
-      @publication.archive
+      if (@current_user.id == @publication.owner_id) || @current_user.developer || @current_user.admin
+        @publication.archive
+      end
     end
 
     private
