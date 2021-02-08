@@ -33,6 +33,7 @@ gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '< 50', :platform => :jruby
 gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
 gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
 gem 'jdbc-mysql', '< 8', require: false
+gem 'activerecord-session_store'
 gem 'tzinfo-data', :platform => :jruby
 gem 'actionpack-page_caching'
 gem 'rack', '>= 1.1.0'
