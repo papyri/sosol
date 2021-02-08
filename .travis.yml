@@ -8,6 +8,13 @@ env:
 jdk:
   - oraclejdk8
   - openjdk8
+  - openjdk9
+  - openjdk10
+  - openjdk11
+  - openjdk12
+  - openjdk13
+  - openjdk14
+  - openjdk15
 rvm:
   - jruby-9.2.14.0
 before_install:
