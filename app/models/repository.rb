@@ -54,7 +54,7 @@ class Repository
       # Sometimes, Git will give output which contains an invalid UTF-8 byte sequence which causes JRuby's internal backticks implementation
       # to raise an ArgumentError. This is a workaround for that.
       Rails.logger.error(e.inspect)
-      Airbrake[:default].notify(e)
+      Airbrake.notify(e)
     end
     t2 = Time.now
     Rails.logger.info("Repository.run_command finished (called from #{caller[0].to_s}) in #{(t2 - t1).to_s} seconds: #{command_string}")
@@ -69,7 +69,7 @@ class Repository
       Rails.logger.error("Repository.run_command error (called from #{caller[0].to_s}): #{command_string}")
       Rails.logger.error("Repository.run_command exit code: #{$?.exitstatus.to_s}")
       error_string = "Repository.run_command error running: #{command_string}\n#{result}"
-      Airbrake[:default].notify(error_string)
+      Airbrake.notify(error_string)
       raise error_string
     else
       return result

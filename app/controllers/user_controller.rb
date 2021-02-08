@@ -294,18 +294,17 @@ class UserController < ApplicationController
 
       #get publications that have been approved
       #@approved_publications = @board.publications.collect{|p| p.status == "approved" ? p : nil}.compact
-      @approved_publications = Publication.where(owner_id: @board.id, :owner_type => "Board", :status => "approved").includes(identifiers: [:votes]).order(updated_at: :desc)
+      @approved_publications = Publication.where(owner_id: @board.id, :owner_type => "Board", :status => "approved").includes(identifiers: [:votes]).order(updated_at: :desc).to_a
 
       #remove approved publications if in the finalizer list
       @finalizing_publications.each do |fp|
         #remove it from the list of approved publications
-        @approved_publications.each do |ap|
+        @approved_publications.reject! do |ap|
           begin
-            if fp.origin == ap.origin
-              @approved_publications.delete(ap)
-            end
+            fp.origin == ap.origin
           rescue ActiveRecord::RecordNotFound => e
             Rails.logger.debug("UserController#board_dashboard ActiveRecord::RecordNotFound while removing approved publications: #{e.inspect}")
+            false
           end
         end
      end
@@ -320,7 +319,7 @@ class UserController < ApplicationController
      @count = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").count
 
      #find all pubs that are still in voting phase
-     board_voting_publications = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").includes(identifiers: [:votes]).order(updated_at: :desc).offset(@offset).limit(50)
+     board_voting_publications = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").includes(identifiers: [:votes]).order(updated_at: :desc).offset(@offset).limit(50).to_a
      #find all pubs that the user needs to review
      @needs_reviewing_publications = board_voting_publications.collect{ |p|
         needs_review = false

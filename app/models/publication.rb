@@ -1403,7 +1403,7 @@ class Publication < ActiveRecord::Base
   #- +nil+ if no board owned publication found.
   def find_first_board
     board_publication = self
-    while (board_publication.owner_type != "Board" && board_publication != nil) do
+    while ((board_publication != nil) && (board_publication.owner_type != "Board")) do
       board_publication = board_publication.parent
     end
     if board_publication
