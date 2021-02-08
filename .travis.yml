@@ -1,6 +1,6 @@
 language: ruby
 cache: bundler
-dist: trusty
+dist: focal
 sudo: false
 env:
   global:
