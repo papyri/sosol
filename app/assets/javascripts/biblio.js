@@ -77,8 +77,8 @@ function multiAddNameList(type)
 
 function multiAddPublisherList()
 {
-  var publisherType  = $$('#multiPlus_publisherList > select')[0].value;
-  var value          = $$('#multiPlus_publisherList > input')[0].value;
+  var publisherType  = $$('#multiItems_publisherList > select')[0].value;
+  var value          = $$('#multiItems_publisherList > input')[0].value;
 
   var index = multiGetNextIndex('publisherList');
 
