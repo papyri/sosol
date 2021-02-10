@@ -97,12 +97,12 @@ function multiAddPublisherList()
 
 function multiAddRelatedArticleList()
 {
-  var series    = $$('#multiPlus_relatedArticleList > input')[0].value;
-  var volume    = $$('#multiPlus_relatedArticleList > input')[1].value;
-  var number    = $$('#multiPlus_relatedArticleList > input')[2].value;
-  var ddb       = $$('#multiPlus_relatedArticleList > input')[3].value;
-  var tm        = $$('#multiPlus_relatedArticleList > input')[4].value;
-  var inventory = $$('#multiPlus_relatedArticleList > input')[5].value;
+  var series    = $$('#multiItems_relatedArticleList > input')[0].value;
+  var volume    = $$('#multiItems_relatedArticleList > input')[1].value;
+  var number    = $$('#multiItems_relatedArticleList > input')[2].value;
+  var ddb       = $$('#multiItems_relatedArticleList > input')[3].value;
+  var tm        = $$('#multiItems_relatedArticleList > input')[4].value;
+  var inventory = $$('#multiItems_relatedArticleList > input')[5].value;
 
   var index = multiGetNextIndex('relatedArticleList');
 
