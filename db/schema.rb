@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -31,9 +30,8 @@ ActiveRecord::Schema.define(version: 20210208190016) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["board_id", "user_id"], name: "index_boards_users_on_board_id_and_user_id", unique: true
   end
-
-  add_index "boards_users", ["board_id", "user_id"], name: "index_boards_users_on_board_id_and_user_id", unique: true
 
   create_table "comments", force: :cascade do |t|
     t.text     "comment"
@@ -103,9 +101,8 @@ ActiveRecord::Schema.define(version: 20210208190016) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["emailer_id", "user_id"], name: "index_emailers_users_on_emailer_id_and_user_id", unique: true
   end
-
-  add_index "emailers_users", ["emailer_id", "user_id"], name: "index_emailers_users_on_emailer_id_and_user_id", unique: true
 
   create_table "events", force: :cascade do |t|
     t.string   "category"
@@ -149,10 +146,9 @@ ActiveRecord::Schema.define(version: 20210208190016) do
     t.text     "data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
-
-  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true
-  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at"
 
   create_table "user_identifiers", force: :cascade do |t|
     t.string   "identifier"
