@@ -4,7 +4,7 @@
 chmod a+rx ~
 
 # make sure we can run jruby as tomcat before doing anything
-sudo -u tomcat jruby --version
+rbenv install -s && sudo -u tomcat jruby --version
 if [ $? -eq 0 ]; then
 sudo -u tomcat JRUBY_OPTS="-J-Xmx4g" jruby -S bundle install
 sudo -u tomcat jruby -S bundle exec cap local externals:setup
