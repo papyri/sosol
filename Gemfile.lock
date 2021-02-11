@@ -99,7 +99,7 @@ GEM
       rack-utf8_sanitizer
       rails (>= 3.1)
     highline (2.0.3)
-    i18n (1.8.8)
+    i18n (1.8.7)
       concurrent-ruby (~> 1.0)
     jdbc-mysql (5.1.47)
     jdbc-postgres (42.2.14)
@@ -244,6 +244,7 @@ DEPENDENCIES
   factory_bot_rails
   haml (= 4.0.6)
   handle_invalid_percent_encoding_requests
+  i18n (< 1.8.8)
   jdbc-mysql
   jdbc-sqlite3 (>= 3.7.2)
   jquery-rails
