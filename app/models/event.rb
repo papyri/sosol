@@ -1,5 +1,5 @@
 #Logs events for news feed.
-class Event < ActiveRecord::Base
+class Event < ApplicationRecord
   belongs_to :owner, :polymorphic => true
   belongs_to :target, :polymorphic => true
   

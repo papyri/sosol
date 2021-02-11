@@ -1,5 +1,5 @@
 #Holds information about a vote.
-class Vote < ActiveRecord::Base
+class Vote < ApplicationRecord
   belongs_to :publication
   belongs_to :identifier
   belongs_to :user

@@ -20,7 +20,7 @@
 require 'jgit_tree'
 require 'shellwords'
 
-class Publication < ActiveRecord::Base
+class Publication < ApplicationRecord
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized approved_pending }
   @@canon_mutex = Mutex.new
 

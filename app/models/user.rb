@@ -1,5 +1,5 @@
 #Represents a system user.
-class User < ActiveRecord::Base
+class User < ApplicationRecord
 
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name

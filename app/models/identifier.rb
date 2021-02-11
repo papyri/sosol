@@ -1,5 +1,5 @@
 # - Super-class of all identifiers
-class Identifier < ActiveRecord::Base
+class Identifier < ApplicationRecord
 
   IDENTIFIER_SUBCLASSES = Sosol::Application.config.site_identifiers.split(",")
 
