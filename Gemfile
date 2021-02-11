@@ -19,6 +19,7 @@ group :test do
   gem 'shoulda'
   gem 'factory_bot_rails'
   gem 'database_cleaner-active_record'
+  gem 'rails-controller-testing'
 end
 
 gem 'jquery-rails'
