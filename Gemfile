@@ -50,5 +50,3 @@ gem 'sucker_punch', '~> 2.0'
 gem 'with_advisory_lock'
 gem 'silencer'
 gem 'rack-attack', '~> 4.0'
-
-gem 'test_after_commit', :group => :test

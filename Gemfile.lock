@@ -201,8 +201,6 @@ GEM
       sprockets (>= 3.0.0)
     sucker_punch (2.1.2)
       concurrent-ruby (~> 1.0)
-    test_after_commit (1.1.0)
-      activerecord (>= 3.2)
     therubyrhino (2.1.2)
       therubyrhino_jar (>= 1.7.4, < 1.7.9)
     therubyrhino_jar (1.7.8)
@@ -266,7 +264,6 @@ DEPENDENCIES
   shoulda-matchers
   silencer
   sucker_punch (~> 2.0)
-  test_after_commit
   therubyrhino
   tzinfo-data
   uglifier (>= 1.0.3)
