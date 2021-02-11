@@ -357,7 +357,7 @@ Sosol::Application.routes.draw do
   get 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
   match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/, :via => :get
   match 'peep_user_dashboard/:user_id(/:publication)' => 'user#peep_user_dashboard', :user_id => /\d+/, :publication => /(submitted|editing|new|committed|finalizing|\d+)/, :via => :get
-  match 'editor/user/info' => 'user#info', :via => [:get, :options]
+  match 'user/info' => 'user#info', :via => [:get, :options]
   %w{apis biblio citation_cts collection cts_inventory cts_oac dclp_meta dclp_text ddb epi_cts epi_trans_cts hgv_meta hgv_trans oac tei_cts tei_trans_cts}.each do |identifier_class|
     match 'publications/:publication_id/:identifier_controller/:id/show_commit/:commit_id', controller: "#{identifier_class}_identifiers", action: :show_commit, constraints: { :commit_id => /[0-9a-fA-F]{40}/, :identifier_controller => /#{identifier_class}_identifiers/ }, :via => :get
   end
