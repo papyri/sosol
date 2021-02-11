@@ -257,7 +257,7 @@ class HGVTransIdentifier < HGVIdentifier
     # write back to a string
     modified_xml_content = ''
     original_xml_content.write(modified_xml_content)
-    puts modified_xml_content
+    Rails.logger.debug("HGVTransIdentifier#leiden_translation_to_xml modified_xml_content: #{modified_xml_content}")
     return modified_xml_content
   end
   
