@@ -1,5 +1,5 @@
 class CommentsController < ApplicationController
-  before_filter :authorize
+  before_action :authorize
 
   layout false
   # GET /comments

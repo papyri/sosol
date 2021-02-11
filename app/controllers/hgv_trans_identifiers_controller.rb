@@ -1,6 +1,6 @@
 class HgvTransIdentifiersController < IdentifiersController
   #layout 'site'
-  before_filter :authorize
+  before_action :authorize
   # require 'xml'
   # require 'xml/xslt'
   

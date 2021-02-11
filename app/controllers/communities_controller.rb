@@ -1,6 +1,6 @@
 class CommunitiesController < ApplicationController
 
-  before_filter :authorize
+  before_action :authorize
 
   # GET /communities
   # GET /communities.xml

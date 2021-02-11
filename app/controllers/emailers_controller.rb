@@ -1,5 +1,5 @@
 class EmailersController < ApplicationController
-  before_filter :authorize
+  before_action :authorize
   
   def find_board_member
     @emailer = Emailer.find(params[:id].to_s)

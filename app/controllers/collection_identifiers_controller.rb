@@ -1,6 +1,6 @@
 class CollectionIdentifiersController < ApplicationController
-  before_filter :authorize
-  before_filter :check_ddb
+  before_action :authorize
+  before_action :check_ddb
 
   # Ensures user has DDB rights to view page. Otherwise returns 403 error.
   def check_ddb

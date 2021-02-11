@@ -1,6 +1,6 @@
 class CtsOacIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
-  before_filter :authorize
+  before_action :authorize
   
   def edit
     find_publication_and_identifier

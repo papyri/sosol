@@ -2,8 +2,8 @@ class BoardsController < ApplicationController
 
   #layout "site"
   #layout "header_footer"
-  before_filter :authorize
-  before_filter :check_admin
+  before_action :authorize
+  before_action :check_admin
 
   #Ensures user has admin rights to view page. Otherwise returns 403 error.
   def check_admin

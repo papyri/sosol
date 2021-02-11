@@ -1,8 +1,8 @@
 class RepositoriesController < ApplicationController
   #layout 'site'
-  before_filter :authorize
+  before_action :authorize
   
-  before_filter :find_repository
+  before_action :find_repository
 
   def index
     redirect_to :action => 'tree'

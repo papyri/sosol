@@ -1,7 +1,7 @@
 class DdbIdentifiersController < IdentifiersController
   #layout 'site'
-  before_filter :authorize
-  before_filter :ownership_guard, :only => [:update, :updatexml]
+  before_action :authorize
+  before_action :ownership_guard, :only => [:update, :updatexml]
   
   # - GET /publications/1/ddb_identifiers/1/edit
   # - Edit DDB Text via Leiden+

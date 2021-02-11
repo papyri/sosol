@@ -1,7 +1,7 @@
 class CtsPublicationsController < PublicationsController
   layout Sosol::Application.config.site_layout
-  before_filter :authorize
-  before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
+  before_action :authorize
+  before_action :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
 
 
   ## Create/Update a CTS Publication from a linked URN

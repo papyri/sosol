@@ -19,12 +19,12 @@ class ApplicationController < ActionController::Base
   # layout 'default'
 
   # include ::MaintenanceMode
-  # before_filter :disabled?
+  # before_action :disabled?
 
-  before_filter :get_user_id
-  before_filter :rpx_setup
+  before_action :get_user_id
+  before_action :rpx_setup
 
-  before_filter :tab_setup
+  before_action :tab_setup
 
   unless Rails.application.config.consider_all_requests_local
     rescue_from Exception, :with => :render_500

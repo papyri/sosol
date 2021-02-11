@@ -1,7 +1,7 @@
 class DecreesController < ApplicationController
   
   #layout "site"
-  before_filter :authorize
+  before_action :authorize
   
   # GET /decrees
   # GET /decrees.xml
