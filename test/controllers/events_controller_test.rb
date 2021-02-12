@@ -41,8 +41,9 @@ class EventsControllerTest < ActionController::TestCase
   end
 
   def test_should_update_event
-    put :update, params: { :id => @event.id, :event => { } }
+    put :update, params: { :id => @event.id, :event => { category: 'submit' } }
     assert_redirected_to event_path(assigns(:event))
+    assert_equal 'submit', @event.reload.category
   end
 
   def test_should_destroy_event
