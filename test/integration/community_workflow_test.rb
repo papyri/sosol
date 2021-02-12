@@ -198,18 +198,16 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
       teardown do
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx community testing teardown begin xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         begin
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
-            count = 0
-            [ @board_user, @board_user_2, @creator_user, @end_user, @community_user, @trash_user, @test_community ].each do |entity|
-              count = count + 1
-              #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
-              unless entity.nil?
-                begin
-                  entity.reload
-                  entity.destroy
-                rescue ActiveRecord::RecordNotFound => e
-                  Rails.logger.info(e.inspect)
-                end
+          count = 0
+          [ @board_user, @board_user_2, @creator_user, @end_user, @community_user, @trash_user, @test_community ].each do |entity|
+            count = count + 1
+            #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
+            unless entity.nil?
+              begin
+                entity.reload
+                entity.destroy
+              rescue ActiveRecord::RecordNotFound => e
+                Rails.logger.info(e.inspect)
               end
             end
           end

@@ -152,15 +152,13 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
       teardown do
         begin
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
-            count = 0
-            [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].reverse.each do |entity|
-              count = count + 1
-              #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
-              unless entity.nil?
-                entity.reload
-                entity.destroy
-              end
+          count = 0
+          [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].reverse.each do |entity|
+            count = count + 1
+            #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
+            unless entity.nil?
+              entity.reload
+              entity.destroy
             end
           end
         end
@@ -530,11 +528,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
     teardown do
       Rails.logger.info("Running IDP2 context teardown in thread: #{Thread.current.object_id}")
-      ActiveRecord::Base.connection_pool.clear_reloadable_connections!
-      ActiveRecord::Base.connection_pool.with_connection do |conn|
-        ( @ddb_board.users + [ @james, @submitter,
+      ( @ddb_board.users + [ @james, @submitter,
         @ddb_board, @hgv_meta_board, @hgv_trans_board ] ).each {|entity| entity.destroy}
-      end
     end
 
     context "a publication" do
@@ -566,9 +561,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
           new_active_threads = []
 
           new_active_threads << Thread.new do
-            begin
-              ActiveRecord::Base.connection_pool.clear_reloadable_connections!
-              ActiveRecord::Base.connection_pool.with_connection do |conn|
+            Rails.application.executor.wrap do
+              begin
                 open_session do |submit_session|
                   begin
                     submit_session.post '/publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
@@ -576,20 +570,18 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                     Rails.logger.info("#{e.class} inside submission thread 1")
                   end
                 end
+              ensure
+                # The new thread gets a new AR connection, so we should
+                # always close it and flush logs before we terminate
+                Rails.logger.debug('submit race submit 1 finished')
+                Rails.logger.flush
               end
-            ensure
-              # The new thread gets a new AR connection, so we should
-              # always close it and flush logs before we terminate
-              Rails.logger.debug('submit race submit 1 finished')
-              ActiveRecord::Base.connection.close
-              Rails.logger.flush
             end
           end
 
           new_active_threads << Thread.new do
-            begin
-              ActiveRecord::Base.connection_pool.clear_reloadable_connections!
-              ActiveRecord::Base.connection_pool.with_connection do |conn|
+            Rails.application.executor.wrap do
+              begin
                 open_session do |submit_session|
                   begin
                     submit_session.post '/publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
@@ -597,13 +589,12 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                     Rails.logger.info("#{e.class} inside submit thread 2")
                   end
                 end
+              ensure
+                # The new thread gets a new AR connection, so we should
+                # always close it and flush logs before we terminate
+                Rails.logger.debug('submit race submit 2 finished')
+                Rails.logger.flush
               end
-            ensure
-              # The new thread gets a new AR connection, so we should
-              # always close it and flush logs before we terminate
-              Rails.logger.debug('submit race submit 2 finished')
-              ActiveRecord::Base.connection.close
-              Rails.logger.flush
             end
           end
 
@@ -614,14 +605,10 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
           Rails.logger.debug "submit race threadwaiting done"
           Rails.logger.flush
 
-          ActiveRecord::Base.clear_active_connections!
-          ActiveRecord::Base.connection_pool.clear_reloadable_connections!
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
-            @publication.reload
-            assert_equal 1, @publication.children.length, 'submitted publication should only have one child after submissions'
-            assert_equal 1, @publication.all_children.length, 'submitted publication should only have one child after submissions'
-            assert_equal 'submitted', @publication.status, 'submitted publication should have status "submitted" after submissions'
-          end
+          @publication.reload
+          assert_equal 1, @publication.children.length, 'submitted publication should only have one child after submissions'
+          assert_equal 1, @publication.all_children.length, 'submitted publication should only have one child after submissions'
+          assert_equal 'submitted', @publication.status, 'submitted publication should have status "submitted" after submissions'
           Rails.logger.debug "submit race assertions done"
           Rails.logger.flush
         end
@@ -711,11 +698,10 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
             new_active_threads = []
 
             new_active_threads << Thread.new do
-              begin
-                Rails.logger.info("Starting MMF race thread 1: #{Thread.current.object_id}")
-                Thread.current.report_on_exception = false
-                ActiveRecord::Base.connection_pool.clear_reloadable_connections!
-                ActiveRecord::Base.connection_pool.with_connection do |conn|
+              Rails.application.executor.wrap do
+                begin
+                  Rails.logger.info("Starting MMF race thread 1: #{Thread.current.object_id}")
+                  Thread.current.report_on_exception = false
                   open_session do |make_me_finalizer_session|
                     begin
                       assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 1'
@@ -726,22 +712,20 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                       Rails.logger.info("#{e.class} inside MMF thread 1")
                     end
                   end
+                ensure
+                  # The new thread gets a new AR connection, so we should
+                  # always close it and flush logs before we terminate
+                  Rails.logger.debug('MMF race become_finalizer 1 finished')
+                  Rails.logger.flush
                 end
-              ensure
-                # The new thread gets a new AR connection, so we should
-                # always close it and flush logs before we terminate
-                Rails.logger.debug('MMF race become_finalizer 1 finished')
-                ActiveRecord::Base.connection.close
-                Rails.logger.flush
               end
             end
 
             new_active_threads << Thread.new do
-              begin
-                Rails.logger.info("Starting MMF race thread 2: #{Thread.current.object_id}")
-                Thread.current.report_on_exception = false
-                ActiveRecord::Base.connection_pool.clear_reloadable_connections!
-                ActiveRecord::Base.connection_pool.with_connection do |conn|
+              Rails.application.executor.wrap do
+                begin
+                  Rails.logger.info("Starting MMF race thread 2: #{Thread.current.object_id}")
+                  Thread.current.report_on_exception = false
                   open_session do |make_me_finalizer_session|
                     begin
                       assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 2'
@@ -752,13 +736,12 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                       Rails.logger.info("#{e.class} inside MMF thread 2")
                     end
                   end
+                ensure
+                  # The new thread gets a new AR connection, so we should
+                  # always close it and flush logs before we terminate
+                  Rails.logger.debug('MMF race become_finalizer 2 finished')
+                  Rails.logger.flush
                 end
-              ensure
-                # The new thread gets a new AR connection, so we should
-                # always close it and flush logs before we terminate
-                Rails.logger.debug('MMF race become_finalizer 2 finished')
-                ActiveRecord::Base.connection.close
-                Rails.logger.flush
               end
             end
 
@@ -769,15 +752,11 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
             Rails.logger.debug "MMF race threadwaiting done"
             Rails.logger.flush
 
-            ActiveRecord::Base.clear_active_connections!
-            ActiveRecord::Base.connection_pool.clear_reloadable_connections!
-            ActiveRecord::Base.connection_pool.with_connection do |conn|
-              @ddb_board.reload
-              assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should only have one child after finalizer copy'
-              mmf_finalizing_publication = @ddb_board.publications.first.children.first
-              current_finalizer = mmf_finalizing_publication.owner
-              assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
-            end
+            @ddb_board.reload
+            assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should only have one child after finalizer copy'
+            mmf_finalizing_publication = @ddb_board.publications.first.children.first
+            current_finalizer = mmf_finalizing_publication.owner
+            assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
             Rails.logger.debug "MMF race assertions done"
             Rails.logger.flush
           end

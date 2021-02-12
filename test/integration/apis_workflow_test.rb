@@ -154,15 +154,13 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
 
       teardown do
         begin
-          ActiveRecord::Base.connection_pool.with_connection do |conn|
-            count = 0
-            [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].reverse.each do |entity|
-              count = count + 1
-              #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
-              unless entity.nil?
-                entity.reload
-                entity.destroy
-              end
+          count = 0
+          [ @board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board, @translation_board ].reverse.each do |entity|
+            count = count + 1
+            #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
+            unless entity.nil?
+              entity.reload
+              entity.destroy
             end
           end
         end
