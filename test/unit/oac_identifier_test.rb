@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class OACIdentifierTest < ActiveSupport::TestCase
+  delegate :url_helpers, to: 'Rails.application.routes'
   
   context "identifier test" do
     setup do
@@ -19,8 +20,8 @@ class OACIdentifierTest < ActiveSupport::TestCase
       @test_tb1 = 'http://data.perseus.org/citation/urn:cts:greekLang:tlg0012.tlg001.perseus-grc1:1.1'
       @test_tb2 = 'http://data.perseus.org/citation/urn:cts:greekLang:tlg0012.tlg002.perseus-grc1:1.1'
       @test_title = 'Test Annotation'
-      @creator_uri = ActionDispatch::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator.name, :only_path => false)
-      @creator2_uri = ActionDispatch::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator2.name, :only_path => false)
+      @creator_uri = url_helpers.url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator.name, :only_path => false)
+      @creator2_uri = url_helpers.url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator2.name, :only_path => false)
       @oac_identifier.add_annotation(@test_uri1,[@test_tb1],@test_tb2,@test_title,@creator_uri,'test add annotation')
     end
     
