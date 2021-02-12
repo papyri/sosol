@@ -176,7 +176,7 @@ class BoardsController < ApplicationController
     respond_to do |format|
       board_params = params[:board].slice(:friendly_name, :skip_finalize, :requires_assignment, :max_assignable)
 
-      if @board.update_attributes(board_params)
+      if board_params.present? && board_params.is_a?(Hash) && @board.update_attributes(board_params)
         flash[:notice] = 'Board was successfully updated.'
         format.html { redirect_to(@board) }
         format.xml  { head :ok }

@@ -64,7 +64,7 @@ class VotesController < ApplicationController
     @vote = Vote.find(params[:id].to_s)
 
     respond_to do |format|
-      if @vote.update_attributes(params[:vote])
+      if params[:vote].present? && params[:vote].is_a?(Hash) && @vote.update_attributes(params[:vote])
         flash[:notice] = 'Vote was successfully updated.'
         format.html { redirect_to(@vote) }
         format.xml  { head :ok }

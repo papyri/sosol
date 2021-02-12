@@ -372,9 +372,14 @@ class UserController < ApplicationController
     begin
       user_params = params[:user].slice(:full_name, :affiliation, :email, :email_opt_out)
 
-      @user.update_attributes(user_params)
-      flash[:notice] = 'User was successfully updated.'
-      redirect_to :controller => "user", :action => "account"
+      if user_params.present? && user_params.is_a?(Hash)
+        @user.update_attributes(user_params)
+        flash[:notice] = 'User was successfully updated.'
+        redirect_to :controller => "user", :action => "account"
+      else
+        flash[:error] = 'Error occured - user was not updated.'
+        redirect_to :controller => "user", :action => "account"
+      end
     rescue StandardError => e
       flash[:error] = 'Error occured - user was not updated.'
       redirect_to :controller => "user", :action => "account"
