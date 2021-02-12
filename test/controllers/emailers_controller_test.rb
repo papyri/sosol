@@ -46,8 +46,9 @@ class EmailersControllerTest < ActionController::TestCase
   end
 
   test "should update emailer" do
-    put :update, params: { :id => @emailer.id, :emailer => { } }
+    put :update, params: { :id => @emailer.id, :emailer => { message: 'updated message' } }
     assert_redirected_to edit_board_path(@emailer.board.id)
+    assert_equal 'updated message', @emailer.reload.message
   end
 
   test "should destroy emailer" do
