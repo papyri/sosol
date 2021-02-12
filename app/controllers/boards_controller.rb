@@ -174,7 +174,7 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id].to_s)
 
     respond_to do |format|
-      if params[:board].present? && params[:board].is_a?(Hash) && @board.update_attributes(params[:board].slice(:friendly_name, :skip_finalize, :requires_assignment, :max_assignable))
+      if params[:board].present? && @board.update_attributes(board_params)
         flash[:notice] = 'Board was successfully updated.'
         format.html { redirect_to(@board) }
         format.xml  { head :ok }
@@ -339,7 +339,7 @@ end
 private
 
 def board_params
-  params.require(:board).permit(:title,:category,:identifier_classes,:friendly_name,:decrees)
+  params.require(:board).permit(:title,:category,:identifier_classes,:friendly_name,:decrees,:skip_finalize,:requires_assignment,:max_assignable)
 end
 
 end

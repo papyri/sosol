@@ -66,8 +66,9 @@ class BoardsControllerTest < ActionController::TestCase
   end
 
   test "should update board" do    
-    put :update, params: { :id => @board.id, :board => { } }
+    put :update, params: { :id => @board.id, :board => { friendly_name: 'updated friendly name' } }
     assert_redirected_to board_path(assigns(:board))
+    assert_equal 'updated friendly name', @board.reload.friendly_name
   end
 
   test "should destroy board" do
