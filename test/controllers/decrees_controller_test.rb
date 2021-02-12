@@ -48,8 +48,9 @@ class DecreesControllerTest < ActionController::TestCase
   end
 
   test "should update decree" do
-    put :update, params: { :id => @decree.id, :decree => { } }
+    put :update, params: { :id => @decree.id, :decree => { tally_method: Decree::TALLY_METHODS[:percent] } }
     assert_redirected_to edit_board_path(@board.id)
+    assert_equal Decree::TALLY_METHODS[:percent], @decree.reload.tally_method
   end
 
   test "should destroy decree" do
