@@ -67,7 +67,7 @@ class CommunitiesController < ApplicationController
     @community = Community.find(params[:id].to_s)
 
     respond_to do |format|
-      if params[:community].present? && params[:community].is_a?(Hash) && @community.update_attributes(params[:community])
+      if params[:community].present? && @community.update_attributes(community_params)
         flash[:notice] = 'Community was successfully updated.'
         format.html { redirect_to(:action => 'edit', :id => @community.id) }
         format.xml  { head :ok }

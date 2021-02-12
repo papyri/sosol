@@ -45,8 +45,9 @@ class CommunitiesControllerTest < ActionController::TestCase
   end
 
   test "should update community" do
-    put :update, params: { :id => @community.id, :community => { } }
+    put :update, params: { :id => @community.id, :community => { description: 'updated description' } }
     assert_redirected_to edit_community_path(assigns(:community))
+    assert_equal 'updated description', @community.reload.description
   end
 
   test "should destroy community" do
