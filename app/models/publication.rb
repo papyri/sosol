@@ -185,7 +185,7 @@ class Publication < ApplicationRecord
 
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
   before_create do |publication|
-    !publication.owner.repository.branches.include?(publication.branch)
+    throw(:abort) if publication.owner.repository.branches.include?(publication.branch)
   end
 
   after_commit :delete_associated_branch, on: :destroy
