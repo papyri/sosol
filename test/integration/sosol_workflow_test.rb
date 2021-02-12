@@ -208,7 +208,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         open_session do |submit_session|
 
           submit_session.post '/publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
-            :submit_comment => "I made a new pub"
+            params: { :submit_comment => "I made a new pub" }
 
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
         end
@@ -260,8 +260,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
         open_session do |meta_session|
           meta_session.post '/publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
-            :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
-            :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
+            params: { :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
+            :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" } }
 
           Rails.logger.debug "--flash is: " + meta_session.flash.inspect
 
@@ -306,7 +306,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         # do rename
         open_session do |meta_rename_session|
           meta_rename_session.patch '/publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
-            :new_name => 'papyri.info/hgv/9999999999'
+            params: { :new_name => 'papyri.info/hgv/9999999999' }
         end
 
         meta_final_publication.reload
@@ -321,7 +321,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         open_session do |meta_finalize_session|
 
           meta_finalize_session.post '/publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + meta_final_publication.owner.id.to_s, \
-            :comment => 'I agree meta is great and now it is final'
+            params: { :comment => 'I agree meta is great and now it is final' }
 
           Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
           Rails.logger.debug "----session data is: " + meta_finalize_session.session.to_hash.inspect
@@ -383,8 +383,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         open_session do |text_session|
 
           text_session.post '/publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
-            :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
-            :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
+            params: { :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
+            :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" } }
           Rails.logger.debug "--flash is: " + text_session.flash.inspect
         end
 
@@ -418,7 +418,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         # try to finalize without rename
         open_session do |text_finalize_session|
           text_finalize_session.post '/publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
-            :comment => 'I agree text is great and now it is final'
+            params: { :comment => 'I agree text is great and now it is final' }
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
           Rails.logger.debug "----session data is: " + text_finalize_session.session.to_hash.inspect
@@ -431,7 +431,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         # do rename
         open_session do |text_rename_session|
           text_rename_session.patch '/publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
-            :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
+            params: { :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false }
         end
 
         text_final_publication.reload
@@ -462,7 +462,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         open_session do |text_finalize_session|
 
           text_finalize_session.post '/publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
-            :comment => 'I agree text is great and now it is final'
+            params: { :comment => 'I agree text is great and now it is final' }
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
           Rails.logger.debug "----session data is: " + text_finalize_session.session.to_hash.inspect
