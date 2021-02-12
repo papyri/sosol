@@ -23,38 +23,38 @@ class DecreesControllerTest < ActionController::TestCase
   end
 
   test "should get new" do
-    get :new, { :board_id => @board.id }
+    get :new, params: { :board_id => @board.id }
     assert_response :success
   end
 
   test "should create decree" do
     assert_difference('Decree.count') do
-      post :create, :decree => 
+      post :create, params: { :decree =>
         { :board_id => @board.id,
-          :tally_method => Decree::TALLY_METHODS[:count] }
+          :tally_method => Decree::TALLY_METHODS[:count] } }
     end
 
     assert_redirected_to edit_board_path(@board.id)
   end
 
   test "should show decree" do
-    get :show, :id => @decree.id
+    get :show, params: { :id => @decree.id }
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, :id => @decree.id
+    get :edit, params: { :id => @decree.id }
     assert_response :success
   end
 
   test "should update decree" do
-    put :update, :id => @decree.id, :decree => { }
+    put :update, params: { :id => @decree.id, :decree => { } }
     assert_redirected_to edit_board_path(@board.id)
   end
 
   test "should destroy decree" do
     assert_difference('Decree.count', -1) do
-      delete :destroy, :id => @decree.id
+      delete :destroy, params: { :id => @decree.id }
     end
 
     assert_redirected_to edit_board_path(@board.id)

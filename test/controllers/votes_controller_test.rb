@@ -29,30 +29,30 @@ class VotesControllerTest < ActionController::TestCase
 
   test "should create vote" do
     assert_difference('Vote.count') do
-      post :create, :vote => { }
+      post :create, params: { :vote => { } }
     end
 
     assert_redirected_to vote_path(assigns(:vote))
   end
 
   test "should show vote" do
-    get :show, :id => @vote.id
+    get :show, params: { :id => @vote.id }
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, :id => @vote.id
+    get :edit, params: { :id => @vote.id }
     assert_response :success
   end
 
   test "should update vote" do
-    put :update, :id => @vote.id, :vote => { }
+    put :update, params: { :id => @vote.id, :vote => { } }
     assert_redirected_to vote_path(assigns(:vote))
   end
 
   test "should destroy vote" do
     assert_difference('Vote.count', -1) do
-      delete :destroy, :id => @vote.id
+      delete :destroy, params: { :id => @vote.id }
     end
 
     assert_redirected_to votes_path

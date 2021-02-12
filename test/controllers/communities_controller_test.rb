@@ -28,30 +28,30 @@ class CommunitiesControllerTest < ActionController::TestCase
 
   test "should create community" do
     assert_difference('Community.count') do
-      post :create, :community => FactoryBot.build(:community).attributes.merge({"admins"=>[],"members"=>[]})
+      post :create, params: { :community => FactoryBot.build(:community).attributes.merge({"admins"=>[],"members"=>[]}) }
     end
 
     assert_redirected_to edit_community_path(assigns(:community))
   end
 
   test "should show community" do
-    get :show, :id => @community.id
+    get :show, params: { :id => @community.id }
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, :id => @community.id
+    get :edit, params: { :id => @community.id }
     assert_response :success
   end
 
   test "should update community" do
-    put :update, :id => @community.id, :community => { }
+    put :update, params: { :id => @community.id, :community => { } }
     assert_redirected_to edit_community_path(assigns(:community))
   end
 
   test "should destroy community" do
     assert_difference('Community.count', -1) do
-      delete :destroy, :id => @community.id
+      delete :destroy, params: { :id => @community.id }
     end
 
     assert_redirected_to :controller => 'user', :action => 'admin'

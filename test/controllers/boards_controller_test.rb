@@ -36,7 +36,7 @@ class BoardsControllerTest < ActionController::TestCase
 
   test "should create board" do
     assert_difference('Board.count') do
-      post :create, :board => FactoryBot.build(:board).attributes
+      post :create, params: { :board => FactoryBot.build(:board).attributes }
     end
 
     assert_redirected_to edit_board_path(assigns(:board))
@@ -44,35 +44,35 @@ class BoardsControllerTest < ActionController::TestCase
   end
 
   test "should have max rank default" do
-    post :create, :board => FactoryBot.build(:board).attributes
+    post :create, params: { :board => FactoryBot.build(:board).attributes }
     assert assigns(:board).rank == Board.count
     assigns(:board).destroy
   end
     
   test "should have valid rank" do
-    post :create, :board => FactoryBot.build(:board).attributes
+    post :create, params: { :board => FactoryBot.build(:board).attributes }
     assert assigns(:board).rank > 0 && assigns(:board).rank <= Board.count
     assigns(:board).destroy
   end
     
   test "should show board" do    
-    get :show, :id => @board.id
+    get :show, params: { :id => @board.id }
     assert_response :success
   end
 
   test "should get edit" do    
-    get :edit, :id => @board.id
+    get :edit, params: { :id => @board.id }
     assert_response :success
   end
 
   test "should update board" do    
-    put :update, :id => @board.id, :board => { }
+    put :update, params: { :id => @board.id, :board => { } }
     assert_redirected_to board_path(assigns(:board))
   end
 
   test "should destroy board" do
     assert_difference('Board.count', -1) do
-      delete :destroy, :id => @board.id
+      delete :destroy, params: { :id => @board.id }
     end
 
     assert_redirected_to boards_path
