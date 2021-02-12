@@ -46,8 +46,9 @@ class VotesControllerTest < ActionController::TestCase
   end
 
   test "should update vote" do
-    put :update, params: { :id => @vote.id, :vote => { } }
+    put :update, params: { :id => @vote.id, :vote => { choice: 'UpdatedChoice' } }
     assert_redirected_to vote_path(assigns(:vote))
+    assert_equal 'UpdatedChoice', @vote.reload.choice
   end
 
   test "should destroy vote" do
