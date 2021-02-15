@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 ruby "2.5.7", :engine => "jruby", :engine_version => "9.2.14.0"
 
-gem 'rails', '~> 5.1.7'
+gem 'rails', '~> 5.2.4.5'
 
 # Needed for the new asset pipeline
 gem 'sass-rails', '~> 5'
@@ -29,10 +29,10 @@ gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
 gem 'jdbc-sqlite3', '>= 3.7.2', :platform => :jruby
-gem 'activerecord-jdbc-adapter', '>= 1.3.25', '< 52', :platform => :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '< 52', :platform => :jruby
-gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '< 52', :platform => :jruby
-gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '< 52', :platform => :jruby
+gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
 gem 'jdbc-mysql', require: false
 gem 'activerecord-session_store'
 gem 'tzinfo-data', :platform => :jruby
