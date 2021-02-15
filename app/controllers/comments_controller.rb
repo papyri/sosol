@@ -55,8 +55,7 @@ class CommentsController < ApplicationController
   # POST /comments
   # POST /comments.xml
   def create
-
-    @comment = Comment.new(params[:comment])
+    @comment = Comment.new(comment_params)
 
     @comment.user_id = @current_user.id
  #   if params[:reason] != nil
@@ -106,5 +105,11 @@ class CommentsController < ApplicationController
       format.html { redirect_to(comments_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def comment_params
+    params.require(:comment).permit(:comment,:identifier_id,:publication_id,:reason)
   end
 end
