@@ -9,6 +9,8 @@ Sosol::Application.routes.draw do
   get :add_admin
   get :add_admin_page
   get :remove_admin
+  get :confirm_destroy
+  get :edit_end_user
   post :remove_current_user_membership
   post :remove_current_user
   end
@@ -49,8 +51,10 @@ Sosol::Application.routes.draw do
     member do
   get :edit_members
   get :add_member
+  get :find_member
   get :remove_member
   post :update_rankings
+  get :confirm_destroy
   end
   
   end
@@ -99,6 +103,7 @@ Sosol::Application.routes.draw do
   end
   end
   post 'publications/create' => 'publications#create'
+  post 'publications/create_from_list' => 'publications#create_from_list'
   post 'publications/create_from_templates' => 'publications#create_from_templates'
   post 'publications/create_from_biblio_template' => 'publications#create_from_biblio_template'
   post 'publications/create_from_selector' => 'publications#create_from_selector'
@@ -380,7 +385,7 @@ Sosol::Application.routes.draw do
   match 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities', :via => :get
   match 'cts/getrepos' => 'cts_proxy#getrepos', :via => :get
   match '/' => 'welcome#index', :via => :get
-  match '/:controller(/:action(/:id))', :via => :get
+  # match '/:controller(/:action(/:id))', :via => :get
   match 'signout' => 'user#signout', :as => :signout, :via => :get
   match 'signin' => 'user#signin', :as => :signin, :via => :get
   match 'account' => 'user#account', :as => :account, :via => :get
