@@ -1,19 +1,20 @@
-- shortTitleList = @identifier[type]
+- shortTitleList = @identifier.non_database_attribute[type]
 - type = type.to_s 
 .multi{:id => 'multi_' + type, :class => 'multi_shortTitleList'}
   %h6
     %label.shortTitle= I18n.t('biblio.label.shortTitle')
     %label.responsibility= I18n.t('biblio.label.responsibility')
   %ul.items{:id => 'multiItems_' + type}
-    - shortTitleList.each_index do |index|
-    - title          = shortTitleList[index].title
-    - responsibility = shortTitleList[index].responsibility
-      %li
-        = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][title]',          title,          :disabled => !@identifier.mutable?, :class => 'observechange title'
-        = select_tag     'biblio_identifier[' + type + '][' + index.to_s + '][responsibility]', options_for_select(f.make_options(:shortTitleResponsibility), responsibility), :disabled => !@identifier.mutable?, :class => 'observechange responsibility' 
+    - if shortTitleList.present?
+      - shortTitleList.each_index do |index|
+      - title          = shortTitleList[index].title
+      - responsibility = shortTitleList[index].responsibility
+        %li
+          = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][title]',          title,          :disabled => !@identifier.mutable?, :class => 'observechange title'
+          = select_tag     'biblio_identifier[' + type + '][' + index.to_s + '][responsibility]', options_for_select(f.make_options(:shortTitleResponsibility), responsibility), :disabled => !@identifier.mutable?, :class => 'observechange responsibility' 
 
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('tooltip.multiMove')} o
+          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + type}
     %input.observechange{:id => type + '_title'}
     = select_tag type + '_responsibility', options_for_select(f.make_options(:shortTitleResponsibility)), :disabled => !@identifier.mutable?, :class => 'observechange responsibility'

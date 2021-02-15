@@ -1,14 +1,15 @@
-- relatedObject = @identifier[type]
+- relatedObject = @identifier.non_database_attribute[type]
 - type = type.to_s
 
 .multi{:id => 'multi_' + type}
   %ul.items{:id => 'multiItems_' + type}
-    - relatedObject.each_index do |index|
-      %li
-        = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + ']', relatedObject[index].pointer, :title => relatedObject[index].ignored, :disabled => !@identifier.mutable?, :class => 'observechange pointer'
+    - if relatedObject.present?
+      - relatedObject.each_index do |index|
+        %li
+          = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + ']', relatedObject[index].pointer, :title => relatedObject[index].ignored, :disabled => !@identifier.mutable?, :class => 'observechange pointer'
 
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('tooltip.multiMove')} o
+          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + type}
     %input.observechange{:id => type + '_pointer'}
     

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   sequence :name do |n|
     "name_#{n}"
   end
@@ -28,9 +28,9 @@ FactoryGirl.define do
   end
 
   factory :board do |f|
-    f.title { FactoryGirl.generate(:name) }
-    f.category 'category'
-    f.identifier_classes ['DDBIdentifier']
+    f.title { FactoryBot.generate(:name) }
+    f.category { 'category' }
+    f.identifier_classes { ['DDBIdentifier'] }
   end
 
   factory :apis_board, :parent => :board do |f|
@@ -50,7 +50,7 @@ FactoryGirl.define do
           :choices => "reject")
       ]
     }
-    f.identifier_classes ['APISIdentifier']
+    f.identifier_classes { ['APISIdentifier'] }
   end
 
   factory :hgv_board, :parent => :board do |f|
@@ -79,91 +79,90 @@ FactoryGirl.define do
   end
 
   factory :hgv_meta_board, :parent => :hgv_board do |f|
-    f.identifier_classes ['HGVMetaIdentifier']
+    f.identifier_classes { ['HGVMetaIdentifier'] }
   end
 
   factory :hgv_trans_board, :parent => :hgv_board do |f|
-    f.identifier_classes ['HGVTransIdentifier']
+    f.identifier_classes { ['HGVTransIdentifier'] }
   end
 
 
   factory :user do |f|
-    f.name { FactoryGirl.generate(:name) }
-    f.full_name { FactoryGirl.generate(:full_name) }
-    f.email { FactoryGirl.generate(:email) }
+    f.name { FactoryBot.generate(:name) }
+    f.full_name { FactoryBot.generate(:full_name) }
+    f.email { FactoryBot.generate(:email) }
   end
 
   factory :admin, :parent => :user do |f|
-    f.admin true
+    f.admin { true }
   end
 
   factory :decree do |f|
     f.association :board
-    f.tally_method Decree::TALLY_METHODS[:percent]
+    f.tally_method { Decree::TALLY_METHODS[:percent] }
   end
 
   factory :percent_decree, :parent => :decree do |f|
-    f.tally_method Decree::TALLY_METHODS[:percent]
+    f.tally_method { Decree::TALLY_METHODS[:percent] }
   end
 
   factory :count_decree, :parent => :decree do |f|
-    f.tally_method Decree::TALLY_METHODS[:count]
+    f.tally_method { Decree::TALLY_METHODS[:count] }
   end
 
   factory :emailer do |f|
     f.association :board
-    f.extra_addresses ''
-    f.include_document 'false'
-    f.include_comments 'false'
-    f.message 'MyText'
-    f.subject 'MySubject'
+    f.extra_addresses { '' }
+    f.include_document { 'false' }
+    f.include_comments { 'false' }
+    f.message { 'MyText' }
+    f.subject { 'MySubject' }
   end
 
   factory :event do |f|
-    f.category 'commit'
+    f.category { 'commit' }
   end
 
   factory :vote do |f|
     f.association :user
     f.association :publication
-    f.choice :choice #'MyString'
+    f.choice { :choice } #'MyString'
   end
 
 
   factory :publication do |f|
     f.association :owner, :factory => :user
     f.creator { |pub| pub.owner }
-    f.title 'MyString'
+    f.title { 'MyString' }
   end
 
   factory :HGVMetaIdentifier do |f|
-    f.name { FactoryGirl.generate(:hgv_identifier_string) }
-    f.alternate_name { FactoryGirl.generate(:hgv_number) }
+    f.name { FactoryBot.generate(:hgv_identifier_string) }
+    f.alternate_name { FactoryBot.generate(:hgv_number) }
   end
 
   factory :DDBIdentifier do |f|
-    f.name { FactoryGirl.generate(:ddb_identifier_string) }
+    f.name { FactoryBot.generate(:ddb_identifier_string) }
   end
 
   factory :community do |f|
-    f.name { FactoryGirl.generate(:name) }
-    f.friendly_name { FactoryGirl.generate(:name) }
-    f.description 'description'
-    f.admins Array.new
+    f.name { FactoryBot.generate(:name) }
+    f.friendly_name { FactoryBot.generate(:name) }
+    f.description { 'description' }
+    f.admins { Array.new }
   end
 
 
   factory :comment do |f|
-    f.comment :comment
-    f.user_id :user_id
-    f.identifier_id :identifier_id
-    f.reason :reason
-    f.publication_id :publication_id
-    
+    f.comment { :comment }
+    f.user_id { :user_id }
+    f.identifier_id { :identifier_id }
+    f.reason { :reason }
+    f.publication_id { :publication_id }
   end
 
   factory :TeiCTSIdentifier do |f|
-    f.name { FactoryGirl.generate(:tei_cts_identifier_string) }
-    f.title :title
+    f.name { FactoryBot.generate(:tei_cts_identifier_string) }
+    f.title { :title }
   end
 end

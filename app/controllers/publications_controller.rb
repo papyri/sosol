@@ -245,8 +245,8 @@ class PublicationsController < ApplicationController
           redirect_to @publication
           return
         end
-        
-        #check if we need to signup to a community 
+
+        #check if we need to signup to a community
         if params[:do_community_signup] && params[:community] && params[:community][:id] != "0"
           @community = Community.find(params[:community][:id].to_s)
           unless (@community.add_member(@current_user.id))
@@ -310,7 +310,7 @@ class PublicationsController < ApplicationController
     @branches = @current_user.repository.branches
     @branches.delete("master")
 
-    @publications = Publication.find_all_by_owner_id(@current_user.id)
+    @publications = Publication.where(owner_id: @current_user.id)
     # just give branches that don't have corresponding publications
     @branches -= @publications.map{|p| p.branch}
 
@@ -324,7 +324,7 @@ class PublicationsController < ApplicationController
     # TODO make sure we don't steal it from someone who is working on it
     @publication = Publication.find(params[:id].to_s)
     original_publication_owner_id = @publication.owner.id
-    
+
     if @publication.owner_type != "Board"
       #note this can only be called on a board owned publication
       flash[:error] = "Can't change finalizer on non-board copy of publication."
@@ -605,7 +605,7 @@ class PublicationsController < ApplicationController
     Vote.transaction do
       @publication.lock!
       #note that votes go to the publication's identifier
-      @vote = Vote.new(params[:vote])
+      @vote = Vote.new(vote_params)
       vote_identifier = @vote.identifier.lock!
       @vote.user_id = @current_user.id
       @vote.board_id = @publication.owner_id
@@ -657,7 +657,7 @@ class PublicationsController < ApplicationController
         redirect_to dashboard_url
       end
     end
-    @publications = Publication.find_all_by_owner_id(params[:id].to_s, :conditions => {:owner_type => 'User', :status => 'committed', :creator_id => params[:id].to_s, :parent_id => nil }, :order => "updated_at DESC")
+    @publications = Publication.where(owner_id: params[:id].to_s, owner_type: 'User', status: 'committed', creator_id: params[:id].to_s, parent_id: nil).order(updated_at: :desc)
 
   end
 
@@ -724,7 +724,7 @@ class PublicationsController < ApplicationController
 
   def master_list
     if @current_user.developer
-      @publications = Publication.find(:all)
+      @publications = Publication.all
     else
       redirect_to dashboard_url
     end
@@ -732,7 +732,7 @@ class PublicationsController < ApplicationController
 
   protected
     def find_publication
-      @publication ||= Publication.find(params[:id].to_s, :lock => true)
+      @publication ||= Publication.lock(true).find(params[:id].to_s)
     end
 
     def ownership_guard
@@ -824,7 +824,7 @@ class PublicationsController < ApplicationController
       end
 
       related_identifiers.each do |relid|
-        possible_conflicts = Identifier.find_all_by_name(relid, :include => :publication)
+        possible_conflicts = Identifier.where(name: relid).includes(:publication)
         actual_conflicts = possible_conflicts.select {|pc| ((pc.publication) && (pc.publication.owner == @current_user) && !(%w{archived finalized}.include?(pc.publication.status)))}
         conflicting_identifiers += actual_conflicts
       end
@@ -894,6 +894,18 @@ class PublicationsController < ApplicationController
 
     def archive_pub(pub_id)
       @publication = Publication.find(pub_id)
-      @publication.archive
+      if (@current_user.id == @publication.owner_id) || @current_user.developer || @current_user.admin
+        @publication.archive
+      end
+    end
+
+    private
+
+    def publication_params
+      params.require(:publication)
+    end
+
+    def vote_params
+      params.require(:vote).permit(:publication_id, :identifier_id, :user_id, :board_id, :choice)
     end
 end

@@ -2,9 +2,9 @@ require 'test_helper'
 require 'ddiff'
 require 'thwait'
 
-class SosolWorkflowTest < ActionController::IntegrationTest
+class SosolWorkflowTest < ActionDispatch::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
-    FactoryGirl.create(:vote,
+    FactoryBot.create(:vote,
                        :publication_id => identifier.publication.id,
                        :identifier_id => identifier.id,
                        :user => user,
@@ -86,28 +86,28 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 end
 
 
-class SosolWorkflowTest < ActionController::IntegrationTest
+class SosolWorkflowTest < ActionDispatch::IntegrationTest
   context "for idp3" do
     context "sosol testing" do
       setup do
         Rails.logger.level = 0
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx sosol testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         #a user to put on the boards
-        @board_user = FactoryGirl.create(:user, :name => "board_man_bob", :email => "bob@example.com")
-        @board_user_2 = FactoryGirl.create(:user, :name => "board_man_alice")
+        @board_user = FactoryBot.create(:user, :name => "board_man_bob", :email => "bob@example.com")
+        @board_user_2 = FactoryBot.create(:user, :name => "board_man_alice")
         #a user to submit publications
-        @creator_user = FactoryGirl.create(:user, :name => "creator_bob", :email => "bobcreator@example.com")
+        @creator_user = FactoryBot.create(:user, :name => "creator_bob", :email => "bobcreator@example.com")
         #an end user to recieve the "finalized" publication
-        @end_user = FactoryGirl.create(:user, :name => "end_bob")
+        @end_user = FactoryBot.create(:user, :name => "end_bob")
 
         #set up the boards, and vote
-        @meta_board = FactoryGirl.create(:hgv_meta_board, :title => "meta")
+        @meta_board = FactoryBot.create(:hgv_meta_board, :title => "meta")
 
         #the board memeber
         @meta_board.users << @board_user
 
         #the vote
-        @meta_decree = FactoryGirl.create(:count_decree,
+        @meta_decree = FactoryBot.create(:count_decree,
                                           :board => @meta_board,
                                           :trigger => 1.0,
                                           :action => "approve",
@@ -115,29 +115,29 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         @meta_board.decrees << @meta_decree
 
         #the mailer
-        @mailer1 = FactoryGirl.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => true, :send_to_all_board_members => false, :message => 'Message Text', :subject => 'Submitted to Meta')
-        @mailer2 = FactoryGirl.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => false, :send_to_all_board_members => true, :message => 'Board Message Text', :subject => 'Board Member Alert')
+        @mailer1 = FactoryBot.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => true, :send_to_all_board_members => false, :message => 'Message Text', :subject => 'Submitted to Meta')
+        @mailer2 = FactoryBot.create(:emailer, :board => @meta_board, :when_to_send => 'submitted', :send_to_owner => false, :send_to_all_board_members => true, :message => 'Board Message Text', :subject => 'Board Member Alert')
         @meta_board.emailers << @mailer1
         @meta_board.emailers << @mailer2
 
-        @text_board = FactoryGirl.create(:board, :title => "text")
+        @text_board = FactoryBot.create(:board, :title => "text")
         #the board memeber
         @text_board.users << @board_user
         @text_board.users << @board_user_2
         #the vote
-        @text_decree = FactoryGirl.create(:count_decree,
+        @text_decree = FactoryBot.create(:count_decree,
                                           :board => @text_board,
                                           :trigger => 1.0,
                                           :action => "approve",
                                           :choices => "ok")
         @text_board.decrees << @text_decree
 
-        @translation_board = FactoryGirl.create(:hgv_trans_board, :title => "translation")
+        @translation_board = FactoryBot.create(:hgv_trans_board, :title => "translation")
 
         #the board memeber
         @translation_board.users << @board_user
         #the vote
-        @translation_decree = FactoryGirl.create(:count_decree,
+        @translation_decree = FactoryBot.create(:count_decree,
                                                  :board => @translation_board,
                                                  :trigger => 1.0,
                                                  :action => "approve",
@@ -179,7 +179,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug "---Create A New Publication---"
           #publication_session.post 'publications/create_from_templates', :session => { :user_id => @creator_user.id }
 
-          publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
+          publication_session.post '/publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
 
           Rails.logger.debug "--flash is: " + publication_session.flash.inspect
 
@@ -207,7 +207,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         deliveries_before = ActionMailer::Base.deliveries.size
         open_session do |submit_session|
 
-          submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
+          submit_session.post '/publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
             :submit_comment => "I made a new pub"
 
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
@@ -230,13 +230,13 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         assert_equal 'bob@example.com', board_email.to[0]
 
         #meta board should have 1 publication, others should have 0
-        meta_publications = Publication.find(:all, :conditions => { :owner_id => @meta_board.id, :owner_type => "Board" } )
+        meta_publications = Publication.where(owner_id: @meta_board.id, owner_type: 'Board')
         assert_equal 1, meta_publications.length, "Meta does not have 1 publication but rather, " + meta_publications.length.to_s + " publications"
 
-        text_publications = Publication.find(:all, :conditions => { :owner_id => @text_board.id, :owner_type => "Board" } )
+        text_publications = Publication.where(owner_id: @text_board.id, owner_type: 'Board')
         assert_equal 0, text_publications.length, "Text does not have 0 publication but rather, " + text_publications.length.to_s + " publications"
 
-        translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
+        translation_publications = Publication.where(owner_id: @translation_board.id, owner_type: 'Board')
         assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
 
         Rails.logger.debug "Meta Board has publication"
@@ -259,14 +259,14 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "Found meta identifier, will vote on it"
 
         open_session do |meta_session|
-          meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+          meta_session.post '/publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
             :comment => { :comment => "I agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
             :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
 
           Rails.logger.debug "--flash is: " + meta_session.flash.inspect
-      
+
         end
-        
+
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
 
@@ -305,7 +305,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         Rails.logger.info(meta_final_identifier.inspect)
         # do rename
         open_session do |meta_rename_session|
-          meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
+          meta_rename_session.patch '/publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + meta_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/hgv/9999999999'
         end
 
@@ -320,7 +320,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         open_session do |meta_finalize_session|
 
-          meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + meta_final_publication.owner.id.to_s, \
+          meta_finalize_session.post '/publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + meta_final_publication.owner.id.to_s, \
             :comment => 'I agree meta is great and now it is final'
 
           Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
@@ -354,15 +354,15 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         #now text board should have it
 
         #meta board should have 1 publication
-        meta_publications = Publication.find(:all, :conditions => { :owner_id => @meta_board.id, :owner_type => "Board" } )
+        meta_publications = Publication.where(owner_id: @meta_board.id, owner_type: 'Board')
         assert_equal 1, meta_publications.length, "Meta does not have 1 publication but rather, " + meta_publications.length.to_s + " publications"
 
         #text board should have 1 publication
-        text_publications = Publication.find(:all, :conditions => { :owner_id => @text_board.id, :owner_type => "Board" } )
+        text_publications = Publication.where(owner_id: @text_board.id, owner_type: 'Board')
         assert_equal 1, text_publications.length, "Text does not have 0 publication but rather, " + text_publications.length.to_s + " publications"
 
         #translation board should have 0 publication
-        translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
+        translation_publications = Publication.where(owner_id: @translation_board.id, owner_type: 'Board')
         assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
 
         #vote on it
@@ -382,12 +382,12 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         open_session do |text_session|
 
-          text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+          text_session.post '/publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
             :comment => { :comment => "I agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
             :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
           Rails.logger.debug "--flash is: " + text_session.flash.inspect
         end
-        
+
         #reload the publication to get the vote associations to go thru?
         text_publication.reload
 
@@ -417,7 +417,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         # try to finalize without rename
         open_session do |text_finalize_session|
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
+          text_finalize_session.post '/publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
@@ -430,7 +430,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
         # do rename
         open_session do |text_rename_session|
-          text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
+          text_rename_session.patch '/publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + text_final_publication.owner.id.to_s,
             :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
         end
 
@@ -443,7 +443,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         publication_head_original = text_final_publication.head()
         # do make-me-finalizer now that we've renamed
         open_session do |mmf_session|
-          mmf_session.post 'publications/' + text_publication.id.to_s + '/become_finalizer?test_user_id=' + other_finalizer.id.to_s
+          mmf_session.post '/publications/' + text_publication.id.to_s + '/become_finalizer?test_user_id=' + other_finalizer.id.to_s
           Rails.logger.debug "--MMF flash is: " + mmf_session.flash.inspect
           Rails.logger.debug "----MMF session data is: " + mmf_session.session.to_hash.inspect
           Rails.logger.debug mmf_session.body
@@ -461,7 +461,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
         # actually finalize
         open_session do |text_finalize_session|
 
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
+          text_finalize_session.post '/publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + text_final_publication.owner.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect
@@ -495,37 +495,37 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
   context "for IDP2" do
     setup do
-      @ddb_board = FactoryGirl.create(:board, :title => 'DDbDP Editorial Board')
+      @ddb_board = FactoryBot.create(:board, :title => 'DDbDP Editorial Board')
 
       3.times do |i|
-        @ddb_board.users << FactoryGirl.create(:user)
+        @ddb_board.users << FactoryBot.create(:user)
       end
 
-      FactoryGirl.create(:percent_decree,
+      FactoryBot.create(:percent_decree,
                          :board => @ddb_board,
                          :trigger => 50.0,
                          :action => "approve",
                          :choices => "yes no defer")
-      FactoryGirl.create(:percent_decree,
+      FactoryBot.create(:percent_decree,
                          :board => @ddb_board,
                          :trigger => 50.0,
                          :action => "reject",
                          :choices => "reject")
-      FactoryGirl.create(:count_decree,
+      FactoryBot.create(:count_decree,
                          :board => @ddb_board,
                          :trigger => 1.0,
                          :action => "graffiti",
                          :choices => "graffiti")
 
-      @james = FactoryGirl.create(:user, :name => "James")
+      @james = FactoryBot.create(:user, :name => "James")
 
-      @hgv_meta_board = FactoryGirl.create(:hgv_meta_board, :title => 'HGV metadata')
-      @hgv_trans_board = FactoryGirl.create(:hgv_trans_board, :title => 'Translations')
+      @hgv_meta_board = FactoryBot.create(:hgv_meta_board, :title => 'HGV metadata')
+      @hgv_trans_board = FactoryBot.create(:hgv_trans_board, :title => 'Translations')
 
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
 
-      @submitter = FactoryGirl.create(:user, :name => "Submitter", :email => "submitter@example.com")
+      @submitter = FactoryBot.create(:user, :name => "Submitter", :email => "submitter@example.com")
     end
 
     teardown do
@@ -539,7 +539,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
     context "a publication" do
       setup do
-        @publication = FactoryGirl.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
+        @publication = FactoryBot.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
 
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master
@@ -571,7 +571,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
               ActiveRecord::Base.connection_pool.with_connection do |conn|
                 open_session do |submit_session|
                   begin
-                    submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
+                    submit_session.post '/publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
                   rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                     Rails.logger.info("#{e.class} inside submission thread 1")
                   end
@@ -592,7 +592,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
               ActiveRecord::Base.connection_pool.with_connection do |conn|
                 open_session do |submit_session|
                   begin
-                    submit_session.post 'publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
+                    submit_session.post '/publications/' + submit_publication_id + '/submit?test_user_id=' + submitter
                   rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                     Rails.logger.info("#{e.class} inside submit thread 2")
                   end
@@ -674,7 +674,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
 
             Rails.logger.info("MMF on pub: #{@ddb_board.publications.first.inspect}")
             open_session do |make_me_finalizer_session|
-              make_me_finalizer_session.post 'publications/' + @ddb_board.publications.first.id.to_s + '/become_finalizer?test_user_id=' + different_finalizer.id.to_s
+              make_me_finalizer_session.post '/publications/' + @ddb_board.publications.first.id.to_s + '/become_finalizer?test_user_id=' + different_finalizer.id.to_s
             end
 
             mmf_finalizing_publication = @ddb_board.publications.first.children.first
@@ -682,7 +682,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
             assert_not_equal original_finalizer, current_finalizer, 'Current finalizer should not be the same as the original finalizer'
             assert_equal 1, @ddb_board.publications.first.children.length, 'DDB publication should only have one child after finalizer copy'
           end
-          
+
           should "not race during make-me-finalizer" do
             assert_not_nil @ddb_board
             @ddb_board.reload
@@ -719,7 +719,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                       assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 1'
                       assert User.exists?(different_finalizer), 'MMF finalizer should exist in thread 1'
                       assert Board.exists?(mmf_publication_owner_id), 'MMF board should exist in thread 1'
-                      make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
+                      make_me_finalizer_session.post '/publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer
                     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                       Rails.logger.info("#{e.class} inside MMF thread 1")
                     end
@@ -744,7 +744,7 @@ class SosolWorkflowTest < ActionController::IntegrationTest
                       assert Publication.exists?(mmf_publication_id), 'MMF publication should exist in thread 2'
                       assert User.exists?(different_finalizer_2), 'MMF finalizer should exist in thread 2'
                       assert Board.exists?(mmf_publication_owner_id), 'MMF board should exist in thread 2'
-                      make_me_finalizer_session.post 'publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
+                      make_me_finalizer_session.post '/publications/' + mmf_publication_id + '/become_finalizer?test_user_id=' + different_finalizer_2
                     rescue ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid => e
                       Rails.logger.info("#{e.class} inside MMF thread 2")
                     end

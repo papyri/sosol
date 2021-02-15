@@ -1,9 +1,12 @@
 require 'rdoc/task'
 
 #clear the doc:app task et al
-Rake::Task["doc:app"].clear
-Rake::Task["doc/app"].clear
-Rake::Task["doc/app/index.html"].clear
+begin
+  Rake::Task["doc:app"].clear
+  Rake::Task["doc/app"].clear
+  Rake::Task["doc/app/index.html"].clear
+rescue StandardError => e
+end
 
 namespace :doc do
   desc "Generate documentation for the application. Set custom template with TEMPLATE=/path/to/rdoc/template.rb or title with TITLE=\"Custom Title\""

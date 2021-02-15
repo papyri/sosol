@@ -38,7 +38,7 @@ class HGVTransIdentifier < HGVIdentifier
   
   # Returns value for 'n' attribute in Translation template
   def n_attribute
-    ddb = DDBIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
+    ddb = DDBIdentifier.find_by_publication_id(self.publication.id)
     return ddb.n_attribute
   end
   
@@ -257,7 +257,7 @@ class HGVTransIdentifier < HGVIdentifier
     # write back to a string
     modified_xml_content = ''
     original_xml_content.write(modified_xml_content)
-    puts modified_xml_content
+    Rails.logger.debug("HGVTransIdentifier#leiden_translation_to_xml modified_xml_content: #{modified_xml_content}")
     return modified_xml_content
   end
   

@@ -7,8 +7,7 @@ Sosol::Application.configure do
   # and recreated between test runs.  Don't rely on the data there!
   config.cache_classes = true
 
-  # Log error messages when you accidentally call methods on nil.
-  config.whiny_nils = true
+  config.eager_load = false
 
   # Show full error reports and disable caching
   config.consider_all_requests_local       = true
@@ -32,6 +31,9 @@ Sosol::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  # Changes from :sorted to :random in Rails 5
+  config.active_support.test_order = :random
 
   # config/environments/test_secret.rb should set
   # RPX_API_KEY and RPX_REALM (site name) for RPX,

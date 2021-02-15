@@ -20,6 +20,8 @@ class Identifier < ActiveRecord::Base
     record.errors.add attr, "Identifier must be one of #{Sosol::Application.config.site_identifiers}" unless Sosol::Application.config.site_identifiers.split(',').include?(value)
   end
 
+  attr_accessor :unsaved_xml_content
+
   require 'jruby_xml'
 
 
@@ -272,10 +274,7 @@ class Identifier < ActiveRecord::Base
   #   - temporary identifier name
   def self.next_temporary_identifier
     year = Time.now.year
-    latest = self.find(:all,
-                       :conditions => ["name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};#{year};%"],
-                       :order => "name DESC",
-                       :limit => 1).first
+    latest = self.where("name like ?", "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};#{year};%").order("name DESC").limit(1).first
     if latest.nil?
       # no constructed id's for this year/class
       document_number = 1
@@ -314,7 +313,7 @@ class Identifier < ActiveRecord::Base
       end
 
     #let the finalizer edit the id the board owns
-    elsif self.publication.status == "finalizing" &&  self.publication.find_first_board.identifier_classes.include?(self.class.to_s)
+    elsif self.publication.status == "finalizing" &&  self.publication.find_first_board && self.publication.find_first_board.identifier_classes.include?(self.class.to_s)
       return true
 
     #they can edit any of their stuff if it is not submitted
@@ -329,7 +328,7 @@ class Identifier < ActiveRecord::Base
   # - *Returns* :
   #   - the content of the associated identifier's XML file
   def xml_content
-    return self.content
+    self.unsaved_xml_content.presence || self.content
   end
 
   # Commits identifier XML to the repository vis set_content
@@ -353,6 +352,8 @@ class Identifier < ActiveRecord::Base
     if options[:validate] && is_valid_xml?(content)
       commit_sha = self.set_content(content, options)
     end
+
+    self.unsaved_xml_content = nil
 
     return commit_sha
   end
@@ -447,7 +448,7 @@ class Identifier < ActiveRecord::Base
       JRubyXML.stream_from_string(input_content.nil? ? self.xml_content : input_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
         %w{data xslt common add_change.xsl})),
-      :who => ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => user_info.name, :only_path => false),
+      :who => ActionDispatch::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => user_info.name, :only_path => false),
       :comment => text,
       :when => timestamp
     )
@@ -470,7 +471,7 @@ class Identifier < ActiveRecord::Base
     # assume context is from finalizing publication, so parent is board's copy
     parent_classes = self.parent.owner.identifier_classes
 
-    Comment.find_all_by_publication_id(self.publication.origin.id).each do |c|
+    Comment.where(publication_id: self.publication.origin.id).each do |c|
       if(parent_classes.include?(c.identifier.class.to_s))
         change_desc_content = add_change_desc( "#{c.reason.capitalize} - " + c.comment, c.user, change_desc_content, c.created_at.localtime.xmlschema )
         commit_message += " - #{c.reason.capitalize} - #{c.comment} (#{c.user.human_name})\n"

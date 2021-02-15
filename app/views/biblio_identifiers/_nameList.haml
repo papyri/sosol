@@ -1,4 +1,4 @@
-- nameList = @identifier[type]
+- nameList = @identifier.non_database_attribute[type]
 - type = type.to_s 
 .multi{:id => 'multi_' + type}
   %h6
@@ -6,17 +6,18 @@
     %label= I18n.t('biblio.label.lastName')
     %label= I18n.t('biblio.label.name')
   %ul.items{:id => 'multiItems_' + type}
-    - nameList.each_index do |index|
-    - firstName = nameList[index].firstName
-    - lastName  = nameList[index].lastName
-    - name      = nameList[index].name
-      %li
-        = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][firstName]', firstName, :disabled => !@identifier.mutable?, :class => 'observechange firstName'
-        = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][lastName]',  lastName,  :disabled => !@identifier.mutable?, :class => 'observechange lastName'
-        = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][name]',      name,      :disabled => !@identifier.mutable?, :class => 'observechange name'
+    - if nameList.present?
+      - nameList.each_index do |index|
+      - firstName = nameList[index].firstName
+      - lastName  = nameList[index].lastName
+      - name      = nameList[index].name
+        %li
+          = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][firstName]', firstName, :disabled => !@identifier.mutable?, :class => 'observechange firstName'
+          = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][lastName]',  lastName,  :disabled => !@identifier.mutable?, :class => 'observechange lastName'
+          = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][name]',      name,      :disabled => !@identifier.mutable?, :class => 'observechange name'
 
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('tooltip.multiMove')} o
+          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add{:id => 'multiPlus_' + type}
     %input.observechange{:id => type + '_firstName'}
     %input.observechange{:id => type + '_lastName'}

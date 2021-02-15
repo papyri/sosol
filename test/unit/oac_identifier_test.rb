@@ -7,20 +7,20 @@ class OACIdentifierTest < ActiveSupport::TestCase
       @original_site_identifiers = Sosol::Application.config.site_identifiers
       Sosol::Application.config.site_identifiers = (@original_site_identifiers.split(',') | %w{OACIdentifier TeiCTSIdentifier}).join(',')
 
-      @creator = FactoryGirl.create(:user, :name => "Creator")
-      @creator2 = FactoryGirl.create(:user, :name => "Creator2")
-      @publication = FactoryGirl.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
+      @creator = FactoryBot.create(:user, :name => "Creator")
+      @creator2 = FactoryBot.create(:user, :name => "Creator2")
+      @publication = FactoryBot.create(:publication, :owner => @creator, :creator => @creator, :status => "new")
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
-      @parent = FactoryGirl.create(:TeiCTSIdentifier, :title => 'Test Text')
+      @parent = FactoryBot.create(:TeiCTSIdentifier, :title => 'Test Text')
       @oac_identifier = OACIdentifier.new_from_template(@publication,@parent)
       @test_uri1 = 'http://data.perseus.org/annotations/abcd'
       @test_uri2 = 'http://data.perseus.org/annotations/efgh'
       @test_tb1 = 'http://data.perseus.org/citation/urn:cts:greekLang:tlg0012.tlg001.perseus-grc1:1.1'
       @test_tb2 = 'http://data.perseus.org/citation/urn:cts:greekLang:tlg0012.tlg002.perseus-grc1:1.1'
       @test_title = 'Test Annotation'
-      @creator_uri = ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator.name, :only_path => false)
-      @creator2_uri = ActionController::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator2.name, :only_path => false)
+      @creator_uri = ActionDispatch::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator.name, :only_path => false)
+      @creator2_uri = ActionDispatch::Integration::Session.new(Sosol::Application).url_for(:host => Sosol::Application.config.site_user_namespace, :controller => 'user', :action => 'show', :user_name => @creator2.name, :only_path => false)
       @oac_identifier.add_annotation(@test_uri1,[@test_tb1],@test_tb2,@test_title,@creator_uri,'test add annotation')
     end
     

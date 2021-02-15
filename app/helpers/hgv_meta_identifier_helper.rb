@@ -190,9 +190,11 @@ module HgvMetaIdentifierHelper
       #   - +Array+ of +HgvGeo::Provenance+ objects
       def self.getObjectList epiDocList
         objectList = []
-        epiDocList.each {|epi|
-          objectList[objectList.length] = HgvGeo::Provenance.new(:provenance => epi)
-        }
+        if epiDocList.present?
+          epiDocList.each {|epi|
+            objectList[objectList.length] = HgvGeo::Provenance.new(:provenance => epi)
+          }
+        end
         objectList
       end
       

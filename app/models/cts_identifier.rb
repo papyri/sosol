@@ -79,10 +79,7 @@ class CTSIdentifier < Identifier
     Rails.logger.info("New urn:#{newUrn}")
     document_path = collection + "/" + CTS::CTSLib.pathForUrn(newUrn,pubtype)
     editionPart = ".#{self::TEMPORARY_COLLECTION}-#{lang}-#{year}-"
-    latest = self.find(:all,
-                       :conditions => ["name like ?", "#{document_path}%"],
-                       :order => "name DESC",
-                       :limit => 1).first
+    latest = self.where('name like ?', "#{document_path}%").order(name: :desc).limit(1).first
     if latest.nil?
       # no constructed id's for this year/class
       document_number = 1

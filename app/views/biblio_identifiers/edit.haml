@@ -118,11 +118,11 @@
         .clear
         .swifty.quickSave=I18n.t('label.quickSave')
 
-      - if @identifier[:originalBp] && @identifier[:originalBp].length > 0
+      - if @identifier.non_database_attribute[:originalBp] && @identifier.non_database_attribute[:originalBp].length > 0
         %h4.category.original
           %a{:name => 'Original'}=I18n.t('biblio.legend.original')
         .editbox.original{:style => 'display: none;'}
-          - @identifier[:originalBp].each_pair do |title, value|
+          - @identifier.non_database_attribute[:originalBp].each_pair do |title, value|
             =title + ': '
             =value
             %br

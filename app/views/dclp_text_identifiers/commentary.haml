@@ -184,7 +184,7 @@
     if(original_item_id === undefined) {original_item_id = "";}
 
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
-    '#{form_tag({:action => :update_commentary}, :method => :put, :id => "update_commentary_form").chomp()}' +
+    '#{form_tag({:action => :update_commentary}, :method => :patch, :id => "update_commentary_form").chomp()}' +
     '<input type="hidden" name="line_id" value="' + id + '"/>' +
     '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
     '<ul id="menuModel" style="display:inherit">' +
@@ -252,7 +252,7 @@
     if(content === undefined) {content = "";}
     
     return '<div id="form-frontmatter" class="frontmatter_container" style="display:none;"><div class="form">' +
-    '#{form_tag({:action => :update_frontmatter_commentary}, :method => :put, :id => "update_frontmatter_form").chomp()}' +
+    '#{form_tag({:action => :update_frontmatter_commentary}, :method => :patch, :id => "update_frontmatter_form").chomp()}' +
     '<ul id="menuModel" style="display:inherit">' +
     '  <li id="1">' +
     '    <a href="#" title="General Formatting Helpers">Formatting</a>' +
@@ -977,6 +977,6 @@
       %label Commentary
       .PContent
         :preserve
-          #{@identifier[:html_preview]}
+          #{@identifier_html_preview}
 %textarea{:id => "fm_or_com", :style => "display:none"}
 = javascript_include_tag 'confirm'

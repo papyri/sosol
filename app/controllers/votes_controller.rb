@@ -6,7 +6,7 @@ class VotesController < ApplicationController
   # GET /votes
   # GET /votes.xml
   def index
-    @votes = Vote.find(:all)
+    @votes = Vote.all
 
     respond_to do |format|
       format.html # index.html.erb

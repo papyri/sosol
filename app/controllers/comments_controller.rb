@@ -1,11 +1,11 @@
 class CommentsController < ApplicationController
   before_filter :authorize
-  
+
   layout false
   # GET /comments
   # GET /comments.xml
   def index
-    @comments = Comment.find(:all)
+    @comments = Comment.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -18,12 +18,11 @@ class CommentsController < ApplicationController
   def ask_for
     @publication = Publication.find(params[:publication_id].to_s)
     @publication_id = @publication.origin.id
-    
+
     @identifier = Identifier.find(params[:identifier_id].to_s)
     @identifier_id  = @identifier.origin.id
-   
-    @comments = Comment.find_all_by_publication_id(@publication_id, :order => 'created_at').reverse
 
+    @comments = Comment.where(publication_id: @publication_id).order(created_at: :desc)
   end
 
   # GET /comments/1
@@ -56,18 +55,17 @@ class CommentsController < ApplicationController
   # POST /comments
   # POST /comments.xml
   def create
-  
-    @comment = Comment.new(params[:comment])
+    @comment = Comment.new(comment_params)
 
     @comment.user_id = @current_user.id
  #   if params[:reason] != nil
  #     @comment.reason = params[:reason]
  #   end
-  
+
     respond_to do |format|
       if @comment.save
         flash[:notice] = 'Comment was successfully created.'
-        
+
         #url will not work correctly without :id, however id is not used in ask_for, so we just use 1
         format.html { redirect_to :id => 1, :controller => "comments", :action => "ask_for", :publication_id => @comment.publication_id, :identifier_id => @comment.identifier.id, :method => "get" }
         #format.html { redirect_to(@comment) }
@@ -107,5 +105,11 @@ class CommentsController < ApplicationController
       format.html { redirect_to(comments_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def comment_params
+    params.require(:comment).permit(:comment,:identifier_id,:publication_id,:reason)
   end
 end

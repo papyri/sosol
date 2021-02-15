@@ -22,7 +22,7 @@ class DdbIdentifiersController < IdentifiersController
     begin
       # use a fragment cache for cases where we'd need to do a leiden transform
       if fragment_exist?(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
-        @identifier[:leiden_plus] = read_fragment(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
+        @leiden_plus = read_fragment(:action => 'edit', :part => "leiden_plus_#{@identifier.id}")
       else
         if(Sosol::Application.config.respond_to?(:xsugar_standalone_enabled) && Sosol::Application.config.xsugar_standalone_enabled)
           original_xml = DDBIdentifier.preprocess(@identifier.xml_content)
@@ -41,25 +41,25 @@ class DdbIdentifiersController < IdentifiersController
           end
           
           if @identifier.get_broken_leiden.nil?  
-            @identifier[:leiden_plus] = abs
+            @leiden_plus = abs
           else
-            @identifier[:leiden_plus] = nil
+            @leiden_plus = nil
             @bad_leiden = true
           end
           
         else
-          @identifier[:leiden_plus] = @identifier.leiden_plus
+          @leiden_plus = @identifier.leiden_plus
         end
-        write_fragment({:action => 'edit', :part => "leiden_plus_#{@identifier.id}"}, @identifier[:leiden_plus])
+        write_fragment({:action => 'edit', :part => "leiden_plus_#{@identifier.id}"}, @leiden_plus)
       end
-      if @identifier[:leiden_plus].nil?
+      if @leiden_plus.nil?
         flash.now[:error] = "File loaded from broken Leiden+"
-        @identifier[:leiden_plus] = @identifier.get_broken_leiden
+        @leiden_plus = @identifier.get_broken_leiden
       end
     rescue RXSugar::XMLParseError => parse_error
       flash.now[:error] = "Error parsing XML at line #{parse_error.line}, column #{parse_error.column}"
       new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
-      @identifier[:leiden_plus] = new_content
+      @leiden_plus = new_content
     end
     @is_editor_view = true
   end
@@ -101,7 +101,7 @@ class DdbIdentifiersController < IdentifiersController
       flash.now[:notice] = "File updated with broken Leiden+ - XML and Preview will be incorrect until fixed"
       expire_leiden_cache
       expire_publication_cache
-        @identifier[:leiden_plus] = params[:ddb_identifier_leiden_plus].to_s
+        @leiden_plus = params[:ddb_identifier_leiden_plus].to_s
         @is_editor_view = true
         render :template => 'ddb_identifiers/edit'
     else #Save button is clicked
@@ -124,7 +124,7 @@ class DdbIdentifiersController < IdentifiersController
       rescue RXSugar::NonXMLParseError => parse_error
         flash.now[:error] = "Error parsing Leiden+ at line #{parse_error.line}, column #{parse_error.column}.  This file was NOT SAVED. "
         new_content = insert_error_here(parse_error.content, parse_error.line, parse_error.column)
-        @identifier[:leiden_plus] = new_content
+        @leiden_plus = new_content
         @bad_leiden = true
         @original_commit_comment = params[:comment]
         @is_editor_view = true
@@ -133,7 +133,7 @@ class DdbIdentifiersController < IdentifiersController
         flash.now[:error] = parse_error.to_str + 
           ".  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED. "
         @bad_leiden = true #to keep from trying to parse the L+ as XML when render edit template
-        @identifier[:leiden_plus] = params[:ddb_identifier_leiden_plus]
+        @leiden_plus = params[:ddb_identifier_leiden_plus]
         @is_editor_view = true
         render :template => 'ddb_identifiers/edit'
       end #begin
@@ -145,13 +145,13 @@ class DdbIdentifiersController < IdentifiersController
   # - *Params*  :
   #   - +none+
   # - *Returns* :
-  #   - @identifier[:html_preview] - data for view to display
+  #   - @identifier_html_preview - data for view to display
   #   - @is_editor_view - tell view to display edit menu at top of page
   def commentary
     find_identifier
 
     begin
-      @identifier[:html_preview] = 
+      @identifier_html_preview = 
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
           DDBIdentifier.preprocess(@identifier.xml_content)),
@@ -161,7 +161,7 @@ class DdbIdentifiersController < IdentifiersController
     rescue JRubyXML::ParseError => parse_error
       flash.now[:error] = parse_error.to_str + 
           ".  This message is because the XML is unable to be transformed by the line-by-line commentary XSLT."
-      @identifier[:html_preview] = ''
+      @identifier_html_preview = ''
     end
       
     @is_editor_view = true
@@ -265,7 +265,7 @@ class DdbIdentifiersController < IdentifiersController
     find_identifier
 
     begin
-      @identifier[:html_preview] = @identifier.preview
+      @identifier_html_preview = @identifier.preview
     rescue JRubyXML::ParseError => parse_error
       flash[:error] = "Error parsing XML for preview. #{parse_error.to_str}"
       redirect_to polymorphic_path([@identifier.publication, @identifier],

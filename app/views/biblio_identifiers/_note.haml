@@ -1,18 +1,19 @@
-- @identifier[:note]
+- @identifier.non_database_attribute[:note]
 .multi#multi_note
   %h6
     %label.responsibility= I18n.t('biblio.label.annotationResponsibility')
     %label.annotation= I18n.t('biblio.label.annotation')
   %ul.items#multiItems_note
-    - @identifier[:note].each_index do |index|
-    - responsibility = @identifier[:note][index].responsibility
-    - annotation     = @identifier[:note][index].annotation
-      %li
-        = text_area_tag 'biblio_identifier[note][' + index.to_s + '][responsibility]', responsibility, :disabled => !@identifier.mutable?, :class => 'observechange responsibility'
-        = text_area_tag 'biblio_identifier[note][' + index.to_s + '][annotation]',     annotation,     :disabled => !@identifier.mutable?, :class => 'observechange annotation'
+    - if @identifier.non_database_attribute[:note].present?
+      - @identifier.non_database_attribute[:note].each_index do |index|
+      - responsibility = @identifier.non_database_attribute[:note][index].responsibility
+      - annotation     = @identifier.non_database_attribute[:note][index].annotation
+        %li
+          = text_area_tag 'biblio_identifier[note][' + index.to_s + '][responsibility]', responsibility, :disabled => !@identifier.mutable?, :class => 'observechange responsibility'
+          = text_area_tag 'biblio_identifier[note][' + index.to_s + '][annotation]',     annotation,     :disabled => !@identifier.mutable?, :class => 'observechange annotation'
 
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('tooltip.multiMove')} o
+          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add#multiPlus_note
     %textarea.observechange.responsibility#note_responsibility
     %textarea.observechange.annotation#note_annotation

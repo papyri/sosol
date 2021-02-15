@@ -86,8 +86,8 @@ class DCLPTextIdentifier < DDBIdentifier
 
   # ?
   def n_attribute
-    text = DCLPTextIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
-    meta = DCLPMetaIdentifier.find_by_publication_id(self.publication.id, :limit => 1)
+    text = DCLPTextIdentifier.find_by_publication_id(self.publication.id)
+    meta = DCLPMetaIdentifier.find_by_publication_id(self.publication.id)
 
     return meta ? meta.n_attribute : (text ? text.n_attribute : nil)
   end

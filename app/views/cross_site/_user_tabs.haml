@@ -46,7 +46,7 @@
 
 - if @current_user
 
-  - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
+  - end_communities = Community.where( :end_user_id => @current_user.id )
   - user_communities = @current_user.community_memberships
   - all_communities = end_communities | user_communities
 
@@ -66,7 +66,7 @@
             = link_to community.format_name, :controller => "User", :action => "user_community_dashboard", :community_id => community.id
   
         -#there is no real diff between this view and the user view        
-          - end_communities = Community.find(:all, :conditions => {:end_user_id => @current_user.id} )
+          - end_communities = Community.where(end_user_id: @current_user.id)
           - if end_communities && end_communities.length > 0
             %li
               Completed

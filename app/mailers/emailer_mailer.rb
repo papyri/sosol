@@ -65,7 +65,7 @@ class EmailerMailer < ActionMailer::Base
       attachments.inline['attachment.txt'] = document_content
     end
     if include_comments  
-      @comments = Comment.find_all_by_publication_id(identifiers[0].publication.origin.id)    
+      @comments = Comment.where(publication_id: identifiers[0].publication.origin.id)
     else
       @comments = [] 
     end

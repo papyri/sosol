@@ -9,14 +9,14 @@ class DecreeTest < ActiveSupport::TestCase
   ].each do |method|
     context "a #{method[:tally_method]} decree" do
       setup do
-        @decree = FactoryGirl.create(:decree,
+        @decree = FactoryBot.create(:decree,
                           :action => "approve",
                           :trigger => method[:trigger],
                           :tally_method => method[:tally_method],
                           :choices => "yes")
         # add some users to this decree's board
         3.times do |i|
-          @decree.board.users << FactoryGirl.create(:user)
+          @decree.board.users << FactoryBot.create(:user)
         end
       end
     
@@ -32,7 +32,7 @@ class DecreeTest < ActiveSupport::TestCase
     
       context "with votes on a publication/identifier" do
         setup do
-          @publication = FactoryGirl.create(:publication, :owner => @decree.board, :creator => @decree.board.users.first)
+          @publication = FactoryBot.create(:publication, :owner => @decree.board, :creator => @decree.board.users.first)
           @publication.branch_from_master
           @ddb_identifier = DDBIdentifier.new_from_template(@publication)
         end
@@ -43,7 +43,7 @@ class DecreeTest < ActiveSupport::TestCase
       
         should "perform action when trigger is met" do
           2.times do |v|
-            FactoryGirl.create(:vote,
+            FactoryBot.create(:vote,
                     :publication => @publication,
                     :identifier_id => @ddb_identifier.id,
                     :user => @decree.board.users[v],
@@ -54,7 +54,7 @@ class DecreeTest < ActiveSupport::TestCase
         end
       
         should "not perform action when trigger is not met" do
-          FactoryGirl.create(:vote,
+          FactoryBot.create(:vote,
                   :publication => @publication,
                   :identifier => @ddb_identifier,
                   :user => @decree.board.users[0],

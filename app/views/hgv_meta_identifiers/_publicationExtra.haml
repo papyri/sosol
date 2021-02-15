@@ -1,4 +1,4 @@
-- extras = HgvPublication.getExtras @identifier[:publicationExtra]
+- extras = HgvPublication.getExtras @identifier.non_database_attribute[:publicationExtra]
 .multi#multi_publicationExtra
   %ul.items#multiItems_publicationExtra
     - extras.each_index do |index|

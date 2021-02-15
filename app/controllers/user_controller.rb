@@ -21,7 +21,7 @@ class UserController < ApplicationController
   end
 
   def all_users_links
-    @users = User.find(:all, :order => "full_name ASC")
+    @users = User.order(full_name: :asc)
   end
 
   #Gets info for the current user in json format.
@@ -111,7 +111,7 @@ class UserController < ApplicationController
       redirect_to dashboard_url
       return
     end
-    @boards = Board.find(:all)
+    @boards = Board.all
   end
 
 
@@ -148,22 +148,15 @@ class UserController < ApplicationController
     #show the old dashboard
 
     #below selects publications to show in standard user data section of dashboard
-    #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND owner_id = creator_id AND parent_id is null", :include => :identifiers)
-
     unless fragment_exist?(:action => 'dashboard', :part => "your_publications_#{@current_user.id}")
-      @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status != 'archived' AND owner_id = creator_id AND parent_id is null", :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-      #could not find valid format for status not equal to 'archive' in below statement so resorted to older format above
-      #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+      @publications = Publication.where.not(status: 'archived').where(owner_id: @current_user.id, creator_id: @current_user.id, owner_type: 'User', parent_id: nil).includes(identifiers: [:votes]).order(updated_at: :desc)
     end
 
     unless fragment_exist?(:action => 'dashboard', :part => "board_publications_#{@current_user.id}")
       #below selects publications current user is responsible for finalizing to show in board section of dashboard
-      #@board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => "owner_type = 'User' AND status = 'finalizing'", :include => :identifiers, :order => "updated_at DESC")
-      @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+      @board_final_pubs = Publication.where(owner_id: @current_user.id, owner_type: 'User', status: 'finalizing').includes(identifiers: [:votes]).order(updated_at: :desc)
 
       @boards = @current_user.boards.ranked
-      #or do we want to use the creator id?
-      #@publications = Publication.find_all_by_creator_id(@current_user.id, :include => :identifiers)
     end
 
     if !fragment_exist?(:action => 'dashboard', :part => 'events_list_time') || (Time.now > (read_fragment(:action => 'dashboard', :part => 'events_list_time') + 60))
@@ -172,8 +165,7 @@ class UserController < ApplicationController
     end
 
     unless fragment_exist?(:action => 'dashboard', :part => 'events_list')
-      @events = Event.find(:all, :order => "created_at DESC", :limit => 25,
-                           :include => [:owner, :target])[0..24]
+      @events = Event.order(created_at: :desc).limit(25).includes(:owner, :target).load
     end
 
 
@@ -206,13 +198,12 @@ class UserController < ApplicationController
 
   #Finds publications created by current user and are not part of a community.
   def user_dashboard
-    #@publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
     #assuming 4 find calls faster than the above, then splits
 
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @submitted_publications = Publication.where(owner_id: @current_user.id, community_id: nil, owner_type: 'User', creator_id: @current_user.id, parent_id: nil, status: 'submitted').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @editing_publications = Publication.where(owner_id: @current_user.id, community_id: nil, owner_type: 'User', creator_id: @current_user.id, parent_id: nil, status: 'editing').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @new_publications = Publication.where(owner_id: @current_user.id, community_id: nil, owner_type: 'User', creator_id: @current_user.id, parent_id: nil, status: 'new').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @committed_publications = Publication.where(owner_id: @current_user.id, community_id: nil, owner_type: 'User', creator_id: @current_user.id, parent_id: nil, status: 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
 
     @show_events = true
   end
@@ -237,25 +228,25 @@ class UserController < ApplicationController
       if status
         case status
         when 'submitted'
-          @submitted_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @submitted_publications = Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status).includes(identifiers: [:votes]).order(updated_at: :desc)
         when 'editing'
-          @editing_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @editing_publications = Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status).includes(identifiers: [:votes]).order(updated_at: :desc)
         when 'new'
-          @new_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @new_publications = Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status).includes(identifiers: [:votes]).order(updated_at: :desc)
         when 'committed'
-          @committed_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @committed_publications = Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status).includes(identifiers: [:votes]).order(updated_at: :desc)
         when 'finalizing'
-          @finalizing_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @finalizing_publications = Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => status).includes(identifiers: [:votes]).order(updated_at: :desc)
         end
       else
         if publication_id
-          @submitted_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:id => publication_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @submitted_publications = Publication.where(owner_id: user_id,:id => publication_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil).includes(identifiers: [:votes]).order(updated_at: :desc)
         else
-          @submitted_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-          @editing_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-          @new_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-          @committed_publications = Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-          @finalizing_publications =  Publication.find_all_by_owner_id(user_id, :conditions => {:community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'finalizing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @submitted_publications = Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'submitted').includes(identifiers: [:votes]).order(updated_at: :desc)
+          @editing_publications = Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'editing').includes(identifiers: [:votes]).order(updated_at: :desc)
+          @new_publications = Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'new').includes(identifiers: [:votes]).order(updated_at: :desc)
+          @committed_publications = Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
+          @finalizing_publications =  Publication.where(owner_id: user_id, :community_id => nil, :owner_type => 'User', :creator_id => user_id, :parent_id => nil, :status => 'finalizing').includes(identifiers: [:votes]).order(updated_at: :desc)
         end
       end
 
@@ -271,10 +262,10 @@ class UserController < ApplicationController
   #Finds publications created by the current user and are part of the specified community.
   def user_community_dashboard
     cid = params[:community_id]
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @submitted_publications = Publication.where(owner_id: @current_user.id, :community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @editing_publications = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @new_publications = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @committed_publications = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
 
     @community = Community.find_by_id(cid)
     render "user_dashboard"
@@ -284,20 +275,11 @@ class UserController < ApplicationController
 
   #Shows all publications for the current user (excepting archived status).
   def user_complete_dashboard
- #   @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => { :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
- #   @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
- #   @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
- #   @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
- #   @finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id,  :status => 'finalizing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-
-
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => { :owner_type => 'User', :owner_id => @current_user.id, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @finalizing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :owner_id => @current_user.id, :status => 'finalizing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-
-
+    @submitted_publications = Publication.where(owner_id: @current_user.id,  :owner_type => 'User', :status => 'submitted').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @editing_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :status => 'editing').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @new_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :status => 'new').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @committed_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :status => 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @finalizing_publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :status => 'finalizing').includes(identifiers: [:votes]).order(updated_at: :desc)
 
     render 'user_dashboard'
   end
@@ -307,21 +289,23 @@ class UserController < ApplicationController
       @board = Board.find_by_id(params[:board_id])
 
       #get publications for the member to finalize
-      @board_final_pubs = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :status => 'finalizing'}, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+      @board_final_pubs = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :status => 'finalizing').includes(identifiers: [:votes]).order(updated_at: :desc)
       @finalizing_publications =  @board_final_pubs.collect{|p| ((! p.parent.nil? && p.parent.owner == @board)) ? p : nil}.compact
 
       #get publications that have been approved
       #@approved_publications = @board.publications.collect{|p| p.status == "approved" ? p : nil}.compact
-      @approved_publications = Publication.find_all_by_owner_id(@board.id, :conditions => {:owner_type => "Board", :status => "approved" }, :include => [{:identifiers => :votes}], :order => "updated_at DESC"  )
+      @approved_publications = Publication.where(owner_id: @board.id, :owner_type => "Board", :status => "approved").includes(identifiers: [:votes]).order(updated_at: :desc).to_a
 
       #remove approved publications if in the finalizer list
       @finalizing_publications.each do |fp|
         #remove it from the list of approved publications
-        @approved_publications.each do |ap|
-         if fp.origin == ap.origin
-           @approved_publications.delete(ap)
-         end
-
+        @approved_publications.reject! do |ap|
+          begin
+            fp.origin == ap.origin
+          rescue ActiveRecord::RecordNotFound => e
+            Rails.logger.debug("UserController#board_dashboard ActiveRecord::RecordNotFound while removing approved publications: #{e.inspect}")
+            false
+          end
         end
      end
 
@@ -332,10 +316,10 @@ class UserController < ApplicationController
      else
        @offset = 0
      end
-     @count = Publication.count(:conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"})
+     @count = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").count
 
      #find all pubs that are still in voting phase
-     board_voting_publications = Publication.find(:all, :conditions => {:owner_id => @board.id, :owner_type => 'Board', :status => "voting"}, :include => [{:identifiers => :votes}], :order => "updated_at DESC", :offset => @offset, :limit => 50  )
+     board_voting_publications = Publication.where(:owner_id => @board.id, :owner_type => 'Board', :status => "voting").includes(identifiers: [:votes]).order(updated_at: :desc).offset(@offset).limit(50).to_a
      #find all pubs that the user needs to review
      @needs_reviewing_publications = board_voting_publications.collect{ |p|
         needs_review = false
@@ -364,14 +348,11 @@ class UserController < ApplicationController
   end
 
   def archives
-   # @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
-    #@board_final_pubs = Array.new()
-    #@events = Array.new()
     if params[:board_id]
       @board = Board.find_by_id(params[:board_id])
-      @publications = @board.publications.find( :all, :conditions => { :status => 'archived' }, :include => :identifiers, :order => "updated_at DESC")
+      @publications = @board.publications.where(:status => 'archived').includes(:identifiers).order(updated_at: :desc)
     else
-      @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil }, :include => :identifiers, :order => "updated_at DESC")
+      @publications = Publication.where(owner_id: @current_user.id, :owner_type => 'User', :creator_id => @current_user.id, :status => 'archived', :parent_id => nil).includes(:identifiers).order(updated_at: :desc)
     end
 
 
@@ -456,7 +437,7 @@ Developer:
 
    def index_user_admins
     if current_user_is_master_admin?
-      @users = User.find(:all)
+      @users = User.all
     end
    end
 
@@ -541,7 +522,7 @@ Developer:
       @community = Community.find_by_id(cid)
     end
 
-    @publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => status_wanted }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @publications = Publication.where(owner_id: @current_user.id, community_id: cid, owner_type: 'User', creator_id: @current_user.id, parent_id: nil, status: status_wanted).includes(identifiers: [:votes]).order(updated_at: :desc)
 
     t = Tempfile.new("publication_download_#{@current_user.name}-#{request.remote_ip}")
 
@@ -583,10 +564,10 @@ Developer:
 
 
     cid = params[:community_id]
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @submitted_publications = Publication.where(owner_id: @current_user.id, :community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @editing_publications = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @new_publications = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @committed_publications = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
 
     @community = Community.find_by_id(cid)
 
@@ -618,13 +599,12 @@ Developer:
 
   #Determines which combos of boards & publication status' exist so we can ask the user which one they want to download.
   def download_options
-
     #has become overkill for current method, really only need to see if any of these publications exists, dont need the whole list
     cid = nil
-    @submitted_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @editing_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @new_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-    @committed_publications = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+    @submitted_publications = Publication.where(owner_id: @current_user.id, :community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @editing_publications = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @new_publications = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new').includes(identifiers: [:votes]).order(updated_at: :desc)
+    @committed_publications = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
 
    # @community = Community.find_by_id(cid)
 
@@ -637,10 +617,10 @@ Developer:
           @communities[cid] = Hash.new
           @communities[cid][:id] = cid
           @communities[cid][:name] = community.format_name
-          @communities[cid][:submitted_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-          @communities[cid][:editing_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-          @communities[cid][:new_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
-          @communities[cid][:committed_publications] = Publication.find_all_by_owner_id(@current_user.id, :conditions => {:community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed' }, :include => [{:identifiers => :votes}], :order => "updated_at DESC")
+          @communities[cid][:submitted_publications] = Publication.where(owner_id: @current_user.id, :community_id => cid, :owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'submitted').includes(identifiers: [:votes]).order(updated_at: :desc)
+          @communities[cid][:editing_publications] = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'editing').includes(identifiers: [:votes]).order(updated_at: :desc)
+          @communities[cid][:new_publications] = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'new').includes(identifiers: [:votes]).order(updated_at: :desc)
+          @communities[cid][:committed_publications] = Publication.where(owner_id: @current_user.id, :community_id => cid,:owner_type => 'User', :creator_id => @current_user.id, :parent_id => nil, :status => 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
         end
     end
 

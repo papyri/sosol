@@ -1,29 +1,31 @@
-- easyObject = @identifier[type]
+- easyObject = @identifier.non_database_attribute[type]
 - type = type.to_s
 - typeBig = type.slice(0, 1).capitalize + type[1..-1]
 
 .multi{:id => 'multi_' + type}
   %h6
-    - if easyList.length > 1
+    - if easyList.present? && easyList.length > 1
       - easyList.each do |item|
         %label{:class => item}= I18n.t('biblio.label.' + item)
   %ul.items{:id => 'multiItems_' + type}
-    - easyObject.each_index do |index|
-      %li
-        - easyList.each do |member|
-          - if defined?(optionList) && optionList.kind_of?(Hash) && optionList.include?(member)
-            = select_tag('biblio_identifier[' + type + '][' + index.to_s + '][' + member + ']', options_for_select(optionList[member], easyObject[index].send(member)), :disabled => !@identifier.mutable?, :class => 'observechange ' + member)
-          - else
-            = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][' + member + ']', easyObject[index].send(member), :disabled => !@identifier.mutable?, :class => 'observechange ' + member
+    - if easyObject.present?
+      - easyObject.each_index do |index|
+        %li
+          - easyList.each do |member|
+            - if defined?(optionList) && optionList.kind_of?(Hash) && optionList.include?(member)
+              = select_tag('biblio_identifier[' + type + '][' + index.to_s + '][' + member + ']', options_for_select(optionList[member], easyObject[index].send(member)), :disabled => !@identifier.mutable?, :class => 'observechange ' + member)
+            - else
+              = text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][' + member + ']', easyObject[index].send(member), :disabled => !@identifier.mutable?, :class => 'observechange ' + member
 
-        %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
-        %span.move{:title => I18n.t('tooltip.multiMove')} o
-  %p.add{:id => 'multiPlus_' + type}
-    - easyList.each do |member|
-      - if defined?(optionList) && optionList.kind_of?(Hash) && optionList.include?(member)
-        = select_tag(type + '_' + member, options_for_select(optionList[member]))
-      - else
-        %input.observechange{:id => type + '_' + member}
+          %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
+          %span.move{:title => I18n.t('tooltip.multiMove')} o
+    %p.add{:id => 'multiPlus_' + type}
+    - if easyList.present?
+      - easyList.each do |member|
+        - if defined?(optionList) && optionList.kind_of?(Hash) && optionList.include?(member)
+          = select_tag(type + '_' + member, options_for_select(optionList[member]))
+        - else
+          %input.observechange{:id => type + '_' + member}
     
     %span{:onclick => "multiAdd" + typeBig + "()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 

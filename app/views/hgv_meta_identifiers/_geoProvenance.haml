@@ -1,5 +1,5 @@
-- @identifier[:provenance].each_index do |provenanceIndex| # provenance / events
-  - provenance = HgvGeo::Provenance.new( :provenance => @identifier[:provenance][provenanceIndex])
+- @identifier.non_database_attribute[:provenance].each_index do |provenanceIndex| # provenance / events
+  - provenance = HgvGeo::Provenance.new( :provenance => @identifier.non_database_attribute[:provenance][provenanceIndex])
   - base = 'hgv_meta_identifier[provenance][' + provenanceIndex.to_s + ']'
   - baseAttributes = base + '[attributes]'
   - baseChildren = base + '[children]'

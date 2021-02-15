@@ -94,7 +94,7 @@ class HgvMetaIdentifiersController < IdentifiersController
   def get_geo_preview
     @identifier = HGVMetaIdentifier.new
     @identifier.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
-    @update = HgvProvenance.format @identifier[:provenance]
+    @update = HgvProvenance.format @identifier.non_database_attribute[:provenance]
 
     respond_to do |format|
       format.js
@@ -182,7 +182,7 @@ class HgvMetaIdentifiersController < IdentifiersController
         if params[:hgv_meta_identifier][:provenance]
           hgv = HGVMetaIdentifier.new
           hgv.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
-          params[:hgv_meta_identifier][:origPlace] = HgvProvenance.format hgv[:provenance]
+          params[:hgv_meta_identifier][:origPlace] = HgvProvenance.format hgv.non_database_attribute[:provenance]
 
         else
           params[:hgv_meta_identifier][:origPlace] = 'unbekannt'

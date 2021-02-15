@@ -6,7 +6,7 @@ class DecreesController < ApplicationController
   # GET /decrees
   # GET /decrees.xml
   def index
-    @decrees = Decree.find(:all)
+    @decrees = Decree.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -47,7 +47,7 @@ class DecreesController < ApplicationController
   # POST /decrees
   # POST /decrees.xml
   def create
-    @decree = Decree.new(params[:decree])
+    @decree = Decree.new(decree_params)
 
     if @decree.save
       board = Board.find(@decree.board_id)
@@ -101,4 +101,10 @@ class DecreesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+    def decree_params
+      params.require(:decree).permit(:association,:tally_method,:action,:trigger,:choices,:board_id)
+    end
 end

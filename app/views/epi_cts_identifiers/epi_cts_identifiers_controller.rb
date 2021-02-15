@@ -67,7 +67,7 @@ class EpiCtsIdentifiersController < IdentifiersController
   def commentary
     find_identifier
 
-    @identifier[:html_preview] = 
+    @identifier_html_preview = 
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(
         EpiCTSIdentifier.preprocess(@identifier.xml_content)),
@@ -149,7 +149,7 @@ class EpiCtsIdentifiersController < IdentifiersController
     # xslt.xsl = REXML::Document.new File.open('start-div-portlet.xsl')
     # xslt.serve()
 
-    @identifier[:html_preview] = @identifier.preview
+    @identifier_html_preview = @identifier.preview
   end
   
   protected

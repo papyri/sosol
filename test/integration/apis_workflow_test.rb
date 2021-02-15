@@ -1,9 +1,9 @@
 require 'test_helper'
 require 'ddiff'
 
-class ApisWorkflowTest < ActionController::IntegrationTest
+class ApisWorkflowTest < ActionDispatch::IntegrationTest
   def generate_board_vote_for_decree(board, decree, identifier, user)
-    FactoryGirl.create(:vote,
+    FactoryBot.create(:vote,
                        :publication_id => identifier.publication.id,
                        :identifier_id => identifier.id,
                        :user => user,
@@ -85,61 +85,61 @@ class ApisWorkflowTest < ActionController::IntegrationTest
 end
 
 
-class ApisWorkflowTest < ActionController::IntegrationTest
+class ApisWorkflowTest < ActionDispatch::IntegrationTest
   context "for idp3" do
     context "apis testing" do
       setup do
         Rails.logger.level = 0
         Rails.logger.debug "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx sosol testing setup xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         #a user to put on the boards
-        @board_user = FactoryGirl.create(:user, :name => "board_man_bob")
-        @board_user_2 = FactoryGirl.create(:user, :name => "board_man_alice")
+        @board_user = FactoryBot.create(:user, :name => "board_man_bob")
+        @board_user_2 = FactoryBot.create(:user, :name => "board_man_alice")
 
         #a user to submit publications
-        @creator_user = FactoryGirl.create(:user, :name => "creator_bob")
+        @creator_user = FactoryBot.create(:user, :name => "creator_bob")
 
         #an end user to recieve the "finalized" publication
-        @end_user = FactoryGirl.create(:user, :name => "end_bob")
+        @end_user = FactoryBot.create(:user, :name => "end_bob")
 
         #set up the boards, and decrees
-        @meta_board = FactoryGirl.create(:hgv_meta_board, :title => "meta")
+        @meta_board = FactoryBot.create(:hgv_meta_board, :title => "meta")
 
         #the board memeber
         @meta_board.users << @board_user
         #@meta_board.users << @board_user_2
 
         #the decree
-        @meta_decree = FactoryGirl.create(:count_decree,
+        @meta_decree = FactoryBot.create(:count_decree,
                                           :board => @meta_board,
                                           :trigger => 1.0,
                                           :action => "approve",
                                           :choices => "ok")
         @meta_board.decrees << @meta_decree
 
-        @text_board = FactoryGirl.create(:board, :title => "text")
+        @text_board = FactoryBot.create(:board, :title => "text")
         #the board memeber
         @text_board.users << @board_user
         #the vote
-        @text_decree = FactoryGirl.create(:count_decree,
+        @text_decree = FactoryBot.create(:count_decree,
                                           :board => @text_board,
                                           :trigger => 1.0,
                                           :action => "approve",
                                           :choices => "ok")
         @text_board.decrees << @text_decree
 
-        @translation_board = FactoryGirl.create(:hgv_trans_board, :title => "translation")
+        @translation_board = FactoryBot.create(:hgv_trans_board, :title => "translation")
 
         #the board memeber
         @translation_board.users << @board_user
         #the decree
-        @translation_decree = FactoryGirl.create(:count_decree,
+        @translation_decree = FactoryBot.create(:count_decree,
                                                  :board => @translation_board,
                                                  :trigger => 1.0,
                                                  :action => "approve",
                                                  :choices => "ok")
         @translation_board.decrees << @translation_decree
 
-        @apis_board = FactoryGirl.create(:apis_board, :title => "nyu")
+        @apis_board = FactoryBot.create(:apis_board, :title => "nyu")
         @apis_board.users << @board_user
 
         #set board order
@@ -181,8 +181,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
           Rails.logger.debug "---Create A New Publication---"
           #publication_session.post 'publications/create_from_templates', :session => { :user_id => @creator_user.id }
 
-          publication_session.post 'publications/create_from_identifier' + '?test_user_id=' + @creator_user.id.to_s, \
-            :id => 'papyri.info/apis/nyu.apis.4782'
+          publication_session.get '/publications/create_from_identifier/papyri.info/apis/nyu.apis.4782' + '?test_user_id=' + @creator_user.id.to_s
 
           Rails.logger.debug "--flash is: " + publication_session.flash.inspect
 
@@ -215,7 +214,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
           modified_content = original_content.sub(/Bobst/, 'APIS Workflow Test')
           assert_not_equal original_content, modified_content, "Modified content should be modified"
 
-          edit_session.put "publications/#{@publication.id.to_s}/apis_identifiers/#{apis_identifier.id.to_s}/?test_user_id=#{@creator_user.id.to_s}",
+          edit_session.patch "/publications/#{@publication.id.to_s}/apis_identifiers/#{apis_identifier.id.to_s}/?test_user_id=#{@creator_user.id.to_s}",
             :apis_identifier => {:xml_content => modified_content}, :comment => 'APIS Workflow Test'
 
           Rails.logger.debug "--APIS flash is: " + edit_session.flash.inspect
@@ -226,7 +225,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
 
         open_session do |submit_session|
 
-          submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
+          submit_session.post '/publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
             :submit_comment => "I edited an APIS pub"
 
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
@@ -241,13 +240,13 @@ class ApisWorkflowTest < ActionController::IntegrationTest
         assert_equal "submitted", @publication.status, "Publication status not submitted " + @publication.community_id.to_s + " id "
 
         #apis board should have 1 publication, others should have 0
-        apis_publications = Publication.find(:all, :conditions => { :owner_id => @apis_board.id, :owner_type => "Board" } )
+        apis_publications = Publication.where(owner_id: @apis_board.id, owner_type: 'Board')
         assert_equal 1, apis_publications.length, "APIS does not have 1 publication but rather, " + apis_publications.length.to_s + " publications"
 
-        text_publications = Publication.find(:all, :conditions => { :owner_id => @text_board.id, :owner_type => "Board" } )
+        text_publications = Publication.where(owner_id: @text_board.id, owner_type: 'Board')
         assert_equal 0, text_publications.length, "Text does not have 0 publication but rather, " + text_publications.length.to_s + " publications"
 
-        translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
+        translation_publications = Publication.where(owner_id: @translation_board.id, owner_type: 'Board')
         assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
 
         Rails.logger.debug "APIS Board has publication"
@@ -270,12 +269,12 @@ class ApisWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "Found apis identifier, will vote on it"
 
         open_session do |apis_session|
-          apis_session.post 'publications/vote/' + apis_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+          apis_session.post '/publications/vote/' + apis_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
             :comment => { :comment => "I agree apis is great", :user_id => @board_user.id, :publication_id => apis_identifier.publication.id, :identifier_id => apis_identifier.id, :reason => "vote" }, \
             :vote => { :publication_id => apis_identifier.publication.id.to_s, :identifier_id => apis_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @apis_board.id.to_s, :choice => "accept" }
 
           Rails.logger.debug "--flash is: " + apis_session.flash.inspect
-      
+
         end
 
         #reload the publication to get the vote associations to go thru?
@@ -318,7 +317,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
 
         open_session do |apis_finalize_session|
 
-          apis_finalize_session.post 'publications/' + apis_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          apis_finalize_session.post '/publications/' + apis_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
             :comment => 'I agree apis is great and now it is final'
 
           Rails.logger.debug "--flash is: " + apis_finalize_session.flash.inspect
@@ -352,37 +351,37 @@ class ApisWorkflowTest < ActionController::IntegrationTest
 
   context "for IDP2" do
     setup do
-      @ddb_board = FactoryGirl.create(:board, :title => 'DDbDP Editorial Board')
+      @ddb_board = FactoryBot.create(:board, :title => 'DDbDP Editorial Board')
 
       3.times do |i|
-        @ddb_board.users << FactoryGirl.create(:user)
+        @ddb_board.users << FactoryBot.create(:user)
       end
 
-      FactoryGirl.create(:percent_decree,
+      FactoryBot.create(:percent_decree,
                          :board => @ddb_board,
                          :trigger => 50.0,
                          :action => "approve",
                          :choices => "yes no defer")
-      FactoryGirl.create(:percent_decree,
+      FactoryBot.create(:percent_decree,
                          :board => @ddb_board,
                          :trigger => 50.0,
                          :action => "reject",
                          :choices => "reject")
-      FactoryGirl.create(:count_decree,
+      FactoryBot.create(:count_decree,
                          :board => @ddb_board,
                          :trigger => 1.0,
                          :action => "graffiti",
                          :choices => "graffiti")
 
-      @james = FactoryGirl.create(:user, :name => "James")
+      @james = FactoryBot.create(:user, :name => "James")
 
-      @hgv_meta_board = FactoryGirl.create(:hgv_meta_board, :title => 'HGV metadata')
-      @hgv_trans_board = FactoryGirl.create(:hgv_trans_board, :title => 'Translations')
+      @hgv_meta_board = FactoryBot.create(:hgv_meta_board, :title => 'HGV metadata')
+      @hgv_trans_board = FactoryBot.create(:hgv_trans_board, :title => 'Translations')
 
       @hgv_meta_board.users << @james
       @hgv_trans_board.users << @james
 
-      @submitter = FactoryGirl.create(:user, :name => "Submitter")
+      @submitter = FactoryBot.create(:user, :name => "Submitter")
     end
 
     teardown do
@@ -392,7 +391,7 @@ class ApisWorkflowTest < ActionController::IntegrationTest
 
     context "a publication" do
       setup do
-        @publication = FactoryGirl.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
+        @publication = FactoryBot.create(:publication, :owner => @submitter, :creator => @submitter, :status => "new")
 
         # branch from master so we aren't just creating an empty branch
         @publication.branch_from_master

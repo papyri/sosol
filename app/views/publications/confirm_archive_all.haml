@@ -15,8 +15,8 @@
   %h1
     -# using the link_to_function and form_tag to get the link to submit with a 'post' and execute the javascript
     -# to show the 'loading' image while working
-    = link_to_function 'Archive ALL', "show_working_image();", :id => 'archive_all_link'
-    = form_tag(url_for_options = {:controller => 'publications', :action => 'archive_all', :pub_ids => @publications}, options = {:method => :post, :id => 'archive_all_form'})
+    = link_to 'Archive ALL', '#', onclick: "show_working_image(); return false", :id => 'archive_all_link'
+    = form_tag(url_for_options = {:controller => 'publications', :action => 'archive_all', :pub_ids => @publications.map{|p| p.id}}, options = {:method => :post, :id => 'archive_all_form'})
     = "or"
     = link_to "Cancel", dashboard_url
   %br

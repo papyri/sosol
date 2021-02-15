@@ -12,11 +12,11 @@ class Comment < ActiveRecord::Base
   belongs_to :identifier
   
   #create named scope for each type of reason
-  scope :commit, :conditions => { :reason => 'commit' }
-  scope :finalizing, :conditions => { :reason => 'finalizing' }
-  scope :submit, :conditions => { :reason => 'submit' }
-  scope :general, :conditions => { :reason => 'general' }
-  scope :vote, :conditions => { :reason => 'vote' }
+  scope :commit, -> { where(reason: 'commit') }
+  scope :finalizing, -> { where(reason: 'finalizing') }
+  scope :submit, -> { where(reason: 'submit') }
+  scope :general, -> { where(reason: 'general') }
+  scope :vote, -> { where(reason: 'vote') }
 
   def comment=(comment_text)
     write_attribute(:comment, CGI.escape(comment_text))

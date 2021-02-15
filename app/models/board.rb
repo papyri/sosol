@@ -19,11 +19,9 @@ class Board < ActiveRecord::Base
   #board rank determines workflow order for publication
   #ranked scopes returns the boards for a given community in order of their rank
   #ranked left as default for sosol ranks
-  scope :ranked, :order => 'rank ASC', :conditions => { 'community_id' => nil }
+  scope :ranked, -> { where(community_id: nil).order(rank: :asc) }
   
-  scope :ranked_by_community_id,  lambda { |id_in| { :order => 'rank ASC', :conditions => [ 'community_id = ?', id_in ] } }
-
-
+  scope :ranked_by_community_id, -> (id_in) { where(community_id: id_in).order(rank: :asc) }
 
   # :identifier_classes is an array of identifier classes this board has
   # commit control over. This isn't done relationally because it's not a
@@ -195,7 +193,7 @@ class Board < ActiveRecord::Base
         # and selecting the last one which has the current board as its owner should work.
         board_publication = email_identifiers[0].publication.origin.all_children.select {|p| p.owner == self}.last
         begin
-          EmailerMailer.identifier_email(when_to_send,email_identifiers,board_publication,addresses,mailer.include_document,mailer.include_comments,mailer.message,mailer.subject).deliver
+          EmailerMailer.identifier_email(when_to_send,email_identifiers,board_publication,addresses,mailer.include_document,mailer.include_comments,mailer.message,mailer.subject).deliver_now
         rescue StandardError => e
           Rails.logger.error("Error sending email: #{e.class.to_s}, #{e.to_s}")
         end

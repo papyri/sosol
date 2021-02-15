@@ -1,4 +1,4 @@
-- valueList = defined?(multiList) ? multiList : @identifier[key]
+- valueList = defined?(multiList) ? multiList : @identifier.non_database_attribute[key]
 - cssClass = /\A([a-zA-Z\d_]*?)(?<partOfKey>[a-zA-Z]+)[\d_]*?\Z/ =~ key.to_s ? partOfKey : 'default' 
 .multi{:id => 'multi_' + key.to_s, :class => cssClass}
   %ul.items{:id => 'multiItems_' + key.to_s}

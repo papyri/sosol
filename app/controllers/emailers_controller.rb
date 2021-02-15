@@ -11,7 +11,7 @@ class EmailersController < ApplicationController
   
   def find_sosol_users
     @emailer = Emailer.find(params[:id].to_s)
-    @sosol_users = User.find(:all)
+    @sosol_users = User.all
   end
   
   def add_member
@@ -46,7 +46,7 @@ class EmailersController < ApplicationController
   # GET /emailers
   # GET /emailers.xml
   def index
-    @emailers = Emailer.find(:all)
+    @emailers = Emailer.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -89,7 +89,7 @@ class EmailersController < ApplicationController
   # POST /emailers
   # POST /emailers.xml
   def create
-    @emailer = Emailer.new(params[:emailer])
+    @emailer = Emailer.new(emailer_params)
     
     if @emailer.save
       board = Board.find(@emailer.board_id)
@@ -133,4 +133,10 @@ class EmailersController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+    def emailer_params
+      params.require(:emailer).permit(:association,:extra_addresses,:include_document,:message,:board_id)
+    end
 end

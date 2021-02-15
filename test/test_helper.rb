@@ -1,18 +1,17 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'rails/test_help'
-require 'factory_girl_rails'
-require 'factory_girl'
+require 'factory_bot_rails'
+require 'factory_bot'
 require 'shoulda'
 require 'shoulda/matchers'
-require 'test/unit'
-require 'test/unit/active_support'
 require 'active_support'
 require 'active_support/test_case'
-require 'database_cleaner'
+require 'database_cleaner/active_record'
 require 'sucker_punch/testing/inline'
+require 'mocha/minitest'
 
-class Test::Unit::TestCase
+class ActiveSupport::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method
   # in a transaction that's rolled back on completion.  This ensures that the
   # test database remains unchanged so your fixtures don't have to be reloaded
@@ -48,9 +47,7 @@ class Test::Unit::TestCase
   def assert_path_equal(path_array, path_string)
     assert_equal File.join(@path_prefix, path_array), path_string
   end
-end
 
-class ActiveSupport::TestCase
   def setup_test_repository
     if (!File.directory?(Sosol::Application.config.canonical_repository)) && File.directory?(Sosol::Application.config.canonical_canonical_repository)
       clone_command = ["git clone --bare",
@@ -65,7 +62,8 @@ class ActiveSupport::TestCase
   end
   
   def setup_database_cleaner
-    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.start
   end
 
@@ -86,4 +84,11 @@ class ActiveSupport::TestCase
   setup :setup_flock
   teardown :teardown_database_cleaner
   teardown :teardown_flock
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :minitest
+    with.library :rails
+  end
 end

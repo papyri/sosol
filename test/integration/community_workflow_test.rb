@@ -19,7 +19,7 @@ Each community board recieves the submit, votes on it, then sends it to the fina
 The finalizer finalizes it, which copies the changes back to the original submitter.
 =end
 
-class CommunityWorkflowTest < ActionController::IntegrationTest
+class CommunityWorkflowTest < ActionDispatch::IntegrationTest
   def compare_publications(a,b)
 
     pubs_are_matched = true
@@ -100,7 +100,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
   end
 end
 
-class CommunityWorkflowTest < ActionController::IntegrationTest
+class CommunityWorkflowTest < ActionDispatch::IntegrationTest
   context "for community" do
     context "community testing" do
       setup do
@@ -109,21 +109,21 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "*************are we in debug mode***************"
 
         #a user to put on the boards
-        @board_user = FactoryGirl.create(:user, :name => "board_man_freaky_bob")
-        @board_user_2 = FactoryGirl.create(:user, :name => "board_man_freaky_alice")
+        @board_user = FactoryBot.create(:user, :name => "board_man_freaky_bob")
+        @board_user_2 = FactoryBot.create(:user, :name => "board_man_freaky_alice")
         #a user to submit publications
-        @creator_user = FactoryGirl.create(:user, :name => "creator_freaky_bob")
+        @creator_user = FactoryBot.create(:user, :name => "creator_freaky_bob")
         #an end user to recieve the "finalized" publication
-        @end_user = FactoryGirl.create(:user, :name => "end_freaky_bob")
+        @end_user = FactoryBot.create(:user, :name => "end_freaky_bob")
 
         #a general member in the community
-        @community_user = FactoryGirl.create(:user, :name => "community_freaky_bob")
+        @community_user = FactoryBot.create(:user, :name => "community_freaky_bob")
 
         #a user to make a publication so we are not testing SOSOL 2011 1 (local bug-this one somehow got added to canonical)
-        @trash_user = FactoryGirl.create(:user, :name => "just_to_make_another_publication")
+        @trash_user = FactoryBot.create(:user, :name => "just_to_make_another_publication")
 
         #set up the community
-        @test_community = FactoryGirl.create(:community,
+        @test_community = FactoryBot.create(:community,
                                              :name => "test_freaky_community",
                                              :friendly_name => "testy",
                                              #:abbreviation => "tc",
@@ -134,15 +134,15 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         @test_community.save
 
         #set up the boards, and vote
-        #@meta_board = FactoryGirl.create(:community_meta_board, :title => "meta", :community_id => @test_community.id)
-        @meta_board = FactoryGirl.create(:hgv_meta_board, :title => "meta", :community_id => @test_community.id)
+        #@meta_board = FactoryBot.create(:community_meta_board, :title => "meta", :community_id => @test_community.id)
+        @meta_board = FactoryBot.create(:hgv_meta_board, :title => "meta", :community_id => @test_community.id)
 
         #the board member
         @meta_board.users << @board_user
         #@meta_board.users << @board_user_2
 
         #the vote
-        @meta_decree = FactoryGirl.create(:count_decree,
+        @meta_decree = FactoryBot.create(:count_decree,
                                           :board => @meta_board,
                                           :trigger => 1.0,
                                           :action => "approve",
@@ -155,12 +155,12 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
 
 
 
-        #@text_board = FactoryGirl.create(:community_text_board, :title => "text", :community_id => @test_community.id)
-        @text_board = FactoryGirl.create(:board, :title => "text", :community_id => @test_community.id)
+        #@text_board = FactoryBot.create(:community_text_board, :title => "text", :community_id => @test_community.id)
+        @text_board = FactoryBot.create(:board, :title => "text", :community_id => @test_community.id)
         #the board memeber
         @text_board.users << @board_user
         #the vote
-        @text_decree = FactoryGirl.create(:count_decree,
+        @text_decree = FactoryBot.create(:count_decree,
                                           :board => @text_board,
                                           :trigger => 1.0,
                                           :action => "approve",
@@ -170,13 +170,13 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #add board to community
         @test_community.boards << @text_board
 
-        #@translation_board = FactoryGirl.create(:community_translation_board, :title => "translation", :community_id => @test_community.id)
-        @translation_board = FactoryGirl.create(:hgv_trans_board, :title => "translation", :community_id => @test_community.id)
+        #@translation_board = FactoryBot.create(:community_translation_board, :title => "translation", :community_id => @test_community.id)
+        @translation_board = FactoryBot.create(:hgv_trans_board, :title => "translation", :community_id => @test_community.id)
 
         #the board memeber
         @translation_board.users << @board_user
         #the vote
-        @translation_decree = FactoryGirl.create(:count_decree,
+        @translation_decree = FactoryBot.create(:count_decree,
                                                  :board => @translation_board,
                                                  :trigger => 1.0,
                                                  :action => "approve",
@@ -204,8 +204,12 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
               count = count + 1
               #assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
               unless entity.nil?
-                entity.reload
-                entity.destroy
+                begin
+                  entity.reload
+                  entity.destroy
+                rescue ActiveRecord::RecordNotFound => e
+                  Rails.logger.info(e.inspect)
+                end
               end
             end
           end
@@ -227,7 +231,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #for testing create a publication so the next one will be another number create a publication with a session
         open_session do |trash_publication_session|
           Rails.logger.debug "---Create A New Trash Publication---"
-          trash_publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @trash_user.id.to_s
+          trash_publication_session.post '/publications/create_from_templates' + '?test_user_id=' + @trash_user.id.to_s
           Rails.logger.debug "--flash is: " + trash_publication_session.flash.inspect
           @trash_publication = @trash_user.publications.first
           @trash_publication.log_info
@@ -236,7 +240,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #create a publication with a session
         open_session do |publication_session|
           Rails.logger.debug "---Create A New Publication---"
-          publication_session.post 'publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
+          publication_session.post '/publications/create_from_templates' + '?test_user_id=' + @creator_user.id.to_s
           Rails.logger.debug "--flash is: " + publication_session.flash.inspect
           @publication = @creator_user.publications.first
           @publication.log_info
@@ -256,7 +260,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #submit to the community
         Rails.logger.debug "---Submit Publication---"
         open_session do |submit_session|
-          submit_session.post 'publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
+          submit_session.post '/publications/' + @publication.id.to_s + '/submit/?test_user_id=' + @creator_user.id.to_s, \
             :submit_comment => "I made a new pub", :community => { :id => @test_community.id.to_s }
           Rails.logger.debug "--flash is: " + submit_session.flash.inspect
         end
@@ -268,13 +272,13 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "---Publication Submitted to Community: " + @publication.community.name
 
         #meta board should have 1 publication, others should have 0
-        meta_publications = Publication.find(:all, :conditions => { :owner_id => @meta_board.id, :owner_type => "Board" } )
+        meta_publications = Publication.where(owner_id: @meta_board.id, owner_type: 'Board')
         assert_equal 1, meta_publications.length, "Meta does not have 1 publication but rather, " + meta_publications.length.to_s + " publications"
 
-        text_publications = Publication.find(:all, :conditions => { :owner_id => @text_board.id, :owner_type => "Board" } )
+        text_publications = Publication.where(owner_id: @text_board.id, owner_type: 'Board')
         assert_equal 0, text_publications.length, "Text does not have 0 publication but rather, " + text_publications.length.to_s + " publications"
 
-        translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
+        translation_publications = Publication.where(owner_id: @translation_board.id, owner_type: 'Board')
         assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
 
         Rails.logger.debug "Community Meta Board has publication"
@@ -295,16 +299,18 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
 
         #vote on meta publication
         open_session do |meta_session|
-          meta_session.post 'publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+          meta_session.post '/publications/vote/' + meta_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
             :comment => { :comment => "I vote to agree meta is great", :user_id => @board_user.id, :publication_id => meta_identifier.publication.id, :identifier_id => meta_identifier.id, :reason => "vote" }, \
             :vote => { :publication_id => meta_identifier.publication.id.to_s, :identifier_id => meta_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @meta_board.id.to_s, :choice => "ok" }
 
           Rails.logger.debug "--flash is: " + meta_session.flash.inspect
-          
+
         end
-        
+
+        Rails.logger.debug "---Reloading publication: #{meta_publication.inspect}"
         #reload the publication to get the vote associations to go thru?
         meta_publication.reload
+        Rails.logger.debug "---Reloaded publication: #{meta_publication.inspect}"
 
         vote_str = "Votes on meta are: "
         meta_publication.votes.each do |v|
@@ -332,19 +338,26 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
           end
         end
 
+        Rails.logger.info("---Meta publication before rename")
+        Rails.logger.info(meta_final_publication.inspect)
+        Rails.logger.info(meta_final_identifier.inspect)
         # do rename
         open_session do |meta_rename_session|
-          meta_rename_session.put 'publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
-            :new_name => 'papyri.info/hgv/9999999999'
+          meta_rename_session.patch '/publications/' + meta_final_publication.id.to_s + '/hgv_meta_identifiers/' + meta_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+            :new_name => 'papyri.info/hgv/9898989898'
         end
 
         meta_final_publication.reload
+        meta_final_identifier.reload
+        Rails.logger.info("---Meta publication after rename")
+        Rails.logger.info(meta_final_publication.inspect)
+        Rails.logger.info(meta_final_identifier.inspect)
         assert !meta_final_publication.needs_rename?, "finalizing publication should not need rename after being renamed"
 
         #finalize the meta
         open_session do |meta_finalize_session|
 
-          meta_finalize_session.post 'publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          meta_finalize_session.post '/publications/' + meta_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
             :comment => 'I agree meta is great and now it is final'
 
           Rails.logger.debug "--flash is: " + meta_finalize_session.flash.inspect
@@ -387,15 +400,15 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         #now text board should have it
 
         #meta board should have 1 publication
-        meta_publications = Publication.find(:all, :conditions => { :owner_id => @meta_board.id, :owner_type => "Board" } )
+        meta_publications = Publication.where(owner_id: @meta_board.id, owner_type: 'Board')
         assert_equal 1, meta_publications.length, "Meta does not have 1 publication but rather, " + meta_publications.length.to_s + " publications"
 
         #text board should have 1 publication
-        text_publications = Publication.find(:all, :conditions => { :owner_id => @text_board.id, :owner_type => "Board" } )
+        text_publications = Publication.where(owner_id: @text_board.id, owner_type: 'Board')
         assert_equal 1, text_publications.length, "Text does not have 0 publication but rather, " + text_publications.length.to_s + " publications"
 
         #translation board should have 0 publication
-        translation_publications = Publication.find(:all, :conditions => { :owner_id => @translation_board.id, :owner_type => "Board" } )
+        translation_publications = Publication.where(owner_id: @translation_board.id, owner_type: 'Board')
         assert_equal 0, translation_publications.length, "Translation does not have 0 publication but rather, " + translation_publications.length.to_s + " publications"
 
         #vote on it
@@ -414,7 +427,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
         Rails.logger.debug "Found text identifier, will vote on it"
         #vote on text
         open_session do |text_session|
-          text_session.post 'publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
+          text_session.post '/publications/vote/' + text_publication.id.to_s + '?test_user_id=' + @board_user.id.to_s, \
             :comment => { :comment => "I vote since I yippppppp agree text is great", :user_id => @board_user.id, :publication_id => text_identifier.publication.id, :identifier_id => text_identifier.id, :reason => "vote" }, \
             :vote => { :publication_id => text_identifier.publication.id.to_s, :identifier_id => text_identifier.id.to_s, :user_id => @board_user.id.to_s, :board_id => @text_board.id.to_s, :choice => "ok" }
           Rails.logger.debug "--flash is: " + text_session.flash.inspect
@@ -455,8 +468,8 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
 
         # do rename
         open_session do |text_rename_session|
-          text_rename_session.put 'publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
-            :new_name => 'papyri.info/ddbdp/bgu;1;999', :set_dummy_header => false
+          text_rename_session.patch '/publications/' + text_final_publication.id.to_s + '/ddb_identifiers/' + text_final_identifier.id.to_s + '/rename/?test_user_id='  + @board_user.id.to_s,
+            :new_name => 'papyri.info/ddbdp/bgu;1;987', :set_dummy_header => false
         end
 
         text_final_publication.reload
@@ -464,7 +477,7 @@ class CommunityWorkflowTest < ActionController::IntegrationTest
 
         #finalize text
         open_session do |text_finalize_session|
-          text_finalize_session.post 'publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
+          text_finalize_session.post '/publications/' + text_final_publication.id.to_s + '/finalize/?test_user_id=' + @board_user.id.to_s, \
             :comment => 'I agree text is great and now it is final'
 
           Rails.logger.debug "--flash is: " + text_finalize_session.flash.inspect

@@ -1,11 +1,11 @@
 .provenanceContainer
-  = check_box_tag 'hgv_meta_identifier[provenanceUnknown]', :unknown, @identifier[:origPlace] == 'unbekannt' ? true : false, :disabled => !@identifier.mutable?, :class => 'observechange provenanceUnknown', :onchange => 'provenanceOrigPlaceUnknownToggle(this)'
+  = check_box_tag 'hgv_meta_identifier[provenanceUnknown]', :unknown, @identifier.non_database_attribute[:origPlace] == 'unbekannt' ? true : false, :disabled => !@identifier.mutable?, :class => 'observechange provenanceUnknown', :onchange => 'provenanceOrigPlaceUnknownToggle(this)'
   = label_tag     'hgv_meta_identifier[provenanceUnknown]', I18n.t('meta.label.unknown'), :class => 'meta provenanceUnknown', :title => @identifier.configuration.xpath(:origPlace)
   .clear
-  .multi.geoSpot{:id => 'multi_provenance', :style => 'display: ' + (@identifier[:origPlace] == 'unbekannt' ? 'none' : 'block')}
+  .multi.geoSpot{:id => 'multi_provenance', :style => 'display: ' + (@identifier.non_database_attribute[:origPlace] == 'unbekannt' ? 'none' : 'block')}
     %ul.items{:id => 'multiItems_provenance'}
-      - @identifier[:provenance].each_index do |provenanceIndex|
-        - provenance = HgvGeo::Provenance.new( :provenance => @identifier[:provenance][provenanceIndex])
+      - @identifier.non_database_attribute[:provenance].each_index do |provenanceIndex|
+        - provenance = HgvGeo::Provenance.new( :provenance => @identifier.non_database_attribute[:provenance][provenanceIndex])
         - base = 'hgv_meta_identifier[provenance][' + provenanceIndex.to_s + ']'
         - baseAttributes = base + '[attributes]'
         - baseChildren = base + '[children]'

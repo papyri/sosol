@@ -1,8 +1,8 @@
 .multi#multi_citedLiterature
   %ul.items#multiItems_citedLiterature
-    - @identifier[:citedLiterature].each_index do |index|
-    - target = @identifier[:citedLiterature][index][:children] && @identifier[:citedLiterature][index][:children][:pointer] && @identifier[:citedLiterature][index][:children][:pointer][:attributes] && @identifier[:citedLiterature][index][:children][:pointer][:attributes][:target] ? @identifier[:citedLiterature][index][:children][:pointer][:attributes][:target] : ''
-    - pagination = @identifier[:citedLiterature][index][:children] && @identifier[:citedLiterature][index][:children][:pagination] && @identifier[:citedLiterature][index][:children][:pagination][:value] ? @identifier[:citedLiterature][index][:children][:pagination][:value] : ''
+    - @identifier.non_database_attribute[:citedLiterature].each_index do |index|
+    - target = @identifier.non_database_attribute[:citedLiterature][index][:children] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pointer] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pointer][:attributes] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pointer][:attributes][:target] ? @identifier.non_database_attribute[:citedLiterature][index][:children][:pointer][:attributes][:target] : ''
+    - pagination = @identifier.non_database_attribute[:citedLiterature][index][:children] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pagination] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pagination][:value] ? @identifier.non_database_attribute[:citedLiterature][index][:children][:pagination][:value] : ''
       %li
         = text_field_tag 'hgv_meta_identifier[citedLiterature][' + index.to_s + '][children][pointer][attributes][target]', target, :disabled => !@identifier.mutable?, :class => 'observechange target'
         = text_field_tag 'hgv_meta_identifier[citedLiterature][' + index.to_s + '][children][pagination][value]', pagination, :disabled => !@identifier.mutable?, :class => 'observechange pagination'

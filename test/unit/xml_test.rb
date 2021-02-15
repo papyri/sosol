@@ -55,7 +55,7 @@ class XmlTest < ActiveSupport::TestCase
 
       xmlOut = ''
       @formatter.write element.root, xmlOut
-      assert_equal '<abc><bait/><a a="a"><b b="b"><c c1="c1" c2="c2" c3="..."/></b></a></abc>', xmlOut, 'wrong xml formatting'
+      assert_equal '<abc><bait/><a a="a"><b b="b"><c c1="c1" c2="c2" c3="..."/></b></a></abc>', xmlOut.tr("'",'"'), 'wrong xml formatting'
 
     }
   end

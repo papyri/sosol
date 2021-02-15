@@ -10,7 +10,7 @@ class CreateDocos < ActiveRecord::Migration
       t.string :xml
       t.string :url
 
-      t.timestamps
+      t.timestamps null: true
     end
   end
 

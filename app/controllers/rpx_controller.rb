@@ -98,7 +98,7 @@ class RpxController < ApplicationController
 
     # FIXME: Glassfish reqeust object seems to ignore context root?
     # data = @rpx.auth_info(params[:token].to_s, request.url)
-    data = @rpx.auth_info(params[:token].to_s, url_for(:controller => :rpx, :action => :login_return, :only_path => false))
+    data = @rpx.auth_info(params[:token].to_s, url_for(:controller => :rpx, :action => :login_return, :only_path => false, :protocol => 'https'))
 
     identifier = data["identifier"]
 

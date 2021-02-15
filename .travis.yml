@@ -4,7 +4,7 @@ dist: trusty
 sudo: false
 env:
   global:
-    - JRUBY_OPTS="-J-Xmx1g --2.0"
+    - JRUBY_OPTS="-J-Xmx1g"
 jdk:
   - oraclejdk8
   - openjdk8

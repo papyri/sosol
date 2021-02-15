@@ -3,19 +3,22 @@
 source 'https://rubygems.org'
 ruby "2.3.3", :engine => "jruby", :engine_version => "9.1.17.0"
 
-gem 'rails', '~> 3.2.22'
+gem 'rails', '~> 4.2.11.3'
 
 # Needed for the new asset pipeline
-group :assets do
-  gem 'sass-rails', '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
-  gem 'uglifier', '>= 1.0.3'
-  gem 'therubyrhino'
-end
+gem 'sass-rails', '~> 4'
+gem 'coffee-rails', '~> 4'
+gem 'uglifier', '>= 1.0.3'
+gem 'therubyrhino'
 
 group :test do
   gem 'rake'
-  gem 'mocha', '~> 1.1.0'
+  gem 'mocha'
+  gem 'shoulda-context'
+  gem 'shoulda-matchers'
+  gem 'shoulda'
+  gem 'factory_bot_rails'
+  gem 'database_cleaner-active_record'
 end
 
 gem 'jquery-rails'
@@ -25,29 +28,26 @@ gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
 gem 'jdbc-sqlite3', '>= 3.7.2', :platform => :jruby
-gem 'activerecord-jdbc-adapter', '~> 1.3.25', :platform => :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '~> 1.3.25', :platform => :jruby
-gem 'activerecord-jdbcmysql-adapter', '~> 1.3.25', :platform => :jruby
-gem 'activerecord-jdbcpostgresql-adapter', '~> 1.3.25', :platform => :jruby
+gem 'activerecord-jdbc-adapter', '>= 1.3.25', '< 50', :platform => :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '< 50', :platform => :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
+gem 'jdbc-mysql', '< 8', require: false
+gem 'activerecord-session_store'
+gem 'tzinfo-data', :platform => :jruby
+gem 'actionpack-page_caching'
 gem 'rack', '>= 1.1.0'
 gem 'handle_invalid_percent_encoding_requests'
-gem 'shoulda-matchers', '>= 2.0.0'
-gem 'shoulda', '>= 2.11.3'
-gem "factory_girl_rails", ">= 1.2"
-gem 'factory_girl', '>= 2.6.4'
-gem 'airbrake', '~> 5.6.1'
+gem 'airbrake'
 gem 'rubyzip', '~> 1.0'
 gem 'zip-zip'
-gem 'prototype-rails'
 gem 'dynamic_form'
 gem 'capistrano', '~> 2.15.0'
 gem 'warbler', '~> 2.0'
 gem 'puma'
-gem 'database_cleaner'
 gem 'sucker_punch', '~> 2.0'
-gem 'with_advisory_lock', '~> 3.0.0'
+gem 'with_advisory_lock'
 gem 'silencer'
 gem 'rack-attack', '~> 4.0'
 
-gem 'test_after_commit', '= 0.4.1', :group => :test
-gem 'test-unit-rails', '= 1.0.4', :group => :test
+gem 'test_after_commit', :group => :test

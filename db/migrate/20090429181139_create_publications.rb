@@ -3,7 +3,7 @@ class CreatePublications < ActiveRecord::Migration
     create_table :publications do |t|
       t.string :title
 
-      t.timestamps
+      t.timestamps null: true
     end
   end
 
