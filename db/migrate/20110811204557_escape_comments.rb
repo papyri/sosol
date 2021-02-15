@@ -1,4 +1,4 @@
-class EscapeComments < ActiveRecord::Migration
+class EscapeComments < ActiveRecord::Migration[4.2]
   def self.up
     #raw_comments = ActiveRecord::Base.connection.execute('SELECT * FROM comments')
     #raw_comments.each do |raw_comment|

@@ -1,4 +1,4 @@
-class AddOwnerIdToPublication < ActiveRecord::Migration
+class AddOwnerIdToPublication < ActiveRecord::Migration[4.2]
   def self.up
     add_column :publications, :owner_id, :integer
     add_column :publications, :owner_type, :string

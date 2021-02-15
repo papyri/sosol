@@ -1,4 +1,4 @@
-class AddBoardsCommunityKeys < ActiveRecord::Migration
+class AddBoardsCommunityKeys < ActiveRecord::Migration[4.2]
   def self.up
     add_column :boards, :community_id, :integer
     add_column :communities, :board_id, :integer

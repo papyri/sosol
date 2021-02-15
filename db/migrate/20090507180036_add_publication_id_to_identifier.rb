@@ -1,4 +1,4 @@
-class AddPublicationIdToIdentifier < ActiveRecord::Migration
+class AddPublicationIdToIdentifier < ActiveRecord::Migration[4.2]
   def self.up
     add_column :identifiers, :publication_id, :integer
   end

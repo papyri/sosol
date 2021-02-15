@@ -1,4 +1,4 @@
-class AddNoteToDocos < ActiveRecord::Migration
+class AddNoteToDocos < ActiveRecord::Migration[4.2]
   def self.up
     add_column :docos, :note, :text
   end

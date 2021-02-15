@@ -1,4 +1,4 @@
-class FixVotesUserIdToInteger < ActiveRecord::Migration
+class FixVotesUserIdToInteger < ActiveRecord::Migration[4.2]
   def self.up
     change_column :votes, :user_id, :integer
   end

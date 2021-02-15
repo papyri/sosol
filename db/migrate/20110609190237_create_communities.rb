@@ -1,4 +1,4 @@
-class CreateCommunities < ActiveRecord::Migration
+class CreateCommunities < ActiveRecord::Migration[4.2]
   def self.up
     create_table :communities do |t|
       t.string :name

@@ -1,4 +1,4 @@
-class AddTallyMethodToDecree < ActiveRecord::Migration
+class AddTallyMethodToDecree < ActiveRecord::Migration[4.2]
   def self.up
     add_column :decrees, :tally_method, :string
   end

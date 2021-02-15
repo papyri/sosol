@@ -1,4 +1,4 @@
-class RenameTextAndArticleInComments < ActiveRecord::Migration
+class RenameTextAndArticleInComments < ActiveRecord::Migration[4.2]
   def self.up
     	rename_column :comments, :text, :comment
     	rename_column :comments, :article_id, :identifier_id

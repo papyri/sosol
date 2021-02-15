@@ -1,4 +1,4 @@
-class CreateDocos < ActiveRecord::Migration
+class CreateDocos < ActiveRecord::Migration[4.2]
   def self.up
     #create_table :docos, :options => 'default charset=utf8' do |t| - for creating in mysql as standalone
     create_table :docos do |t|

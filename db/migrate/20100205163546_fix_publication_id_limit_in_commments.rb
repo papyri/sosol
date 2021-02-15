@@ -1,4 +1,4 @@
-class FixPublicationIdLimitInCommments < ActiveRecord::Migration
+class FixPublicationIdLimitInCommments < ActiveRecord::Migration[4.2]
  def self.up	
 	change_column :comments, :publication_id, :integer, :limit => nil
  end

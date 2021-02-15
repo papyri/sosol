@@ -1,4 +1,4 @@
-class AddStatusToIdentifiers < ActiveRecord::Migration
+class AddStatusToIdentifiers < ActiveRecord::Migration[4.2]
   def self.up
     add_column :identifiers, :status, :string, :default => "editing"
   end

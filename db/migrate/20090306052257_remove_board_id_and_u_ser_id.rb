@@ -1,4 +1,4 @@
-class RemoveBoardIdAndUSerId < ActiveRecord::Migration
+class RemoveBoardIdAndUSerId < ActiveRecord::Migration[4.2]
   def self.up
     remove_column :users, :board_id
     remove_column :boards, :user_id
