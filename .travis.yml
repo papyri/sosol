@@ -10,7 +10,7 @@ jdk:
 rvm:
   - jruby-9.2.14.0
 before_install:
-  - gem install bundler --version '<2.0'
+  - gem install bundler --version '>2.0'
 before_script:
   - gem --version
   - bundle exec cap local externals:setup

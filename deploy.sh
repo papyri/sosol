@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUNDLER_VERSION="1.17.3"
+BUNDLER_VERSION="2.2.10"
 
 # workaround for puppet permissions on dev
 chmod a+rx ~
