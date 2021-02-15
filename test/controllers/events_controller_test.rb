@@ -12,13 +12,13 @@ class EventsControllerTest < ActionController::TestCase
   end
   
   def test_should_get_index
-    get :index
+    get :index, params: {}
     assert_response :success
     assert_not_nil assigns(:events)
   end
 
   def test_should_get_new
-    get :new
+    get :new, params: {}
     assert_response :success
   end
 
