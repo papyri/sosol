@@ -84,6 +84,7 @@ GEM
     database_cleaner-core (2.0.1)
     dynamic_form (1.1.4)
     erubi (1.10.0)
+    erubis (2.7.0)
     execjs (2.7.0)
     factory_bot (6.1.0)
       activesupport (>= 5.0.0)
@@ -242,6 +243,7 @@ DEPENDENCIES
   coffee-rails (~> 4)
   database_cleaner-active_record
   dynamic_form
+  erubis
   factory_bot_rails
   haml (= 4.0.6)
   handle_invalid_percent_encoding_requests
