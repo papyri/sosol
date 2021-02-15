@@ -19,18 +19,18 @@ class BoardsControllerTest < ActionController::TestCase
 
   test "should return forbidden for non-admin" do
     @request.session[:user_id] = @non_admin.id
-    get :index
+    get :index, params: {}
     assert_response :forbidden
   end
   
   test "should get index" do
-    get :index
+    get :index, params: {}
     assert_response :success
     assert_not_nil assigns(:boards)
   end
 
   test "should get new" do
-    get :new
+    get :new, params: {}
     assert_response :success
   end
 

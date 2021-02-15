@@ -17,7 +17,7 @@ class DecreesControllerTest < ActionController::TestCase
   end
   
   test "should get index" do
-    get :index
+    get :index, params: {}
     assert_response :success
     assert_not_nil assigns(:decrees)
   end

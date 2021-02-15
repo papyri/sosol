@@ -17,13 +17,13 @@ class VotesControllerTest < ActionController::TestCase
   end
   
   test "should get index" do
-    get :index
+    get :index, params: {}
     assert_response :success
     assert_not_nil assigns(:votes)
   end
 
   test "should get new" do
-    get :new
+    get :new, params: {}
     assert_response :success
   end
 

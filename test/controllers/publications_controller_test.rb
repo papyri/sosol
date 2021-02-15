@@ -12,7 +12,7 @@ class PublicationsControllerTest < ActionController::TestCase
   end
 
   def test_should_get_index
-    get :index
+    get :index, params: {}
     assert_response :success
     assert_not_nil assigns(:publications)
   end
