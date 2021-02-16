@@ -375,7 +375,7 @@ class UserController < ApplicationController
       user_params = params[:user].slice(:full_name, :affiliation, :email, :email_opt_out)
 
       if user_params.present? && user_params.is_a?(Hash)
-        @user.update_attributes(user_params)
+        @user.update(user_params)
         flash[:notice] = 'User was successfully updated.'
         redirect_to :controller => "user", :action => "account"
       else
@@ -466,7 +466,7 @@ Developer:
       begin
         user_params = params[:user].slice(:is_master_admin, :is_community_master_admin, :admin, :developer)
 
-        @user.update_attributes(user_params)
+        @user.update(user_params)
         flash[:notice] = 'User was successfully updated.'
         redirect_to :controller => "user", :action => "index_user_admins"
       rescue StandardError => e

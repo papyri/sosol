@@ -167,7 +167,7 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id].to_s)
 
     respond_to do |format|
-      if params[:board].present? && @board.update_attributes(board_params)
+      if params[:board].present? && @board.update(board_params)
         flash[:notice] = 'Board was successfully updated.'
         format.html { redirect_to(@board) }
         format.xml  { head :ok }
