@@ -64,6 +64,7 @@ class ActiveSupport::TestCase
   end
   
   def setup_database_cleaner
+    DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.start
   end
