@@ -5,6 +5,13 @@ class BoardsController < ApplicationController
   before_action :authorize
   before_action :check_admin
 
+  #Ensures user has admin rights to view page. Otherwise returns 403 error.
+  def check_admin
+    if @current_user.nil? || !@current_user.admin
+      render :file => "#{Rails.root}/public/403.html", :status => '403', :layout => false, :formats => [:html]
+    end
+  end
+
   #Presents overview for publication.
   def overview
     @board = Board.find(params[:id].to_s)
