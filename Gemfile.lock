@@ -124,8 +124,10 @@ GEM
     net-ssh (2.9.2)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
-    nokogiri (1.10.10-java)
+    nokogiri (1.11.1-java)
+      racc (~> 1.4)
     puma (2.12.2-java)
+    racc (1.5.2-java)
     rack (1.6.13)
     rack-attack (4.4.1)
       rack
