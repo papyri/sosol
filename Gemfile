@@ -23,7 +23,7 @@ end
 
 gem 'jquery-rails'
 gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
-gem 'haml', '= 4.0.6'
+gem 'haml', '5.0.0'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
