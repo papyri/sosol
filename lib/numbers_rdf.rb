@@ -7,7 +7,7 @@ module NumbersRDF
   
   # Actual server address for the Numbers Server, could in theory be different from NAMESPACE_IDENTIFIER
   NUMBERS_SERVER_DOMAIN = 'papyri.info'
-  NUMBERS_SERVER_PORT = 80
+  NUMBERS_SERVER_PORT = 443
 
   class Timeout < ::Timeout::Error; end
 
@@ -66,6 +66,8 @@ module NumbersRDF
       def path_to_numbers_server_response(path, format = 'rdf')
         begin
           http = Net::HTTP.new(NUMBERS_SERVER_DOMAIN, NUMBERS_SERVER_PORT)
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           headers = (format == 'json') ? {'Accept' => 'application/rdf+json'} : {}
           return http.get(path, headers)
         rescue ::Timeout::Error => e
