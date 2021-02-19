@@ -17,7 +17,7 @@ class DCLPTextIdentifier < DDBIdentifier
 
   # cl: CROMULENT DCLP ‘View in PN’ hack
   def get_catalog_link
-    '/' + DCLPTextIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+|SoSOL;\d{4};\d{4})$/, 1]
+    '/' + DCLPTextIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+[a-z]*|SoSOL;\d{4};\d{4})$/, 1]
   end
 
   def self.collection_names_hash
