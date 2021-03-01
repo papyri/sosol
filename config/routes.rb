@@ -100,7 +100,10 @@ Sosol::Application.routes.draw do
   end
   post 'publications/create' => 'publications#create'
   post 'publications/create_from_templates' => 'publications#create_from_templates'
+  post 'publications/create_from_apis_template' => 'publications#create_from_apis_template'
   post 'publications/create_from_biblio_template' => 'publications#create_from_biblio_template'
+  post 'publications/create_from_dclp_template' => 'publications#create_from_dclp_template'
+  post 'publications/create_from_list' => 'publications#create_from_list'
   post 'publications/create_from_selector' => 'publications#create_from_selector'
   
 
