@@ -17,7 +17,7 @@ class DCLPTextIdentifier < DDBIdentifier
 
   # cl: CROMULENT DCLP ‘View in PN’ hack
   def get_catalog_link
-    '/' + DCLPTextIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+|SoSOL;\d{4};\d{4})$/, 1]
+    '/' + DCLPTextIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+[a-z]*|SoSOL;\d{4};\d{4})$/, 1]
   end
 
   def self.collection_names_hash
@@ -138,12 +138,6 @@ class DCLPTextIdentifier < DDBIdentifier
     #new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
 
     return new_identifier
-  end
-
-  # cl: CROMULENT DCLP ‘View in PN’ hack
-  # name can be »papyri.info/dclp/SoSOL;2017;0002«
-  def get_catalog_link
-    '/' + DCLPMetaIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+|SoSOL;\d{4};\d{4})$/, 1]
   end
 
   def correspondingDclpMetaIdentifier
