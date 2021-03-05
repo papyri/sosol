@@ -1,9 +1,9 @@
 log/*.log
 tmp/**/*
 .DS_Store
+public/assets
 public/cache/**/*
 public/stylesheets/*
-public/assets/**
 node_modules
 doc/api
 doc/app
