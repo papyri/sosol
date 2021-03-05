@@ -399,6 +399,7 @@ Sosol::Application.routes.draw do
   post 'rpx/create_submit', to: 'rpx#create_submit'
   post 'identifiers/create', to: 'identifiers#create'
   get 'user/board_dashboard', to: 'user#board_dashboard'
+  get 'user/user_dashboard', to: 'user#user_dashboard'
   get 'user/user_community_dashboard', to: 'user#user_community_dashboard'
   get 'user/user_complete_dashbaord', to: 'user#user_complete_dashbaord'
   get 'user/archives', to: 'user#archives'
