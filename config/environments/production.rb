@@ -13,15 +13,6 @@ Sosol::Application.configure do
   config.action_controller.page_cache_directory = "#{Rails.root}/public/cache/"
   config.cache_store = :file_store, "/tmp/sosol/"
 
-  # Specifies the header that your server uses for sending files
-  config.action_dispatch.x_sendfile_header = "X-Sendfile"
-
-  # For nginx:
-  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
-
-  # If you have no front-end server that supports something like X-Sendfile,
-  # just comment this out and Rails will serve the files
-
   # See everything in the log (default is :info)
   config.log_level = :info
 
@@ -35,7 +26,18 @@ Sosol::Application.configure do
 
   # Disable Rails's static file server
   # In production, Apache or nginx will already do this
-  config.serve_static_files = false
+  # config.serve_static_files = true
+  config.public_file_server.enabled = true
+
+  # Specifies the header that your server uses for sending files
+  config.action_dispatch.x_sendfile_header = "X-Sendfile" unless config.public_file_server.enabled
+
+  # For nginx:
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
+
+  # If you have no front-end server that supports something like X-Sendfile,
+  # just comment this out and Rails will serve the files
+
 
 	# Compress JavaScripts and CSS
 	config.assets.compress = true
@@ -45,7 +47,7 @@ Sosol::Application.configure do
 	# config.assets.css_compressor = :yui
 
 	# Don't fallback to assets pipeline if a precompiled asset is missed
-	config.assets.compile = false
+	config.assets.compile = true
 
 	# Generate digests for assets URLs.
 	config.assets.digest = true
