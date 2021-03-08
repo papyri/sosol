@@ -376,6 +376,7 @@ Sosol::Application.routes.draw do
   match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/, :via => :get
   match 'publications/vote/:id' => 'publications#vote', :via => :post
   match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/, :via => :get
+  post 'cts_publications/create_from_selector', to: 'cts_publications#create_from_selector'
   match 'js/:query' => 'ajax_proxy#js', :query => /.*/, :via => :get
   match 'css/:query' => 'ajax_proxy#css', :query => /.*/, :via => :get
   match 'images/:query' => 'ajax_proxy#images', :query => /.*/, :via => :get
