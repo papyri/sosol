@@ -3,12 +3,6 @@ class ApisIdentifiersController < IdentifiersController
   before_action :ownership_guard, :only => [:update, :updatexml]
   require 'pp'
 
-  def editold
-    find_identifier
-    @identifier.get_epidoc_attributes
-    @is_editor_view = true
-  end
-
   def edit
     find_identifier
     @is_editor_view = true
