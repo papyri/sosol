@@ -3,6 +3,8 @@ Sosol::Application.routes.draw do
   
     member do
   get :find_member
+  get :list_publications
+  get :set_end_user
   get :add_member
   get :add_member_page
   get :remove_member
