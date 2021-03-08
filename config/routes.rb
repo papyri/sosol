@@ -451,6 +451,7 @@ Sosol::Application.routes.draw do
   get 'cross_site/header', to: 'cross_site#header'
   get 'cross_site/advanced_create', to: 'cross_site#advanced_create'
   get 'cross_site/sign_in_out', to: 'cross_site#sign_in_out'
+  get 'helper/wheretogo', to: 'helper#wheretogo'
   get 'helper/ancientdia', to: 'helper#ancientdia'
   get 'helper/number', to: 'helper#number'
   get 'helper/gapall', to: 'helper#gapall'
