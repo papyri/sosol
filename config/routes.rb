@@ -155,6 +155,9 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
+    get :biblio_autocomplete
+    get :biblio_preview
+    get :ancient_author_autocomplete
     patch :updatexml
     get :rename_review
     patch :rename
