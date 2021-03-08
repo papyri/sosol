@@ -293,6 +293,9 @@ Sosol::Application.routes.draw do
     end
 
     resources :tei_cts_identifiers do
+      collection do
+        post :create_from_selector
+      end
     
         member do
     get :history
