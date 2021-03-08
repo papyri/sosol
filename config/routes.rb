@@ -32,6 +32,8 @@ Sosol::Application.routes.draw do
     member do
   get :add_member
   get :remove_member
+  get :find_board_member
+  get :find_sosol_users
   end
   
   end
