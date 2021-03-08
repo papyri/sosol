@@ -15,7 +15,7 @@
   
     var searchText = document.getElementById("search_freetext").value;
   
-    request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/get_bibliography/';
+    request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'get_bibliography', :only_path => true)}";
   
     new Ajax.Request(request_url, {
       method: 'get',

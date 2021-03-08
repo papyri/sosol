@@ -377,6 +377,7 @@ Sosol::Application.routes.draw do
   match 'images/:query' => 'ajax_proxy#images', :query => /.*/, :via => :get
   match 'mulgara/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/, :via => :get
   match 'ajax_proxy/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/, :via => :get
+  match 'ajax_proxy/get_bibliography/' => 'ajax_proxy#get_bibliography', :via => :get
   match 'sparql' => 'ajax_proxy#sparql', :via => :get
   match 'ajax_proxy/xsugar/' => 'ajax_proxy#xsugar', :via => :post
   match 'ajax_proxy/hgvnum/' => 'ajax_proxy#hgvnum', :via => :post
