@@ -3,6 +3,8 @@ Sosol::Application.routes.draw do
   
     member do
   get :find_member
+  get :list_publications
+  get :set_end_user
   get :add_member
   get :add_member_page
   get :remove_member
@@ -30,6 +32,8 @@ Sosol::Application.routes.draw do
     member do
   get :add_member
   get :remove_member
+  get :find_board_member
+  get :find_sosol_users
   end
   
   end
@@ -49,6 +53,7 @@ Sosol::Application.routes.draw do
   resources :boards do
   
     member do
+  get :overview
   get :edit_members
   get :add_member
   get :find_member
@@ -100,6 +105,13 @@ Sosol::Application.routes.draw do
   get :finalize_review
   post :finalize
   post :become_finalizer
+  post :archive
+  get :confirm_archive
+  get :confirm_archive_all
+  get :confirm_withdraw
+  post :withdraw
+  get :confirm_delete
+  get :download
   end
   end
   post 'publications/create' => 'publications#create'
@@ -136,6 +148,8 @@ Sosol::Application.routes.draw do
     resources :hgv_meta_identifiers do
     
         member do
+    get :get_date_preview
+    get :get_geo_preview
     get :history
     get :preview
     get :editxml
@@ -152,6 +166,9 @@ Sosol::Application.routes.draw do
     get :history
     get :preview
     get :editxml
+    get :biblio_autocomplete
+    get :biblio_preview
+    get :ancient_author_autocomplete
     patch :updatexml
     get :rename_review
     patch :rename
@@ -219,12 +236,16 @@ Sosol::Application.routes.draw do
     end
 
     resources :epi_cts_identifiers do
+      collection do
+        post :create_from_selector
+      end
     
         member do
     get :history
     get :preview
     get :editxml
     patch :updatexml
+    patch :link_translation
     get :rename_review
     patch :rename
     get :commentary
@@ -238,6 +259,9 @@ Sosol::Application.routes.draw do
     end
 
     resources :epi_trans_cts_identifiers do
+      collection do
+        post :create_from_selector
+      end
     
         member do
     get :history
@@ -254,6 +278,7 @@ Sosol::Application.routes.draw do
     resources :citation_cts_identifiers do
     
         member do
+    get :confirm_edit_or_annotate
     get :history
     get :preview
     get :editxml
@@ -268,6 +293,9 @@ Sosol::Application.routes.draw do
     end
 
     resources :tei_cts_identifiers do
+      collection do
+        post :create_from_selector
+      end
     
         member do
     get :history
@@ -289,6 +317,9 @@ Sosol::Application.routes.draw do
     end
 
     resources :tei_trans_cts_identifiers do
+      collection do
+        post :create_from_selector
+      end
     
         member do
     post :create
@@ -372,11 +403,13 @@ Sosol::Application.routes.draw do
   match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/, :via => :get
   match 'publications/vote/:id' => 'publications#vote', :via => :post
   match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/, :via => :get
+  post 'cts_publications/create_from_selector', to: 'cts_publications#create_from_selector'
   match 'js/:query' => 'ajax_proxy#js', :query => /.*/, :via => :get
   match 'css/:query' => 'ajax_proxy#css', :query => /.*/, :via => :get
   match 'images/:query' => 'ajax_proxy#images', :query => /.*/, :via => :get
   match 'mulgara/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/, :via => :get
   match 'ajax_proxy/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/, :via => :get
+  match 'ajax_proxy/get_bibliography/' => 'ajax_proxy#get_bibliography', :via => :get
   match 'sparql' => 'ajax_proxy#sparql', :via => :get
   match 'ajax_proxy/xsugar/' => 'ajax_proxy#xsugar', :via => :post
   match 'ajax_proxy/hgvnum/' => 'ajax_proxy#hgvnum', :via => :post
@@ -387,6 +420,7 @@ Sosol::Application.routes.draw do
   match 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => /[^\/]*/, :via => :get
   match 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities', :via => :get
   match 'cts/getrepos' => 'cts_proxy#getrepos', :via => :get
+  match 'cts/getvalidreffs' => 'cts_proxy#getvalidreffs', :via => :get
   match '/' => 'welcome#index', :via => :get
   # match '/:controller(/:action(/:id))', :via => :get
   match 'signout' => 'user#signout', :as => :signout, :via => :get
@@ -399,6 +433,7 @@ Sosol::Application.routes.draw do
   post 'rpx/create_submit', to: 'rpx#create_submit'
   post 'identifiers/create', to: 'identifiers#create'
   get 'user/board_dashboard', to: 'user#board_dashboard'
+  get 'user/user_dashboard', to: 'user#user_dashboard'
   get 'user/user_community_dashboard', to: 'user#user_community_dashboard'
   get 'user/user_complete_dashbaord', to: 'user#user_complete_dashbaord'
   get 'user/archives', to: 'user#archives'
@@ -442,4 +477,8 @@ Sosol::Application.routes.draw do
   get 'translation_leiden/get_language_translation_leiden', to: 'translation_leiden#get_language_translation_leiden'
   get 'translation_leiden/translation_leiden_to_xml', to: 'translation_leiden#translation_leiden_to_xml'
   post 'dclp_meta_identifiers/biblio_preview', to: 'dclp_meta_identifiers#biblio_preview'
+  get 'collection_identifiers/update_review', to: 'collection_identifiers#update_review'
+  post 'collection_identifiers/update', to: 'collection_identifiers#update'
+  get 'leiden/xml2leiden', to: 'leiden#xml2leiden'
+  get 'leiden/leiden2xml', to: 'leiden#leiden2xml'
 end

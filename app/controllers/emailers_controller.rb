@@ -5,10 +5,7 @@ class EmailersController < ApplicationController
     @emailer = Emailer.find(params[:id].to_s)
   end
   
-  def whens_hash
-    { "Submit" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Committed" => "committed", "Graffiti" => "graffiti", "Never" => "never" }    
-  end
-  
+
   def find_sosol_users
     @emailer = Emailer.find(params[:id].to_s)
     @sosol_users = User.all
@@ -135,7 +132,10 @@ class EmailersController < ApplicationController
   end
 
   private
-
+    def whens_hash
+      { "Submit" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Committed" => "committed", "Graffiti" => "graffiti", "Never" => "never" }    
+    end
+    
     def emailer_params
       params.require(:emailer).permit(:association,:extra_addresses,:include_document,:message,:board_id)
     end

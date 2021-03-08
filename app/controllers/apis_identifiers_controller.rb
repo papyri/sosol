@@ -3,12 +3,6 @@ class ApisIdentifiersController < IdentifiersController
   before_action :ownership_guard, :only => [:update, :updatexml]
   require 'pp'
 
-  def editold
-    find_identifier
-    @identifier.get_epidoc_attributes
-    @is_editor_view = true
-  end
-
   def edit
     find_identifier
     @is_editor_view = true
@@ -47,6 +41,12 @@ class ApisIdentifiersController < IdentifiersController
     @is_editor_view = true
   end
 
+  def xml
+    find_identifier
+    send_data(@identifier.xml_content, :filename => @identifier.title, :type => "application/xml")
+  end
+
+  private
   def generate_flash_message
     flash[:notice] = "File updated."
     if %w{new editing}.include? @identifier.publication.status
@@ -63,10 +63,5 @@ class ApisIdentifiersController < IdentifiersController
 
   def find_identifier
     @identifier = APISIdentifier.find(params[:id].to_s)
-  end
-
-  def xml
-    find_identifier
-    send_data(@identifier.xml_content, :filename => @identifier.title, :type => "application/xml")
   end
 end

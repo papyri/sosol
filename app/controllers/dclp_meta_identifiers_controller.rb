@@ -62,19 +62,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
     render json: data, content_type: 'application/json'
   end
 
-  def exist url
-    begin
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request.basic_auth("admin", "papy")
-      response = http.request(request)
-      return JSON.parse(response.body)
-    rescue StandardError => e
-      Rails.logger.error e.inspect
-      return {}
-    end
-  end
+
 
   # - GET /publications/123/dclp_text_identifiers/456/preview
   # - Provides preview of what the XML from the repository will look like with PN Stylesheets applied
@@ -86,6 +74,19 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
   end
 
   protected
+    def exist url
+      begin
+        uri = URI.parse(url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        request = Net::HTTP::Get.new(uri.request_uri)
+        request.basic_auth("admin", "papy")
+        response = http.request(request)
+        return JSON.parse(response.body)
+      rescue StandardError => e
+        Rails.logger.error e.inspect
+        return {}
+      end
+    end
 
     # Sets the identifier instance variable values
     # - *Params*  :
