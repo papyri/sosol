@@ -446,4 +446,6 @@ Sosol::Application.routes.draw do
   get 'translation_leiden/get_language_translation_leiden', to: 'translation_leiden#get_language_translation_leiden'
   get 'translation_leiden/translation_leiden_to_xml', to: 'translation_leiden#translation_leiden_to_xml'
   post 'dclp_meta_identifiers/biblio_preview', to: 'dclp_meta_identifiers#biblio_preview'
+  get 'collection_identifiers/update_review', to: 'collection_identifiers#update_review'
+  post 'collection_identifiers/update', to: 'collection_identifiers#update'
 end
