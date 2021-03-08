@@ -49,6 +49,7 @@ Sosol::Application.routes.draw do
   resources :boards do
   
     member do
+  get :overview
   get :edit_members
   get :add_member
   get :find_member
