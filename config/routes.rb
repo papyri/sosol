@@ -227,12 +227,16 @@ Sosol::Application.routes.draw do
     end
 
     resources :epi_cts_identifiers do
+      collection do
+        post :create_from_selector
+      end
     
         member do
     get :history
     get :preview
     get :editxml
     patch :updatexml
+    patch :link_translation
     get :rename_review
     patch :rename
     get :commentary
