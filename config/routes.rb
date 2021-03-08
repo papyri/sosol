@@ -317,6 +317,9 @@ Sosol::Application.routes.draw do
     end
 
     resources :tei_trans_cts_identifiers do
+      collection do
+        post :create_from_selector
+      end
     
         member do
     post :create
