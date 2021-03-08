@@ -466,4 +466,6 @@ Sosol::Application.routes.draw do
   post 'dclp_meta_identifiers/biblio_preview', to: 'dclp_meta_identifiers#biblio_preview'
   get 'collection_identifiers/update_review', to: 'collection_identifiers#update_review'
   post 'collection_identifiers/update', to: 'collection_identifiers#update'
+  get 'leiden/xml2leiden', to: 'leiden#xml2leiden'
+  get 'leiden/leiden2xml', to: 'leiden#leiden2xml'
 end
