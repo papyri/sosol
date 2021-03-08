@@ -392,6 +392,7 @@ Sosol::Application.routes.draw do
   match 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => /[^\/]*/, :via => :get
   match 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities', :via => :get
   match 'cts/getrepos' => 'cts_proxy#getrepos', :via => :get
+  match 'cts/getvalidreffs' => 'cts_proxy#getvalidreffs', :via => :get
   match '/' => 'welcome#index', :via => :get
   # match '/:controller(/:action(/:id))', :via => :get
   match 'signout' => 'user#signout', :as => :signout, :via => :get
