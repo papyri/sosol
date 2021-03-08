@@ -5,13 +5,6 @@ class BoardsController < ApplicationController
   before_action :authorize
   before_action :check_admin
 
-  #Ensures user has admin rights to view page. Otherwise returns 403 error.
-  def check_admin
-    if @current_user.nil? || !@current_user.admin
-      render :file => 'public/403', :status => '403', :layout => false, :formats => [:html]
-    end
-  end
-
   #Presents overview for publication.
   def overview
     @board = Board.find(params[:id].to_s)
@@ -337,6 +330,12 @@ def confirm_destroy
 end
 
 private
+  #Ensures user has admin rights to view page. Otherwise returns 403 error.
+  def check_admin
+    if @current_user.nil? || !@current_user.admin
+      render :file => 'public/403', :status => '403', :layout => false, :formats => [:html]
+    end
+  end
 
 def board_params
   params.require(:board).permit(:title,:category,:identifier_classes,:friendly_name,:decrees,:skip_finalize,:requires_assignment,:max_assignable)
