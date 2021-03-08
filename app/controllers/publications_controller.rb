@@ -49,10 +49,6 @@ class PublicationsController < ApplicationController
 
 
 
-  def determine_creatable_identifiers
-    @creatable_identifiers = @publication.creatable_identifiers
-  end
-
   def advanced_create()
     @publication = Publication.new
   end
@@ -900,6 +896,10 @@ class PublicationsController < ApplicationController
     end
 
     private
+
+    def determine_creatable_identifiers
+      @creatable_identifiers = @publication.creatable_identifiers
+    end
 
     def publication_params
       params.require(:publication)

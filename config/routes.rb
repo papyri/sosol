@@ -105,6 +105,13 @@ Sosol::Application.routes.draw do
   get :finalize_review
   post :finalize
   post :become_finalizer
+  post :archive
+  get :confirm_archive
+  get :confirm_archive_all
+  get :confirm_withdraw
+  post :withdraw
+  get :confirm_delete
+  get :download
   end
   end
   post 'publications/create' => 'publications#create'
