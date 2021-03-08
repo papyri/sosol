@@ -255,6 +255,7 @@ Sosol::Application.routes.draw do
     resources :citation_cts_identifiers do
     
         member do
+    get :confirm_edit_or_annotate
     get :history
     get :preview
     get :editxml
