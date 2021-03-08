@@ -2,13 +2,6 @@ class CollectionIdentifiersController < ApplicationController
   before_action :authorize
   before_action :check_ddb
 
-  # Ensures user has DDB rights to view page. Otherwise returns 403 error.
-  def check_ddb
-    if @current_user.nil? || !(@current_user.boards.select{|b| b.identifier_classes.include?("DDBIdentifier")}.length > 0)
-      render :file => 'public/403', :status => '403', :layout => false, :formats => [:html]
-    end
-  end
-
   def update
     @short_name = params[:short_name]
     @long_name = params[:long_name]
@@ -45,4 +38,14 @@ class CollectionIdentifiersController < ApplicationController
     @short_name = params[:short_name]
     @entry_identifier_id = params[:entry_identifier_id]
   end
+
+  private
+  # Ensures user has DDB rights to view page. Otherwise returns 403 error.
+  def check_ddb
+    if @current_user.nil? || !(@current_user.boards.select{|b| b.identifier_classes.include?("DDBIdentifier")}.length > 0)
+      render :file => 'public/403', :status => '403', :layout => false, :formats => [:html]
+    end
+  end
+
+
 end
