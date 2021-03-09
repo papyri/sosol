@@ -108,7 +108,7 @@ class HgvMetaIdentifiersController < IdentifiersController
     # Prunes post parameters for hash entries +:publicationExtra+, +:textDate+ and +:mentionedDate+
     # Side effect on params variable
     def prune_params
-
+      hgv_meta_identifier_params
       if params[:hgv_meta_identifier]
 
         # get rid of empty digital images
@@ -160,6 +160,7 @@ class HgvMetaIdentifiersController < IdentifiersController
     # Complements incoming form data for hash entries +:textDate+, +:mentionedDate+ and +provenance+
     # Side effect on params variable
     def complement_params
+      hgv_meta_identifier_params
 
       if params[:hgv_meta_identifier]
 
@@ -221,4 +222,9 @@ class HgvMetaIdentifiersController < IdentifiersController
       @identifier = HGVMetaIdentifier.find(params[:id].to_s)
     end
 
+    private
+
+    def hgv_meta_identifier_params
+      params.require(:hgv_meta_identifier).permit(:provenance, :origPlace, :mentionedDate, :textDate, :figures, :publicationExtra)
+    end
 end
