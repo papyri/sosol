@@ -108,7 +108,6 @@ class HgvMetaIdentifiersController < IdentifiersController
     # Prunes post parameters for hash entries +:publicationExtra+, +:textDate+ and +:mentionedDate+
     # Side effect on params variable
     def prune_params
-      hgv_meta_identifier_params
       if params[:hgv_meta_identifier]
 
         # get rid of empty digital images
@@ -133,14 +132,14 @@ class HgvMetaIdentifiersController < IdentifiersController
           }
 
           # get rid of unnecessary date attribute @xml:id if there is only one date
-          if params[:hgv_meta_identifier][:textDate].to_h.length == 1
+          if hgv_meta_identifier_params()[:hgv_meta_identifier][:textDate].to_h.length == 1
             params[:hgv_meta_identifier][:textDate]['0'][:attributes][:id] = nil
           end
         end
 
         # get rid of empty certainties for mentioned dates (X, Y, Z)
         if params[:hgv_meta_identifier]['mentionedDate']
-          params[:hgv_meta_identifier]['mentionedDate'].to_h.each_pair{|index, date|
+          hgv_meta_identifier_params()[:hgv_meta_identifier]['mentionedDate'].to_h.each_pair{|index, date|
             if date['children'] && date['children']['date'] && date['children']['date']['children'] && date['children']['date']['children']['certainty']
               date['children']['date']['children']['certainty'].each_pair{|certainty_index, certainty|
                 if certainty['attributes'] && certainty['attributes']['relation'] && certainty['attributes']['relation'].empty?
@@ -160,8 +159,6 @@ class HgvMetaIdentifiersController < IdentifiersController
     # Complements incoming form data for hash entries +:textDate+, +:mentionedDate+ and +provenance+
     # Side effect on params variable
     def complement_params
-      hgv_meta_identifier_params
-
       if params[:hgv_meta_identifier]
 
         if params[:hgv_meta_identifier][:textDate]
