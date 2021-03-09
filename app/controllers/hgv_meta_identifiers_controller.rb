@@ -141,8 +141,7 @@ class HgvMetaIdentifiersController < IdentifiersController
 
         # get rid of empty certainties for mentioned dates (X, Y, Z)
         if params[:hgv_meta_identifier]['mentionedDate']
-          params[:hgv_meta_identifier]['mentionedDate'].permit!
-          params[:hgv_meta_identifier]['mentionedDate'].to_h.each_pair{|index, date|
+          params[:hgv_meta_identifier]['mentionedDate'].each_pair{|index, date|
             if date['children'] && date['children']['date'] && date['children']['date']['children'] && date['children']['date']['children']['certainty']
               date['children']['date']['children']['certainty'].each_pair{|certainty_index, certainty|
                 if certainty['attributes'] && certainty['attributes']['relation'] && certainty['attributes']['relation'].empty?
