@@ -133,7 +133,7 @@ class HgvMetaIdentifiersController < IdentifiersController
           }
 
           # get rid of unnecessary date attribute @xml:id if there is only one date
-          if params[:hgv_meta_identifier][:textDate].to_a.length == 1
+          if params[:hgv_meta_identifier][:textDate].to_h.length == 1
             params[:hgv_meta_identifier][:textDate]['0'][:attributes][:id] = nil
           end
         end
