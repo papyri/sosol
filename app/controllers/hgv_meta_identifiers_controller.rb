@@ -133,14 +133,14 @@ class HgvMetaIdentifiersController < IdentifiersController
           }
 
           # get rid of unnecessary date attribute @xml:id if there is only one date
-          if params[:hgv_meta_identifier][:textDate].length == 1
+          if params[:hgv_meta_identifier][:textDate].to_a.length == 1
             params[:hgv_meta_identifier][:textDate]['0'][:attributes][:id] = nil
           end
         end
 
         # get rid of empty certainties for mentioned dates (X, Y, Z)
         if params[:hgv_meta_identifier]['mentionedDate']
-          params[:hgv_meta_identifier]['mentionedDate'].each_pair{|index, date|
+          params[:hgv_meta_identifier]['mentionedDate'].to_h.each_pair{|index, date|
             if date['children'] && date['children']['date'] && date['children']['date']['children'] && date['children']['date']['children']['certainty']
               date['children']['date']['children']['certainty'].each_pair{|certainty_index, certainty|
                 if certainty['attributes'] && certainty['attributes']['relation'] && certainty['attributes']['relation'].empty?
