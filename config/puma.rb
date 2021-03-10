@@ -52,5 +52,7 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 # end
 #
 
+stdout_redirect "#{Rails.root.to_s}/log/production.log", "#{Rails.root.to_s}/log/production.log", true if Rails.env.production?
+
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
