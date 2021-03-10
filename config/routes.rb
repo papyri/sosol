@@ -398,7 +398,7 @@ Sosol::Application.routes.draw do
   match 'peep_user_dashboard/:user_id(/:publication)' => 'user#peep_user_dashboard', :user_id => /\d+/, :publication => /(submitted|editing|new|committed|finalizing|\d+)/, :via => :get
   match 'user/info' => 'user#info', :via => [:get, :options]
   %w{apis biblio citation_cts collection cts_inventory cts_oac dclp_meta dclp_text ddb epi_cts epi_trans_cts hgv_meta hgv_trans oac tei_cts tei_trans_cts}.each do |identifier_class|
-    match 'publications/:publication_id/:identifier_controller/:id/show_commit/:commit_id', controller: "#{identifier_class}_identifiers", action: :show_commit, constraints: { :commit_id => /[0-9a-fA-F]{40}/, :identifier_controller => /#{identifier_class}_identifiers/ }, :via => :get
+    match "publications/:publication_id/#{identifier_class}_identifiers/:id/show_commit/:commit_id", controller: "#{identifier_class}_identifiers", action: :show_commit, constraints: { :commit_id => /[0-9a-fA-F]{40}/ }, :via => :get
   end
   match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/, :via => :get
   match 'publications/vote/:id' => 'publications#vote', :via => :post
@@ -469,6 +469,7 @@ Sosol::Application.routes.draw do
   get 'helper/appsubst', to: 'helper#appsubst'
   get 'helper/division', to: 'helper#division'
   get 'helper/tryit', to: 'helper#tryit'
+  get 'translation_helper/wheretogo', to: 'translation_helper#wheretogo'
   get 'translation_helper/terms', to: 'translation_helper#terms'
   get 'translation_helper/new_lang', to: 'translation_helper#new_lang'
   get 'translation_helper/linebreak', to: 'translation_helper#linebreak'
