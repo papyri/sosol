@@ -469,6 +469,7 @@ Sosol::Application.routes.draw do
   get 'helper/appsubst', to: 'helper#appsubst'
   get 'helper/division', to: 'helper#division'
   get 'helper/tryit', to: 'helper#tryit'
+  get 'translation_helper/wheretogo', to: 'translation_helper#wheretogo'
   get 'translation_helper/terms', to: 'translation_helper#terms'
   get 'translation_helper/new_lang', to: 'translation_helper#new_lang'
   get 'translation_helper/linebreak', to: 'translation_helper#linebreak'

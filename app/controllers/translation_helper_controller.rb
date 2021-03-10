@@ -1,6 +1,9 @@
 class TranslationHelperController < ApplicationController
   
   layout false
+
+  def wheretogo
+  end
   
   # Helper Terms
 	def terms
