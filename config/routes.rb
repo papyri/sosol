@@ -431,7 +431,7 @@ Sosol::Application.routes.draw do
   post 'rpx/associate_return', to: 'rpx#associate_return'
   post 'rpx/associate_really', to: 'rpx#associate_really'
   post 'rpx/create_submit', to: 'rpx#create_submit'
-  post 'identifiers/create', to: 'identifiers#create'
+  match 'identifiers/create', to: 'identifiers#create', :via => [:get, :post]
   get 'user/board_dashboard', to: 'user#board_dashboard'
   get 'user/user_dashboard', to: 'user#user_dashboard'
   get 'user/user_community_dashboard', to: 'user#user_community_dashboard'
