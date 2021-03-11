@@ -321,7 +321,7 @@
     originalleiden = $('com_sugar_content').value;
     //alert ("originalleiden" + originalleiden);
     if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
-      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+      request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'xsugar', :only_path => true)}";
     }
     else {
       request_url = "#{Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? Sosol::Application.config.xsugar_standalone_url : ''}";
@@ -408,7 +408,7 @@
     originalleiden = $('fm_sugar_content').value;
 
     if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
-      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+      request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'xsugar', :only_path => true)}";
     }
     else {
       request_url = "#{Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? Sosol::Application.config.xsugar_standalone_url : ''}";
@@ -493,7 +493,7 @@
     
     //create url call
     if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
-      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+      request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'xsugar', :only_path => true)}";
     }
     else {
       request_url = "#{Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? Sosol::Application.config.xsugar_standalone_url : ''}";
@@ -877,7 +877,7 @@
 
     //create url call
     if (#{(Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
-      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+      request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'xsugar', :only_path => true)}";
     }
     else {
       request_url = "#{Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? Sosol::Application.config.xsugar_standalone_url : ''}";
