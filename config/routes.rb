@@ -425,6 +425,8 @@ Sosol::Application.routes.draw do
   # match '/:controller(/:action(/:id))', :via => :get
   match 'signout' => 'user#signout', :as => :signout, :via => :get
   match 'signin' => 'user#signin', :as => :signin, :via => :get
+  get 'user/signout', to: 'user#signout'
+  get 'user/signin', to: 'user#signin'
   match 'account' => 'user#account', :as => :account, :via => :get
   post 'rpx/login_return', to: 'rpx#login_return'
   post 'rpx/remove_openid', to: 'rpx#remove_openid'
