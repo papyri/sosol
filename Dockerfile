@@ -23,8 +23,7 @@ RUN git clone git://github.com/sstephenson/rbenv.git .rbenv
 ENV PATH /root/.rbenv/bin:/root/.rbenv/shims:$PATH
 RUN echo 'eval "$(rbenv init -)"' > /etc/profile.d/rbenv.sh
 RUN chmod +x /etc/profile.d/rbenv.sh
-RUN git clone git://github.com/sstephenson/ruby-build.git #.rbenv/plugins/ruby-build
-RUN cd ruby-build; ./install.sh
+RUN git clone git://github.com/sstephenson/ruby-build.git "$(rbenv root)"/plugins/ruby-build && cd "$(rbenv root)"/plugins/ruby-build && git checkout 500863c
 RUN git clone https://github.com/rbenv/rbenv-vars.git $(rbenv root)/plugins/rbenv-vars
 
 # Copy in secret files
