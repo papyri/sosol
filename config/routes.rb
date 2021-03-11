@@ -148,8 +148,8 @@ Sosol::Application.routes.draw do
     resources :hgv_meta_identifiers do
     
         member do
-    get :get_date_preview
-    get :get_geo_preview
+    post :get_date_preview
+    post :get_geo_preview
     get :history
     get :preview
     get :editxml
