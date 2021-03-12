@@ -113,7 +113,8 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
 
         # get rid of empty extra/biblScopes/passages for editions/biblio
         if params[:hgv_meta_identifier][:edition]
-          params[:hgv_meta_identifier][:edition].each_value{|edition|
+          params[:hgv_meta_identifier][:edition].permit!
+          params[:hgv_meta_identifier][:edition].to_h.each_value{|edition|
             if edition[:children]
               # delete title if there is a biblio id
               if edition[:children][:link] && edition[:children][:link] && edition[:children][:link][:value] && (edition[:children][:link][:value] =~ /\A\d+\Z/)
