@@ -106,7 +106,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
           params[:hgv_meta_identifier][:collectionList].permit!
           params[:hgv_meta_identifier][:collectionList].delete_if{|key, collection| collection.empty?}
           if params[:hgv_meta_identifier][:collectionList].to_h.length == 1
-            params[:hgv_meta_identifier][:collection] = params[:hgv_meta_identifier][:collectionList].shift[1]
+            params[:hgv_meta_identifier][:collection] = params[:hgv_meta_identifier][:collectionList].to_h.shift[1]
             params[:hgv_meta_identifier].delete :collectionList
           end
         end
