@@ -1,4 +1,8 @@
 class AjaxProxyController < ApplicationController
+  def index
+    render :plain => ''
+  end
+
   def proxy
     response = NumbersRDF::NumbersHelper.identifier_to_numbers_server_response(params[:id].to_s, 'json')
     render :plain => response.body, :status => response.code
