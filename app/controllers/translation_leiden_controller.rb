@@ -15,11 +15,11 @@ class TranslationLeidenController < ApplicationController
     begin
       leidenback = TranslationLeiden.xml_to_translation_leiden(xml2conv)
       
-      render :text => "#{leidenback}"
+      render :plain => "#{leidenback}"
     rescue RXSugar::XMLParseError => parse_error
       #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
       parse_error.content.insert((parse_error.column-1), "**ERROR**")
-      render :text => xml2conv + "Error at column #{parse_error.column} #{parse_error.content}"
+      render :plain => xml2conv + "Error at column #{parse_error.column} #{parse_error.content}"
     end
   end
   
@@ -32,11 +32,11 @@ class TranslationLeidenController < ApplicationController
     lang = (params[:lang])
     begin
       leidenback = TranslationLeiden.get_language_translation_leiden(lang)
-      render :text => "#{leidenback}"
+      render :plain => "#{leidenback}"
     rescue RXSugar::XMLParseError => parse_error
       #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
       parse_error.content.insert((parse_error.column-1), "**ERROR**")
-      render :text => xml2conv + "Error at column #{parse_error.column} #{parse_error.content}"
+      render :plain => xml2conv + "Error at column #{parse_error.column} #{parse_error.content}"
     end
   end
   
@@ -54,11 +54,11 @@ class TranslationLeidenController < ApplicationController
       xmlback = TranslationLeiden.translation_leiden_to_xml(leiden2conv)
       
       
-      render :text => "#{xmlback}"
+      render :plain => "#{xmlback}"
     rescue RXSugar::NonXMLParseError => parse_error
       #insert **ERROR** into content to help user find it - subtract 1 for offset from 0
       parse_error.content.insert((parse_error.column-1), "**ERROR**")
-      render :text => "Error at column #{parse_error.column} #{parse_error.content}"
+      render :plain => "Error at column #{parse_error.column} #{parse_error.content}"
     end
     
     
