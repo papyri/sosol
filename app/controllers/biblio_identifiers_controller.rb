@@ -19,7 +19,8 @@ class BiblioIdentifiersController < IdentifiersController
   def update
     find_identifier
     begin
-      commit_sha = @identifier.set_epidoc(params[:biblio_identifier], params[:comment])
+      params.permit!
+      commit_sha = @identifier.set_epidoc(params[:biblio_identifier].to_h, params[:comment])
 
       expire_publication_cache
       generate_flash_message
