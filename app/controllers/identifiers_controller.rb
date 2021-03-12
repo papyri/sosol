@@ -216,7 +216,7 @@ class IdentifiersController < ApplicationController
 
     def retrieve_failed(null_pointer_error)
       flash[:error] = "Error retrieving file content from repository. This error has been logged for review by an administrator."
-      notify_airbrake(null_pointer_error, params)
+      notify_airbrake(null_pointer_error, params.permit!)
       redirect_to dashboard_url
     end
 end
