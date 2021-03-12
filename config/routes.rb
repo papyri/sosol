@@ -413,6 +413,7 @@ Sosol::Application.routes.draw do
   match 'ajax_proxy/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/, :via => :get
   match 'ajax_proxy/get_bibliography/' => 'ajax_proxy#get_bibliography', :via => :get
   match 'sparql' => 'ajax_proxy#sparql', :via => :get
+  get 'ajax_proxy', to: 'ajax_proxy#index'
   match 'ajax_proxy/xsugar/' => 'ajax_proxy#xsugar', :via => :post
   match 'ajax_proxy/hgvnum/' => 'ajax_proxy#hgvnum', :via => :post
   match 'ajax_proxy/:id' => 'ajax_proxy#proxy', :id => /papyri\.info.*/, :via => :get
