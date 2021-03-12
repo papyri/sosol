@@ -161,14 +161,16 @@ Sosol::Application.routes.draw do
     end
 
     resources :dclp_meta_identifiers do
+      collection do
+        get :biblio_autocomplete
+        get :ancient_author_autocomplete
+      end
 
         member do
     get :history
     get :preview
     get :editxml
-    get :biblio_autocomplete
     get :biblio_preview
-    get :ancient_author_autocomplete
     patch :updatexml
     get :rename_review
     patch :rename
