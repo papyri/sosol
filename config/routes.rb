@@ -149,7 +149,9 @@ Sosol::Application.routes.draw do
     
         member do
     post :get_date_preview
+    patch :get_date_preview
     post :get_geo_preview
+    patch :get_geo_preview
     get :history
     get :preview
     get :editxml
