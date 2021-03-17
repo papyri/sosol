@@ -142,7 +142,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
           params[:hgv_meta_identifier][:printedIllustration].delete_if{|key, value| value.empty? }
         end
         if params[:hgv_meta_identifier][:onlineResource]
-          params[:hgv_meta_identifier][:onlineResource].delete_if{|key, value| !value.kind_of?(Hash) || !value[:children] || !value[:children][:link] || !value[:children][:link][:attributes] || !value[:children][:link][:attributes][:target] || value[:children][:link][:attributes][:target].empty? }
+          params[:hgv_meta_identifier][:onlineResource].delete_if{|key, value| !value.kind_of?(ActionController::Parameters) || !value[:children] || !value[:children][:link] || !value[:children][:link][:attributes] || !value[:children][:link][:attributes][:target] || value[:children][:link][:attributes][:target].empty? }
         end
 
       end
@@ -210,7 +210,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
             if work[:children]
               if work[:children][:author]
                 refList = {}
-                if work[:children][:author][:attributes] && work[:children][:author][:attributes][:ref] && work[:children][:author][:attributes][:ref].kind_of?(Hash)
+                if work[:children][:author][:attributes] && work[:children][:author][:attributes][:ref] && work[:children][:author][:attributes][:ref].kind_of?(ActionController::Parameters)
                   refList = work[:children][:author][:attributes][:ref]
                 end
                 if work[:children][:author][:tlg] && work[:children][:author][:tlg] =~ /\d\d\d\d/
@@ -229,7 +229,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
               end
               if work[:children][:title]
                 refList = {}
-                if work[:children][:title][:attributes] && work[:children][:title][:attributes][:ref] && work[:children][:title][:attributes][:ref].kind_of?(Hash)
+                if work[:children][:title][:attributes] && work[:children][:title][:attributes][:ref] && work[:children][:title][:attributes][:ref].kind_of?(ActionController::Parameters)
                   refList = work[:children][:title][:attributes][:ref]
                 end
                 if work[:children][:title][:tm] && work[:children][:title][:tm] =~ /\d+/
