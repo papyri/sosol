@@ -73,7 +73,7 @@
           = render :partial => 'hgv_meta_identifiers/date'
           .clear
           %span.swifty.quickSave=I18n.t('label.quickSave')
-          %span.swifty.datePreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_date_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.datePreview')
+          %span.swifty.datePreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_date_preview', :only_path => true)}?' + $$('form.edit_dclp_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}=I18n.t('meta.label.datePreview')
 
         %h4.category.mentionedDate
           %a{:name => 'mentionedDate'}=I18n.t('meta.legend.mentionedDate')
@@ -87,7 +87,7 @@
         .editbox{:style => 'display: none;'}
           %p#geoPreview
             = @identifier.non_database_attribute[:origPlace]
-          %span.swifty.geoPreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}', {asynchronous:true, evalScripts:true, parameters:$$('form.edit_hgv_meta_identifier')[0].serialize()}); return false;"}=I18n.t('meta.label.geoPreview')
+          %span.swifty.geoPreview{:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}', {asynchronous:true, evalScripts:true, parameters:$$('form.edit_dclp_meta_identifier')[0].serialize()}); return false;"}=I18n.t('meta.label.geoPreview')
 
           %hr
           = render :partial => 'hgv_meta_identifiers/provenance'
