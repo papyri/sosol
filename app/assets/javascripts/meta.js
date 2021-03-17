@@ -565,7 +565,7 @@ function checkNotAddedMultiples(){
   multiAdd('translationsLa');
   multiAdd('translationsFr');
   multiAdd('printedIllustration');
-  multiAdd('onlineResource', 'children_link_attributes_target');
+  multiAdd('onlineResource', 0, 'children_link_attributes_target');
   multiAdd('collectionList');
   multiAdd('keywords');
 }
