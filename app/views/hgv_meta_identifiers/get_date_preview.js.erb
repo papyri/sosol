@@ -1,0 +1,5 @@
+<% [:X, :Y, :Z].each do |dateId| %>
+  <% [:when, :notBefore, :notAfter, :format].each do |field| %>
+    document.getElementById('<%=j field.to_s + dateId.to_s %>').innerHTML = '<%=j @updates[dateId] ? @updates[dateId][field] : '' %>';
+  <% end %>
+<% end %>
