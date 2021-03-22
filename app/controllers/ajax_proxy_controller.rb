@@ -1,5 +1,5 @@
 class AjaxProxyController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:js, :css, :images]
+  # skip_before_action :verify_authenticity_token, only: [:js, :css, :images]
 
   def index
     render :plain => ''
