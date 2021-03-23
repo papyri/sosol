@@ -16,7 +16,7 @@ jdk:
 rvm:
   - jruby-9.2.16.0
 before_install:
-  - gem install bundler --version '>2.0'
+  - gem install bundler --version '2.2.15'
 before_script:
   - psql -c 'create database sosol_test;'
   - gem --version
