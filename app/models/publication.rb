@@ -20,7 +20,7 @@
 require 'jgit_tree'
 require 'shellwords'
 
-class Publication < ActiveRecord::Base
+class Publication < ApplicationRecord
   PUBLICATION_STATUS = %w{ new editing submitted approved finalizing committed archived voting finalized approved_pending }
   @@canon_mutex = Mutex.new
 
@@ -185,12 +185,12 @@ class Publication < ActiveRecord::Base
 
   # Should check the owner's repo to make sure the branch doesn't exist and halt if so
   before_create do |publication|
-    !publication.owner.repository.branches.include?(publication.branch)
+    throw(:abort) if publication.owner.repository.branches.include?(publication.branch)
   end
 
   after_commit :delete_associated_branch, on: :destroy
   def delete_associated_branch
-    self.owner.present? && self.owner.repository.delete_branch(self.branch)
+    self.owner.present? && self.branch_exists? && self.owner.repository.delete_branch(self.branch)
   end
 
   #Outputs publication information and content to the Rails logger.
@@ -514,7 +514,7 @@ class Publication < ActiveRecord::Base
   end
 
   def branch_exists?
-    return self.owner.repository.branches.include?(self.branch)
+    return self.owner.repository.exists? && self.owner.repository.branches.include?(self.branch)
   end
 
   def change_status(new_status)

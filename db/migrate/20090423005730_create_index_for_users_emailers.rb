@@ -1,4 +1,4 @@
-class CreateIndexForUsersEmailers < ActiveRecord::Migration
+class CreateIndexForUsersEmailers < ActiveRecord::Migration[4.2]
   def self.up
     create_table :emailers_users, :id => false do |t|
       t.string :emailer_id

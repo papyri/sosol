@@ -1,4 +1,4 @@
-class AddPrecisionToDecreeDecimal < ActiveRecord::Migration
+class AddPrecisionToDecreeDecimal < ActiveRecord::Migration[4.2]
   def self.up
   	change_column :decrees, :trigger, :decimal, :precision => 5, :scale => 2
   end

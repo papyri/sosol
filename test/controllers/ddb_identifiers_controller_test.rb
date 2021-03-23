@@ -19,8 +19,8 @@ class DdbIdentifiersControllerTest < ActionController::TestCase
     @identifier.repository.class.any_instance.stubs(:commit_content).raises(Exceptions::CommitError.new("Commit failed"))
     # just make a nonsense change to the content
     content = { :xml_content => @identifier.xml_content.sub("English","Gobbleygook") }
-    get :editxml, :id => @identifier.id.to_s, :publication_id => @identifier.publication.id.to_s
-    put :updatexml, :id => @identifier.id.to_s , :publication_id => @identifier.publication.id.to_s,  :comment => "test", :ddb_identifier => content
+    get :editxml, params: { :id => @identifier.id.to_s, :publication_id => @identifier.publication.id.to_s }
+    put :updatexml, params: { :id => @identifier.id.to_s , :publication_id => @identifier.publication.id.to_s,  :comment => "test", :ddb_identifier => content }
     assert_redirected_to '/publications/' + @publication.id.to_s + '/ddb_identifiers/' + @identifier.id.to_s + '/edit'
     assert_equal "Commit failed", flash[:error]
   end

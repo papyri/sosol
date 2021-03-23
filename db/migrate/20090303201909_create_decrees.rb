@@ -1,4 +1,4 @@
-class CreateDecrees < ActiveRecord::Migration
+class CreateDecrees < ActiveRecord::Migration[4.2]
   def self.up
     create_table :decrees do |t|
       t.string :action

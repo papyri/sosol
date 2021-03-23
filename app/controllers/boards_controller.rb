@@ -2,15 +2,8 @@ class BoardsController < ApplicationController
 
   #layout "site"
   #layout "header_footer"
-  before_filter :authorize
-  before_filter :check_admin
-
-  #Ensures user has admin rights to view page. Otherwise returns 403 error.
-  def check_admin
-    if @current_user.nil? || !@current_user.admin
-      render :file => 'public/403', :status => '403', :layout => false, :formats => [:html]
-    end
-  end
+  before_action :authorize
+  before_action :check_admin
 
   #Presents overview for publication.
   def overview
@@ -174,9 +167,7 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id].to_s)
 
     respond_to do |format|
-      board_params = params[:board].slice(:friendly_name, :skip_finalize, :requires_assignment, :max_assignable)
-
-      if @board.update_attributes(board_params)
+      if params[:board].present? && @board.update_attributes(board_params)
         flash[:notice] = 'Board was successfully updated.'
         format.html { redirect_to(@board) }
         format.xml  { head :ok }
@@ -339,9 +330,15 @@ def confirm_destroy
 end
 
 private
+  #Ensures user has admin rights to view page. Otherwise returns 403 error.
+  def check_admin
+    if @current_user.nil? || !@current_user.admin
+      render :file => 'public/403', :status => '403', :layout => false, :formats => [:html]
+    end
+  end
 
 def board_params
-  params.require(:board).permit(:title,:category,:identifier_classes,:friendly_name,:decrees)
+  params.require(:board).permit(:title,:category,:identifier_classes,:friendly_name,:decrees,:skip_finalize,:requires_assignment,:max_assignable)
 end
 
 end

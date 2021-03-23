@@ -17,42 +17,43 @@ class EmailersControllerTest < ActionController::TestCase
   end
   
   test "should get index" do
-    get :index
+    get :index, params: {}
     assert_response :success
     assert_not_nil assigns(:emailers)
   end
 
   test "should get new" do
-    get :new, { :board_id => @board.id }
+    get :new, params: { :board_id => @board.id }
     assert_response :success
   end
 
   test "should create emailer" do
     assert_difference('Emailer.count') do
-      post :create, :emailer => { :board_id => @board.id }
+      post :create, params: { :emailer => { :board_id => @board.id } }
     end
 
     assert_redirected_to edit_emailer_path(@board.emailers.last.id)
   end
 
   test "should show emailer" do
-    get :show, :id => @emailer.id
+    get :show, params: { :id => @emailer.id }
     assert_response :success
   end
 
   test "should get edit" do
-    get :edit, :id => @emailer.id
+    get :edit, params: { :id => @emailer.id }
     assert_response :success
   end
 
   test "should update emailer" do
-    put :update, :id => @emailer.id, :emailer => { }
+    put :update, params: { :id => @emailer.id, :emailer => { message: 'updated message' } }
     assert_redirected_to edit_board_path(@emailer.board.id)
+    assert_equal 'updated message', @emailer.reload.message
   end
 
   test "should destroy emailer" do
     assert_difference('Emailer.count', -1) do
-      delete :destroy, :id => @emailer.id
+      delete :destroy, params: { :id => @emailer.id }
     end
 
     assert_redirected_to edit_board_path(@emailer.board.id)

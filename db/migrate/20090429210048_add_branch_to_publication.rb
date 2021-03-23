@@ -1,4 +1,4 @@
-class AddBranchToPublication < ActiveRecord::Migration
+class AddBranchToPublication < ActiveRecord::Migration[4.2]
   def self.up
     add_column :publications, :branch, :string
   end

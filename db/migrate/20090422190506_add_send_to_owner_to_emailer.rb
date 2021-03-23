@@ -1,4 +1,4 @@
-class AddSendToOwnerToEmailer < ActiveRecord::Migration
+class AddSendToOwnerToEmailer < ActiveRecord::Migration[4.2]
   def self.up
   	add_column :emailers, :send_to_owner, :boolean
   end

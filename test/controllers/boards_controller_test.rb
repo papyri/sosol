@@ -19,24 +19,24 @@ class BoardsControllerTest < ActionController::TestCase
 
   test "should return forbidden for non-admin" do
     @request.session[:user_id] = @non_admin.id
-    get :index
+    get :index, params: {}
     assert_response :forbidden
   end
   
   test "should get index" do
-    get :index
+    get :index, params: {}
     assert_response :success
     assert_not_nil assigns(:boards)
   end
 
   test "should get new" do
-    get :new
+    get :new, params: {}
     assert_response :success
   end
 
   test "should create board" do
     assert_difference('Board.count') do
-      post :create, :board => FactoryBot.build(:board).attributes
+      post :create, params: { :board => FactoryBot.build(:board).attributes }
     end
 
     assert_redirected_to edit_board_path(assigns(:board))
@@ -44,35 +44,36 @@ class BoardsControllerTest < ActionController::TestCase
   end
 
   test "should have max rank default" do
-    post :create, :board => FactoryBot.build(:board).attributes
+    post :create, params: { :board => FactoryBot.build(:board).attributes }
     assert assigns(:board).rank == Board.count
     assigns(:board).destroy
   end
     
   test "should have valid rank" do
-    post :create, :board => FactoryBot.build(:board).attributes
+    post :create, params: { :board => FactoryBot.build(:board).attributes }
     assert assigns(:board).rank > 0 && assigns(:board).rank <= Board.count
     assigns(:board).destroy
   end
     
   test "should show board" do    
-    get :show, :id => @board.id
+    get :show, params: { :id => @board.id }
     assert_response :success
   end
 
   test "should get edit" do    
-    get :edit, :id => @board.id
+    get :edit, params: { :id => @board.id }
     assert_response :success
   end
 
   test "should update board" do    
-    put :update, :id => @board.id, :board => { }
+    put :update, params: { :id => @board.id, :board => { friendly_name: 'updated friendly name' } }
     assert_redirected_to board_path(assigns(:board))
+    assert_equal 'updated friendly name', @board.reload.friendly_name
   end
 
   test "should destroy board" do
     assert_difference('Board.count', -1) do
-      delete :destroy, :id => @board.id
+      delete :destroy, params: { :id => @board.id }
     end
 
     assert_redirected_to boards_path

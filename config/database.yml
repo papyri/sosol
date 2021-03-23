@@ -13,7 +13,7 @@ development:
 test:
   adapter: sqlite3
   database: db/test.sqlite3
-  pool: 1
+  pool: 5
   timeout: 10000
 
 production:

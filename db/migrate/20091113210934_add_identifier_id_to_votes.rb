@@ -1,4 +1,4 @@
-class AddIdentifierIdToVotes < ActiveRecord::Migration
+class AddIdentifierIdToVotes < ActiveRecord::Migration[4.2]
   def self.up
     add_column :votes, :identifier_id, :integer
   end

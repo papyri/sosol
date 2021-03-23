@@ -62,19 +62,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
     render json: data, content_type: 'application/json'
   end
 
-  def exist url
-    begin
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request.basic_auth("admin", "papy")
-      response = http.request(request)
-      return JSON.parse(response.body)
-    rescue StandardError => e
-      Rails.logger.error e.inspect
-      return {}
-    end
-  end
+
 
   # - GET /publications/123/dclp_text_identifiers/456/preview
   # - Provides preview of what the XML from the repository will look like with PN Stylesheets applied
@@ -86,6 +74,19 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
   end
 
   protected
+    def exist url
+      begin
+        uri = URI.parse(url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        request = Net::HTTP::Get.new(uri.request_uri)
+        request.basic_auth("admin", "papy")
+        response = http.request(request)
+        return JSON.parse(response.body)
+      rescue StandardError => e
+        Rails.logger.error e.inspect
+        return {}
+      end
+    end
 
     # Sets the identifier instance variable values
     # - *Params*  :
@@ -98,19 +99,22 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
       super
 
       if params[:hgv_meta_identifier]
+        params[:hgv_meta_identifier].permit!
 
         # get rid of either collection or of collectionList
         if params[:hgv_meta_identifier][:collectionList]
+          params[:hgv_meta_identifier][:collectionList].permit!
           params[:hgv_meta_identifier][:collectionList].delete_if{|key, collection| collection.empty?}
-          if params[:hgv_meta_identifier][:collectionList].length == 1
-            params[:hgv_meta_identifier][:collection] = params[:hgv_meta_identifier][:collectionList].shift[1]
+          if params[:hgv_meta_identifier][:collectionList].to_h.length == 1
+            params[:hgv_meta_identifier][:collection] = params[:hgv_meta_identifier][:collectionList].to_h.shift[1]
             params[:hgv_meta_identifier].delete :collectionList
           end
         end
 
         # get rid of empty extra/biblScopes/passages for editions/biblio
         if params[:hgv_meta_identifier][:edition]
-          params[:hgv_meta_identifier][:edition].each_value{|edition|
+          params[:hgv_meta_identifier][:edition].permit!
+          params[:hgv_meta_identifier][:edition].to_h.each_value{|edition|
             if edition[:children]
               # delete title if there is a biblio id
               if edition[:children][:link] && edition[:children][:link] && edition[:children][:link][:value] && (edition[:children][:link][:value] =~ /\A\d+\Z/)
@@ -138,7 +142,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
           params[:hgv_meta_identifier][:printedIllustration].delete_if{|key, value| value.empty? }
         end
         if params[:hgv_meta_identifier][:onlineResource]
-          params[:hgv_meta_identifier][:onlineResource].delete_if{|key, value| !value.kind_of?(Hash) || !value[:children] || !value[:children][:link] || !value[:children][:link][:attributes] || !value[:children][:link][:attributes][:target] || value[:children][:link][:attributes][:target].empty? }
+          params[:hgv_meta_identifier][:onlineResource].delete_if{|key, value| !value.kind_of?(ActionController::Parameters) || !value[:children] || !value[:children][:link] || !value[:children][:link][:attributes] || !value[:children][:link][:attributes][:target] || value[:children][:link][:attributes][:target].empty? }
         end
 
       end
@@ -206,7 +210,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
             if work[:children]
               if work[:children][:author]
                 refList = {}
-                if work[:children][:author][:attributes] && work[:children][:author][:attributes][:ref] && work[:children][:author][:attributes][:ref].kind_of?(Hash)
+                if work[:children][:author][:attributes] && work[:children][:author][:attributes][:ref] && work[:children][:author][:attributes][:ref].kind_of?(ActionController::Parameters)
                   refList = work[:children][:author][:attributes][:ref]
                 end
                 if work[:children][:author][:tlg] && work[:children][:author][:tlg] =~ /\d\d\d\d/
@@ -225,7 +229,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
               end
               if work[:children][:title]
                 refList = {}
-                if work[:children][:title][:attributes] && work[:children][:title][:attributes][:ref] && work[:children][:title][:attributes][:ref].kind_of?(Hash)
+                if work[:children][:title][:attributes] && work[:children][:title][:attributes][:ref] && work[:children][:title][:attributes][:ref].kind_of?(ActionController::Parameters)
                   refList = work[:children][:title][:attributes][:ref]
                 end
                 if work[:children][:title][:tm] && work[:children][:title][:tm] =~ /\d+/

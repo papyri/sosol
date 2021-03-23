@@ -1,4 +1,4 @@
-class AddModifiedToIdentifier < ActiveRecord::Migration
+class AddModifiedToIdentifier < ActiveRecord::Migration[4.2]
   def self.up
     add_column :identifiers, :modified, :boolean, :default => false
   end

@@ -1,4 +1,4 @@
-class AddTypeToDocos < ActiveRecord::Migration
+class AddTypeToDocos < ActiveRecord::Migration[4.2]
   def self.up
     add_column :docos, :docotype, :string, :null => false, :default => "text"
   	  add_index :docos, :docotype

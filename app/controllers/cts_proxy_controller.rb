@@ -2,24 +2,24 @@ class CtsProxyController < ApplicationController
 
   def editions
     response = CTS::CTSLib.getEditionUrns(params[:inventory].to_s)
-    render :text => response
+    render :plain => response
   end
   
   def validreffs
     @publication = Publication.find(params[:publication_id].to_s)
     inventory = new_identifier.related_inventory
     response = CTS::CTSLib.proxyGetValidReff(inventory, params[:urn].to_s, params[:level].to_s)
-    render :text => response
+    render :plain => response
   end
   
   def translations
     response = CTS::CTSLib.getTranslationUrns(params[:inventory].to_s,params[:urn].to_s)
-    render :text => response
+    render :plain => response
   end
   
   def citations
     response = CTS::CTSLib.getCitationLabels(params[:inventory].to_s,params[:urn].to_s)
-    render :text => response
+    render :plain => response
   end
   
   def getpassage
@@ -36,7 +36,7 @@ class CtsProxyController < ApplicationController
     else
       response = CTS::CTSLib.proxyGetPassage(params[:id].to_s,params[:urn].to_s)
     end
-    render :text => JRubyXML.apply_xsl_transform(
+    render :plain => JRubyXML.apply_xsl_transform(
                       JRubyXML.stream_from_string(response),
                       JRubyXML.stream_from_file(File.join(Rails.root,
                       %w{data xslt cts extract_text.xsl})))  
@@ -44,14 +44,14 @@ class CtsProxyController < ApplicationController
   
   def getcapabilities
     response = CTS::CTSLib.proxyGetCapabilities(params[:collection].to_s)
-    render :text => JRubyXML.apply_xsl_transform(
+    render :plain => JRubyXML.apply_xsl_transform(
                       JRubyXML.stream_from_string(response),
                       JRubyXML.stream_from_file(File.join(Rails.root,
                       %w{data xslt cts inventory_to_json.xsl})))
   end
   
   def getrepos
-    render :text => CTS::CTSLib.getExternalCTSReposAsJson()
+    render :plain => CTS::CTSLib.getExternalCTSReposAsJson()
   end
 
 end

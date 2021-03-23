@@ -70,6 +70,11 @@ module NumbersRDF
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           headers = (format == 'json') ? {'Accept' => 'application/rdf+json'} : {}
           return http.get(path, headers)
+        rescue Errno::ECONNREFUSED => e
+          Rails.logger.debug("Default HTTPS connection failed, trying plain-HTTP fallback")
+          http = Net::HTTP.new(NUMBERS_SERVER_DOMAIN, 80)
+          headers = (format == 'json') ? {'Accept' => 'application/rdf+json'} : {}
+          return http.get(path, headers)
         rescue ::Timeout::Error => e
           raise NumbersRDF::Timeout, e.message, caller
         end

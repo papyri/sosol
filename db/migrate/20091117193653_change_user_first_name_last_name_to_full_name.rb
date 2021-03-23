@@ -1,4 +1,4 @@
-class ChangeUserFirstNameLastNameToFullName < ActiveRecord::Migration
+class ChangeUserFirstNameLastNameToFullName < ActiveRecord::Migration[4.2]
   def self.up
     add_column :users, :full_name, :string
     remove_column :users, :first_name

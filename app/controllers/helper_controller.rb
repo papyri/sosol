@@ -2,6 +2,9 @@
 class HelperController < ApplicationController
   
   layout false
+
+  def wheretogo
+  end
   
   # Helper Symbols Ancient Diacriticals Double
   def ancientdia

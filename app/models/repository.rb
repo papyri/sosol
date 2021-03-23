@@ -98,7 +98,7 @@ class Repository
 
   def jgit_repo
     result = @@jgit_repo_cache.get(@path)
-    if result.nil? && exists?(@path)
+    if result.nil? && File.exists?(@path)
       begin
         result = org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
         @@jgit_repo_cache.put(@path, result)
@@ -119,9 +119,9 @@ class Repository
     return "git --git-dir=#{Shellwords.escape(self.path)}"
   end
 
-  def exists?(path)
+  def exists?
     # master.has_repository?
-    File.exists?(path)
+    File.exists?(@path)
   end
 
   def fork_bare(destination_path)

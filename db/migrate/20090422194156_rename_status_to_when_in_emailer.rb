@@ -1,4 +1,4 @@
-class RenameStatusToWhenInEmailer < ActiveRecord::Migration
+class RenameStatusToWhenInEmailer < ActiveRecord::Migration[4.2]
   def self.up
     	rename_column :emailers, :status, :when_to_send
   end

@@ -1,4 +1,4 @@
-class AddPublicationIdToVote < ActiveRecord::Migration
+class AddPublicationIdToVote < ActiveRecord::Migration[4.2]
   def self.up
     add_column :votes, :publication_id, :integer
   end

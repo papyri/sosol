@@ -1,4 +1,4 @@
-class ChangeStringsToTexts < ActiveRecord::Migration
+class ChangeStringsToTexts < ActiveRecord::Migration[4.2]
   def self.up    
     change_column :comments, :text, :text
     

@@ -1,4 +1,4 @@
-class RenameTypeToCategory < ActiveRecord::Migration
+class RenameTypeToCategory < ActiveRecord::Migration[4.2]
   def self.up
     rename_column "events", "type", "category"
   end

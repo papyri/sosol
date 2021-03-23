@@ -1,7 +1,7 @@
 class VotesController < ApplicationController
   
   #layout "site"
-  before_filter :authorize
+  before_action :authorize
     
   # GET /votes
   # GET /votes.xml
@@ -64,7 +64,7 @@ class VotesController < ApplicationController
     @vote = Vote.find(params[:id].to_s)
 
     respond_to do |format|
-      if @vote.update_attributes(params[:vote])
+      if params[:vote].present? && @vote.update_attributes(vote_params)
         flash[:notice] = 'Vote was successfully updated.'
         format.html { redirect_to(@vote) }
         format.xml  { head :ok }
@@ -85,5 +85,11 @@ class VotesController < ApplicationController
       format.html { redirect_to(votes_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def vote_params
+    params.require(:vote).permit(:publication,:choice)
   end
 end

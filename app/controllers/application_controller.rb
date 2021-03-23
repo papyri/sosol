@@ -19,12 +19,12 @@ class ApplicationController < ActionController::Base
   # layout 'default'
 
   # include ::MaintenanceMode
-  # before_filter :disabled?
+  # before_action :disabled?
 
-  before_filter :get_user_id
-  before_filter :rpx_setup
+  before_action :get_user_id
+  before_action :rpx_setup
 
-  before_filter :tab_setup
+  before_action :tab_setup
 
   unless Rails.application.config.consider_all_requests_local
     rescue_from Exception, :with => :render_500
@@ -39,6 +39,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def render_500(e)
+    Rails.logger.debug(e.inspect)
     notify_airbrake(e)
     @redirect = true unless request.referer =~ /dashboard$/
     flash[:error] = "We're sorry, but something went wrong."
@@ -47,6 +48,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_numbers_error(e)
+    Rails.logger.debug(e.inspect)
     notify_airbrake(e)
     @redirect = false
     flash.now[:error] = "We're sorry, but the Numbers Server appears to be unresponsive."
@@ -55,6 +57,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_404(e)
+    Rails.logger.debug(e.inspect)
     flash[:error] = "The page you were looking for doesn't exist."
     render :template => 'common/error_404', :layout => false, :status => 404
   end

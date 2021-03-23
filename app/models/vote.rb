@@ -1,5 +1,5 @@
 #Holds information about a vote.
-class Vote < ActiveRecord::Base
+class Vote < ApplicationRecord
   belongs_to :publication
   belongs_to :identifier
   belongs_to :user
@@ -24,7 +24,7 @@ class Vote < ActiveRecord::Base
       #decree_action = self.publication.tally_votes(related_votes)
       #self.publication.tally_votes(related_votes)
 
-      related_votes = self.publication.votes(true)
+      related_votes = self.publication.votes.reload
       Rails.logger.info("Vote#tally called for #{self.publication.id} with votes #{related_votes.inspect}")
       TallyVotesJob.perform_async(self.publication.id, related_votes)
     end

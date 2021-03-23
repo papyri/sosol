@@ -8,7 +8,7 @@
   function ajax_xml_to_leiden(was_disabled) {
     try_counter = try_counter + 1;
     if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
-      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+      request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'xsugar', :only_path => true)}";
     }
     else {
       request_url = "#{!Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? '' : Sosol::Application.config.xsugar_standalone_url}";

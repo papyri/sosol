@@ -5,7 +5,7 @@
   
   function getHGVNumber(identifierIn){
   
-    request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/hgvnum/';
+    request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'hgvnum', :only_path => true)}";
     
     //made asynchronous false because next call to xsugar was firing before response got back
     new Ajax.Request(request_url, {

@@ -5,7 +5,7 @@
 #- *vote* when a vote is cast
 #- *finalizing* when a publication is finalized
 #- *general* other cases, such as an opinion comment on someone else's publication
-class Comment < ActiveRecord::Base
+class Comment < ApplicationRecord
   # belongs_to :article
   belongs_to :user
   belongs_to :publication

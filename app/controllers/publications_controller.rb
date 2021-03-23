@@ -1,7 +1,7 @@
 class PublicationsController < ApplicationController
   ##layout 'site'
-  before_filter :authorize
-  before_filter :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
+  before_action :authorize
+  before_action :ownership_guard, :only => [:confirm_archive, :archive, :confirm_withdraw, :withdraw, :confirm_delete, :destroy, :submit]
 
   def new
   end
@@ -48,10 +48,6 @@ class PublicationsController < ApplicationController
 
 
 
-
-  def determine_creatable_identifiers
-    @creatable_identifiers = @publication.creatable_identifiers
-  end
 
   def advanced_create()
     @publication = Publication.new
@@ -900,6 +896,10 @@ class PublicationsController < ApplicationController
     end
 
     private
+
+    def determine_creatable_identifiers
+      @creatable_identifiers = @publication.creatable_identifiers
+    end
 
     def publication_params
       params.require(:publication)

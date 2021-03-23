@@ -1,6 +1,6 @@
 
 ##Board represents an editorial review board.
-class Board < ActiveRecord::Base
+class Board < ApplicationRecord
   has_many :decrees, :dependent => :destroy
   has_many :emailers, :dependent => :destroy
   

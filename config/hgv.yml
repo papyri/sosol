@@ -62,7 +62,7 @@
             :target:
               :name: target
               :optional: false
-              :pattern: /\Ahttp:\/\/papyri\.info\/biblio\/.+\Z/
+              :pattern: /\Ahttps?:\/\/papyri\.info\/biblio\/.+\Z/
         :pagination:
           :xpath: biblScope[@type='pp']
     :citedLiterature:
@@ -76,7 +76,7 @@
             :target:
               :name: target
               :optional: false
-              :pattern: /\Ahttp:\/\/papyri\.info\/biblio\/.+\Z/
+              :pattern: /\Ahttps?:\/\/papyri\.info\/biblio\/.+\Z/
         :pagination:
           :xpath: biblScope[@type='pp']
     :contentText:

@@ -1,4 +1,4 @@
-class AddUrldisplayToDocos < ActiveRecord::Migration
+class AddUrldisplayToDocos < ActiveRecord::Migration[4.2]
   def self.up
     add_column :docos, :urldisplay, :string
   end

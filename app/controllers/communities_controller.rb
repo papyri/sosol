@@ -1,6 +1,6 @@
 class CommunitiesController < ApplicationController
 
-  before_filter :authorize
+  before_action :authorize
 
   # GET /communities
   # GET /communities.xml
@@ -67,7 +67,7 @@ class CommunitiesController < ApplicationController
     @community = Community.find(params[:id].to_s)
 
     respond_to do |format|
-      if @community.update_attributes(params[:community])
+      if params[:community].present? && @community.update_attributes(community_params)
         flash[:notice] = 'Community was successfully updated.'
         format.html { redirect_to(:action => 'edit', :id => @community.id) }
         format.xml  { head :ok }

@@ -1,14 +1,11 @@
 class EmailersController < ApplicationController
-  before_filter :authorize
+  before_action :authorize
   
   def find_board_member
     @emailer = Emailer.find(params[:id].to_s)
   end
   
-  def whens_hash
-    { "Submit" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Committed" => "committed", "Graffiti" => "graffiti", "Never" => "never" }    
-  end
-  
+
   def find_sosol_users
     @emailer = Emailer.find(params[:id].to_s)
     @sosol_users = User.all
@@ -109,7 +106,7 @@ class EmailersController < ApplicationController
     @emailer = Emailer.find(params[:id].to_s)
 
     respond_to do |format|
-      if @emailer.update_attributes(params[:emailer])
+      if params[:emailer].present? && @emailer.update_attributes(emailer_params)
         flash[:notice] = 'Emailer was successfully updated.'
         format.html { redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  }
         #format.html { redirect_to(@emailer) }
@@ -135,7 +132,10 @@ class EmailersController < ApplicationController
   end
 
   private
-
+    def whens_hash
+      { "Submit" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Committed" => "committed", "Graffiti" => "graffiti", "Never" => "never" }    
+    end
+    
     def emailer_params
       params.require(:emailer).permit(:association,:extra_addresses,:include_document,:message,:board_id)
     end

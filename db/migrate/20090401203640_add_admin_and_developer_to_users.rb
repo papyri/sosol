@@ -1,4 +1,4 @@
-class AddAdminAndDeveloperToUsers < ActiveRecord::Migration
+class AddAdminAndDeveloperToUsers < ActiveRecord::Migration[4.2]
   def self.up
 	add_column :users, :admin, :boolean
 	add_column :users, :developer, :boolean

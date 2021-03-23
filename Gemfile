@@ -3,10 +3,10 @@
 source 'https://rubygems.org'
 ruby "2.5.7", :engine => "jruby", :engine_version => "9.2.14.0"
 
-gem 'rails', '~> 4.2.11.3'
+gem 'rails', '~> 5.2.4.5'
 
 # Needed for the new asset pipeline
-gem 'sass-rails', '~> 4'
+gem 'sass-rails', '~> 5'
 gem 'coffee-rails', '~> 4'
 gem 'uglifier', '>= 1.0.3'
 gem 'therubyrhino'
@@ -19,20 +19,21 @@ group :test do
   gem 'shoulda'
   gem 'factory_bot_rails'
   gem 'database_cleaner-active_record'
+  gem 'rails-controller-testing'
 end
 
 gem 'jquery-rails'
 gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
-gem 'haml', '= 4.0.6'
+gem 'haml-rails', '~> 2.0'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
 gem 'jdbc-sqlite3', '>= 3.7.2', :platform => :jruby
-gem 'activerecord-jdbc-adapter', '>= 1.3.25', '< 50', :platform => :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '< 50', :platform => :jruby
-gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
-gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '< 50', :platform => :jruby
-gem 'jdbc-mysql', '< 8', require: false
+gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
+gem 'jdbc-mysql', require: false
 gem 'activerecord-session_store'
 gem 'tzinfo-data', :platform => :jruby
 gem 'actionpack-page_caching'
@@ -49,5 +50,6 @@ gem 'sucker_punch', '~> 2.0'
 gem 'with_advisory_lock'
 gem 'silencer'
 gem 'rack-attack', '~> 4.0'
-
-gem 'test_after_commit', :group => :test
+gem 'i18n', '< 1.8.8'
+gem "pry", "~> 0.14.0"
+gem "pry-rails", "~> 0.3.9"

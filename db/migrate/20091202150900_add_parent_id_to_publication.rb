@@ -1,4 +1,4 @@
-class AddParentIdToPublication < ActiveRecord::Migration
+class AddParentIdToPublication < ActiveRecord::Migration[4.2]
   def self.up
     add_column :publications, :parent_id, :integer
   end

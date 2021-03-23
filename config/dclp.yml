@@ -115,7 +115,7 @@
               :pattern: /\Agrc|la\Z/
             :ref:
               :name: ref
-              :pattern: /\Ahttp:\/\//
+              :pattern: /\Ahttps?:\/\//
               # sample patterns and languages for tm, tlg, stoa and cwkb
               # phi: http://data.perseus.org/catalog/urn:cts:latinLit:phi2200 (Latin)
               # tlg: http://data.perseus.org/catalog/urn:cts:greekLit:tlg2200 (Greek)
@@ -134,7 +134,7 @@
               :pattern: /\Agrc|la\Z/
             :ref:
               :name: ref
-              :pattern: /\Ahttp:\/\//
+              :pattern: /\Ahttps?:\/\//
               # patterns and languages for tm, tlg, stoa and cwkb
               # tm: http://www.trismegistos.org/authorwork/1146
               # tlg: http://catalog.perseus.org/catalog/urn:cts:greekLit:tlg0059.tlg018 (Greek)
@@ -193,7 +193,7 @@
           :attributes:
             :target:
               :name: target
-              :pattern: '/\Ahttp:\/\//'
+              :pattern: '/\Ahttps?:\/\//'
     :edition:
       :xpath: /TEI/text/body/div[@type='bibliography'][@subtype='principalEdition']/listBibl/bibl
       :multiple: true

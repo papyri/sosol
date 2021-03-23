@@ -146,7 +146,7 @@
       return '';
     }
     else {
-    return '#{form_tag({:action => :delete_commentary}, :method => :delete, :id => "delete_form").chomp()}' +
+    return '#{form_tag({:action => :delete_commentary}, :method => :delete, :id => "delete_form").chomp().html_safe}' +
         '<input type="hidden" name="line_id" value="' + id + '"/>' +
         '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
         '<span style="float:right;position:relative;top:-1.5em">' +
@@ -165,7 +165,7 @@
       return '';
     }
     else {
-      return '#{form_tag({:action => :delete_frontmatter_commentary}, :method => :delete, :id => "delete_frontmatter_form").chomp()}' +
+      return '#{form_tag({:action => :delete_frontmatter_commentary}, :method => :delete, :id => "delete_frontmatter_form").chomp().html_safe}' +
           '<span style="float:right;position:relative;top:-1.5em">' +
             '<a href="#{url_for({:action => :delete_frontmatter_commentary})}" style="color:red" onclick="if (confirm(\'Are you sure you want to delete the front matter commentary?\')) {$(\'delete_frontmatter_form\').submit();};return false;">delete</a>'
           '</span>' +
@@ -184,7 +184,7 @@
     if(original_item_id === undefined) {original_item_id = "";}
 
     return '<div id="form-'+id+'" style="display:none;"><div class="form">' +
-    '#{form_tag({:action => :update_commentary}, :method => :patch, :id => "update_commentary_form").chomp()}' +
+    '#{form_tag({:action => :update_commentary}, :method => :patch, :id => "update_commentary_form").chomp().html_safe}' +
     '<input type="hidden" name="line_id" value="' + id + '"/>' +
     '<input type="hidden" name="original_item_id" value="' + original_item_id + '"/>' +
     '<ul id="menuModel" style="display:inherit">' +
@@ -252,7 +252,7 @@
     if(content === undefined) {content = "";}
     
     return '<div id="form-frontmatter" class="frontmatter_container" style="display:none;"><div class="form">' +
-    '#{form_tag({:action => :update_frontmatter_commentary}, :method => :patch, :id => "update_frontmatter_form").chomp()}' +
+    '#{form_tag({:action => :update_frontmatter_commentary}, :method => :patch, :id => "update_frontmatter_form").chomp().html_safe}' +
     '<ul id="menuModel" style="display:inherit">' +
     '  <li id="1">' +
     '    <a href="#" title="General Formatting Helpers">Formatting</a>' +
@@ -321,7 +321,7 @@
     originalleiden = $('com_sugar_content').value;
     //alert ("originalleiden" + originalleiden);
     if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
-      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+      request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'xsugar', :only_path => true)}";
     }
     else {
       request_url = "#{Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? Sosol::Application.config.xsugar_standalone_url : ''}";
@@ -408,7 +408,7 @@
     originalleiden = $('fm_sugar_content').value;
 
     if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
-      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+      request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'xsugar', :only_path => true)}";
     }
     else {
       request_url = "#{Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? Sosol::Application.config.xsugar_standalone_url : ''}";
@@ -493,7 +493,7 @@
     
     //create url call
     if (#{Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
-      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+      request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'xsugar', :only_path => true)}";
     }
     else {
       request_url = "#{Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? Sosol::Application.config.xsugar_standalone_url : ''}";
@@ -877,7 +877,7 @@
 
     //create url call
     if (#{(Sosol::Application.config.respond_to?(:xsugar_standalone_use_proxy) && Sosol::Application.config.xsugar_standalone_use_proxy}) {
-      request_url = "#{url_for(:controller => 'ajax_proxy', :only_path => true)}" + '/xsugar/';
+      request_url = "#{url_for(:controller => 'ajax_proxy', :action => 'xsugar', :only_path => true)}";
     }
     else {
       request_url = "#{Sosol::Application.config.respond_to?(:xsugar_standalone_url) ? Sosol::Application.config.xsugar_standalone_url : ''}";
@@ -959,6 +959,6 @@
       %label Commentary
       .PContent
         :preserve
-          #{@identifier_html_preview}
+          #{@identifier_html_preview.html_safe}
 %textarea{:id => "fm_or_com", :style => "display:none"}
 = javascript_include_tag 'confirm'

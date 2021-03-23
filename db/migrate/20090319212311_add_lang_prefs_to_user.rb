@@ -1,4 +1,4 @@
-class AddLangPrefsToUser < ActiveRecord::Migration
+class AddLangPrefsToUser < ActiveRecord::Migration[4.2]
   def self.up
     add_column :users, :language_prefs, :string
   end

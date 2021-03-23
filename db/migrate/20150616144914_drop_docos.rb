@@ -1,4 +1,4 @@
-class DropDocos < ActiveRecord::Migration
+class DropDocos < ActiveRecord::Migration[4.2]
   def up
     drop_table :docos
   end

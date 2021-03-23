@@ -1,7 +1,7 @@
 class DecreesController < ApplicationController
   
   #layout "site"
-  before_filter :authorize
+  before_action :authorize
   
   # GET /decrees
   # GET /decrees.xml
@@ -77,7 +77,7 @@ class DecreesController < ApplicationController
     @decree = Decree.find(params[:id].to_s)
 
     respond_to do |format|
-      if @decree.update_attributes(params[:decree])
+      if params[:decree].present? && @decree.update_attributes(decree_params)
         flash[:notice] = 'Decree was successfully updated.'
         
         format.html { redirect_to :controller => "boards", :action => "edit", :id => @decree.board_id }

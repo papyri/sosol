@@ -1,4 +1,4 @@
-class CreateCommunityAdmins < ActiveRecord::Migration
+class CreateCommunityAdmins < ActiveRecord::Migration[4.2]
   def self.up
     create_table :communities_admins , :id => false do |t|
       t.integer :community_id

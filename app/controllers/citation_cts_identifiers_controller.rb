@@ -1,6 +1,6 @@
 class CitationCtsIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
-  before_filter :authorize
+  before_action :authorize
   
   def edit
     redirect_to :action =>"editxml",:id=>params[:id]

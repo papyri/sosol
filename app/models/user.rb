@@ -1,5 +1,5 @@
 #Represents a system user.
-class User < ActiveRecord::Base
+class User < ApplicationRecord
 
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name
@@ -138,7 +138,7 @@ class User < ActiveRecord::Base
     if user_id.is_a? Integer
       stats = ActiveRecord::Base.connection.execute("select p.id AS pub_id, p.title AS pub_title, p.status AS pub_status, i.title AS id_title, c.comment AS comment, c.reason AS reason, c.created_at AS created_at from comments c LEFT OUTER JOIN publications p ON c.publication_id=p.id LEFT OUTER JOIN identifiers i ON c.identifier_id=i.id where c.user_id=#{user_id} ORDER BY c.created_at;")
       stats.each {|row|
-        row["created_at"] = DateTime.parse(row["created_at"])
+        row["created_at"] = DateTime.parse(row["created_at"].to_s)
         unless row["comment"].nil?
           row["comment"] = URI.unescape(row["comment"]).gsub("+", " ")
         end

@@ -4,12 +4,12 @@ include HgvMetaIdentifierHelper
 class HgvMetaIdentifiersController < IdentifiersController
   # uses standard layout
   # user must be logged in to access these actions
-  before_filter :authorize
-  before_filter :ownership_guard, :only => [:update, :updatexml]
+  before_action :authorize
+  before_action :ownership_guard, :only => [:update, :updatexml]
   # before post data is used for further processing unwanted entries are discarded
-  before_filter :prune_params, :only => [:update, :get_date_preview]
+  before_action :prune_params, :only => [:update, :get_date_preview]
   #  before post data is further processed some user entries are decorated with additional information, such as human readable format strings
-  before_filter :complement_params, :only => [:update, :get_date_preview]
+  before_action :complement_params, :only => [:update, :get_date_preview]
 
   # Retrieves hgv identifier object from database and calls up HGV metadata editor
   # Assumes that incoming post respectively get parameters contain a valid hgv identifier id
@@ -29,7 +29,8 @@ class HgvMetaIdentifiersController < IdentifiersController
     find_identifier
     #exit
     begin
-      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier], params[:comment].to_s)
+      params.permit!
+      commit_sha = @identifier.set_epidoc(params[:hgv_meta_identifier].to_h, params[:comment].to_s)
       expire_publication_cache
       generate_flash_message
     rescue JRubyXML::ParseError => e
@@ -93,7 +94,8 @@ class HgvMetaIdentifiersController < IdentifiersController
   # Side effect on +@identifier+ and +@update+
   def get_geo_preview
     @identifier = HGVMetaIdentifier.new
-    @identifier.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
+    params.permit!
+    @identifier.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier].to_h
     @update = HgvProvenance.format @identifier.non_database_attribute[:provenance]
 
     respond_to do |format|
@@ -108,8 +110,8 @@ class HgvMetaIdentifiersController < IdentifiersController
     # Prunes post parameters for hash entries +:publicationExtra+, +:textDate+ and +:mentionedDate+
     # Side effect on params variable
     def prune_params
-
       if params[:hgv_meta_identifier]
+        params[:hgv_meta_identifier].permit!
 
         # get rid of empty digital images
         if params[:hgv_meta_identifier][:figures]
@@ -132,8 +134,9 @@ class HgvMetaIdentifiersController < IdentifiersController
             date[:c].empty? && date[:y].empty? && !date[:unknown]
           }
 
+          params[:hgv_meta_identifier][:textDate].permit!
           # get rid of unnecessary date attribute @xml:id if there is only one date
-          if params[:hgv_meta_identifier][:textDate].length == 1
+          if params[:hgv_meta_identifier][:textDate].to_h.length == 1
             params[:hgv_meta_identifier][:textDate]['0'][:attributes][:id] = nil
           end
         end
@@ -160,7 +163,6 @@ class HgvMetaIdentifiersController < IdentifiersController
     # Complements incoming form data for hash entries +:textDate+, +:mentionedDate+ and +provenance+
     # Side effect on params variable
     def complement_params
-
       if params[:hgv_meta_identifier]
 
         if params[:hgv_meta_identifier][:textDate]
@@ -181,7 +183,8 @@ class HgvMetaIdentifiersController < IdentifiersController
         
         if params[:hgv_meta_identifier][:provenance]
           hgv = HGVMetaIdentifier.new
-          hgv.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier]
+          params.permit!
+          hgv.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier].to_h
           params[:hgv_meta_identifier][:origPlace] = HgvProvenance.format hgv.non_database_attribute[:provenance]
 
         else
@@ -221,4 +224,9 @@ class HgvMetaIdentifiersController < IdentifiersController
       @identifier = HGVMetaIdentifier.find(params[:id].to_s)
     end
 
+    private
+
+    def hgv_meta_identifier_params
+      params.require(:hgv_meta_identifier).permit(:provenance, :origPlace, :mentionedDate, :textDate, :figures, :publicationExtra)
+    end
 end
