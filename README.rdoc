@@ -1,3 +1,7 @@
+= SoSOL (Son of Suda On Line)
+
+{<img src="https://travis-ci.com/sosol/sosol.svg?branch=master" alt="Build Status" />}[https://travis-ci.com/sosol/sosol]
+
 = Quick Start
 
 == Requirements
