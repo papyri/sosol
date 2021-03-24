@@ -19,7 +19,7 @@ Sosol::Application.configure do
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
   # STDOUT used for Tomcat/catalina.out logging
-  config.logger = Logger.new(STDOUT)
+  config.logger = ActiveSupport::Logger.new("#{Rails.root}/log/production.log")
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
