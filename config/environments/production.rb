@@ -20,6 +20,7 @@ Sosol::Application.configure do
   # config.logger = SyslogLogger.new
   # STDOUT used for Tomcat/catalina.out logging
   config.logger = Logger.new(STDOUT)
+  config.logger.send :include, ActiveRecord::SessionStore::Extension::LoggerSilencer
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
