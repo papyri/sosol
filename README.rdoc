@@ -2,9 +2,9 @@
 
 == Requirements
 
-* Java SE 8 (1.8+)
-* JRuby (9.1.17.0) - Preferably managed through {rbenv}[https://github.com/sstephenson/rbenv].
-* Bundler (1.17.3+) (gem install bundler)
+* Java SE 8+ (1.8+)
+* JRuby (9.2.14.0) - Preferably managed through {rbenv}[https://github.com/sstephenson/rbenv].
+* Bundler (2.2.10+) (gem install bundler)
 * Git (1.7.1+)
 
 == Initial setup steps for development
@@ -178,25 +178,6 @@ systems by implementing the identifier subclasses necessary for the given
 dataset as well as coherent means for aggregating these components into
 publications.
 
-= JRuby Deployment
-
-== WAR-based deployment
-
-* use warbler to bundle as a standard .war (includes JRuby, gems, etc.) to upload to an app server
-  * initialize/migrate your production DB using "RAILS_ENV=production jruby -S rake db:migrate" (change production line in config/database.yml for your setup)
-  * may want to add "config.logger = Logger.new(STDOUT)" to config/environment.rb to get Rails logging out to servlet container
-  * run "cap local externals:setup" to fetch externals
-  * use "jruby -S warble war" to build the war
-  * need to change REPOSITORY_ROOT in config/environment.rb to an absolute shared path, because packing up the 500MB+ canonical repo in the war will grind things to a halt 
-* war unpacking isn't guaranteed (and multiple deploys would overwrite changes to the unpacked dir structure anyway) so it seems like alternate config will be needed
-  * need a persistent directory for git (overwrite REPOSITORY_ROOT and CANONICAL_REPOSITORY in production)
-  * DB migrations seem impossible to run from the deployed war context, so you'll have to run them pre-deploy using the production environment on some checkout of the code (meaning it will also need access to your production DB server credentials)
-  * not sure on logs, sessions (may need extra config for new vers of Rails), rollback (probably impossible to get easily in a war context due to also needing to reverse migrations)
-
-== Directory-based deployment
-
-* deploy an unpacked directory and run within JRuby using any variety of servers (e.g. jetty-rails, glassfish - N.B. glassfish gem must have all required jars invoked inside JRuby on the classpath e.g. lib/java/saxon9he.jar) which can be accessed directly or proxied
-
 = Repository Setup
 
 == Canonical Repository (from Git)
@@ -208,12 +189,12 @@ publications.
 
 = Administration
 
-* "jruby script/console production" should give you a console for the production environment (keep in mind things like DB/Git access, you'll need to run this from a location that can access those resources, the source, and the correct configs for your production environment)
+* "jruby -S bundle exec rails -e production" should give you a console for the production environment (keep in mind things like DB/Git access, you'll need to run this from a location that can access those resources, the source, and the correct configs for your production environment)
   * from here you can give users admin privileges by e.g.:
     * me = User.find_by_name('rfbaumann')
     * me.admin = true
     * me.save!
-* can completely reset the database with "jruby -S rake RAILS_ENV=production db:reset"
+* can completely reset the database with "jruby -S bundle exec rake RAILS_ENV=production db:reset"
   * note that this ''won't'' run AR callbacks, so you need to clear user/board git repos:
     * if you plan on '''keeping''' canonical (aka repo 3) i.e. not deleting it and recloning from the Git SVN copy, you need to first ensure that it has all finalized objects and remove the user repos you'll delete from its alternates file:
       * cd REPOSITORY_ROOT/canonical.git && git repack && echo "" > objects/info/alternates
@@ -224,8 +205,8 @@ publications.
 = XSugar Standalone
 * to start a local XSugar standalone server:
   * in vendor/plugins/rxsugar/src/standalone run mvn:install and mvn:jetty run
-  
-= Tomcat setup
+
+= Database setup
 * jruby -S rake RAILS_ENV=production db:migrate
 * jruby -S rake RAILS_ENV=production db:structure:dump
 * CREATE DATABASE sosol
