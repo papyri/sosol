@@ -53,3 +53,4 @@ gem 'rack-attack', '~> 4.0'
 gem 'i18n', '< 1.8.8'
 gem "pry", "~> 0.14.0"
 gem "pry-rails", "~> 0.3.9"
+gem 'devise'
