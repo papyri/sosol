@@ -1,4 +1,5 @@
 Sosol::Application.routes.draw do
+  devise_for :users
   resources :communities do
   
     member do

@@ -1,5 +1,9 @@
 #Represents a system user.
 class User < ApplicationRecord
+  # Include default devise modules. Others available are:
+  # :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :confirmable, :validatable
 
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name
