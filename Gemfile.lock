@@ -206,6 +206,9 @@ GEM
     omniauth-oauth2 (1.7.1)
       oauth2 (~> 1.4)
       omniauth (>= 1.9, < 3)
+    omniauth-rails_csrf_protection (1.0.0)
+      actionpack (>= 4.2)
+      omniauth (~> 2.0)
     orm_adapter (0.5.0)
     pry (0.14.0-java)
       coderay (~> 1.1)
@@ -352,6 +355,7 @@ DEPENDENCIES
   json (>= 1.6.6)
   mocha
   omniauth-google-oauth2
+  omniauth-rails_csrf_protection
   pry (~> 0.14.0)
   pry-rails (~> 0.3.9)
   puma
