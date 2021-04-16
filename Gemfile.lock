@@ -1,3 +1,15 @@
+GIT
+  remote: https://github.com/heartcombo/devise.git
+  revision: 5d5636f03ac19e8188d99c044d4b5e90124313af
+  branch: master
+  specs:
+    devise (4.7.3)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0)
+      responders
+      warden (~> 1.2.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -89,12 +101,6 @@ GEM
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
-    devise (4.7.3)
-      bcrypt (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 4.1.0)
-      responders
-      warden (~> 1.2.3)
     dynamic_form (1.1.4)
     erubi (1.10.0)
     erubis (2.7.0)
@@ -151,7 +157,7 @@ GEM
     jruby-rack (1.1.21)
     json (2.5.1-java)
     jwt (2.2.2)
-    loofah (2.9.0)
+    loofah (2.9.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.1)
@@ -176,7 +182,7 @@ GEM
     net-ssh-gateway (2.0.0)
       net-ssh (>= 4.0.0)
     nio4r (2.5.7-java)
-    nokogiri (1.11.2-java)
+    nokogiri (1.11.3-java)
       racc (~> 1.4)
     oauth2 (1.4.7)
       faraday (>= 0.8, < 2.0)
@@ -328,7 +334,7 @@ DEPENDENCIES
   capistrano (~> 2.15.0)
   coffee-rails (~> 4)
   database_cleaner-active_record
-  devise
+  devise!
   dynamic_form
   factory_bot_rails
   haml-rails (~> 2.0)
