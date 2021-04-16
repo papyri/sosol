@@ -151,6 +151,10 @@ class User < ApplicationRecord
     end
   end
 
+  def self.from_omniauth(access_token)
+    Rails.logger.info("User.from_omniauth: #{access_token.inspect}")
+  end
+
   protected
 
   def password_required?
