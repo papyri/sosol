@@ -149,4 +149,10 @@ class User < ApplicationRecord
         }
     end
   end
+
+  protected
+
+  def password_required?
+    false
+  end
 end
