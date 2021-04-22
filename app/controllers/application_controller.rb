@@ -85,6 +85,9 @@ class ApplicationController < ActionController::Base
     if user_id
       @current_user = User.find_by_id user_id
     end
+    if current_user.present? && !@current_user.present?
+      @current_user = current_user
+    end
     return true
   end
   
