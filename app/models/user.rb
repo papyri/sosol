@@ -153,6 +153,24 @@ class User < ApplicationRecord
 
   def self.from_omniauth(access_token)
     Rails.logger.info("User.from_omniauth: #{access_token.inspect}")
+    user_identifier_string = ''
+    if (access_token.provider == 'google_oauth2') && access_token.uid.present?
+      Rails.logger.info('Constructing google_oauth2 identifier')
+      user_identifier_string = "https://www.google.com/profiles/#{access_token.uid}"
+    else
+      Rails.logger.info('User identifier string will be blank')
+    end
+    user_identifier = UserIdentifier.find_by_identifier(user_identifier_string)
+    if user_identifier.present?
+      return user_identifier.user
+    else
+      new_user = User.create(name: access_token.info.name.tr(' ','').downcase, email: access_token.info.email, full_name: access_token.info.name)
+      new_user_identifier = UserIdentifier.create(identifier: user_identifier_string)
+      Rails.logger.info(new_user.inspect)
+      Rails.logger.info(new_user_identifier.inspect)
+      new_user.user_identifiers << new_user_identifier
+      return new_user
+    end
   end
 
   protected
