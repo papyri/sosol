@@ -5,7 +5,8 @@
 
   #janrainEngageEmbed
 
-  = button_to "Sign in with Google via OmniAuth", user_google_oauth2_omniauth_authorize_path
+  - if Devise.omniauth_providers.include?(:google_oauth2)
+    = button_to "Sign in with Google via OmniAuth", user_google_oauth2_omniauth_authorize_path
 
   #signup_box
     %h2 Why should I sign up?
