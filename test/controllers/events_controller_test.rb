@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class EventsControllerTest < ActionController::TestCase
+  include Devise::Test::ControllerHelpers
+
   def setup
     @event = FactoryBot.create(:event)
     @event_two = FactoryBot.create(:event)
