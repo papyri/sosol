@@ -155,17 +155,19 @@ class User < ApplicationRecord
     Rails.logger.info("User.from_omniauth: #{access_token.inspect}")
     user_identifier_string = ''
     if (access_token.provider == 'google_oauth2') && access_token.uid.present?
-      Rails.logger.info('Constructing google_oauth2 identifier')
       user_identifier_string = "https://www.google.com/profiles/#{access_token.uid}"
+      Rails.logger.info("Constructed google_oauth2 identifier: #{user_identifier_string}")
     else
       Rails.logger.info('User identifier string will be blank')
     end
     user_identifier = UserIdentifier.find_by_identifier(user_identifier_string)
     if user_identifier.present?
+      Rails.logger.info("Found UserIdentifier: #{user_identifier.inspect}")
       return user_identifier.user
     else
-      new_user = User.create(name: access_token.info.name.tr(' ','').downcase, email: access_token.info.email, full_name: access_token.info.name)
-      new_user_identifier = UserIdentifier.create(identifier: user_identifier_string)
+      Rails.logger.info("No matching UserIdentifier, creating new user")
+      new_user = User.new(name: access_token.info.name.tr(' ','').downcase, email: access_token.info.email, full_name: access_token.info.name)
+      new_user_identifier = UserIdentifier.new(identifier: user_identifier_string)
       Rails.logger.info(new_user.inspect)
       Rails.logger.info(new_user_identifier.inspect)
       new_user.user_identifiers << new_user_identifier
