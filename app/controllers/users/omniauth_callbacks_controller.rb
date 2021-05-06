@@ -7,10 +7,14 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       sign_in_and_redirect @user, event: :authentication
     else
       session['devise.google_data'] = request.env['omniauth.auth'].except('extra') # Removing extra as it can overflow some session stores
+      session[:identifier] = @user.user_identifiers.first.identifier
+      Rails.logger.info("Session identifier: " + session[:identifier].inspect)
+      Rails.logger.info("User from controller: " + @user.inspect)
+      # We need to use render instead of redirect to pass parameters seamlessly
       if @user.errors.full_messages.present?
-        redirect_to new_user_registration_url, alert: @user.errors.full_messages.join("\n")
+        render template: 'devise/registrations/new', alert: @user.errors.full_messages.join("\n")
       else
-        redirect_to new_user_registration_url
+        render template: 'devise/registrations/new'
       end
     end
   end

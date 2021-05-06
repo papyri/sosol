@@ -175,6 +175,20 @@ class User < ApplicationRecord
     end
   end
 
+  def self.new_with_session(params, session)
+    Rails.logger.info("User.new_with_session #{params.inspect} #{session.inspect}")
+    Rails.logger.info("session.keys #{session.keys.inspect}")
+    super.tap do |user|
+      if session['identifier'].present?
+        Rails.logger.info("Session identifier present")
+        unless user.user_identifiers.any?{|i| i.identifier == session['identifier']}
+          Rails.logger.info("Adding identifier to user")
+          user.user_identifiers << UserIdentifier.new(identifier: session['identifier'])
+        end
+      end
+    end
+  end
+
   protected
 
   def password_required?

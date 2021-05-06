@@ -26,6 +26,8 @@ class ApplicationController < ActionController::Base
 
   before_action :tab_setup
 
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
   unless Rails.application.config.consider_all_requests_local
     rescue_from Exception, :with => :render_500
     rescue_from ActionController::RoutingError, :with => :render_404
@@ -68,6 +70,10 @@ class ApplicationController < ActionController::Base
       flash[:notice] = "Please log in"
       redirect_to signin_url
     end
+  end
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :full_name])
   end
 
   private
