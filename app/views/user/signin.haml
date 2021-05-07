@@ -3,10 +3,11 @@
   -##rpx_box
     -#%iframe{ :src => rpx_signin_url('embed'), :scrolling => 'no', :frameBorder => 'no', :style => "width:30em;height:20em;" }
 
-  #janrainEngageEmbed
-
   - if Devise.omniauth_providers.include?(:google_oauth2)
     = button_to "Sign in with Google", user_google_oauth2_omniauth_authorize_path, class: 'styled_button'
+    %br
+
+  #janrainEngageEmbed
 
   #signup_box
     %h2 Why should I sign up?
