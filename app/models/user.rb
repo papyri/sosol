@@ -192,6 +192,6 @@ class User < ApplicationRecord
   protected
 
   def password_required?
-    false
+    self.user_identifiers.present?
   end
 end
