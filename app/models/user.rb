@@ -190,7 +190,10 @@ class User < ApplicationRecord
   end
 
   def password_required?
-    self.user_identifiers.present?
+    Rails.logger.info("password_required? for: #{self.inspect}")
+    Rails.logger.info("password_required? for: #{self.user_identifiers.inspect}")
+    Rails.logger.info("password_required? #{self.user_identifiers.blank?}")
+    self.user_identifiers.blank?
   end
 
   def update_with_password(params, *options)

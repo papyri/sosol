@@ -4,8 +4,14 @@
     -#%iframe{ :src => rpx_signin_url('embed'), :scrolling => 'no', :frameBorder => 'no', :style => "width:30em;height:20em;" }
 
   - if Devise.omniauth_providers.include?(:google_oauth2)
-    = button_to "Sign in with Google", user_google_oauth2_omniauth_authorize_path, class: 'styled_button'
+    = button_to "Sign up or sign in with Google", user_google_oauth2_omniauth_authorize_path, class: 'styled_button'
     %br
+    %p or
+  = link_to 'Sign up with email/password', new_user_registration_path
+  %br
+  = link_to 'Sign in with email/password', new_user_session_path
+  %br
+  %br
 
   #janrainEngageEmbed
 
