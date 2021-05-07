@@ -21,7 +21,7 @@
     <%= f.email_field :email, autocomplete: "email", value: resource.email %>
   </div>
 
-  <% unless session['devise.google_data'].present? %>
+  <% unless resource.password_required? %>
     <div class="field">
       <%= f.label :password %>
       <% if @minimum_password_length %>

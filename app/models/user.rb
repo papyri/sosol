@@ -189,9 +189,15 @@ class User < ApplicationRecord
     end
   end
 
-  protected
-
   def password_required?
     self.user_identifiers.present?
+  end
+
+  def update_with_password(params, *options)
+    if encrypted_password.blank?
+      update_attributes(params, *options)
+    else
+      super
+    end
   end
 end
