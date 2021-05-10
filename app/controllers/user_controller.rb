@@ -4,6 +4,7 @@ class UserController < ApplicationController
   before_action :authorize, :except => [:signin, :signout, :show, :info, :help, :all_users_links]
 
   def signout
+    sign_out current_user if current_user.present?
     reset_session
     redirect_to :controller => :welcome, :action => "index"
   end
