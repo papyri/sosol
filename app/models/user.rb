@@ -194,6 +194,15 @@ class User < ApplicationRecord
     end
   end
 
+  # NB: Devise only uses this to check that the "current password" is correct when
+  # adding or updating a password. Overriding it in this way makes it so that users
+  # who come in via Google OmniAuth with a "nil" password set are able to *add* a
+  # password to their account. It will *not* allow users with a "nil" password set
+  # to login with a blank password.
+  def valid_password?(current_password)
+    self.encrypted_password.blank? || super(current_password)
+  end
+
   def password_required?
     Rails.logger.info("password_required? for: #{self.inspect}")
     Rails.logger.info("password_required? for: #{self.user_identifiers.inspect}")
