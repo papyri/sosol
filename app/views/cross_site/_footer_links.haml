@@ -1,9 +1,5 @@
-
-
-
-- if @current_user            
+- if @current_user
   %li
-    = link_to 'Admin', :controller => 'user', :action => 'admin'
-  %li              
-    = link_to 'Account', :controller => 'user', :action => 'account'
-    
+    = link_to 'Admin', user_admin_path
+  %li
+    = link_to 'Account', account_path
