@@ -94,6 +94,7 @@ class UserController < ApplicationController
   end
 
   def signin
+    reset_session
     if (ENV['RAILS_ENV'] == 'development') && @current_user.nil? && params[:developer]
       developer = User.find_by_name('developer')
       if developer.nil?
