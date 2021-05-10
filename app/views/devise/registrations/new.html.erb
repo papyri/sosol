@@ -8,18 +8,27 @@
   <% Rails.logger.info("Resource name from view: " + resource_name.inspect) %>
   <div class="field">
     <%= f.label :username %><br />
-    <%= f.text_field :name, value: resource.name %>
+    <%= f.text_field :name, autocomplete: "username", size: 35, value: resource.name %>
   </div>
+  <br />
 
   <div class="field">
     <%= f.label :full_name %><br />
-    <%= f.text_field :full_name, value: resource.full_name %>
+    <%= f.text_field :full_name, autocomplete: "name", size: 35, value: resource.full_name %>
   </div>
+  <br />
 
   <div class="field">
     <%= f.label :email %><br />
-    <%= f.email_field :email, autocomplete: "email", value: resource.email %>
+    <%= f.email_field :email, autocomplete: "email", size: 35, value: resource.email %>
   </div>
+  <br />
+
+  <div class="field">
+    <%= f.label :affiliation %> <em>(optional)</em><br />
+    <%= f.text_field :affiliation, autocomplete: "organization", size: 35 %>
+  </div>
+  <br />
 
   <% if resource.password_required? %>
     <div class="field">
@@ -27,13 +36,14 @@
       <% if @minimum_password_length %>
       <em>(<%= @minimum_password_length %> characters minimum)</em>
       <% end %><br />
-      <%= f.password_field :password, autocomplete: "new-password" %>
+      <%= f.password_field :password, autocomplete: "new-password", size: 35 %>
     </div>
 
     <div class="field">
       <%= f.label :password_confirmation %><br />
-      <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+      <%= f.password_field :password_confirmation, autocomplete: "new-password", size: 35 %>
     </div>
+    <br />
   <% end %>
 
   <div class="actions">
