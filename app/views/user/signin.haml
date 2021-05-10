@@ -3,15 +3,12 @@
   -##rpx_box
     -#%iframe{ :src => rpx_signin_url('embed'), :scrolling => 'no', :frameBorder => 'no', :style => "width:30em;height:20em;" }
 
-  - if Devise.omniauth_providers.include?(:google_oauth2)
-    = button_to "Sign up or sign in with Google", user_google_oauth2_omniauth_authorize_path, class: 'styled_button'
-    %p or
-  = link_to 'Sign in with email/password', new_user_session_path, class: 'styled_button'
-  = link_to 'Sign up with email/password', new_user_registration_path, class: 'styled_button'
-  %br
-  %br
-
-  #janrainEngageEmbed
+  #signin_buttons
+    - if Devise.omniauth_providers.include?(:google_oauth2)
+      = button_to "Sign up or sign in with Google", user_google_oauth2_omniauth_authorize_path, class: 'styled_button'
+      %p or
+    = link_to 'Sign in with email/password', new_user_session_path, class: 'styled_button'
+    = link_to 'Sign up with email/password', new_user_registration_path, class: 'styled_button'
 
   #signup_box
     %h2 Why should I sign up?
@@ -22,9 +19,12 @@
       %li Publish new documents
       %li Collaborate with other users
 
-  #signup_explanation.text_box
-    %h3 What is this?
-    %p!== Instead of creating yet another username and password, #{Sosol::Application.config.site_name} will use your Google, AOL, Facebook, or Yahoo account. If you don't have one of these accounts, you can create an OpenID for free at <a href="https://www.myopenid.com/signup">myOpenID.com</a>. If you have a Flickr, Blogger, or WordPress.com account, you may already have an OpenID through those services - click the OpenID logo and then the icon for the corresponding service, and it well help you find out your OpenID URL.
-    %br
-    %h3 Do I have to give you my password?
-    %p!== <strong>No.</strong> After entering your info above, you will be taken to the service that you picked and enter your password there. Then you will be asked to approve #{Sosol::Application.config.site_name} to have limited access to basic information like your username and email address. Finally you will be redirected back here to finish signing up. <strong>We will never have access to your passwords or your accounts.</strong>
+  #janrainEngageEmbed
+
+  -#
+    #signup_explanation.text_box
+      %h3 What is this?
+      %p!== Instead of creating yet another username and password, #{Sosol::Application.config.site_name} will use your Google, AOL, Facebook, or Yahoo account. If you don't have one of these accounts, you can create an OpenID for free at <a href="https://www.myopenid.com/signup">myOpenID.com</a>. If you have a Flickr, Blogger, or WordPress.com account, you may already have an OpenID through those services - click the OpenID logo and then the icon for the corresponding service, and it well help you find out your OpenID URL.
+      %br
+      %h3 Do I have to give you my password?
+      %p!== <strong>No.</strong> After entering your info above, you will be taken to the service that you picked and enter your password there. Then you will be asked to approve #{Sosol::Application.config.site_name} to have limited access to basic information like your username and email address. Finally you will be redirected back here to finish signing up. <strong>We will never have access to your passwords or your accounts.</strong>
