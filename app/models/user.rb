@@ -30,6 +30,8 @@ class User < ApplicationRecord
 
   has_repository
 
+  attr_accessor :current_password
+
   after_create do |user|
     user.repository.create
 
@@ -200,7 +202,7 @@ class User < ApplicationRecord
   end
 
   def update_with_password(params, *options)
-    if encrypted_password.blank?
+    if encrypted_password.blank? && params[:password].blank?
       update_attributes(params, *options)
     else
       super

@@ -4,13 +4,26 @@
   <%= render "devise/shared/error_messages", resource: resource %>
 
   <div class="field">
+    <%= f.label :full_name %><br />
+    <%= f.text_field :full_name, autocomplete: "name", size: 35, value: resource.full_name %>
+  </div>
+  <br />
+
+  <div class="field">
     <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+    <%= f.email_field :email, autocomplete: "email" %>
   </div>
 
   <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
     <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
   <% end %>
+  <br />
+
+  <div class="field">
+    <%= f.label :affiliation %> <em>(optional)</em><br />
+    <%= f.text_field :affiliation, autocomplete: "organization", size: 35, value: resource.affiliation %>
+  </div>
+  <br />
 
   <div class="field">
     <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
