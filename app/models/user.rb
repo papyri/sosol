@@ -179,6 +179,9 @@ class User < ApplicationRecord
     Rails.logger.info("User.new_with_session #{params.inspect} #{session.inspect}")
     Rails.logger.info("session.keys #{session.keys.inspect}")
     super.tap do |user|
+      if session['devise.google_data'].present?
+        Rails.logger.info("devise.google_data: #{session['devise.google_data']}")
+      end
       if session['identifier'].present?
         Rails.logger.info("Session identifier present")
         unless user.user_identifiers.any?{|i| i.identifier == session['identifier']}
