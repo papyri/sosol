@@ -74,7 +74,7 @@ Sosol::Application.routes.draw do
   end
 
   resources :events
-  resource :session
+  # resource :session
   match 'help' => 'user#help', :as => :help, :via => :get
   match 'usage' => 'user#usage_stats', :as => :usage, :via => :get
   match 'all_users_links' => 'user#all_users_links', :as => :all_users_links, :via => :get
