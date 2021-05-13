@@ -4,7 +4,7 @@ class User < ApplicationRecord
   # :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :confirmable, :validatable,
-         :omniauthable, omniauth_providers: [:google_oauth2]
+         :omniauthable, omniauth_providers: [:google]
 
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name
@@ -156,9 +156,9 @@ class User < ApplicationRecord
   def self.from_omniauth(access_token)
     Rails.logger.info("User.from_omniauth: #{access_token.inspect}")
     user_identifier_string = ''
-    if (access_token.provider == 'google_oauth2') && access_token.uid.present?
+    if (access_token.provider == 'google') && access_token.uid.present?
       user_identifier_string = "https://www.google.com/profiles/#{access_token.uid}"
-      Rails.logger.info("Constructed google_oauth2 identifier: #{user_identifier_string}")
+      Rails.logger.info("Constructed google identifier: #{user_identifier_string}")
     else
       Rails.logger.info('User identifier string will be blank')
     end
