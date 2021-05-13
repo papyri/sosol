@@ -49,8 +49,8 @@
   </div>
 <% end %>
 
-<h3>Cancel my account</h3>
-
-<p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
-
-<%= link_to "Back", :back %>
+<h3>Usage Stats</h3>
+<ul>
+  <li><%= link_to "Your Usage Stats", usage_url %></li>
+  <li><%= link_to "Usage Stats By User", all_users_links_url %></li>
+</ul>
