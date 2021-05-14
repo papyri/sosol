@@ -605,7 +605,7 @@ class Publication < ApplicationRecord
   #*Effects*
   #- Calls methods and sets status based on vote tally. See implementation for details.
   def tally_votes(user_votes = nil)
-    user_votes ||= self.votes(true) #use the publication's votes
+    user_votes ||= self.votes.reload #use the publication's votes
     #here is where the action is for deciding how votes are organized and what happens for vote results
     #as of 3-11-2011 the votes are set on the identifier where the user votes & on the publication
     #once a user has voted on any identifier of a publication, then they can no longer vote on the publication
