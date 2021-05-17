@@ -38,12 +38,13 @@
     <%= f.label :password_confirmation %><br />
     <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
   </div>
-
+  <br/>
+  <br/>
   <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
+    <%= f.label :current_password %> <i>(We need your current password to confirm your changes. If you haven't set a password before or are setting your password for the first time, you can leave this blank.)</i><br />
     <%= f.password_field :current_password, autocomplete: "current-password" %>
   </div>
-
+  <br/>
   <div class="actions">
     <%= f.submit "Update" %>
   </div>
