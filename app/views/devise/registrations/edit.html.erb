@@ -15,7 +15,7 @@
   </div>
 
   <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+    <div>Currently waiting on confirmation for: <%= resource.unconfirmed_email %></div>
   <% end %>
   <br />
 
@@ -27,24 +27,24 @@
 
   <div class="field">
     <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
     <% if @minimum_password_length %>
+      <i><%= @minimum_password_length %> characters minimum</i>
       <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
     <% end %>
+    <%= f.password_field :password, autocomplete: "new-password" %>
   </div>
 
   <div class="field">
     <%= f.label :password_confirmation %><br />
     <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
   </div>
-  <br/>
-  <br/>
+  <br />
+  <br />
   <div class="field">
     <%= f.label :current_password %> <i>(We need your current password to confirm your changes. If you haven't set a password before or are setting your password for the first time, you can leave this blank.)</i><br />
     <%= f.password_field :current_password, autocomplete: "current-password" %>
   </div>
-  <br/>
+  <br />
   <div class="actions">
     <%= f.submit "Update" %>
   </div>
