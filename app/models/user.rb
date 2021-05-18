@@ -4,11 +4,12 @@ class User < ApplicationRecord
   # :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :confirmable, :validatable,
-         :omniauthable, omniauth_providers: [:google]
+         :omniauthable, omniauth_providers: [:google], authentication_keys: [:login]
 
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name
   validates_format_of :name, :without => Repository::BASH_SPECIAL_CHARACTERS_REGEX, :message => "Username cannot contain any of the following special characters: #{Repository::BASH_SPECIAL_CHARACTERS_REGEX.source[1..-2]}"
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
 
   has_many :user_identifiers, :dependent => :destroy
 
@@ -31,6 +32,22 @@ class User < ApplicationRecord
   has_repository
 
   attr_accessor :current_password
+  attr_writer :login
+
+  def login
+    @login || self.name || self.email
+  end
+
+  def self.find_for_database_authentication(warden_conditions)
+    conditions = warden_conditions.dup
+    conditions[:email].downcase! if conditions[:email]
+    conditions[:name].downcase! if conditions[:name]
+    if login = conditions.delete(:login)
+      where(conditions.to_h).where(["lower(name) = :value OR lower(email) = :value", { :value => login.downcase }]).first
+    elsif conditions.has_key?(:name) || conditions.has_key?(:email)
+      where(conditions.to_h).first
+    end
+  end
 
   after_create do |user|
     user.repository.create
