@@ -9,6 +9,7 @@ class User < ApplicationRecord
   validates_uniqueness_of :name, :case_sensitive => false
   validates_presence_of :name
   validates_format_of :name, :without => Repository::BASH_SPECIAL_CHARACTERS_REGEX, :message => "Username cannot contain any of the following special characters: #{Repository::BASH_SPECIAL_CHARACTERS_REGEX.source[1..-2]}"
+  validates_format_of :name, :without => /@/, :message => "Username cannot contain an '@' character.", on: :create
   validates :email, presence: true, uniqueness: { case_sensitive: false }
 
   has_many :user_identifiers, :dependent => :destroy
