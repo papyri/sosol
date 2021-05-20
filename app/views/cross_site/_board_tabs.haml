@@ -75,7 +75,7 @@
       %ul
         - sosol_boards.each do |sb|
           %li
-            = link_to sb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => sb.id
+            = link_to sb.friendly_name, user_board_dashboard_path(board_id: sb.id)
         
     
         
@@ -89,6 +89,6 @@
             = current_name    
           - community_boards.each do |cb|
             %li
-              = link_to cb.friendly_name, :controller => "user", :action => "dashboard", :dashboard_type => "board", :board_id => cb.id
+              = link_to cb.friendly_name, user_board_dashboard_path(board_id: cb.id)
               
           
