@@ -311,6 +311,7 @@ Devise.setup do |config|
 
   if ENV['GOOGLE_CLIENT_ID'].present? && ENV['GOOGLE_CLIENT_SECRET'].present?
     config.omniauth :google_oauth2, ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'], {
+      redirect_uri: ENV['GOOGLE_REDIRECT_URI'], # e.g. http://localhost:8000/users/auth/google/callback
       name: 'google'
     }
   end
