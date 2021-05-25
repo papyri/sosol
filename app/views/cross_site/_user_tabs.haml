@@ -63,7 +63,7 @@
   
         - all_communities.each do |community|
           %li
-            = link_to community.format_name, :controller => "user", :action => "user_community_dashboard", :community_id => community.id
+            = link_to community.format_name, user_user_community_dashboard_path(community_id: community.id)
   
         -#there is no real diff between this view and the user view        
           - end_communities = Community.where(end_user_id: @current_user.id)
@@ -72,6 +72,6 @@
               Completed
             - end_communities.each do |community|
               %li
-                = link_to community.format_name, :controller => "user", :action => "user_community_dashboard", :community_id => community.id
+                = link_to community.format_name, user_user_community_dashboard_path(community_id: community.id)
                 
         - #should be finding all user pubs, then showing the ones with community ids?
