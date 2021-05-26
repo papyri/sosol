@@ -25,7 +25,7 @@
   %p 
     click name to add
   %br       
-  = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("communities", "add_admin", @community.id ) }
+  = render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo::LinkingInfo.new("communities", "add_admin", @community.id ) }
 
   
     

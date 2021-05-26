@@ -3,5 +3,5 @@
 %h1
   Editing board
 Click user to add to board.
-= render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo.new("boards", "add_member", @board.id  ) }
+= render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo::LinkingInfo.new("boards", "add_member", @board.id  ) }
 
