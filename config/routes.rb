@@ -451,4 +451,6 @@ Sosol::Application.routes.draw do
   post 'collection_identifiers/update', to: 'collection_identifiers#update'
   get 'leiden/xml2leiden', to: 'leiden#xml2leiden'
   get 'leiden/leiden2xml', to: 'leiden#leiden2xml'
+  get 'dclp_meta_identifiers/biblio_autocomplete', to: 'dclp_meta_identifiers#biblio_autocomplete'
+  get 'dclp_meta_identifiers/ancient_author_autocomplete', to: 'dclp_meta_identifiers#ancient_author_autocomplete'
 end
