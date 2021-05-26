@@ -1,76 +1,64 @@
 Sosol::Application.routes.draw do
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
   resources :communities do
-  
     member do
-  get :find_member
-  get :list_publications
-  get :set_end_user
-  get :add_member
-  get :add_member_page
-  get :remove_member
-  get :add_admin
-  get :add_admin_page
-  get :remove_admin
-  get :confirm_destroy
-  get :edit_end_user
-  post :remove_current_user_membership
-  post :remove_current_user
-  end
-  
+      get :find_member
+      get :list_publications
+      get :set_end_user
+      get :add_member
+      get :add_member_page
+      get :remove_member
+      get :add_admin
+      get :add_admin_page
+      get :remove_admin
+      get :confirm_destroy
+      get :edit_end_user
+      post :remove_current_user_membership
+      post :remove_current_user
+    end
   end
 
   resources :hgv_trans_glossaries do
-  
     member do
-  patch :update
-  end
-  
+      patch :update
+    end
   end
 
   resources :emailers do
-  
     member do
-  get :add_member
-  get :remove_member
-  get :find_board_member
-  get :find_sosol_users
-  end
-  
+      get :add_member
+      get :remove_member
+      get :find_board_member
+      get :find_sosol_users
+    end
   end
 
   resources :votes
   resources :decrees
   resources :boards do
     collection do
-  get :rank
-  post :update_rankings
-  get :send_board_reminder_emails
-  end
-  
-  
+      get :rank
+      post :update_rankings
+      get :send_board_reminder_emails
+    end
   end
 
   resources :boards do
-  
     member do
-  get :overview
-  get :edit_members
-  get :add_member
-  get :find_member
-  get :remove_member
-  post :update_rankings
-  get :confirm_destroy
-  end
-  
+      get :overview
+      get :edit_members
+      get :add_member
+      get :find_member
+      get :remove_member
+      post :update_rankings
+      get :confirm_destroy
+    end
   end
 
   resources :comments do
-  
     member do
-  get :ask_for
-  end
-  
+      get :ask_for
+    end
   end
 
   resources :events
@@ -86,34 +74,31 @@ Sosol::Application.routes.draw do
   match 'publications/archive_all' => 'publications#archive_all', :via => :post
   resources :publications do
     collection do
-  get :advanced_create
-  end
-  
-  
+      get :advanced_create
+    end
   end
 
   resources :publications do
-  
     member do
-  get :edit_adjacent
-  get :edit_text
-  get :edit_meta
-  get :edit_apis
-  get :edit_biblio
-  get :edit_trans
-  get :show
-  post :submit
-  get :finalize_review
-  post :finalize
-  post :become_finalizer
-  post :archive
-  get :confirm_archive
-  get :confirm_archive_all
-  get :confirm_withdraw
-  post :withdraw
-  get :confirm_delete
-  get :download
-  end
+      get :edit_adjacent
+      get :edit_text
+      get :edit_meta
+      get :edit_apis
+      get :edit_biblio
+      get :edit_trans
+      get :show
+      post :submit
+      get :finalize_review
+      post :finalize
+      post :become_finalizer
+      post :archive
+      get :confirm_archive
+      get :confirm_archive_all
+      get :confirm_withdraw
+      post :withdraw
+      get :confirm_delete
+      get :download
+    end
   end
   post 'publications/create' => 'publications#create'
   post 'publications/create_from_list' => 'publications#create_from_list'
@@ -123,44 +108,38 @@ Sosol::Application.routes.draw do
   post 'publications/create_from_dclp_template' => 'publications#create_from_dclp_template'
   post 'publications/create_from_list' => 'publications#create_from_list'
   post 'publications/create_from_selector' => 'publications#create_from_selector'
-  
+
 
   resources :publications do
-  
-  
-      resources :ddb_identifiers do
-    
-        member do
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :rename_review
-    patch :rename
-    get :commentary
-    patch :update_commentary
-    patch :update_frontmatter_commentary
-    delete :delete_commentary
-    delete :delete_frontmatter_commentary
-    end
-    
+    resources :ddb_identifiers do
+      member do
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+        get :commentary
+        patch :update_commentary
+        patch :update_frontmatter_commentary
+        delete :delete_commentary
+        delete :delete_frontmatter_commentary
+      end
     end
 
     resources :hgv_meta_identifiers do
-    
-        member do
-    post :get_date_preview
-    patch :get_date_preview
-    post :get_geo_preview
-    patch :get_geo_preview
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :rename_review
-    patch :rename
-    end
-    
+      member do
+        post :get_date_preview
+        patch :get_date_preview
+        post :get_geo_preview
+        patch :get_geo_preview
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+      end
     end
 
     resources :dclp_meta_identifiers do
@@ -169,232 +148,212 @@ Sosol::Application.routes.draw do
         get :ancient_author_autocomplete
       end
 
-        member do
-    get :history
-    get :preview
-    get :editxml
-    get :biblio_preview
-    patch :updatexml
-    get :rename_review
-    patch :rename
-    end
-
+      member do
+        get :history
+        get :preview
+        get :editxml
+        get :biblio_preview
+        patch :updatexml
+        get :rename_review
+        patch :rename
+      end
     end
 
     resources :dclp_text_identifiers do
-
-        member do
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :rename_review
-    patch :rename
-    get :commentary
-    patch :update_commentary
-    patch :update_frontmatter_commentary
-    delete :delete_commentary
-    delete :delete_frontmatter_commentary
-    end
-
+      member do
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+        get :commentary
+        patch :update_commentary
+        patch :update_frontmatter_commentary
+        delete :delete_commentary
+        delete :delete_frontmatter_commentary
+      end
     end
 
     resources :apis_identifiers do
-    
-        member do
-    get :history
-    get :preview
-    get :xml
-    get :editxml
-    patch :updatexml
-    get :rename_review
-    patch :rename
-    end
-    
+      member do
+        get :history
+        get :preview
+        get :xml
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+      end
     end
 
     resources :hgv_trans_identifiers do
-    
-        member do
-    post :add_new_lang_to_xml
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :rename_review
-    patch :rename
-    end
-    
+      member do
+        post :add_new_lang_to_xml
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+      end
+
     end
 
     resources :biblio_identifiers do
-    
-        member do
-    get :history
-    get :editxml
-    patch :updatexml
-    get :rename_review
-    patch :rename
-    get :preview
-    end
-    
+      member do
+        get :history
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+        get :preview
+      end
     end
 
     resources :epi_cts_identifiers do
       collection do
         post :create_from_selector
       end
-    
-        member do
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    patch :link_translation
-    get :rename_review
-    patch :rename
-    get :commentary
-    patch :update_commentary
-    patch :update_frontmatter_commentary
-    delete :delete_commentary
-    delete :delete_frontmatter_commentary
-    get :link_translation
-    end
-    
+
+      member do
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        patch :link_translation
+        get :rename_review
+        patch :rename
+        get :commentary
+        patch :update_commentary
+        patch :update_frontmatter_commentary
+        delete :delete_commentary
+        delete :delete_frontmatter_commentary
+        get :link_translation
+      end
     end
 
     resources :epi_trans_cts_identifiers do
       collection do
         post :create_from_selector
       end
-    
-        member do
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :rename_review
-    patch :rename
-    post :create
-    end
-    
+
+      member do
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+        post :create
+      end
     end
 
     resources :citation_cts_identifiers do
-    
-        member do
-    get :confirm_edit_or_annotate
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :rename_review
-    patch :rename
-    get :create
-    post :edit_or_create
-    post :select
-    end
-    
+      member do
+        get :confirm_edit_or_annotate
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+        get :create
+        post :edit_or_create
+        post :select
+      end
     end
 
     resources :tei_cts_identifiers do
       collection do
         post :create_from_selector
       end
-    
-        member do
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :exportxml
-    get :rename_review
-    patch :rename
-    get :commentary
-    patch :update_commentary
-    patch :update_frontmatter_commentary
-    delete :delete_commentary
-    delete :delete_frontmatter_commentary
-    get :link_translation
-    get :link_citation
-    end
-    
+
+      member do
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :exportxml
+        get :rename_review
+        patch :rename
+        get :commentary
+        patch :update_commentary
+        patch :update_frontmatter_commentary
+        delete :delete_commentary
+        delete :delete_frontmatter_commentary
+        get :link_translation
+        get :link_citation
+      end
     end
 
     resources :tei_trans_cts_identifiers do
       collection do
         post :create_from_selector
       end
-    
-        member do
-    post :create
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :exportxml
-    get :rename_review
-    patch :rename
-    get :commentary
-    patch :update_commentary
-    patch :update_frontmatter_commentary
-    delete :delete_commentary
-    delete :delete_frontmatter_commentary
-    end
-    
+
+      member do
+        post :create
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :exportxml
+        get :rename_review
+        patch :rename
+        get :commentary
+        patch :update_commentary
+        patch :update_frontmatter_commentary
+        delete :delete_commentary
+        delete :delete_frontmatter_commentary
+      end
     end
 
     resources :cts_inventory_identifiers do
-    
-        member do
-    post :create
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :exportxml
-    get :rename_review
-    patch :rename
-    get :commentary
-    patch :update_commentary
-    patch :update_frontmatter_commentary
-    delete :delete_commentary
-    delete :delete_frontmatter_commentary
-    end
-    
+      member do
+        post :create
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :exportxml
+        get :rename_review
+        patch :rename
+        get :commentary
+        patch :update_commentary
+        patch :update_frontmatter_commentary
+        delete :delete_commentary
+        delete :delete_frontmatter_commentary
+      end
     end
 
     resources :oac_identifiers do
-    
-        member do
-    post :create
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :exportxml
-    post :edit_or_create
-    post :append
-    get :rename_review
-    patch :rename
-    end
-    
+      member do
+        post :create
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :exportxml
+        post :edit_or_create
+        post :append
+        get :rename_review
+        patch :rename
+      end
     end
 
     resources :cts_oac_identifiers do
-    
-        member do
-    post :create
-    get :history
-    get :preview
-    get :editxml
-    patch :updatexml
-    get :exportxml
-    post :edit_or_create
-    post :append
-    patch :delete_annotation
-    end
-    
+      member do
+        post :create
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :exportxml
+        post :edit_or_create
+        post :append
+        patch :delete_annotation
+      end
     end
   end
 
