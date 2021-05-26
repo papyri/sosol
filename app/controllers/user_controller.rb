@@ -4,6 +4,7 @@ class UserController < ApplicationController
   before_action :authorize, :except => [:signin, :signout, :show, :info, :help, :all_users_links]
 
   def signout
+    sign_out current_user if current_user.present?
     reset_session
     redirect_to :controller => :welcome, :action => "index"
   end
@@ -94,6 +95,7 @@ class UserController < ApplicationController
   end
 
   def signin
+    reset_session
     if (ENV['RAILS_ENV'] == 'development') && @current_user.nil? && params[:developer]
       developer = User.find_by_name('developer')
       if developer.nil?

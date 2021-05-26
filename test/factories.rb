@@ -91,6 +91,8 @@ FactoryBot.define do
     f.name { FactoryBot.generate(:name) }
     f.full_name { FactoryBot.generate(:full_name) }
     f.email { FactoryBot.generate(:email) }
+    f.confirmed_at { Time.now }
+    f.password { SecureRandom.uuid }
   end
 
   factory :admin, :parent => :user do |f|

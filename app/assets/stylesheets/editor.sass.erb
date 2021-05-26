@@ -106,10 +106,17 @@ $non_underlined_link: #4183c4
 styled_button
   +styled_button
 
+.styled_button
+  +styled_button
+  text-decoration: none
+  &:visited
+    color: $pn_color
+
 #submit
   margin-top: .5em
   border: 1px solid gray
   background: $main_color_fade
+  text-decoration: none
   padding: 1em
   
   h3
@@ -356,6 +363,10 @@ styled_button_show
           color: black
           text-decoration: none
 
+#signin_buttons
+  float: left
+  margin-bottom: 2em
+
 #janrainEngageEmbed
   float: left
   margin-bottom: 2em
@@ -363,6 +374,9 @@ styled_button_show
 #signup_box
   float: right
   width: 35em
+
+.clear
+  clear: both
 
 #signup_explanation
   clear: both

@@ -26,6 +26,8 @@ class ApplicationController < ActionController::Base
 
   before_action :tab_setup
 
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
   unless Rails.application.config.consider_all_requests_local
     rescue_from Exception, :with => :render_500
     rescue_from ActionController::RoutingError, :with => :render_404
@@ -35,7 +37,15 @@ class ApplicationController < ActionController::Base
   end
 
   layout Sosol::Application.config.site_layout
-  
+
+  def after_sign_in_path_for(resource)
+    dashboard_path
+  end
+
+  def after_sign_up_path_for(resource)
+    dashboard_path
+  end
+
   protected
 
   def render_500(e)
@@ -70,6 +80,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :full_name, :affiliation])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:full_name, :affiliation])
+  end
+
   private
   
   def get_user_id  
@@ -84,6 +99,9 @@ class ApplicationController < ActionController::Base
     user_id = session[:user_id]
     if user_id
       @current_user = User.find_by_id user_id
+    end
+    if current_user.present? && !@current_user.present?
+      @current_user = current_user
     end
     return true
   end

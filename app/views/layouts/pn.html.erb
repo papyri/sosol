@@ -31,7 +31,7 @@
     if (typeof window.janrain !== 'object') window.janrain = {};
     if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
     
-    janrain.settings.tokenUrl = '<%= url_for(:controller => :rpx, :action => :login_return, :only_path => false, :protocol => 'https') %>';
+    janrain.settings.tokenUrl = '<%= rpx_login_return_url(:protocol => 'https') %>';
 
     function isReady() { janrain.ready = true; };
     if (document.addEventListener) {

@@ -1,0 +1,57 @@
+<h2>Edit <%= resource_name.to_s.humanize %></h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <div class="field">
+    <%= f.label :full_name %><br />
+    <%= f.text_field :full_name, autocomplete: "name", size: 35, value: resource.full_name %>
+  </div>
+  <br />
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autocomplete: "email" %>
+  </div>
+
+  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+    <div>Currently waiting on confirmation for: <%= resource.unconfirmed_email %></div>
+  <% end %>
+  <br />
+
+  <div class="field">
+    <%= f.label :affiliation %> <em>(optional)</em><br />
+    <%= f.text_field :affiliation, autocomplete: "organization", size: 35, value: resource.affiliation %>
+  </div>
+  <br />
+
+  <div class="field">
+    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+    <% if @minimum_password_length %>
+      <i><%= @minimum_password_length %> characters minimum</i>
+      <br />
+    <% end %>
+    <%= f.password_field :password, autocomplete: "new-password" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  </div>
+  <br />
+  <br />
+  <div class="field">
+    <%= f.label :current_password %> <i>(We need your current password to confirm your changes. If you haven't set a password before or are setting your password for the first time, you can leave this blank.)</i><br />
+    <%= f.password_field :current_password, autocomplete: "current-password" %>
+  </div>
+  <br />
+  <div class="actions">
+    <%= f.submit "Update" %>
+  </div>
+<% end %>
+
+<h3>Usage Stats</h3>
+<ul>
+  <li><%= link_to "Your Usage Stats", usage_url %></li>
+  <li><%= link_to "Usage Stats By User", all_users_links_url %></li>
+</ul>

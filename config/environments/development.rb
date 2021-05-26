@@ -28,6 +28,7 @@ Sosol::Application.configure do
   require File.join(File.dirname(__FILE__), 'development_secret')
   # configure email parameters
   config.site_email_from='admin@localhost'
+  config.action_mailer.default_url_options = { host: 'localhost' }
 
   # Don't compress assets in development mode
   config.assets.compress = false
