@@ -9,7 +9,10 @@
   <xsl:variable name="path">/tmp</xsl:variable>	
   <xsl:variable name="outbase">/tmp</xsl:variable>
   <xsl:variable name="resolve-uris" select="true()"/>
+  <xsl:variable name="tmbase">/srv/data/papyri.info/TM/files</xsl:variable>
 
+  <xsl:include href="../pn/navigator/pn-xslt/pi-global-varsandparams.xsl"/>
+  <xsl:include href="../pn/navigator/pn-xslt/pi-functions.xsl"/>
   <xsl:include href="../pn/navigator/pn-xslt/htm-teibibl.xsl"/>
   
   <xsl:output method="html"/>
