@@ -330,7 +330,7 @@ class PublicationsController < ApplicationController
       redirect_to show
     else
       if @publication.advisory_lock_exists?("finalize_#{@publication.id}")
-        flash[:error] = "Cen't change finalizer - finalizer's copy is already in the process of being finalized."
+        flash[:error] = "Can't change finalizer - finalizer's copy is already in the process of being finalized."
         redirect_to show
       else
         SendToFinalizerJob.perform_async(@publication.id, @current_user.id)
