@@ -80,7 +80,7 @@
     - if @publication.owner_type == "Board" && @publication.status == "approved"
       -# if i am already the finalizer dont show the button
       - finalizer = @publication.find_finalizer_user
-      - if !(finalizer && finalizer.id == @current_user.id)
+      - if (!(finalizer && (finalizer.id == @current_user.id))) || ((!finalizer) && @publication.branch_exists? && (@publication.children.length == 0))
         = form_tag({:controller => 'publications', :action => 'become_finalizer'}) do
           = submit_tag "Make me finalizer", :disabled => @publication.advisory_lock_exists?("become_finalizer_#{@publication.id}"), :onclick => 'this.disabled=true;this.form.submit();'
     %br
