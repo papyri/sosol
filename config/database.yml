@@ -21,3 +21,5 @@ production:
   properties: {serverTimezone: "America/New_York"}
   database: idp2
   username: idp2
+  pool: 16
+  reaping_frequency: 120
