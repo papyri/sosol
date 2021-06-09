@@ -132,7 +132,7 @@ module JRubyXML
   class EpiDocP5Validator < JARVValidator
     def initialize
       @schema_url =
-        "http://www.stoa.org/epidoc/schema/8.16/tei-epidoc.rng"
+        "https://epidoc.stoa.org/schema/8.16/tei-epidoc.rng"
       super
     end
   end
@@ -140,7 +140,7 @@ module JRubyXML
   class EpiDocP4Validator < JARVValidator
     def initialize
       @schema_url =
-        "http://www.stoa.org/epidoc/dtd/6/tei-epidoc.dtd"
+        "https://epidoc.stoa.org/dtd/6/tei-epidoc.dtd"
       super
     end
   end
@@ -148,7 +148,7 @@ module JRubyXML
   class HGVEpiDocValidator < JARVValidator
     def initialize
       @schema_url =
-        "http://www.stoa.org/epidoc/schema/8.13/tei-epidoc.rng"
+        "https://epidoc.stoa.org/schema/8.13/tei-epidoc.rng"
       super
     end
   end
@@ -156,7 +156,7 @@ module JRubyXML
   class APISEpiDocValidator < JARVValidator
     def initialize
       @schema_url =
-        "http://www.stoa.org/epidoc/schema/8.13/tei-epidoc.rng"
+        "https://epidoc.stoa.org/schema/8.13/tei-epidoc.rng"
       super
     end
   end
@@ -164,7 +164,7 @@ module JRubyXML
   class DCLPEpiDocValidator < JARVValidator
     def initialize
       @schema_url =
-        "http://www.stoa.org/epidoc/schema/8.23/tei-epidoc.rng"
+        "https://epidoc.stoa.org/schema/8.23/tei-epidoc.rng"
       super
     end
   end
