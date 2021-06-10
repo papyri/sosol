@@ -497,8 +497,22 @@ class Publication < ApplicationRecord
   def recoverable_branch
     if (!self.branch_exists?) && self.parent.present? && self.parent.branch_exists?
       parent_head = self.parent.head
-      return self.similar_branches.detect do |similar_branch|
-        parent_head == self.owner.repository.jgit_repo.resolve(similar_branch).name()
+      matching_branch = self.similar_branches.detect do |similar_branch|
+        begin
+          parent_head == self.owner.repository.jgit_repo.resolve(similar_branch).name()
+        rescue Java::OrgEclipseJgitErrors::RevisionSyntaxException => e
+          false
+        end
+      end
+
+      return matching_branch if matching_branch.present?
+
+      return self.repository.branches.detect do |check_branch|
+        begin
+          parent_head == self.owner.repository.jgit_repo.resolve(check_branch).name()
+        rescue Java::OrgEclipseJgitErrors::RevisionSyntaxException => e
+          false
+        end
       end
     end
   end
