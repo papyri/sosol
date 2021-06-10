@@ -494,20 +494,29 @@ class Publication < ApplicationRecord
     return self.repository.branches.select{|owner_branch| owner_branch =~ /#{branch_leaf}/}
   end
 
+  def recoverable_branch
+    if (!self.branch_exists?) && self.parent.present? && self.parent.branch_exists?
+      parent_head = self.parent.head
+      return self.similar_branches.detect do |similar_branch|
+        parent_head == self.owner.repository.jgit_repo.resolve(similar_branch).name()
+      end
+    end
+  end
+
   def recover_branch
-    similar_branches = self.similar_branches
-    if self.similar_branches.length == 1
-      Rails.logger.info("Recovering branch: #{similar_branches.first} -> #{self.branch}")
+    branch_to_recover = self.recoverable_branch
+    if (self.owner_type == 'Board') && self.branch_to_recover.present?
+      Rails.logger.info("Recovering branch: #{branch_to_recover} -> #{self.branch}")
       self.identifiers.each do |check_identifier|
-        if self.repository.get_file_from_branch(check_identifier.to_path, similar_branches.first).nil?
-          Rails.logger.info("Unable to retrieve #{check_identifier.to_path} in branch #{similar_branches.first}")
+        if self.repository.get_file_from_branch(check_identifier.to_path, branch_to_recover).nil?
+          Rails.logger.info("Unable to retrieve #{check_identifier.to_path} in branch #{branch_to_recover}")
           Rails.logger.info("Please check/recover branch manually.")
           return nil
         end
       end
-      return self.repository.rename_branch(similar_branches.first, self.branch)
+      return self.repository.rename_branch(branch_to_recover, self.branch)
     else
-      Rails.logger.info("Multiple/zero similiar branches found for branch #{self.branch}: #{similar_branches.inspect}")
+      Rails.logger.info("Multiple/zero recoverable branches found for branch #{self.branch}: #{self.similar_branches.inspect}")
       Rails.logger.info("Please check/recover branch manually.")
       Return nil
     end
