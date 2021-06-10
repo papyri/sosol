@@ -518,21 +518,34 @@ class Publication < ApplicationRecord
   end
 
   def recover_branch
-    branch_to_recover = self.recoverable_branch
-    if (self.owner_type == 'Board') && self.branch_to_recover.present?
-      Rails.logger.info("Recovering branch: #{branch_to_recover} -> #{self.branch}")
-      self.identifiers.each do |check_identifier|
-        if self.repository.get_file_from_branch(check_identifier.to_path, branch_to_recover).nil?
-          Rails.logger.info("Unable to retrieve #{check_identifier.to_path} in branch #{branch_to_recover}")
-          Rails.logger.info("Please check/recover branch manually.")
-          return nil
+    if (self.owner_type == 'Board') && (!self.branch_exists?)
+      branch_to_recover = self.recoverable_branch
+      if self.branch_to_recover.present?
+        existing_publication = Publication.find_by(owner_id: self.owner_id, owner_type: self.owner_type, branch: branch_to_recover)
+        if existing_publication.present?
+          Rails.logger.info("Recoverable branch #{branch_to_recover} already belongs to Publication: #{existing_publication.inspect}")
+          Rails.logger.info("Copying branch #{branch_to_recover} -> #{self.branch}")
+          return self.repository.create_branch(self.branch, branch_to_recover)
+        else
+          self.identifiers.each do |check_identifier|
+            if self.repository.get_file_from_branch(check_identifier.to_path, branch_to_recover).nil?
+              Rails.logger.info("Unable to retrieve #{check_identifier.to_path} in branch #{branch_to_recover}")
+              Rails.logger.info("Please check/recover branch manually.")
+              return nil
+            end
+          end
+          Rails.logger.info("Recovering branch with rename: #{branch_to_recover} -> #{self.branch}")
+          return self.repository.rename_branch(branch_to_recover, self.branch)
         end
+      elsif self.parent&.branch_exists?
+        Rails.logger.info("Recovering parent branch: #{self.parent.branch} -> #{self.branch}")
+        return self.repository.copy_branch_from_repo(self.parent.branch, self.branch, self.parent.repository)
+      else
+        Rails.logger.info("Multiple/zero recoverable branches found for branch #{self.branch}: #{self.similar_branches.inspect}")
+        Rails.logger.info("Parent branch does not exist.")
+        Rails.logger.info("Please check/recover branch manually.")
+        return nil
       end
-      return self.repository.rename_branch(branch_to_recover, self.branch)
-    else
-      Rails.logger.info("Multiple/zero recoverable branches found for branch #{self.branch}: #{self.similar_branches.inspect}")
-      Rails.logger.info("Please check/recover branch manually.")
-      Return nil
     end
   end
 
@@ -1571,6 +1584,7 @@ class Publication < ApplicationRecord
 
     return duplicate
   end
+
   #copy a child publication repo back to the parent repo
   def copy_repo_to_parent_repo
      #all we need to do is copy the repo back the parents repo
