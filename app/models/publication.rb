@@ -566,6 +566,9 @@ class Publication < ApplicationRecord
             Rails.logger.info("Publication#recover_branch #{self.id} - Recovering branch with rename: #{branch_to_recover} -> #{self.branch}")
             return self.repository.rename_branch(branch_to_recover, self.branch)
           end
+        else
+          Rails.logger.info("Publication#recover_branch #{self.id} - Recoverable branch #{branch_to_recover} doesn't have all identifiers, manual recovery needed")
+          return nil
         end
       elsif self.board_copy? && self.parent&.branch_exists? && self.identifiers_on_branch?(self.parent.repository, self.parent.branch)
         # copy the branch FROM the parent repo to the board copy
