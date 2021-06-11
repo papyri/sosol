@@ -495,7 +495,7 @@ class Publication < ApplicationRecord
   end
 
   def recoverable_branch
-    if (!self.branch_exists?) && self.parent.present? && self.parent.branch_exists?
+    if self.board_copy? && (!self.branch_exists?) && self.parent.present? && self.parent.branch_exists?
       parent_head = self.parent.head
       matching_branch = self.similar_branches.detect do |similar_branch|
         begin
