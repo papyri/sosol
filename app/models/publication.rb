@@ -880,6 +880,11 @@ class Publication < ApplicationRecord
   #- +finalizer+ user who will become the finalizer. If no finalizer given, a board member will be randomly choosen.
   #
   def send_to_finalizer(finalizer = nil)
+    unless self.board_copy?
+      Rails.logger.info("Publication#send_to_finalizer called on #{self.id} which does not belong to a board")
+      return nil
+    end
+
     self.transaction do
       board_members = self.owner.users
       if finalizer.nil?
@@ -930,7 +935,7 @@ class Publication < ApplicationRecord
     end
   end
 
-  #Destroys this publication's finalizer's copy.
+  # Destroys this publication's finalizer's copy.
   def remove_finalizer
     # need to find out if there is a finalizer, and take the publication from them
     # finalizer will point back to this board's publication
@@ -947,12 +952,17 @@ class Publication < ApplicationRecord
   # *Args*
   # - +new_finalizer+ user who will become the finalizer
   def change_finalizer(new_finalizer)
-    #need to copy finalizer's copy if they have changed anything
+    # need to copy finalizer's copy if they have changed anything
     old_finalizing_publication = self.find_finalizer_publication
 
     if old_finalizing_publication.nil?
       Rails.logger.error("Attempt to change finalizer on nonexistent finalize publication " + self.inspect + " .")
       self.send_to_finalizer(new_finalizer)
+    end
+
+    if old_finalizing_publication.owner_id == new_finalizer.id
+      Rails.logger.error("Publication#change_finalizer called on #{self.id} but already belongs to #{new_finalizer.name}")
+      return nil
     end
 
     self.transaction do
