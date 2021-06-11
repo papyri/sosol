@@ -552,9 +552,10 @@ class Publication < ApplicationRecord
       return nil
     end
 
-    if self.board_copy?
+    if self.board_copy? || self.creator_copy?
       branch_to_recover = self.recoverable_branch
       if self.branch_to_recover.present?
+        # we can recover the branch with a rename or within-repo copy
         existing_publication = Publication.find_by(owner_id: self.owner_id, owner_type: self.owner_type, branch: branch_to_recover)
         if self.identifiers_on_branch?(self.repository, branch_to_recover)
           if existing_publication.present?
@@ -566,17 +567,23 @@ class Publication < ApplicationRecord
             return self.repository.rename_branch(branch_to_recover, self.branch)
           end
         end
-      elsif self.parent&.branch_exists? && self.identifiers_on_branch?(self.parent.repository, self.parent.branch)
+      elsif self.board_copy? && self.parent&.branch_exists? && self.identifiers_on_branch?(self.parent.repository, self.parent.branch)
+        # copy the branch FROM the parent repo to the board copy
         Rails.logger.info("Publication#recover_branch #{self.id} - Recovering branch with copy: #{self.parent.branch} -> #{self.branch}")
         return self.repository.copy_branch_from_repo(self.parent.branch, self.branch, self.parent.repository)
+      elsif self.creator_copy? && self.children&.any?{|c| c.branch_exists? && self.identifiers_on_branch?(c.repository, c.branch)}
+        # copy the branch FROM the board repo to the creator copy
+        recoverable_child = self.children.detect{|c| c.branch_exists? && self.identifiers_on_branch?(c.repository, c.branch)}
+        Rails.logger.info("Publication#recover_branch #{self.id} - Recovering branch with copy: #{recoverable_child.branch} -> #{self.branch}")
+        return self.repository.copy_branch_from_repo(recoverable_child.branch, self.branch, recoverable_child.repository)
       else
         Rails.logger.info("Publication#recover_branch #{self.id} - Multiple/zero recoverable branches found for branch #{self.branch}: #{self.similar_branches.inspect}")
-        Rails.logger.info("Publication#recover_branch #{self.id} - Parent branch does not exist.")
+        Rails.logger.info("Publication#recover_branch #{self.id} - OR parent/child branch does not exist.")
         Rails.logger.info("Publication#recover_branch #{self.id} - Please check/recover branch manually.")
         return nil
       end
     else
-      Rails.logger.info("Publication#recover_branch #{self.id} is not a board copy")
+      Rails.logger.info("Publication#recover_branch #{self.id} is not a board or creator copy")
       return nil
     end
   end
