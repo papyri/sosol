@@ -495,11 +495,17 @@ class Publication < ApplicationRecord
   end
 
   def recoverable_branch
+    recoverable_head = nil
     if self.board_copy? && (!self.branch_exists?) && self.parent.present? && self.parent.branch_exists?
-      parent_head = self.parent.head
+      recoverable_head = self.parent.head
+    elsif self.creator_copy? && (!self.branch_exists?) && self.children&.any?{|c| c.branch_exists?}
+      recoverable_head = self.children.detect{|c| c.head}
+    end
+
+    unless recoverable_head.nil?
       matching_branch = self.similar_branches.detect do |similar_branch|
         begin
-          parent_head == self.owner.repository.jgit_repo.resolve(similar_branch).name()
+          recoverable_head == self.owner.repository.jgit_repo.resolve(similar_branch).name()
         rescue Java::OrgEclipseJgitErrors::RevisionSyntaxException => e
           false
         end
@@ -509,7 +515,7 @@ class Publication < ApplicationRecord
 
       return self.repository.branches.detect do |check_branch|
         begin
-          parent_head == self.owner.repository.jgit_repo.resolve(check_branch).name()
+          recoverable_head == self.owner.repository.jgit_repo.resolve(check_branch).name()
         rescue Java::OrgEclipseJgitErrors::RevisionSyntaxException => e
           false
         end
