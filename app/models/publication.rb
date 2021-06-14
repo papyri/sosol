@@ -533,6 +533,10 @@ class Publication < ApplicationRecord
     return true
   end
 
+  def similar_branches_with_identifiers
+    self.similar_branches.select{|b| self.identifiers_on_branch?(self.repository, b)}
+  end
+
   def creator_copy?
     (self.owner_type == 'User') && self.parent.nil? && (self.creator_id == self.owner_id)
   end
@@ -543,6 +547,18 @@ class Publication < ApplicationRecord
 
   def finalizer_copy?
     self.parent&.board_copy? && (self.owner_type == 'User')
+  end
+
+  def branch_recoverable?
+    if self.creator_copy?
+      return self.children.any?{|c| c.branch_exists?} || self.recoverable_branch.present?
+    elsif self.board_copy?
+      return self.parent.branch_exists? || self.recover_branch.present?
+    elsif self.finalizer_copy?
+      return self.parent.branch_exists? || self.origin.branch_exists?
+    else
+      return false
+    end
   end
 
   def recover_branch
