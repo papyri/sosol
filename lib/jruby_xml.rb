@@ -95,8 +95,8 @@ module JRubyXML
     end
 
     def cached_schema_path
-      if @schema_url =~ /^http:\/\//
-        local_path = "#{Rails.root}/data/schemas/#{@schema_url.sub(/^http:\/\//,'')}"
+      if @schema_url =~ /^https?:\/\//
+        local_path = "#{Rails.root}/data/schemas/#{@schema_url.sub(/^https?:\/\//,'')}"
         if File.exist?(local_path)
           return local_path
         end
