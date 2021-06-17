@@ -91,6 +91,7 @@ Sosol::Application.routes.draw do
       get :finalize_review
       post :finalize
       post :become_finalizer
+      post :recover_branch
       post :archive
       get :confirm_archive
       get :confirm_archive_all
