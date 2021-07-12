@@ -17,9 +17,11 @@ test:
   timeout: 10000
 
 production:
-  adapter: mysql
-  properties: {serverTimezone: "America/New_York"}
-  database: idp2
-  username: idp2
-  pool: 16
-  reaping_frequency: 120
+  adapter: <%= ENV['DATABASE_ADAPTER'] %>
+  properties:
+    serverTimezone: America/New_York
+  database: <%= ENV['DATABASE_NAME'] %>
+  username: <%= ENV['DATABASE_USERNAME'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  pool: <%= ENV['DATABASE_POOL'] || '16' %>
+  reaping_frequency: <%= ENV['DATABASE_REAPING_FREQUENCY'] || '120' %>
