@@ -76,6 +76,17 @@
           - if !@publication.modified?
             No changes have been made.
 
+    -# if owner is a board and the branch needs to be recovered, add a button to recover the branch
+    - if @publication.board_copy? && (!@publication.branch_exists?) && @publication.branch_recoverable?
+      %p This publication's Git branch is missing but may be recoverable via an automated process:
+      %br
+      = form_tag({:controller => 'publications', :action => 'recover_branch'}) do
+        = submit_tag "Recover branch", :disabled => @publication.advisory_lock_exists?("recover_branch_#{@publication.id}"), :onclick => 'this.disabled=true;this.form.submit();'
+      %br
+      %p If automated Git branch recovery fails, please 
+        %a{href: 'https://github.com/papyri/sosol/issues', target: '_blank'} open an issue here
+         with a link back to this publication.
+
     -# if owner is a board, and it is approved, add a button to make me the finalizer
     - if @publication.owner_type == "Board" && @publication.status == "approved"
       -# if i am already the finalizer dont show the button

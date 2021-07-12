@@ -316,6 +316,20 @@ class PublicationsController < ApplicationController
     end
   end
 
+  def recover_branch
+    @publication = Publication.find(params[:id].to_s)
+    original_publication_owner_id = @publication.owner.id
+
+    if @publication.advisory_lock_exists?("recover_branch_#{@publication.id}")
+      flash[:notice] = "Git branch recovery is already running for this publication."
+      redirect_to show
+    else
+      RecoverBranchJob.perform_async(@publication.id)
+      flash[:notice] = "Git branch recovery running. Check back in a few minutes."
+      redirect_to :controller => 'user', :action => 'dashboard', :board_id => original_publication_owner_id
+    end
+  end
+
   def become_finalizer
     # TODO make sure we don't steal it from someone who is working on it
     @publication = Publication.find(params[:id].to_s)
