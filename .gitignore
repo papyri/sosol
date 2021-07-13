@@ -1,4 +1,5 @@
 .DS_Store
+.bundle
 .env
 .lock-*
 .sass-cache
@@ -17,3 +18,4 @@ public/assets
 public/cache/**/*
 public/stylesheets/*
 tmp/**/*
+vendor/bundle
