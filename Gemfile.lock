@@ -315,6 +315,7 @@ GEM
 PLATFORMS
   java
   universal-java-1.8
+  universal-java-11
 
 DEPENDENCIES
   actionpack-page_caching
@@ -369,4 +370,4 @@ RUBY VERSION
    ruby 2.5.7p0 (jruby 9.2.14.0)
 
 BUNDLED WITH
-   2.2.10
+   2.2.20
