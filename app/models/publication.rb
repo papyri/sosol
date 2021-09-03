@@ -562,7 +562,7 @@ class Publication < ApplicationRecord
   end
 
   def recover_branch
-    self.with_advisory_lock("recover_branch_#{publication_id}") do
+    self.with_advisory_lock("recover_branch_#{self.id}") do
       Rails.logger.info("Publication#recover_branch #{self.id} branch #{self.branch}")
       if self.branch_exists?
         Rails.logger.info("Publication#recover_branch #{self.id} branch #{self.branch} exists")
