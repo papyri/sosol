@@ -150,16 +150,7 @@ class Repository
   end
 
   def destroy
-    # master.update_attribute :has_repository, false
     # destroy a git repository
-
-    # BEFORE DELETION: REPACK CANONICAL
-    # This will pull in all objects regardless of alternates/shared status.
-    # If you delete an alternates-referenced repository without repacking,
-    # referenced objects will disappear, possibly making the repo unusable.
-    canon = Repository.new
-    canon.repack()
-    canon.del_alternates(self)
     FileUtils.rm_rf(path, :secure => true)
   end
 
@@ -253,8 +244,6 @@ class Repository
 
   #(from_branch, to_branch, from_repo)
   def copy_branch_from_repo(branch, new_branch, other_repo)
-    # Lightweight (but have to watch out for side-effects of repo deletion):
-    # self.add_alternates(other_repo)
     # Heavyweight (missing objects are actually copied):
     Rails.logger.info("copy_branch_from_repo(#{branch}, #{new_branch}, #{other_repo.path}, #{@path})")
     # begin
@@ -284,32 +273,8 @@ class Repository
     end
   end
 
-  def alternates_path
-    File.join(self.path,%w{objects info alternates})
-  end
-
-  def alternates
-    if File.exists?(self.alternates_path())
-      return File.readlines(self.alternates_path())
-    else
-      return []
-    end
-  end
-
-  def alternates=(repository_paths)
-    File.write(self.alternates_path, repository_paths.join("\n"))
-  end
-
   def name
     return self.class.sanitize_ref([@master_class_path, @master.name].join('/'))
-  end
-
-  def add_alternates(other_repo)
-    self.alternates = self.alternates() | [ File.join(other_repo.path, "objects") ]
-  end
-
-  def del_alternates(other_repo)
-    self.alternates = self.alternates() - [ File.join(other_repo.path, "objects") ]
   end
 
   def branches
