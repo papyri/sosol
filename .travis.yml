@@ -11,10 +11,12 @@ rvm:
   - jruby-9.2.14.0
 before_install:
   - gem install bundler --version '>2.0'
+  - psql -c 'create database sosol_test;' -U postgres
 before_script:
   - gem --version
   - bundle exec cap local externals:setup
   - touch config/environments/test_secret.rb
+  - cp -v config/database.travis.yml config/database.yml
   - bundle exec rake git:db:canonical:clone
   - bundle exec rake db:migrate
 after_failure:
