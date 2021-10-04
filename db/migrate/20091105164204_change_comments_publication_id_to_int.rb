@@ -1,9 +1,17 @@
 class ChangeCommentsPublicationIdToInt < ActiveRecord::Migration[4.2]
   def self.up
-    change_column :comments, :publication_id, :integer
+    if activerecord::base.connection.adapter_name == 'postgresql'
+      change_column :comments, :publication_id, "integer using nullif(publication_id, '')::int"
+    else
+      change_column :comments, :publication_id, :integer
+    end
   end
 
   def self.down
-    change_column :comments, :publication_id, :string
+    if activerecord::base.connection.adapter_name == 'postgresql'
+      change_column :comments, :publication_id, "string using nullif(publication_id, '')::string"
+    else
+      change_column :comments, :publication_id, :string
+    end
   end
 end
