@@ -2,6 +2,8 @@ language: ruby
 cache: bundler
 dist: bionic
 sudo: false
+services:
+  - postgresql
 env:
   global:
     - JRUBY_OPTS="-J-Xmx1g"
