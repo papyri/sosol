@@ -51,3 +51,10 @@ gem 'with_advisory_lock'
 gem 'silencer'
 gem 'rack-attack', '~> 4.0'
 gem 'i18n'
+gem "pry", "~> 0.14.0"
+gem "pry-rails", "~> 0.3.9"
+gem 'devise', '~> 4.8'
+gem 'omniauth-google-oauth2'
+gem 'dotenv-rails'
+gem 'omniauth-rails_csrf_protection'
+gem 'httpclient'
