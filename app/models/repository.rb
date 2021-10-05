@@ -98,7 +98,7 @@ class Repository
 
   def jgit_repo
     result = @@jgit_repo_cache.get(@path)
-    if result.nil? && File.exists?(@path)
+    if result.nil? && File.exist?(@path)
       begin
         result = org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment().findGitDir().build()
         @@jgit_repo_cache.put(@path, result)
@@ -121,11 +121,11 @@ class Repository
 
   def exists?
     # master.has_repository?
-    File.exists?(@path)
+    File.exist?(@path)
   end
 
   def fork_bare(destination_path)
-    unless Dir.exists?(destination_path)
+    unless Dir.exist?(destination_path)
       Rails.logger.info(self.class.run_command("git clone --bare -q -s #{Shellwords.escape(self.path)} #{Shellwords.escape(destination_path)} 2>&1"))
     end
   end
