@@ -14,9 +14,9 @@ env:
 jdk:
   - openjdk11
 rvm:
-  - jruby-9.2.16.0
+  - jruby-9.2.19.0
 before_install:
-  - gem install bundler --version '2.2.15'
+  - gem install bundler --version '2.2.28'
 before_script:
   - psql -c 'create database sosol_test;'
   - gem --version
