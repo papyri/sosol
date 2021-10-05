@@ -1,20 +1,24 @@
 language: ruby
 cache: bundler
-dist: bionic
+dist: focal
 sudo: false
-services:
-  - postgresql
+addons:
+  postgresql: "13"
+  apt:
+    packages:
+      - postgresql-13
+      - postgresql-client-13
 env:
   global:
     - JRUBY_OPTS="-J-Xmx1g"
 jdk:
-  - openjdk8
+  - openjdk11
 rvm:
   - jruby-9.2.14.0
 before_install:
   - gem install bundler --version '>2.0'
-  - psql -c 'create database sosol_test;' -U postgres
 before_script:
+  - psql -c 'create database sosol_test;'
   - gem --version
   - bundle exec cap local externals:setup
   - touch config/environments/test_secret.rb
