@@ -8,7 +8,7 @@ class BoardsController < ApplicationController
   #Ensures user has admin rights to view page. Otherwise returns 403 error.
   def check_admin
     if @current_user.nil? || !@current_user.admin
-      render :file => "#{Rails.root}/public/403.html", :status => '403', :layout => false, :formats => [:html]
+      render :file => Rails.root.join('public', '403.html'), :status => '403', :layout => false, :formats => [:html]
     end
   end
 
