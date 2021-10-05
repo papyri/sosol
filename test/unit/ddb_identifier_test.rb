@@ -55,7 +55,7 @@ class DDBIdentifierTest < ActiveSupport::TestCase
       end
       
       should "have nothing at the original path" do
-        assert_equal nil, @creator.repository.get_file_from_branch(@original_path, @publication.branch)
+        assert_nil @creator.repository.get_file_from_branch(@original_path, @publication.branch)
       end
     end
   end
