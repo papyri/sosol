@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUNDLER_VERSION="2.2.10"
+BUNDLER_VERSION=$(fgrep -A1 'BUNDLED WITH' Gemfile.lock | tail -1 | sed -e 's/^ *//')
 
 # workaround for puppet permissions on dev
 chmod a+rx ~
