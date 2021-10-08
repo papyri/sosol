@@ -9,8 +9,7 @@ if [ $? -eq 0 ]; then
   sudo -u $EDITOR_USER -i bundle install --deployment
   # Needed for asset pipeline:
   sudo -u $EDITOR_USER -i bundle exec rake assets:precompile RAILS_ENV="production" RAILS_RELATIVE_URL_ROOT='/editor' RAILS_GROUPS="assets"
-  sudo systemctl stop papyri.editor
   sudo -u $EDITOR_USER -i bundle exec cap local externals:setup
   sudo -u $EDITOR_USER -i bundle exec rake db:migrate RAILS_ENV="production"
-  sudo systemctl start papyri.editor
+  sudo systemctl restart papyri.editor
 fi
