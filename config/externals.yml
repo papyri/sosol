@@ -1,14 +1,14 @@
 lib/rxsugar:
   :type: git
-  :repository: git://github.com/papyri/xsugar.git
+  :repository: https://github.com/papyri/xsugar.git
   :revision: master
 
 data/xslt/epidoc:
   :type: git
-  :repository: git://github.com/DCLP/epidoc-xslt.git
+  :repository: https://github.com/DCLP/epidoc-xslt.git
   :revision: 97e957091d135ec6f8f169c13bdc8e279f26f00b
 
 data/xslt/pn/navigator:
   :type: git
-  :repository: git://github.com/DCLP/navigator.git
+  :repository: https://github.com/DCLP/navigator.git
   :revision: f6d9bb08e524f3291fcddbbf4e108e55151ae035

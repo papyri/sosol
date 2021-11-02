@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:focal
 MAINTAINER Ryan Baumann <ryan.baumann@gmail.com>
 
 # Install the Ubuntu packages.
@@ -8,8 +8,8 @@ MAINTAINER Ryan Baumann <ryan.baumann@gmail.com>
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
   apt-get install -y git wget subversion curl \
-  autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev locales \
-  openjdk-8-jre
+  autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev locales \
+  openjdk-11-jre
 
 # Set the locale.
 RUN locale-gen en_US.UTF-8
@@ -19,11 +19,11 @@ ENV LC_ALL en_US.UTF-8
 WORKDIR /root
 
 # Install rbenv/ruby-build
-RUN git clone git://github.com/sstephenson/rbenv.git .rbenv
+RUN git clone https://github.com/rbenv/rbenv.git .rbenv
 ENV PATH /root/.rbenv/bin:/root/.rbenv/shims:$PATH
 RUN echo 'eval "$(rbenv init -)"' > /etc/profile.d/rbenv.sh
 RUN chmod +x /etc/profile.d/rbenv.sh
-RUN git clone git://github.com/sstephenson/ruby-build.git "$(rbenv root)"/plugins/ruby-build && cd "$(rbenv root)"/plugins/ruby-build && git checkout 500863c
+RUN git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build && cd "$(rbenv root)"/plugins/ruby-build && git checkout 9ae5198
 RUN git clone https://github.com/rbenv/rbenv-vars.git $(rbenv root)/plugins/rbenv-vars
 
 # Copy in secret files
@@ -33,7 +33,7 @@ RUN git clone https://github.com/rbenv/rbenv-vars.git $(rbenv root)/plugins/rben
 
 ADD . /root/sosol/
 WORKDIR /root/sosol
-RUN rbenv install && rbenv rehash && gem install bundler:2.2.15 && rbenv rehash && bundle install && jruby -v && java -version && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
+RUN rbenv install && rbenv rehash && gem install bundler:2.2.28 && rbenv rehash && bundle install && jruby -v && java -version && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
 RUN RAILS_ENV=test ./script/setup
 
 # Finally, start the application
