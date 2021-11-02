@@ -19,9 +19,9 @@ namespace :git do
         require File.expand_path('../../../config/boot', __FILE__)
         
         if ENV['RAILS_ENV'] == "test"
-          CANONICAL_CLONE_URL = "git://github.com/ryanfb/idp.data.test.git"
+          CANONICAL_CLONE_URL = "https://github.com/ryanfb/idp.data.test.git"
         else
-          CANONICAL_CLONE_URL = "git://github.com/papyri/idp.data.git"
+          CANONICAL_CLONE_URL = "https://github.com/papyri/idp.data.git"
         end
         
         if !File.exist?(Sosol::Application.config.canonical_repository)
