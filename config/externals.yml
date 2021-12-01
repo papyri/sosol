@@ -5,10 +5,10 @@ lib/rxsugar:
 
 data/xslt/epidoc:
   :type: git
-  :repository: https://github.com/EpiDoc/Stylesheets.git
-  :revision: 06062b8c98b421a4c34421e66491b62b88715f9a
+  :repository: https://github.com/DCLP/epidoc-xslt.git
+  :revision: 97e957091d135ec6f8f169c13bdc8e279f26f00b
 
 data/xslt/pn/navigator:
   :type: git
-  :repository: https://github.com/papyri/navigator.git
-  :revision: 50a8d888f2c03701a4216cb1a2c3890bf3de89b1
+  :repository: https://github.com/DCLP/navigator.git
+  :revision: f6d9bb08e524f3291fcddbbf4e108e55151ae035
