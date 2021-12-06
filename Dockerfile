@@ -33,7 +33,7 @@ RUN git clone https://github.com/rbenv/rbenv-vars.git $(rbenv root)/plugins/rben
 
 ADD . /root/sosol/
 WORKDIR /root/sosol
-RUN rbenv install && rbenv rehash && gem install bundler:2.2.28 && rbenv rehash && bundle install && jruby -v && java -version && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
+RUN rbenv install && rbenv rehash && gem install bundler:2.2.32 && rbenv rehash && bundle install && jruby -v && java -version && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
 RUN RAILS_ENV=test ./script/setup
 
 # Finally, start the application
