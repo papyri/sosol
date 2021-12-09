@@ -429,7 +429,7 @@ class DDBIdentifier < Identifier
     preprocessed_leiden.gsub!(/#{[0x1fc0].pack('U')}/,combining_perispomeni)
 
     # normalize to normalized form C
-    preprocessed_leiden = ActiveSupport::Multibyte::Chars.new(preprocessed_leiden).normalize(:c).to_s
+    preprocessed_leiden.unicode_normalize!(:nfc)
     
     return preprocessed_leiden
   end

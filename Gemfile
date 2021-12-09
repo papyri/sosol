@@ -1,13 +1,13 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'https://rubygems.org'
-ruby "2.5.7", :engine => "jruby", :engine_version => "9.2.14.0"
+ruby "2.5.8", :engine => "jruby", :engine_version => "9.2.20.1"
 
-gem 'rails', '~> 5.2.6'
+gem 'rails', '~> 6.1.4.1'
 
 # Needed for the new asset pipeline
 gem 'sass-rails', '~> 5'
-gem 'coffee-rails', '~> 4'
+gem 'coffee-rails'
 gem 'uglifier', '>= 1.0.3'
 gem 'therubyrhino'
 
@@ -29,10 +29,10 @@ gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'json', '>=1.6.6'
 gem 'jdbc-sqlite3', '>= 3.7.2', :platform => :jruby
-gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
-gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
-gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 52', :platform => :jruby
+gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 61', :platform => :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 61', :platform => :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 61', :platform => :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 61', :platform => :jruby
 gem 'jdbc-mysql', require: false
 gem 'activerecord-session_store'
 gem 'tzinfo-data', :platform => :jruby
@@ -50,7 +50,7 @@ gem 'sucker_punch', '~> 2.0'
 gem 'with_advisory_lock'
 gem 'silencer'
 gem 'rack-attack', '~> 4.0'
-gem 'i18n', '< 1.8.8'
+gem 'i18n'
 gem "pry", "~> 0.14.0"
 gem "pry-rails", "~> 0.3.9"
 gem 'devise', '~> 4.8'

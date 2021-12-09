@@ -167,7 +167,7 @@ class BoardsController < ApplicationController
     @board = Board.find(params[:id].to_s)
 
     respond_to do |format|
-      if params[:board].present? && @board.update_attributes(board_params)
+      if params[:board].present? && @board.update(board_params)
         flash[:notice] = 'Board was successfully updated.'
         format.html { redirect_to(@board) }
         format.xml  { head :ok }
@@ -329,16 +329,16 @@ def confirm_destroy
   @board = Board.find(params[:id].to_s)
 end
 
-private
+  private
   #Ensures user has admin rights to view page. Otherwise returns 403 error.
   def check_admin
     if @current_user.nil? || !@current_user.admin
-      render :file => 'public/403', :status => '403', :layout => false, :formats => [:html]
+      render :file => Rails.root.join('public', '403.html'), :status => '403', :layout => false, :formats => [:html]
     end
   end
 
-def board_params
-  params.require(:board).permit(:title,:category,:identifier_classes,:friendly_name,:decrees,:skip_finalize,:requires_assignment,:max_assignable)
-end
+  def board_params
+    params.require(:board).permit(:title,:category,:identifier_classes,:friendly_name,:decrees,:skip_finalize,:requires_assignment,:max_assignable)
+  end
 
 end

@@ -106,7 +106,7 @@ class EmailersController < ApplicationController
     @emailer = Emailer.find(params[:id].to_s)
 
     respond_to do |format|
-      if params[:emailer].present? && @emailer.update_attributes(emailer_params)
+      if params[:emailer].present? && @emailer.update(emailer_params)
         flash[:notice] = 'Emailer was successfully updated.'
         format.html { redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  }
         #format.html { redirect_to(@emailer) }

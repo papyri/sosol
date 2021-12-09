@@ -23,7 +23,7 @@ RUN git clone https://github.com/rbenv/rbenv.git .rbenv
 ENV PATH /root/.rbenv/bin:/root/.rbenv/shims:$PATH
 RUN echo 'eval "$(rbenv init -)"' > /etc/profile.d/rbenv.sh
 RUN chmod +x /etc/profile.d/rbenv.sh
-RUN git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build && cd "$(rbenv root)"/plugins/ruby-build && git checkout 9ae5198
+RUN git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build && cd "$(rbenv root)"/plugins/ruby-build && git checkout v20211203
 RUN git clone https://github.com/rbenv/rbenv-vars.git $(rbenv root)/plugins/rbenv-vars
 
 # Copy in secret files
@@ -33,7 +33,7 @@ RUN git clone https://github.com/rbenv/rbenv-vars.git $(rbenv root)/plugins/rben
 
 ADD . /root/sosol/
 WORKDIR /root/sosol
-RUN rbenv install && rbenv rehash && gem install bundler:2.2.28 && rbenv rehash && bundle install && jruby -v && java -version && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
+RUN rbenv install && rbenv rehash && gem install bundler:2.2.32 && rbenv rehash && bundle install && jruby -v && java -version && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
 RUN RAILS_ENV=test ./script/setup
 
 # Finally, start the application

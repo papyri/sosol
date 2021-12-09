@@ -11,7 +11,7 @@ class DateTest < ActiveSupport::TestCase
   end
 
   def test_get_precision
-    assert_equal nil,     HgvDate.getPrecision(nil, nil, nil, nil),              'HgvDate.getPrecision'
+    assert_nil            HgvDate.getPrecision(nil, nil, nil, nil),              'HgvDate.getPrecision'
     assert_equal :medium, HgvDate.getPrecision('ca', nil, nil, nil),             'HgvDate.getPrecision'
     assert_equal :lowlow, HgvDate.getPrecision(nil, 'beginningCirca', nil, nil), 'HgvDate.getPrecision'
     assert_equal :lowlow, HgvDate.getPrecision(nil, nil, 'middleCirca', nil),    'HgvDate.getPrecision'
