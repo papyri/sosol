@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="robots" content="noindex, nofollow"/>
+
   <%= csrf_meta_tag %>
   <title>Papyri.info</title>
    
   <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" title="no title" charset="utf-8">   
    
-  <!-- <link rel="stylesheet" href="http://www.papyri.info/css/custom-theme/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" title="no title" charset="utf-8"> -->
-
   <%= stylesheet_link_tag 'master_additions' %>
   <%= stylesheet_link_tag 'editor' %>
   <% if %w{biblio_identifiers hgv_meta_identifiers dclp_meta_identifiers apis_identifiers}.include?(controller.controller_name)  and controller.action_name == 'edit' %>
