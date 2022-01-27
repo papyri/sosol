@@ -158,7 +158,6 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
       end
 
       should 'user creates and submits publication to sosol' do
-        assert false
         Rails.logger.debug 'BEGIN TEST: user creates and submits publication to sosol'
 
         assert_not_equal nil, @meta_board, 'Meta board not created'
