@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class CommunitiesControllerTest < ActionController::TestCase
@@ -7,54 +9,55 @@ class CommunitiesControllerTest < ActionController::TestCase
     @community = FactoryBot.create(:community)
     @community_two = FactoryBot.create(:community)
   end
-  
+
   def teardown
     @request.session[:user_id] = nil
     @admin.destroy
-    @community.destroy unless !Community.exists? @community.id
-    @community_two.destroy unless !Community.exists? @community_two.id
+    @community.destroy if Community.exists? @community.id
+    @community_two.destroy if Community.exists? @community_two.id
   end
- 
-  test "should get index" do
+
+  test 'should get index' do
     get :index, params: {}
     assert_response :success
     assert_not_nil assigns(:communities)
   end
 
-  test "should get new" do
+  test 'should get new' do
     get :new, params: {}
     assert_response :success
   end
 
-  test "should create community" do
+  test 'should create community' do
     assert_difference('Community.count') do
-      post :create, params: { :community => FactoryBot.build(:community).attributes.merge({"admins"=>[],"members"=>[]}) }
+      post :create,
+           params: { community: FactoryBot.build(:community).attributes.merge({ 'admins' => [], 'members' => [] }) }
     end
 
     assert_redirected_to edit_community_path(assigns(:community))
   end
 
-  test "should show community" do
-    get :show, params: { :id => @community.id }
+  test 'should show community' do
+    get :show, params: { id: @community.id }
     assert_response :success
   end
 
-  test "should get edit" do
-    get :edit, params: { :id => @community.id }
+  test 'should get edit' do
+    get :edit, params: { id: @community.id }
     assert_response :success
   end
 
-  test "should update community" do
-    put :update, params: { :id => @community.id, :community => { description: 'updated description' } }
+  test 'should update community' do
+    put :update, params: { id: @community.id, community: { description: 'updated description' } }
     assert_redirected_to edit_community_path(assigns(:community))
     assert_equal 'updated description', @community.reload.description
   end
 
-  test "should destroy community" do
+  test 'should destroy community' do
     assert_difference('Community.count', -1) do
-      delete :destroy, params: { :id => @community.id }
+      delete :destroy, params: { id: @community.id }
     end
 
-    assert_redirected_to :controller => 'user', :action => 'admin'
+    assert_redirected_to controller: 'user', action: 'admin'
   end
 end

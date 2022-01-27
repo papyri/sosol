@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Disable automatic framework detection by uncommenting/setting to false
 # Warbler.framework_detection = false
 
@@ -7,19 +9,19 @@
 Warbler::Config.new do |config|
   # Update stylesheets before doing anything
   # Sass::Plugin.update_stylesheets
-  
+
   # Temporary directory where the application is staged
   # config.staging_dir = "tmp/war"
 
   # Application directories to be included in the webapp.
-  config.dirs = %w(app config data lib log vendor tmp lib/rxsugar data/xslt/epidoc data/xslt/pn/navigator)
+  config.dirs = %w[app config data lib log vendor tmp lib/rxsugar data/xslt/epidoc data/xslt/pn/navigator]
 
   # Additional files/directories to include, above those in config.dirs
-  config.includes = FileList[".ruby-version"]
+  config.includes = FileList['.ruby-version']
   # config.includes = FileList["db"]
   # config.includes = FileList[
-    # "db/production.sqlite3",
-    # "vendor/gems/*/.specification"]
+  # "db/production.sqlite3",
+  # "vendor/gems/*/.specification"]
 
   # Additional files/directories to exclude
   # config.excludes = FileList["lib/tasks/*"]
@@ -28,7 +30,7 @@ Warbler::Config.new do |config|
   # in lib (and not otherwise excluded) then they need not be mentioned here.
   # JRuby and JRuby-Rack are pre-loaded in this list.  Be sure to include your
   # own versions if you directly set the value
-  config.java_libs += FileList["lib/java/*.jar"]
+  config.java_libs += FileList['lib/java/*.jar']
 
   # Loose Java classes and miscellaneous files to be placed in WEB-INF/classes.
   # config.java_classes = FileList["target/classes/**.*"]
@@ -56,7 +58,7 @@ Warbler::Config.new do |config|
   # fine-grained control.
   # config.gems << /^merb-/
   # config.gems << Gem::Dependency.new("merb-core", "= 0.9.3")
-  
+
   # config.gems << "jruby-openssl"
 
   # Include gem dependencies not mentioned specifically
@@ -64,10 +66,10 @@ Warbler::Config.new do |config|
 
   # Files to be included in the root of the webapp.  Note that files in public
   # will have the leading 'public/' part of the path stripped during staging.
-  config.public_html = FileList["public/**/*"] # , "doc/**/*"]
+  config.public_html = FileList['public/**/*'] # , "doc/**/*"]
 
   # Pathmaps for controlling how public HTML files are copied into the .war
-  config.pathmaps.public_html = ["%{public/,}p"]
+  config.pathmaps.public_html = ['%{public/,}p']
 
   # Name of the war file (without the .war) -- defaults to the basename
   # of RAILS_ROOT

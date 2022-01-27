@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateUserIdentifiers < ActiveRecord::Migration[4.2]
   def self.up
     create_table :user_identifiers do |t|

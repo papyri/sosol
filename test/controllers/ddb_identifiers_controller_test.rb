@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class DdbIdentifiersControllerTest < ActionController::TestCase
   def setup
     @user = FactoryBot.create(:user)
     @request.session[:user_id] = @user.id
-    @publication = FactoryBot.create(:publication, :owner => @user, :creator => @user, :status => "new")
+    @publication = FactoryBot.create(:publication, owner: @user, creator: @user, status: 'new')
     @publication.branch_from_master
     @identifier = DDBIdentifier.new_from_template(@publication)
   end
@@ -14,15 +16,15 @@ class DdbIdentifiersControllerTest < ActionController::TestCase
     @user.destroy
   end
 
-
   def test_should_flash_commit_error
-    @identifier.repository.class.any_instance.stubs(:commit_content).raises(Exceptions::CommitError.new("Commit failed"))
+    @identifier.repository.class.any_instance.stubs(:commit_content).raises(Exceptions::CommitError.new('Commit failed'))
     # just make a nonsense change to the content
-    content = { :xml_content => @identifier.xml_content.sub("English","Gobbleygook") }
-    get :editxml, params: { :id => @identifier.id.to_s, :publication_id => @identifier.publication.id.to_s }
-    put :updatexml, params: { :id => @identifier.id.to_s , :publication_id => @identifier.publication.id.to_s,  :comment => "test", :ddb_identifier => content }
-    assert_redirected_to '/publications/' + @publication.id.to_s + '/ddb_identifiers/' + @identifier.id.to_s + '/edit'
-    assert_equal "Commit failed", flash[:error]
+    content = { xml_content: @identifier.xml_content.sub('English', 'Gobbleygook') }
+    get :editxml, params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s }
+    put :updatexml,
+        params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s, comment: 'test',
+                  ddb_identifier: content }
+    assert_redirected_to "/publications/#{@publication.id}/ddb_identifiers/#{@identifier.id}/edit"
+    assert_equal 'Commit failed', flash[:error]
   end
-
 end

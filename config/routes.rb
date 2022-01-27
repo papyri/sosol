@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Sosol::Application.routes.draw do
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
   resources :communities do
@@ -110,7 +112,6 @@ Sosol::Application.routes.draw do
   post 'publications/create_from_list' => 'publications#create_from_list'
   post 'publications/create_from_selector' => 'publications#create_from_selector'
 
-
   resources :publications do
     resources :ddb_identifiers do
       member do
@@ -198,7 +199,6 @@ Sosol::Application.routes.draw do
         get :rename_review
         patch :rename
       end
-
     end
 
     resources :biblio_identifiers do
@@ -359,16 +359,21 @@ Sosol::Application.routes.draw do
   end
 
   get 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
-  match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/, :via => :get
-  match 'peep_user_dashboard/:user_id(/:publication)' => 'user#peep_user_dashboard', :user_id => /\d+/, :publication => /(submitted|editing|new|committed|finalizing|\d+)/, :via => :get
-  match 'user/info' => 'user#info', :via => [:get, :options]
-  match 'editor/user/info' => 'user#info', :via => [:get, :options]
-  %w{apis biblio citation_cts collection cts_inventory cts_oac dclp_meta dclp_text ddb epi_cts epi_trans_cts hgv_meta hgv_trans oac tei_cts tei_trans_cts}.each do |identifier_class|
-    match "publications/:publication_id/#{identifier_class}_identifiers/:id/show_commit/:commit_id", controller: "#{identifier_class}_identifiers", action: :show_commit, constraints: { :commit_id => /[0-9a-fA-F]{40}/ }, :via => :get
+  match 'users/:user_name' => 'user#show', :user_name => %r{[^/]*}, :via => :get
+  match 'peep_user_dashboard/:user_id(/:publication)' => 'user#peep_user_dashboard', :user_id => /\d+/,
+        :publication => /(submitted|editing|new|committed|finalizing|\d+)/, :via => :get
+  match 'user/info' => 'user#info', :via => %i[get options]
+  match 'editor/user/info' => 'user#info', :via => %i[get options]
+  %w[apis biblio citation_cts collection cts_inventory cts_oac dclp_meta dclp_text ddb epi_cts epi_trans_cts hgv_meta
+     hgv_trans oac tei_cts tei_trans_cts].each do |identifier_class|
+    match "publications/:publication_id/#{identifier_class}_identifiers/:id/show_commit/:commit_id",
+          controller: "#{identifier_class}_identifiers", action: :show_commit, constraints: { commit_id: /[0-9a-fA-F]{40}/ }, via: :get
   end
-  match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/, :via => :get
+  match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/,
+        :via => :get
   match 'publications/vote/:id' => 'publications#vote', :via => :post
-  match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/, :via => :get
+  match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => %r{[^/]*},
+        :via => :get
   post 'cts_publications/create_from_selector', to: 'cts_publications#create_from_selector'
   match 'js/:query' => 'ajax_proxy#js', :query => /.*/, :via => :get
   match 'css/:query' => 'ajax_proxy#css', :query => /.*/, :via => :get
@@ -381,10 +386,12 @@ Sosol::Application.routes.draw do
   match 'ajax_proxy/xsugar/' => 'ajax_proxy#xsugar', :via => :post
   match 'ajax_proxy/hgvnum/' => 'ajax_proxy#hgvnum', :via => :post
   match 'ajax_proxy/:id' => 'ajax_proxy#proxy', :id => /papyri\.info.*/, :via => :get
-  match 'cts/editions/:inventory' => 'cts_proxy#editions', :inventory => /[^\/]*/, :via => :get
-  match 'cts/translations/:inventory/:urn' => 'cts_proxy#translations', :inventory => /[^\/]*/, :urn => /[^\/]*/, :via => :get
-  match 'cts/citations/:inventory/:urn' => 'cts_proxy#citations', :inventory => /[^\/]*/, :urn => /[^\/]*/, :via => :get
-  match 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => /[^\/]*/, :via => :get
+  match 'cts/editions/:inventory' => 'cts_proxy#editions', :inventory => %r{[^/]*}, :via => :get
+  match 'cts/translations/:inventory/:urn' => 'cts_proxy#translations', :inventory => %r{[^/]*}, :urn => %r{[^/]*},
+        :via => :get
+  match 'cts/citations/:inventory/:urn' => 'cts_proxy#citations', :inventory => %r{[^/]*}, :urn => %r{[^/]*},
+        :via => :get
+  match 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => %r{[^/]*}, :via => :get
   match 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities', :via => :get
   match 'cts/getrepos' => 'cts_proxy#getrepos', :via => :get
   match 'cts/getvalidreffs' => 'cts_proxy#getvalidreffs', :via => :get
@@ -400,7 +407,7 @@ Sosol::Application.routes.draw do
   post 'rpx/associate_return', to: 'rpx#associate_return'
   post 'rpx/associate_really', to: 'rpx#associate_really'
   post 'rpx/create_submit', to: 'rpx#create_submit'
-  match 'identifiers/create', to: 'identifiers#create', :via => [:get, :post]
+  match 'identifiers/create', to: 'identifiers#create', via: %i[get post]
   get 'user/board_dashboard', to: 'user#board_dashboard'
   get 'user/user_dashboard', to: 'user#user_dashboard'
   get 'user/user_community_dashboard', to: 'user#user_community_dashboard'
@@ -413,9 +420,9 @@ Sosol::Application.routes.draw do
   get 'user/download_options', to: 'user#download_options'
   patch 'user/update_personal', to: 'user#update_personal'
   patch 'user/update_admins', to: 'user#update_admins'
-  match 'user/email_everybody' => 'user#email_everybody', via: [:patch, :post]
-  match 'user/refresh_usage' => 'user#refresh_usage', via: [:patch, :post]
-  match 'user/leave_community' => 'user#leave_community', via: [:patch, :post]
+  match 'user/email_everybody' => 'user#email_everybody', via: %i[patch post]
+  match 'user/refresh_usage' => 'user#refresh_usage', via: %i[patch post]
+  match 'user/leave_community' => 'user#leave_community', via: %i[patch post]
   get 'cross_site/footer', to: 'cross_site#footer'
   get 'cross_site/header', to: 'cross_site#header'
   get 'cross_site/advanced_create', to: 'cross_site#advanced_create'

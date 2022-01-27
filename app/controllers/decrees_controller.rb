@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 class DecreesController < ApplicationController
-  
-  #layout "site"
+  # layout "site"
   before_action :authorize
-  
+
   # GET /decrees
   # GET /decrees.xml
   def index
@@ -10,7 +11,7 @@ class DecreesController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @decrees }
+      format.xml  { render xml: @decrees }
     end
   end
 
@@ -21,7 +22,7 @@ class DecreesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @decree }
+      format.xml  { render xml: @decree }
     end
   end
 
@@ -31,11 +32,10 @@ class DecreesController < ApplicationController
     @decree = Decree.new
     @decree.board_id = params[:board_id].to_s
     @board = Board.find(params[:board_id].to_s)
-   
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @decree }
+      format.xml  { render xml: @decree }
     end
   end
 
@@ -53,22 +53,21 @@ class DecreesController < ApplicationController
       board = Board.find(@decree.board_id)
       board.decrees << @decree
       board.save
-      
+
       flash[:notice] = 'Decree was successfully created.'
-      redirect_to :controller => "boards", :action => "edit", :id => @decree.board_id
+      redirect_to controller: 'boards', action: 'edit', id: @decree.board_id
     end
 
-#    respond_to do |format|
-#      if @decree.save
-#        flash[:notice] = 'Decree was successfully created.'
-#        format.html { redirect_to(@decree) }
-#        format.xml  { render :xml => @decree, :status => :created, :location => @decree }
-#      else
-#        format.html { render :action => "new" }
-#        format.xml  { render :xml => @decree.errors, :status => :unprocessable_entity }
-#      end
-#    end
-    
+    #    respond_to do |format|
+    #      if @decree.save
+    #        flash[:notice] = 'Decree was successfully created.'
+    #        format.html { redirect_to(@decree) }
+    #        format.xml  { render :xml => @decree, :status => :created, :location => @decree }
+    #      else
+    #        format.html { render :action => "new" }
+    #        format.xml  { render :xml => @decree.errors, :status => :unprocessable_entity }
+    #      end
+    #    end
   end
 
   # PUT /decrees/1
@@ -79,12 +78,12 @@ class DecreesController < ApplicationController
     respond_to do |format|
       if params[:decree].present? && @decree.update(decree_params)
         flash[:notice] = 'Decree was successfully updated.'
-        
-        format.html { redirect_to :controller => "boards", :action => "edit", :id => @decree.board_id }
+
+        format.html { redirect_to controller: 'boards', action: 'edit', id: @decree.board_id }
         format.xml  { head :ok }
       else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @decree.errors, :status => :unprocessable_entity }
+        format.html { render action: 'edit' }
+        format.xml  { render xml: @decree.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -96,15 +95,15 @@ class DecreesController < ApplicationController
     @decree.destroy
 
     respond_to do |format|
-      format.html { redirect_to :controller => "boards", :action => "edit", :id => @decree.board_id }
-      #format.html { redirect_to(decrees_url) }
+      format.html { redirect_to controller: 'boards', action: 'edit', id: @decree.board_id }
+      # format.html { redirect_to(decrees_url) }
       format.xml  { head :ok }
     end
   end
 
   private
 
-    def decree_params
-      params.require(:decree).permit(:association,:tally_method,:action,:trigger,:choices,:board_id)
-    end
+  def decree_params
+    params.require(:decree).permit(:association, :tally_method, :action, :trigger, :choices, :board_id)
+  end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddTallyMethodToDecree < ActiveRecord::Migration[4.2]
   def self.up
     add_column :decrees, :tally_method, :string

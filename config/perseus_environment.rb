@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Be sure to restart your server when you modify this file
 
 # Uncomment below to force Rails into production mode when
@@ -22,7 +24,7 @@ Rails::Initializer.run do |config|
   # you must remove the Active Record framework.
   # config.frameworks -= [ :active_record, :active_resource, :action_mailer ]
 
-  # Specify gems that this application depends on. 
+  # Specify gems that this application depends on.
   # They can then be installed with "rake gems:install" on new installations.
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
@@ -30,39 +32,39 @@ Rails::Initializer.run do |config|
 
   # config.gem "ruby-xslt", :lib => "xml/xslt"
   # config.gem "libxml-ruby", :lib => "xml/libxml"
-  
-  config.gem "haml", :version => "~> 3.0.25"
+
+  config.gem 'haml', version: '~> 3.0.25'
   # config.gem "capistrano", :version => ">= 2.5.5", :lib => false
-  
-  if(RUBY_PLATFORM == 'java')
-    config.gem "json-jruby", :version => ">= 1.4.3.1", :lib => "json"
+
+  if RUBY_PLATFORM == 'java'
+    config.gem 'json-jruby', version: '>= 1.4.3.1', lib: 'json'
   else
-    config.gem "json"
+    config.gem 'json'
   end
-  
-  if(RUBY_PLATFORM == 'java')
-    config.gem "jruby-openssl", :lib => false
-    config.gem "activerecord-jdbc-adapter", :version => ">= 0.9.2", :lib => false
-    config.gem "activerecord-jdbcsqlite3-adapter", :version => ">= 0.9.2", :lib => false
-    config.gem "activerecord-jdbcmysql-adapter", :version => ">= 0.9.2", :lib => false
-		config.gem "rack", :version => ">= 1.1.0", :lib => false
+
+  if RUBY_PLATFORM == 'java'
+    config.gem 'jruby-openssl', lib: false
+    config.gem 'activerecord-jdbc-adapter', version: '>= 0.9.2', lib: false
+    config.gem 'activerecord-jdbcsqlite3-adapter', version: '>= 0.9.2', lib: false
+    config.gem 'activerecord-jdbcmysql-adapter', version: '>= 0.9.2', lib: false
+    config.gem 'rack', version: '>= 1.1.0', lib: false
   end
-  
-  config.gem "shoulda", :version => ">= 2.11.3"
+
+  config.gem 'shoulda', version: '>= 2.11.3'
   EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
 
-  config.gem "factory_girl", :version => "~> 1.2.2"
-  
-  config.gem 'airbrake', :version => ">= 3.0.5"
-  
+  config.gem 'factory_girl', version: '~> 1.2.2'
+
+  config.gem 'airbrake', version: '>= 3.0.5'
+
   config.gem 'grit',
-    :lib     => 'grit',
-    :source  => 'http://gemcutter.org',
-    :version => '>= 2.0'
+             lib: 'grit',
+             source: 'http://gemcutter.org',
+             version: '>= 2.0'
 
-  config.gem 'rubyzip', :lib => 'zip/zip', :version => ">= 0.9.5"
+  config.gem 'rubyzip', lib: 'zip/zip', version: '>= 0.9.5'
 
-  # Only load the plugins named here, in the order given. By default, all plugins 
+  # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
@@ -81,11 +83,11 @@ Rails::Initializer.run do |config|
 
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!
-  # Make sure the secret is at least 30 characters and all random, 
+  # Make sure the secret is at least 30 characters and all random,
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :key => '_protosite_session',
-    :secret      => '9b3d1476080d8895ca5664177c4ce14b9cbe2acd74966996708adde079462003306356b8f59ea169f6aca77bee343c1296d0a3a5b3c980ed9819b7fe944d56e6'
+    key: '_protosite_session',
+    secret: '9b3d1476080d8895ca5664177c4ce14b9cbe2acd74966996708adde079462003306356b8f59ea169f6aca77bee343c1296d0a3a5b3c980ed9819b7fe944d56e6'
   }
 
   # Use the database for sessions instead of the cookie-based default,
@@ -100,23 +102,22 @@ Rails::Initializer.run do |config|
 
   # Activate observers that should always be running
   # config.active_record.observers = :cacher, :garbage_collector
-  
+
   # RPX application configuration
   RPX_BASE_URL = 'https://rpxnow.com'
-  
-SITE_NAME = 'Philologist'
-SITE_FULL_NAME = 'Philologist'
-SITE_TAG_LINE = 'powered by Son of Suda Online'
-SITE_LAYOUT = 'perseus'
-SITE_IDENTIFIERS = 'CitationCTSIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,CTSInventoryIdentifier'
-SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'
-SITE_CATALOG_SEARCH = "View In Catalog"
-SITE_USER_NAMESPACE = "data.perseus.org"
-EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
 
-  
+  SITE_NAME = 'Philologist'
+  SITE_FULL_NAME = 'Philologist'
+  SITE_TAG_LINE = 'powered by Son of Suda Online'
+  SITE_LAYOUT = 'perseus'
+  SITE_IDENTIFIERS = 'CitationCTSIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,CTSInventoryIdentifier'
+  SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'
+  SITE_CATALOG_SEARCH = 'View In Catalog'
+  SITE_USER_NAMESPACE = 'data.perseus.org'
+  EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
+
   REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
-  
-  GITWEB_BASE_URL = "http://127.0.0.1:1234/?p="
+
+  GITWEB_BASE_URL = 'http://127.0.0.1:1234/?p='
 end

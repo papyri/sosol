@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Sosol::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -17,7 +19,7 @@ Sosol::Application.configure do
   config.action_dispatch.show_exceptions = false
 
   # Disable request forgery protection in test environment
-  config.action_controller.allow_forgery_protection    = false
+  config.action_controller.allow_forgery_protection = false
 
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
@@ -47,6 +49,6 @@ Sosol::Application.configure do
   config.canonical_canonical_repository = config.canonical_repository
   config.canonical_repository = File.join(config.repository_root, 'canonical.git')
   # configure email parameters
-  config.site_email_from='admin@localhost'
-  config.action_mailer.default_url_options= { host: 'localhost' }
+  config.site_email_from = 'admin@localhost'
+  config.action_mailer.default_url_options = { host: 'localhost' }
 end

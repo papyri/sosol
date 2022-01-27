@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Sosol::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -27,7 +29,7 @@ Sosol::Application.configure do
   # and possibly other unversioned secrets for development
   require File.join(File.dirname(__FILE__), 'development_secret')
   # configure email parameters
-  config.site_email_from='admin@localhost'
+  config.site_email_from = 'admin@localhost'
   config.action_mailer.default_url_options = { host: 'localhost' }
 
   # Don't compress assets in development mode
@@ -35,4 +37,3 @@ Sosol::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 end
-

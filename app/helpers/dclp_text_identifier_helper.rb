@@ -1,3 +1,4 @@
-module DclpTextIdentifierHelper
+# frozen_string_literal: true
 
+module DclpTextIdentifierHelper
 end

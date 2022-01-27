@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Sosol::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -11,7 +13,7 @@ Sosol::Application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = false
   config.action_controller.page_cache_directory = "#{Rails.root}/public/cache/"
-  config.cache_store = :file_store, "/tmp/sosol/"
+  config.cache_store = :file_store, '/tmp/sosol/'
 
   # See everything in the log (default is :info)
   config.log_level = :info
@@ -30,7 +32,7 @@ Sosol::Application.configure do
   config.public_file_server.enabled = true
 
   # Specifies the header that your server uses for sending files
-  config.action_dispatch.x_sendfile_header = "X-Sendfile" unless config.public_file_server.enabled
+  config.action_dispatch.x_sendfile_header = 'X-Sendfile' unless config.public_file_server.enabled
 
   # For nginx:
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
@@ -38,25 +40,24 @@ Sosol::Application.configure do
   # If you have no front-end server that supports something like X-Sendfile,
   # just comment this out and Rails will serve the files
 
+  # Compress JavaScripts and CSS
+  config.assets.compress = true
 
-	# Compress JavaScripts and CSS
-	config.assets.compress = true
+  # Choose the compressors to use
+  # config.assets.js_compressor  = :uglifier
+  # config.assets.css_compressor = :yui
 
-	# Choose the compressors to use
-	# config.assets.js_compressor  = :uglifier
-	# config.assets.css_compressor = :yui
+  # Don't fallback to assets pipeline if a precompiled asset is missed
+  config.assets.compile = true
 
-	# Don't fallback to assets pipeline if a precompiled asset is missed
-	config.assets.compile = true
+  # Generate digests for assets URLs.
+  config.assets.digest = true
 
-	# Generate digests for assets URLs.
-	config.assets.digest = true
+  # Defaults to Rails.root.join("public/assets")
+  # config.assets.manifest = YOUR_PATH
 
-	# Defaults to Rails.root.join("public/assets")
-	# config.assets.manifest = YOUR_PATH
-
-	# Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
-	# config.assets.precompile += %w( search.js )
+  # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
+  # config.assets.precompile += %w( search.js )
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -84,5 +85,5 @@ Sosol::Application.configure do
   # and possibly other unversioned secrets for development
   require File.join(File.dirname(__FILE__), 'production_secret')
   # configure email parameters
-  config.site_email_from='admin@localhost'
+  config.site_email_from = 'admin@localhost'
 end

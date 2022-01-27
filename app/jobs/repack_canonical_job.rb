@@ -1,16 +1,16 @@
+# frozen_string_literal: true
+
 class RepackCanonicalJob
   include SuckerPunch::Job
 
   def perform
-    begin
-      Rails.logger.debug("RepackCanonicalJob started")
-      Rails.logger.flush if Rails.logger.respond_to? :flush
-      Publication.with_advisory_lock("repack_canonical") do
-        Repository.new.repack()
-      end
-    ensure
-      Rails.logger.debug("RepackCanonicalJob finished")
-      Rails.logger.flush if Rails.logger.respond_to? :flush
+    Rails.logger.debug('RepackCanonicalJob started')
+    Rails.logger.flush if Rails.logger.respond_to? :flush
+    Publication.with_advisory_lock('repack_canonical') do
+      Repository.new.repack
     end
+  ensure
+    Rails.logger.debug('RepackCanonicalJob finished')
+    Rails.logger.flush if Rails.logger.respond_to? :flush
   end
 end

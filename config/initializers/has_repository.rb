@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module HasRepository
   def self.included(base)
     base.extend(ActMethods)
   end
-  
+
   module ActMethods
     def has_repository
       unless included_modules.include? InstanceMethods
@@ -11,10 +13,10 @@ module HasRepository
       end
     end
   end
-  
+
   module ClassMethods
   end
-  
+
   module InstanceMethods
     def repository
       @repository ||= Repository.new(self)
@@ -22,4 +24,4 @@ module HasRepository
   end
 end
 
-ActiveRecord::Base.send(:include, HasRepository)
+ActiveRecord::Base.include HasRepository

@@ -1,22 +1,22 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'cts'
 
 class CTSLibTest < ActiveSupport::TestCase
-  
-  context "urn tests" do
+  context 'urn tests' do
     setup do
     end
-    
+
     teardown do
     end
-    
-    should "be edition" do
+
+    should 'be edition' do
       if defined?(EXIST_HELPER_REPO)
-       type = CTS::CTSLib.versionTypeForUrn('perseus','urn:cts:greekLang:tlg0012.tlg001.perseus-grc1').to_s
-       Rails.logger.info("Type = #{type}")
-       assert type == 'edition'
+        type = CTS::CTSLib.versionTypeForUrn('perseus', 'urn:cts:greekLang:tlg0012.tlg001.perseus-grc1').to_s
+        Rails.logger.info("Type = #{type}")
+        assert type == 'edition'
       end
     end
-    
   end
 end

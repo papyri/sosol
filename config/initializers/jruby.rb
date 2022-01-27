@@ -1,12 +1,12 @@
-if(RUBY_PLATFORM == 'java')
+# frozen_string_literal: true
+
+if RUBY_PLATFORM == 'java'
   require 'java'
-  
+
   JAR_PATH = File.join(::Rails.root.to_s, 'lib', 'java')
-  
+
   Dir.entries(JAR_PATH).sort.each do |entry|
-    if entry =~ /.jar$/
-      require File.join(JAR_PATH, entry)
-    end
+    require File.join(JAR_PATH, entry) if entry =~ /.jar$/
   end
 
   if RUBY_VERSION.to_f < 2.0

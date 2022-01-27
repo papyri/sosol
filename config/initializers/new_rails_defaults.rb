@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # These settings change the behavior of Rails 2 apps and will be defaults
 # for Rails 3. You can remove this initializer when Rails 3 is released.
 

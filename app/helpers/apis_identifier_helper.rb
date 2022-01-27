@@ -1,9 +1,7 @@
+# frozen_string_literal: true
+
 module ApisIdentifierHelper
-  
   module ApisDate
-    
-    def ApisDate.getYear
-      
-    end
+    def self.getYear; end
   end
 end

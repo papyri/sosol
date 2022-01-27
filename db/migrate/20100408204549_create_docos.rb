@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class CreateDocos < ActiveRecord::Migration[4.2]
   def self.up
-    #create_table :docos, :options => 'default charset=utf8' do |t| - for creating in mysql as standalone
+    # create_table :docos, :options => 'default charset=utf8' do |t| - for creating in mysql as standalone
     create_table :docos do |t|
-      t.decimal :line, :precision => 7, :scale =>2
+      t.decimal :line, precision: 7, scale: 2
       t.string :category
       t.string :description
       t.string :preview

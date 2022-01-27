@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class AddDefaultsToStatus < ActiveRecord::Migration[4.2]
   def self.up
-    change_column :publications, :status, :string, :default => "editing"
+    change_column :publications, :status, :string, default: 'editing'
   end
 
   def self.down

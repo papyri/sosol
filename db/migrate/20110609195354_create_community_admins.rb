@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class CreateCommunityAdmins < ActiveRecord::Migration[4.2]
   def self.up
-    create_table :communities_admins , :id => false do |t|
+    create_table :communities_admins, id: false do |t|
       t.integer :community_id
       t.integer :user_id
 

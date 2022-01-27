@@ -1,64 +1,66 @@
+# frozen_string_literal: true
+
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'https://rubygems.org'
-ruby "2.5.8", :engine => "jruby", :engine_version => "9.2.20.1"
+ruby '2.5.8', engine: 'jruby', engine_version: '9.2.20.1'
 
 gem 'rails', '~> 6.1.4.4'
 
 # Needed for the new asset pipeline
-gem 'sass-rails', '~> 5'
 gem 'coffee-rails'
-gem 'uglifier', '>= 1.0.3'
+gem 'sass-rails', '~> 5'
 gem 'therubyrhino'
+gem 'uglifier', '>= 1.0.3'
 
 group :test do
-  gem 'rake'
+  gem 'database_cleaner-active_record'
+  gem 'factory_bot_rails'
   gem 'mocha'
+  gem 'rails-controller-testing'
+  gem 'rake'
+  gem 'shoulda'
   gem 'shoulda-context'
   gem 'shoulda-matchers'
-  gem 'shoulda'
-  gem 'factory_bot_rails'
-  gem 'database_cleaner-active_record'
-  gem 'rails-controller-testing'
 end
 
 group :development, :test do
   gem 'rubocop'
 end
 
-gem 'jquery-rails'
-gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
 gem 'haml-rails', '~> 2.0'
+gem 'jquery-rails'
+gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/, '')
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
-gem 'json', '>=1.6.6'
-gem 'jdbc-sqlite3', '>= 3.7.2', :platform => :jruby
-gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 61', :platform => :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 61', :platform => :jruby
-gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 61', :platform => :jruby
-gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 61', :platform => :jruby
-gem 'jdbc-mysql', require: false
-gem 'activerecord-session_store'
-gem 'tzinfo-data', :platform => :jruby
 gem 'actionpack-page_caching'
-gem 'rack', '>= 1.1.0'
-gem 'handle_invalid_percent_encoding_requests'
+gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 61', platform: :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 61', platform: :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 61', platform: :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 61', platform: :jruby
+gem 'activerecord-session_store'
 gem 'airbrake'
-gem 'rubyzip', '~> 1.0'
-gem 'zip-zip'
-gem 'dynamic_form'
 gem 'capistrano', '~> 2.15.0'
-gem 'warbler', '~> 2.0'
-gem 'puma'
-gem 'sucker_punch', '~> 2.0'
-gem 'with_advisory_lock'
-gem 'silencer'
-gem 'rack-attack', '~> 4.0'
-gem 'i18n'
-gem "pry", "~> 0.14.0"
-gem "pry-rails", "~> 0.3.9"
 gem 'devise', '~> 4.8'
-gem 'omniauth-google-oauth2'
 gem 'dotenv-rails'
-gem 'omniauth-rails_csrf_protection'
+gem 'dynamic_form'
+gem 'handle_invalid_percent_encoding_requests'
 gem 'httpclient'
+gem 'i18n'
+gem 'jdbc-mysql', require: false
+gem 'jdbc-sqlite3', '>= 3.7.2', platform: :jruby
+gem 'json', '>=1.6.6'
+gem 'omniauth-google-oauth2'
+gem 'omniauth-rails_csrf_protection'
+gem 'pry', '~> 0.14.0'
+gem 'pry-rails', '~> 0.3.9'
+gem 'puma'
+gem 'rack', '>= 1.1.0'
+gem 'rack-attack', '~> 4.0'
+gem 'rubyzip', '~> 1.0'
+gem 'silencer'
+gem 'sucker_punch', '~> 2.0'
+gem 'tzinfo-data', platform: :jruby
+gem 'warbler', '~> 2.0'
+gem 'with_advisory_lock'
+gem 'zip-zip'

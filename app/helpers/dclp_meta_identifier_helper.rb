@@ -1,20 +1,21 @@
+# frozen_string_literal: true
+
 module DclpMetaIdentifierHelper
   module DclpEdition
-
     # Assembles all valid type options for DCLP edition types (+publication+, +reference+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpEdition.typeOptions
+    def self.typeOptions
       [
-        [I18n.t('edition.type.publication'),  :publication],
-        [I18n.t('edition.type.reference'),      :reference]
+        [I18n.t('edition.type.publication'), :publication],
+        [I18n.t('edition.type.reference'), :reference]
       ]
     end
 
     # Assembles all valid type options for DCLP edition subtypes (+principal+, +partial+, +previous+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpEdition.subtypeOptions
+    def self.subtypeOptions
       [
         [I18n.t('edition.subtype.principal'),    :principal],
         [I18n.t('edition.subtype.partial'),      :partial],
@@ -33,7 +34,7 @@ module DclpMetaIdentifierHelper
     # e.g. reference + partial = partial
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpEdition.ubertypeOptions1
+    def self.ubertypeOptions1
       [
         [I18n.t('edition.ubertype.principal'),   :principal],
         [I18n.t('edition.ubertype.reference'),   :reference],
@@ -50,7 +51,7 @@ module DclpMetaIdentifierHelper
     # e.g. reference + catalogue = catalogue
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpEdition.ubertypeOptions2
+    def self.ubertypeOptions2
       [
         [I18n.t('edition.ubertype.translation'),  :translation],
         [I18n.t('edition.ubertype.study'),        :study],
@@ -62,7 +63,7 @@ module DclpMetaIdentifierHelper
     # Assembles all valid type options for DCLP languages (+de+, +en+, +it+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpEdition.languageOptions
+    def self.languageOptions
       [
         ['', ''],
         [I18n.t('language.de'), :de],
@@ -78,7 +79,7 @@ module DclpMetaIdentifierHelper
     # listed in alphabetical order
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpEdition.extraOptions
+    def self.extraOptions
       [
         [I18n.t('edition.extra.book'),      :book],
         [I18n.t('edition.extra.chapter'),   :chapter],
@@ -102,21 +103,20 @@ module DclpMetaIdentifierHelper
     end
 
     # Test whether a given value (+test+) is comprised in above list (DclpEdition.extraOptions)
-    def DclpEdition.validExtraOption? test
+    def self.validExtraOption?(test)
       if test.is_a?(Symbol) || test.is_a?(String)
-        DclpEdition.extraOptions.each{ |option|
-          if test.to_sym == option[1]
-            return true
-          end
-        }
+        DclpEdition.extraOptions.each do |option|
+          return true if test.to_sym == option[1]
+        end
       end
-      return false
+      false
     end
 
     # Data structure for publication information
     class Extra
       attr_accessor :value, :unit, :corresp, :from, :to
-      def initialize value, unit, corresp = nil, from = nil, to = nil
+
+      def initialize(value, unit, corresp = nil, from = nil, to = nil)
         @value   = value
         @unit    = unit.to_sym
         @corresp = corresp
@@ -127,13 +127,13 @@ module DclpMetaIdentifierHelper
 
     class Edition
       # +Array+ of a valid values for @type
-      @@typeList          = [:publication, :reference]
+      @@typeList          = %i[publication reference]
       # +Array+ of a valid values for @subtype
-      @@subtypeList       = [:principal, :partial, :previous, :readings, :translation, :study, :catalogue, :palaeo]
+      @@subtypeList       = %i[principal partial previous readings translation study catalogue palaeo]
       # +Array+ of a valid values for @xml:lang
-      @@languageList       = [:de, :en, :it, :es, :la, :fr]
+      @@languageList = %i[de en it es la fr]
       # +Array+ of all String member attributes that have a TEI equivalent
-      @@atomList          = [:type, :subtype, :ubertype, :language, :link, :title, :titleLevel, :titleType] # CROMULENT TITLE HACK
+      @@atomList = %i[type subtype ubertype language link title titleLevel titleType] # CROMULENT TITLE HACK
 
       attr_accessor :type, :subtype, :ubertype, :language, :link, :biblioId, :extraList, :preview, :title, :titleLevel, :titleType # CROMULENT TITLE HACK
 
@@ -141,7 +141,7 @@ module DclpMetaIdentifierHelper
       # - *Args*  :
       #   - +init+ → +Hash+ object containing edition data as provided by the model class +DCLPMetaIdentifier+, used to initialise member variables, defaults to +nil+
       # Side effect on +@type+, +@subtype+, +@ubertype+, +@language+, +@link+, +@biblioId+, +@extraList+, +@preview+, +@title+, +@titleLevel+ and +@titleType+
-      def initialize init = nil
+      def initialize(init = nil)
         @type      = nil
         @subtype   = nil
         @ubertype  = nil
@@ -156,19 +156,15 @@ module DclpMetaIdentifierHelper
 
         if init
           if init[:edition]
-            if init[:edition][:attributes]
-              self.populateAtomFromHash init[:edition][:attributes]
-            end
+            populateAtomFromHash init[:edition][:attributes] if init[:edition][:attributes]
 
             @ubertype = @subtype
-            if @type == 'reference' && @subtype == 'principal'
-              @ubertype = 'reference'
-            end
+            @ubertype = 'reference' if @type == 'reference' && @subtype == 'principal'
 
             if init[:edition][:children]
               if init[:edition][:children][:link]
                 @link = init[:edition][:children][:link][:value]
-                @biblioId = @link.match(/\A.+\/(\d+)\Z/) ? @link.match(/\A.+\/(\d+)\Z/).captures[0] : nil
+                @biblioId = @link.match(%r{\A.+/(\d+)\Z}) ? @link.match(%r{\A.+/(\d+)\Z}).captures[0] : nil
               end
               if init[:edition][:children][:title] # CROMULENT TITLE HACK
                 @title = init[:edition][:children][:title][:value]
@@ -177,50 +173,40 @@ module DclpMetaIdentifierHelper
                   @titleType = init[:edition][:children][:title][:attributes][:type]
                 end
               end
-              if init[:edition][:children][:extra]
-                init[:edition][:children][:extra].each {|extra|
-                  @extraList << Extra.new(extra[:value], extra[:attributes][:unit], extra[:attributes][:corresp], extra[:attributes][:from], extra[:attributes][:to])
-                }
+              init[:edition][:children][:extra]&.each do |extra|
+                @extraList << Extra.new(extra[:value], extra[:attributes][:unit], extra[:attributes][:corresp],
+                                        extra[:attributes][:from], extra[:attributes][:to])
               end
             end
 
           else
-            self.populateAtomFromHash init
+            populateAtomFromHash init
           end
 
         end
+      end
 
-      end
-      
-      def type= value
-        @type = value
-      end
-      
-      def subtype= value
-        @subtype = value
-      end
-      
+      attr_writer :type, :subtype
+
       # Updates atomic instance variables (strings, numbers, etc.) from a given hash
       # - *Args*  :
       #   - +hash+ → key value pairs of object data
       # - *Returns* :
       #   - +Array+ of variable names for atomic values
       # Side effect on all member variables that are declared in +@@atomList+
-      def populateAtomFromHash hash
-        @@atomList.each {|member|
-          self.send((member.to_s + '=').to_sym, hash[member] || nil)
-        }
+      def populateAtomFromHash(hash)
+        @@atomList.each do |member|
+          send("#{member}=".to_sym, hash[member] || nil)
+        end
       end
-    
     end
-  end # module DclpEdition
+  end
 
   module DclpWork
-
     # List of all available authorities (+tlg+, +stoa+, +cwkb+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpWork.authorityOptions(mode = null)
+    def self.authorityOptions(mode = null)
       options = [
         [I18n.t('work.authority.tlg'),  :tlg],
         [I18n.t('work.authority.stoa'), :stoa],
@@ -229,10 +215,11 @@ module DclpMetaIdentifierHelper
         [I18n.t('work.authority.tm'),   :tm]
       ]
 
-      if(mode == :author)
-        options.delete_if {|x| x[1] == :tm}
-      elsif(mode == :title)
-        options.delete_if {|x| x[1] == :phi}
+      case mode
+      when :author
+        options.delete_if { |x| x[1] == :tm }
+      when :title
+        options.delete_if { |x| x[1] == :phi }
       end
 
       options
@@ -242,7 +229,7 @@ module DclpMetaIdentifierHelper
     # type is always +publication+
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpWork.subtypeOptions
+    def self.subtypeOptions
       [
         [I18n.t('work.subtype.ancient'), :ancient],
         [I18n.t('work.subtype.ancientQuote'), :ancientQuote]
@@ -252,25 +239,25 @@ module DclpMetaIdentifierHelper
     # Assembles all valid type options for DCLP work languages (+la+, +el+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
-    def DclpWork.languageOptions
+    def self.languageOptions
       [
         ['', ''],
         [I18n.t('language.la'), :la],
-        [I18n.t('language.el'), :grc],
+        [I18n.t('language.el'), :grc]
       ]
     end
-    
-    def DclpWork.getIdFromUrl(urlList, type)
+
+    def self.getIdFromUrl(urlList, type)
       if urlList
         id = ''
-        urlList.each{|url|
+        urlList.each do |url|
           case type
           when :tlg
             if /\A.*tlg(?<id>\d+)\Z/ =~ url
               return id
             end
           when :tm
-            if /\A.*authorwork\/(?<id>\d+)\Z/ =~ url
+            if %r{\A.*authorwork/(?<id>\d+)\Z} =~ url
               return id
             end
           when :stoa
@@ -282,88 +269,94 @@ module DclpMetaIdentifierHelper
               return id
             end
           when :cwkb
-            if /\A.*cwkb\.org\/(author|work).*[^\d](?<id>\d+)[^\d].*\Z/ =~ url
+            if %r{\A.*cwkb\.org/(author|work).*[^\d](?<id>\d+)[^\d].*\Z} =~ url
               return id
             end
           else
             return nil
           end
-        }
+        end
       end
-      return nil
+      nil
     end
-    
-    def DclpWork.getLanguageFromUrl(urlList)
+
+    def self.getLanguageFromUrl(urlList)
       if urlList
         language = ''
-        urlList.each{|url|
-          if /(?<language>greek|latin)/ =~ url
-            case language
-              when 'latin'
-                return 'la'
-              when 'greek'
-                return 'grc'
-            end
+        urlList.each  do |url|
+          next unless /(?<language>greek|latin)/ =~ url
+
+          case language
+          when 'latin'
+            return 'la'
+          when 'greek'
+            return 'grc'
           end
-        }
+        end
       end
-      return nil
+      nil
     end
 
     # Data structure for publication information
     class Author
       attr_accessor :name, :language, :tlg, :cwkb, :phi, :stoa, :authority, :certainty, :ref, :corresp
-      def initialize init = nil
+
+      def initialize(init = nil)
         @name      = init[:value]
 
-        @ref       = init[:attributes][:ref] ? init[:attributes][:ref] : []
+        @ref       = init[:attributes][:ref] || []
         @phi       = init[:children][:phi] ? init[:children][:phi][:value] : DclpWork.getIdFromUrl(@ref, :phi)
         @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
         @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
         @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
-        @authority = {:phi => @phi, :tlg => @tlg, :stoa => @stoa, :cwkb => @cwkb}
+        @authority = { phi: @phi, tlg: @tlg, stoa: @stoa, cwkb: @cwkb }
 
-        @language  = init[:attributes][:language] ? init[:attributes][:language] : DclpWork.getLanguageFromUrl(@ref)
-        
-        @certainty = init[:children][:certainty] ? init[:children][:certainty] : nil
+        @language  = init[:attributes][:language] || DclpWork.getLanguageFromUrl(@ref)
+
+        @certainty = init[:children][:certainty] || nil
       end
 
-      def to_s()
-        '[AUTHOR ' + (@name ? @name : '-') + ' | language ' + (@language || 'xxx') + ' | tlg ' + (@tlg || '') + ' | cwkb ' + (@cwkb || '') + ' | phi ' + (@phi || '') + ' | stoa ' + (@stoa || '') + ' | corresp ' + (@corresp || '') + ' | certainty ' + (@certainty || '') + ' | ref ' + (@ref.to_s || '') + ']'
+      def to_s
+        "[AUTHOR #{@name || '-'} | language #{@language || 'xxx'} | tlg #{@tlg || ''} | cwkb #{@cwkb || ''} | phi #{@phi || ''} | stoa #{@stoa || ''} | corresp #{@corresp || ''} | certainty #{@certainty || ''} | ref #{@ref.to_s || ''}]"
       end
     end
 
     # Data structure for publication information
     class Title
       attr_accessor :name, :language, :tlg, :cwkb, :tm, :stoa, :authority, :certainty, :ref, :date, :from, :to, :corresp
-      def initialize init = nil
+
+      def initialize(init = nil)
         @name      = init[:value]
-        
-        @ref       = init[:attributes][:ref] ? init[:attributes][:ref] : []
+
+        @ref       = init[:attributes][:ref] || []
         @tm        = init[:children][:tm] ? init[:children][:tm][:value] : DclpWork.getIdFromUrl(@ref, :tm)
         @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
         @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
         @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
-        @authority = {:tm => @tm, :tlg => @tlg, :stoa => @stoa, :cwkb => @cwkb}
-        @language  = init[:attributes][:language] ? init[:attributes][:language] : DclpWork.getLanguageFromUrl(@ref)
-        
-        @certainty = init[:children][:certainty] ? init[:children][:certainty] : nil
+        @authority = { tm: @tm, tlg: @tlg, stoa: @stoa, cwkb: @cwkb }
+        @language  = init[:attributes][:language] || DclpWork.getLanguageFromUrl(@ref)
+
+        @certainty = init[:children][:certainty] || nil
         @date      = init[:children][:date] ? init[:children][:date][:value] : nil
         @when      = init[:children][:date] ? init[:children][:date][:attributes][:when] : nil
         @from      = init[:children][:date] ? init[:children][:date][:attributes][:from] : @when
         @to        = init[:children][:date] ? init[:children][:date][:attributes][:to] : nil
-        
       end
 
-      def to_s()
-        '[TITLE ' + (@name ? @name : '-') + ' | language ' + (@language || '') + ' | tm ' + (@tm || '') + ' | cwkb ' + (@cwkb || '') + ' | tlg ' + (@tlg || '') + ' | stoa ' + (@stoa || '') + ' | corresp ' + (@corresp || '') + ' | certainty ' + (@certainty || '') + ' | ref ' + (@ref.to_s || '') + ' | date ' + (@date || '') + (@when || @from || @to ? '(' + (@when || '') + (@from || '') + (@to ? '-' + @to : '') + ')' : '') + ']'
+      def to_s
+        '[TITLE ' + (@name || '-') + ' | language ' + (@language || '') + ' | tm ' + (@tm || '') + ' | cwkb ' + (@cwkb || '') + ' | tlg ' + (@tlg || '') + ' | stoa ' + (@stoa || '') + ' | corresp ' + (@corresp || '') + ' | certainty ' + (@certainty || '') + ' | ref ' + (@ref.to_s || '') + ' | date ' + (@date || '') + (if @when || @from || @to
+                                                                                                                                                                                                                                                                                                                                  "(#{@when || ''}#{@from || ''}#{@to ? "-#{@to}" : ''})"
+                                                                                                                                                                                                                                                                                                                                else
+                                                                                                                                                                                                                                                                                                                                  ''
+                                                                                                                                                                                                                                                                                                                                end) + ']'
       end
     end
 
     # ContentText, genre, religion, culture and other keywords
     class ContentText
       attr_accessor :genre, :religion, :culture, :keywords, :overview
-      def initialize init = nil
+
+      def initialize(init = nil)
         @genre    = []
         @religion = []
         @culture  = []
@@ -371,29 +364,29 @@ module DclpMetaIdentifierHelper
         @overview = ''
 
         if init && init[:contentText]
-          init[:contentText].each{|keyword|
+          init[:contentText].each do |keyword|
             if keyword[:attributes] && keyword[:attributes][:class]
               case keyword[:attributes][:class]
-                when 'culture'
-                  @culture  << keyword[:value]
-                when 'religion'
-                  @religion << keyword[:value]
-                when 'description'
-                  @genre << keyword[:value]
-                when 'overview'
-                  @overview = keyword[:value]
-                else
-                  @keywords << keyword[:value]
+              when 'culture'
+                @culture  << keyword[:value]
+              when 'religion'
+                @religion << keyword[:value]
+              when 'description'
+                @genre << keyword[:value]
+              when 'overview'
+                @overview = keyword[:value]
+              else
+                @keywords << keyword[:value]
               end
             else
               @keywords << keyword[:value]
             end
-          }
+          end
         end
       end
 
       def to_s
-        '[ContentText genre: ' + @genre.to_s + ', religion: ' + @religion.to_s + ', culture ' + @culture.to_s + '; overview: ' + @overview + ']' 
+        "[ContentText genre: #{@genre}, religion: #{@religion}, culture #{@culture}; overview: #{@overview}]"
       end
     end
 
@@ -401,7 +394,7 @@ module DclpMetaIdentifierHelper
     class Extra
       attr_accessor :value, :unit, :certainty, :from, :to
 
-      def initialize init = nil
+      def initialize(init = nil)
         @value     = nil
         @unit      = nil
         @certainty = nil
@@ -410,41 +403,37 @@ module DclpMetaIdentifierHelper
         @corresp   = nil
 
         if init
-          @value     = defined?(init[:value]) ? init[:value] : nil
+          @value = defined?(init[:value]) ? init[:value] : nil
           if init[:attributes]
             @unit      = defined?(init[:attributes][:unit]) ? init[:attributes][:unit] : nil
             @from      = defined?(init[:attributes][:from]) ? init[:attributes][:from] : nil
             @to        = defined?(init[:attributes][:to]) ? init[:attributes][:to] : nil
             @corresp   = defined?(init[:attributes][:corresp]) ? init[:attributes][:corresp] : nil
           end
-          if init[:children] && init[:children][:certainty]
-            @certainty = init[:children][:certainty]
-          end
+          @certainty = init[:children][:certainty] if init[:children] && init[:children][:certainty]
         end
       end
     end
 
     class Work
       # +Array+ of a valid values for @subtype
-      @@subtypeList = [:ancient, :ancientQuote]
-      @@atomList = [:subtype, :corresp, :id, :exclude]
+      @@subtypeList = %i[ancient ancientQuote]
+      @@atomList = %i[subtype corresp id exclude]
 
       attr_accessor :subtype, :corresp, :id, :exclude, :alternative, :author, :title, :extraList
 
-      def self.alternative? workListAsObtainedFromEpiDoc
+      def self.alternative?(workListAsObtainedFromEpiDoc)
         workListAsObtainedFromEpiDoc.each do |work|
-          if work && work[:attributes] && work[:attributes][:exclude] && !work[:attributes][:exclude].empty?
-            return true
-          end
+          return true if work && work[:attributes] && work[:attributes][:exclude] && !work[:attributes][:exclude].empty?
         end
-        return false
+        false
       end
 
       # Constructor
       # - *Args*  :
       #   - +init+ → +Hash+ object containing work data as provided by the model class +DCLPMetaIdentifier+, used to initialise member variables, defaults to +nil+
       # Side effect on +@subtype+, +@corresp+, +@id+, +@exclude+, +@alternative+, +@author+, +@title+ and +@extraList+
-      def initialize init = nil
+      def initialize(init = nil)
         @subtype     = nil
         @corresp     = nil
         @id          = nil
@@ -456,22 +445,14 @@ module DclpMetaIdentifierHelper
 
         if init
           if init[:attributes]
-            self.populateAtomFromHash init[:attributes]
-            if @id && !@id.empty?
-              @alternative = true
-            end
+            populateAtomFromHash init[:attributes]
+            @alternative = true if @id && !@id.empty?
           end
           if init[:children]
-            if init[:children][:author]
-              @author = Author.new(init[:children][:author])
-            end
-            if init[:children][:title]
-              @title = Title.new(init[:children][:title])
-            end
-            if init[:children][:extra]
-              init[:children][:extra].each {|extra|
-                @extraList << Extra.new(extra)
-              }
+            @author = Author.new(init[:children][:author]) if init[:children][:author]
+            @title = Title.new(init[:children][:title]) if init[:children][:title]
+            init[:children][:extra]&.each do |extra|
+              @extraList << Extra.new(extra)
             end
           end
         end
@@ -483,39 +464,29 @@ module DclpMetaIdentifierHelper
       # - *Returns* :
       #   - +Array+ of variable names for atomic values
       # Side effect on all member variables that are declared in +@@atomList+
-      def populateAtomFromHash hash
-        @@atomList.each {|member|
-          self.send((member.to_s + '=').to_sym, hash[member] || nil)
-        }
-      end
-      
-      def to_s()
-        if @subtype
-          '[WORK Subtype: ' + @subtype + ' | ' + @author.to_s + ' | ' + @title.to_s + ' | count extra: ' + @extraList.length.to_s + ']'
+      def populateAtomFromHash(hash)
+        @@atomList.each do |member|
+          send("#{member}=".to_sym, hash[member] || nil)
         end
       end
 
+      def to_s
+        "[WORK Subtype: #{@subtype} | #{@author} | #{@title} | count extra: #{@extraList.length}]" if @subtype
+      end
     end
+  end
 
-  end # module DclpWork
-  
   module DclpObject
     class Collection
       attr_accessor :list
-      def initialize collection, collectionList
+
+      def initialize(collection, collectionList)
         @list = []
 
-        if collection
-          @list << collection
-        end
-        
-        if collectionList
-          @list += collectionList
-        end
+        @list << collection if collection
 
+        @list += collectionList if collectionList
       end
     end
-
-  end # module DclpObject
-
+  end
 end

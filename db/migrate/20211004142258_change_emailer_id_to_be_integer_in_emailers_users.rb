@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChangeEmailerIdToBeIntegerInEmailersUsers < ActiveRecord::Migration[5.2]
   def up
     if ActiveRecord::Base.connection.adapter_name == 'PostgreSQL'

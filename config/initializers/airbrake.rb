@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if defined?(Airbrake) && ENV['AIRBRAKE_HOST'].present? && ENV['AIRBRAKE_PROJECT_KEY'].present?
   Airbrake.configure do |config|
     config.host = ENV['AIRBRAKE_HOST']

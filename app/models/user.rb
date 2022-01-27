@@ -1,4 +1,6 @@
-#Represents a system user.
+# frozen_string_literal: true
+
+# Represents a system user.
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :lockable, :timeoutable, :trackable and :omniauthable
@@ -6,27 +8,28 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :confirmable, :validatable,
          :omniauthable, omniauth_providers: [:google], authentication_keys: [:login]
 
-  validates_uniqueness_of :name, :case_sensitive => false
+  validates_uniqueness_of :name, case_sensitive: false
   validates_presence_of :name
-  validates_format_of :name, :without => Repository::BASH_SPECIAL_CHARACTERS_REGEX, :message => "Username cannot contain any of the following special characters: #{Repository::BASH_SPECIAL_CHARACTERS_REGEX.source[1..-2]}"
-  validates_format_of :name, :without => /@/, :message => "Username cannot contain an '@' character.", on: :create
+  validates_format_of :name, without: Repository::BASH_SPECIAL_CHARACTERS_REGEX,
+                             message: "Username cannot contain any of the following special characters: #{Repository::BASH_SPECIAL_CHARACTERS_REGEX.source[1..-2]}"
+  validates_format_of :name, without: /@/, message: "Username cannot contain an '@' character.", on: :create
   validates :email, presence: true, uniqueness: { case_sensitive: false }
 
-  has_many :user_identifiers, :dependent => :destroy
+  has_many :user_identifiers, dependent: :destroy
 
   has_many :communities_members
-  has_many :community_memberships, :through => :communities_members, :source => :community
+  has_many :community_memberships, through: :communities_members, source: :community
   has_many :communities_admins
-  has_many :community_admins,  :through => :communities_admins, :source => :community
+  has_many :community_admins, through: :communities_admins, source: :community
 
   has_many :boards_users
-  has_many :boards, :through => :boards_users
-  has_many :finalizing_boards, :class_name => 'Board', :foreign_key => 'finalizer_user_id'
+  has_many :boards, through: :boards_users
+  has_many :finalizing_boards, class_name: 'Board', foreign_key: 'finalizer_user_id'
 
   has_and_belongs_to_many :emailers
 
-  has_many :publications, :as => :owner, :dependent => :destroy
-  has_many :events, :as => :owner, :dependent => :destroy
+  has_many :publications, as: :owner, dependent: :destroy
+  has_many :events, as: :owner, dependent: :destroy
 
   has_many :comments
 
@@ -36,16 +39,17 @@ class User < ApplicationRecord
   attr_writer :login
 
   def login
-    @login || self.name || self.email
+    @login || name || email
   end
 
   def self.find_for_database_authentication(warden_conditions)
     conditions = warden_conditions.dup
-    conditions[:email].downcase! if conditions[:email]
-    conditions[:name].downcase! if conditions[:name]
+    conditions[:email]&.downcase!
+    conditions[:name]&.downcase!
     if login = conditions.delete(:login)
-      where(conditions.to_h).where(["lower(name) = :value OR lower(email) = :value", { :value => login.downcase }]).first
-    elsif conditions.has_key?(:name) || conditions.has_key?(:email)
+      where(conditions.to_h).where(['lower(name) = :value OR lower(email) = :value',
+                                    { value: login.downcase }]).first
+    elsif conditions.key?(:name) || conditions.key?(:email)
       where(conditions.to_h).first
     end
   end
@@ -70,40 +74,38 @@ class User < ApplicationRecord
     # "sb/sb.6/sb.6.9108.xml",
     # "p.yale/p.yale.1/p.yale.1.43.xml",
 
-    if ENV['RAILS_ENV'] != 'test'
-      if ENV['RAILS_ENV'] == 'development'
-        user.admin = true
-        user.save!
+    if ENV['RAILS_ENV'] != 'test' && (ENV['RAILS_ENV'] == 'development')
+      user.admin = true
+      user.save!
 
-        Sosol::Application.config.dev_init_files.each do |pn_id|
-          p = Publication.new
-          p.owner = user
-          p.creator = user
-          p.populate_identifiers_from_identifiers(pn_id)
-          p.save!
-          p.branch_from_master
+      Sosol::Application.config.dev_init_files.each do |pn_id|
+        p = Publication.new
+        p.owner = user
+        p.creator = user
+        p.populate_identifiers_from_identifiers(pn_id)
+        p.save!
+        p.branch_from_master
 
-          e = Event.new
-          e.category = "started editing"
-          e.target = p
-          e.owner = user
-          e.save!
-        end # each
-      end # == development
-    end # != test
-  end # after_create
+        e = Event.new
+        e.category = 'started editing'
+        e.target = p
+        e.owner = user
+        e.save!
+      end
+    end
+  end
 
   def human_name
     # get user name
-    if self.full_name && self.full_name.strip != ""
-      return self.full_name.strip
+    if full_name && full_name.strip != ''
+      full_name.strip
     else
-      return who_name = self.name
+      who_name = name
     end
   end
 
   def jgit_actor
-    org.eclipse.jgit.lib.PersonIdent.new(self.full_name, self.email)
+    org.eclipse.jgit.lib.PersonIdent.new(full_name, email)
   end
 
   # Copied from: https://raw.github.com/mojombo/grit/v2.4.1/lib/grit/actor.rb
@@ -117,57 +119,52 @@ class User < ApplicationRecord
   # Returns a String.
   def output(time)
     out = @name.to_s.dup
-    if @email
-      out << " <#{@email}>"
-    end
+    out << " <#{@email}>" if @email
     hours = (time.utc_offset.to_f / 3600).to_i # 60 * 60, seconds to hours
     rem   = time.utc_offset.abs % 3600
     out << " #{time.to_i} #{hours >= 0 ? :+ : :-}#{hours.abs.to_s.rjust(2, '0')}#{rem.to_s.rjust(2, '0')}"
   end
 
   def author_string
-    "#{self.full_name} <#{self.email}>"
+    "#{full_name} <#{email}>"
   end
 
   def git_author_string
     local_time = Time.now
-    "#{self.author_string} #{local_time.to_i} #{local_time.strftime('%z')}"
+    "#{author_string} #{local_time.to_i} #{local_time.strftime('%z')}"
   end
 
   before_destroy do |user|
     user.repository.destroy
   end
 
-  #Sends an email to all users on the system that have an email address.
-  #*Args*
+  # Sends an email to all users on the system that have an email address.
+  # *Args*
   #- +subject_line+ the email's subject
   #- +email_content+ the email's body
   def self.compose_email(subject_line, email_content)
-    #get email addresses from all users that have them
-    users = User.find_by_sql("SELECT email From users WHERE email is not null")
+    # get email addresses from all users that have them
+    users = User.find_by_sql('SELECT email From users WHERE email is not null')
 
     users.each do |toaddress|
-      if toaddress.email.strip != ""
+      if toaddress.email.strip != ''
         EmailerMailer.general_email(toaddress.email, subject_line, email_content).deliver_now
       end
     end
 
-    #can use below if want to send to all addresses in 1 email
-    #format 'to' addresses for actionmailer
-    #addresses = users.map{|c| c.email}.join(", ")
-    #EmailerMailer.deliver_send_email_out(addresses, subject_line, email_content)
-
+    # can use below if want to send to all addresses in 1 email
+    # format 'to' addresses for actionmailer
+    # addresses = users.map{|c| c.email}.join(", ")
+    # EmailerMailer.deliver_send_email_out(addresses, subject_line, email_content)
   end
 
   def self.stats(user_id)
     if user_id.is_a? Integer
       stats = ActiveRecord::Base.connection.execute("select p.id AS pub_id, p.title AS pub_title, p.status AS pub_status, i.title AS id_title, c.comment AS comment, c.reason AS reason, c.created_at AS created_at from comments c LEFT OUTER JOIN publications p ON c.publication_id=p.id LEFT OUTER JOIN identifiers i ON c.identifier_id=i.id where c.user_id=#{user_id} ORDER BY c.created_at;")
-      stats.each {|row|
-        row["created_at"] = DateTime.parse(row["created_at"].to_s)
-        unless row["comment"].nil?
-          row["comment"] = URI.unescape(row["comment"]).gsub("+", " ")
-        end
-        }
+      stats.each do |row|
+        row['created_at'] = DateTime.parse(row['created_at'].to_s)
+        row['comment'] = URI.unescape(row['comment']).gsub('+', ' ') unless row['comment'].nil?
+      end
     end
   end
 
@@ -183,15 +180,16 @@ class User < ApplicationRecord
     user_identifier = UserIdentifier.find_by_identifier(user_identifier_string)
     if user_identifier.present?
       Rails.logger.info("Found UserIdentifier: #{user_identifier.inspect}")
-      return user_identifier.user
+      user_identifier.user
     else
-      Rails.logger.info("No matching UserIdentifier, creating new user")
-      new_user = User.new(name: access_token.info.name.tr(' ','').downcase, email: access_token.info.email, full_name: access_token.info.name)
+      Rails.logger.info('No matching UserIdentifier, creating new user')
+      new_user = User.new(name: access_token.info.name.tr(' ', '').downcase, email: access_token.info.email,
+                          full_name: access_token.info.name)
       new_user_identifier = UserIdentifier.new(identifier: user_identifier_string)
       Rails.logger.info(new_user.inspect)
       Rails.logger.info(new_user_identifier.inspect)
       new_user.user_identifiers << new_user_identifier
-      return new_user
+      new_user
     end
   end
 
@@ -203,9 +201,9 @@ class User < ApplicationRecord
         Rails.logger.info("devise.google_data: #{session['devise.google_data']}")
       end
       if session['identifier'].present?
-        Rails.logger.info("Session identifier present")
-        unless user.user_identifiers.any?{|i| i.identifier == session['identifier']}
-          Rails.logger.info("Adding identifier to user")
+        Rails.logger.info('Session identifier present')
+        unless user.user_identifiers.any? { |i| i.identifier == session['identifier'] }
+          Rails.logger.info('Adding identifier to user')
           user.user_identifiers << UserIdentifier.new(identifier: session['identifier'])
         end
       end
@@ -218,14 +216,14 @@ class User < ApplicationRecord
   # password to their account. It will *not* allow users with a "nil" password set
   # to login with a blank password.
   def valid_password?(current_password)
-    self.encrypted_password.blank? || super(current_password)
+    encrypted_password.blank? || super(current_password)
   end
 
   def password_required?
-    Rails.logger.info("password_required? for: #{self.inspect}")
-    Rails.logger.info("password_required? for: #{self.user_identifiers.inspect}")
-    Rails.logger.info("password_required? #{self.user_identifiers.blank?}")
-    self.user_identifiers.blank?
+    Rails.logger.info("password_required? for: #{inspect}")
+    Rails.logger.info("password_required? for: #{user_identifiers.inspect}")
+    Rails.logger.info("password_required? #{user_identifiers.blank?}")
+    user_identifiers.blank?
   end
 
   def update_with_password(params, *options)
