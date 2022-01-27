@@ -87,7 +87,7 @@ module JGit
     end
 
     def add(path, sha, mode)
-      Rails.logger.debug("JGITTREE: Add for #{path}")
+      Rails.logger.debug { "JGITTREE: Add for #{path}" }
       # takes a path relative to this tree and adds it
       components = path.split('/')
       if components.length > 1 # need to recurse

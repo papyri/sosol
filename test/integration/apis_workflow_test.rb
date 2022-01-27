@@ -38,9 +38,9 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
             id_has_match = true
             Rails.logger.debug 'Identifier match found'
           else
-            Rails.logger.debug "#{a.title} has nill #{aid.class} identifier" if aid.xml_content.nil?
-            Rails.logger.debug "#{b.title} has nill #{bid.class} identifier" if bid.xml_content.nil?
-            Rails.logger.debug "Identifier diffs for #{a.title} #{b.title} #{aid.class} #{aid.title}"
+            Rails.logger.debug { "#{a.title} has nill #{aid.class} identifier" } if aid.xml_content.nil?
+            Rails.logger.debug { "#{b.title} has nill #{bid.class} identifier" } if bid.xml_content.nil?
+            Rails.logger.debug { "Identifier diffs for #{a.title} #{b.title} #{aid.class} #{aid.title}" }
             log_diffs(aid.xml_content.to_s, bid.xml_content.to_s)
             # Rails.logger.debug "full xml a " + aid.xml_content
             # Rails.logger.debug "full xml b " + bid.xml_content
@@ -50,7 +50,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
 
       unless id_has_match
         pubs_are_matched = false
-        Rails.logger.debug "--Mis matched publication. Id #{aid.title} #{aid.class} is different"
+        Rails.logger.debug { "--Mis matched publication. Id #{aid.title} #{aid.class} is different" }
       end
     end
 
@@ -72,8 +72,8 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
       end
     end
 
-    Rails.logger.debug "added #{plus_str}"
-    Rails.logger.debug "removed #{minus_str}"
+    Rails.logger.debug { "added #{plus_str}" }
+    Rails.logger.debug { "removed #{minus_str}" }
   end
 end
 
@@ -171,7 +171,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
           publication_session.get '/publications/create_from_identifier/papyri.info/apis/nyu.apis.4782',
                                   params: { test_user_id: @creator_user.id.to_s }
 
-          Rails.logger.debug "--flash is: #{publication_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{publication_session.flash.inspect}" }
 
           @publication = @creator_user.publications.first
 
@@ -179,25 +179,25 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
         end
 
         Rails.logger.debug '---APIS Publication Created---'
-        Rails.logger.debug "--identifier count is: #{@publication.identifiers.count}"
+        Rails.logger.debug { "--identifier count is: #{@publication.identifiers.count}" }
 
         an_array = @publication.identifiers
-        Rails.logger.debug "--identifier length via array is: #{an_array.length}"
+        Rails.logger.debug { "--identifier length via array is: #{an_array.length}" }
 
-        Rails.logger.debug "---Identifiers for publication #{@publication.title} are:"
+        Rails.logger.debug { "---Identifiers for publication #{@publication.title} are:" }
 
         @publication.identifiers.each do |pi|
           Rails.logger.debug '-identifier-'
-          Rails.logger.debug "title is: #{pi.title}"
-          Rails.logger.debug "was it modified?: #{pi.modified?}"
-          Rails.logger.debug "class: #{pi.class}"
+          Rails.logger.debug { "title is: #{pi.title}" }
+          Rails.logger.debug { "was it modified?: #{pi.modified?}" }
+          Rails.logger.debug { "class: #{pi.class}" }
           Rails.logger.debug 'xml:'
           Rails.logger.debug pi.xml_content
         end
 
         open_session do |edit_session|
           apis_identifier = @publication.identifiers.select { |i| i.instance_of?(APISIdentifier) }.first
-          assert !apis_identifier.modified?, 'APIS Identifier should not be modified before we edit it'
+          assert_not apis_identifier.modified?, 'APIS Identifier should not be modified before we edit it'
           original_content = apis_identifier.xml_content
           modified_content = original_content.sub(/Bobst/, 'APIS Workflow Test')
           assert_not_equal original_content, modified_content, 'Modified content should be modified'
@@ -206,7 +206,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
                              params: { test_user_id: @creator_user.id.to_s, apis_identifier: { xml_content: modified_content },
                                        comment: 'APIS Workflow Test' }
 
-          Rails.logger.debug "--APIS flash is: #{edit_session.flash.inspect}"
+          Rails.logger.debug { "--APIS flash is: #{edit_session.flash.inspect}" }
 
           apis_identifier.reload
           assert apis_identifier.modified?, 'APIS Identifier should be modified after we edit it'
@@ -216,7 +216,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
           submit_session.post "/publications/#{@publication.id}/submit/",
                               params: { test_user_id: @creator_user.id.to_s, submit_comment: 'I edited an APIS pub' }
 
-          Rails.logger.debug "--flash is: #{submit_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{submit_session.flash.inspect}" }
         end
         @publication.reload
 
@@ -245,7 +245,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
         # vote on it
         apis_publication = apis_publications.first
 
-        assert !apis_publication.creator_commits.empty?, 'submitted publication should have creator commits'
+        assert_not apis_publication.creator_commits.empty?, 'submitted publication should have creator commits'
 
         # find apis identifier
         apis_identifier = nil
@@ -264,7 +264,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
             vote: { publication_id: apis_identifier.publication.id.to_s, identifier_id: apis_identifier.id.to_s, user_id: @board_user.id.to_s, board_id: @apis_board.id.to_s, choice: 'accept' }
           }
 
-          Rails.logger.debug "--flash is: #{apis_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{apis_session.flash.inspect}" }
         end
 
         # reload the publication to get the vote associations to go thru?
@@ -301,16 +301,16 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.info('apis_final_publication')
         Rails.logger.info(apis_final_publication.inspect)
         Rails.logger.info(apis_final_identifier.inspect)
-        assert !apis_final_publication.needs_rename?,
-               'finalizing publication should not need rename after being renamed'
+        assert_not apis_final_publication.needs_rename?,
+                   'finalizing publication should not need rename after being renamed'
 
         open_session do |apis_finalize_session|
           apis_finalize_session.post "/publications/#{apis_final_publication.id}/finalize/",
                                      params: { test_user_id: @board_user.id.to_s,
                                                comment: 'I agree apis is great and now it is final' }
 
-          Rails.logger.debug "--flash is: #{apis_finalize_session.flash.inspect}"
-          Rails.logger.debug "----session data is: #{apis_finalize_session.session.to_hash.inspect}"
+          Rails.logger.debug { "--flash is: #{apis_finalize_session.flash.inspect}" }
+          Rails.logger.debug { "----session data is: #{apis_finalize_session.session.to_hash.inspect}" }
           Rails.logger.debug apis_finalize_session.body
         end
 
@@ -454,7 +454,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
           end
 
           should 'be deleted from editorial board' do
-            assert !Publication.exists?(@new_ddb_submitted_id)
+            assert_not Publication.exists?(@new_ddb_submitted_id)
           end
         end
       end

@@ -5,10 +5,10 @@ class Decree < ApplicationRecord
   TALLY_METHODS = { percent: 'percent',
                     count: 'count' }.freeze
 
-  validates_inclusion_of :tally_method,
-                         in: TALLY_METHODS.values
+  validates :tally_method,
+            inclusion: { in: TALLY_METHODS.values }
 
-  validates_presence_of :tally_method
+  validates :tally_method, presence: true
 
   # Hash with friendly name for valid tally methods. Mainly for setting selection on forms.
   # Methods are Percentage and Absolute Count.

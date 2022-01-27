@@ -331,7 +331,9 @@ class UserController < ApplicationController
       @approved_publications.reject! do |ap|
         fp.origin == ap.origin
       rescue ActiveRecord::RecordNotFound => e
-        Rails.logger.debug("UserController#board_dashboard ActiveRecord::RecordNotFound while removing approved publications: #{e.inspect}")
+        Rails.logger.debug do
+          "UserController#board_dashboard ActiveRecord::RecordNotFound while removing approved publications: #{e.inspect}"
+        end
         false
       end
     end

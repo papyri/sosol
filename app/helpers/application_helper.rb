@@ -157,7 +157,7 @@ module REXML
       if element.elements[xpath].instance_of?(REXML::Element)
         head = element.elements[xpath]
       else
-        Rails.logger.debug("unable to find xpath #{xpath}")
+        Rails.logger.debug { "unable to find xpath #{xpath}" }
         element.to_s
         lumps = REXML::XPath.breakXpathIntoLumps xpath
         lumps.each do |lump|

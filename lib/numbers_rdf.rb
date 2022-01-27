@@ -52,7 +52,7 @@ module NumbersRDF
 
       # Converts e.g. 'papyri.info/hgv/1234' to 'http://papyri.info/hgv/1234'
       def identifier_to_url(identifier)
-        "http://#{identifier}" if !identifier.blank? && identifier =~ /^#{NAMESPACE_IDENTIFIER}/
+        "http://#{identifier}" if identifier.present? && identifier =~ /^#{NAMESPACE_IDENTIFIER}/
       end
 
       # Gets the HTTP response for a given URL path.
@@ -172,9 +172,7 @@ module NumbersRDF
 
       # Applies XPath to an XML response body
       def process_numbers_server_response_body(rdf_xml, xpath)
-        JRubyXML.apply_xpath(rdf_xml, xpath, true).collect do |xpath_result|
-          xpath_result[:value]
-        end
+        JRubyXML.apply_xpath(rdf_xml, xpath, true).pluck(:value)
       rescue NativeException
         nil
       end

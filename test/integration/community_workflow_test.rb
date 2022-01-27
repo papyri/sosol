@@ -28,9 +28,9 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
             id_has_match = true
             Rails.logger.debug 'Identifier match found'
           else
-            Rails.logger.debug "#{a.title} has nill #{aid.class} identifier" if aid.xml_content.nil?
-            Rails.logger.debug "#{b.title} has nill #{bid.class} identifier" if bid.xml_content.nil?
-            Rails.logger.debug "Identifier diffs for #{a.title} #{b.title} #{aid.class} #{aid.title}"
+            Rails.logger.debug { "#{a.title} has nill #{aid.class} identifier" } if aid.xml_content.nil?
+            Rails.logger.debug { "#{b.title} has nill #{bid.class} identifier" } if bid.xml_content.nil?
+            Rails.logger.debug { "Identifier diffs for #{a.title} #{b.title} #{aid.class} #{aid.title}" }
             log_diffs(aid.xml_content.to_s, bid.xml_content.to_s)
             # Rails.logger.debug "full xml a " + aid.xml_content
             # Rails.logger.debug "full xml b " + bid.xml_content
@@ -40,7 +40,7 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
 
       unless id_has_match
         pubs_are_matched = false
-        Rails.logger.debug "--Mis matched publication. Id #{aid.title} #{aid.class} are different"
+        Rails.logger.debug { "--Mis matched publication. Id #{aid.title} #{aid.class} are different" }
       end
     end
 
@@ -62,8 +62,8 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
       end
     end
 
-    Rails.logger.debug "added #{plus_str}"
-    Rails.logger.debug "removed #{minus_str}"
+    Rails.logger.debug { "added #{plus_str}" }
+    Rails.logger.debug { "removed #{minus_str}" }
   end
 
   def output_publication_info(publication)
@@ -220,7 +220,7 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
           Rails.logger.debug '---Create A New Trash Publication---'
           trash_publication_session.post '/publications/create_from_templates',
                                          params: { test_user_id: @trash_user.id.to_s }
-          Rails.logger.debug "--flash is: #{trash_publication_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{trash_publication_session.flash.inspect}" }
           @trash_publication = @trash_user.publications.first
           @trash_publication.log_info
         end
@@ -230,18 +230,18 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
           Rails.logger.debug '---Create A New Publication---'
           publication_session.post '/publications/create_from_templates',
                                    params: { test_user_id: @creator_user.id.to_s }
-          Rails.logger.debug "--flash is: #{publication_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{publication_session.flash.inspect}" }
           @publication = @creator_user.publications.first
           @publication.log_info
         end
 
         Rails.logger.debug '---Publication Created---'
-        Rails.logger.debug "---Identifiers for publication #{@publication.title} are:"
+        Rails.logger.debug { "---Identifiers for publication #{@publication.title} are:" }
 
         @publication.identifiers.each do |pi|
           Rails.logger.debug '-identifier-'
-          Rails.logger.debug "title is: #{pi.title}"
-          Rails.logger.debug "was it modified?: #{pi.modified?}"
+          Rails.logger.debug { "title is: #{pi.title}" }
+          Rails.logger.debug { "was it modified?: #{pi.modified?}" }
           # Rails.logger.debug "xml:"
           # Rails.logger.debug pi.xml_content
         end
@@ -252,7 +252,7 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
           submit_session.post "/publications/#{@publication.id}/submit/",
                               params: { test_user_id: @creator_user.id.to_s, submit_comment: 'I made a new pub',
                                         community: { id: @test_community.id.to_s } }
-          Rails.logger.debug "--flash is: #{submit_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{submit_session.flash.inspect}" }
         end
         @publication.reload
 
@@ -260,7 +260,7 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
         assert_equal 'submitted', @publication.status,
                      "Publication status not submitted #{@publication.community_id} id "
 
-        Rails.logger.debug "---Publication Submitted to Community: #{@publication.community.name}"
+        Rails.logger.debug { "---Publication Submitted to Community: #{@publication.community.name}" }
 
         # meta board should have 1 publication, others should have 0
         meta_publications = Publication.where(owner_id: @meta_board.id, owner_type: 'Board')
@@ -295,13 +295,13 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
                             params: { test_user_id: @board_user.id.to_s, comment: { comment: 'I vote to agree meta is great', user_id: @board_user.id, publication_id: meta_identifier.publication.id, identifier_id: meta_identifier.id, reason: 'vote' }, \
                                       vote: { publication_id: meta_identifier.publication.id.to_s, identifier_id: meta_identifier.id.to_s, user_id: @board_user.id.to_s, board_id: @meta_board.id.to_s, choice: 'ok' } }
 
-          Rails.logger.debug "--flash is: #{meta_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{meta_session.flash.inspect}" }
         end
 
-        Rails.logger.debug "---Reloading publication: #{meta_publication.inspect}"
+        Rails.logger.debug { "---Reloading publication: #{meta_publication.inspect}" }
         # reload the publication to get the vote associations to go thru?
         meta_publication.reload
-        Rails.logger.debug "---Reloaded publication: #{meta_publication.inspect}"
+        Rails.logger.debug { "---Reloaded publication: #{meta_publication.inspect}" }
 
         vote_str = 'Votes on meta are: '
         meta_publication.votes.each do |v|
@@ -342,8 +342,8 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.info('---Meta publication after rename')
         Rails.logger.info(meta_final_publication.inspect)
         Rails.logger.info(meta_final_identifier.inspect)
-        assert !meta_final_publication.needs_rename?,
-               'finalizing publication should not need rename after being renamed'
+        assert_not meta_final_publication.needs_rename?,
+                   'finalizing publication should not need rename after being renamed'
 
         # finalize the meta
         open_session do |meta_finalize_session|
@@ -351,8 +351,8 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
                                      params: { test_user_id: @board_user.id.to_s,
                                                comment: 'I agree meta is great and now it is final' }
 
-          Rails.logger.debug "--flash is: #{meta_finalize_session.flash.inspect}"
-          Rails.logger.debug "----session data is: #{meta_finalize_session.session.to_hash.inspect}"
+          Rails.logger.debug { "--flash is: #{meta_finalize_session.flash.inspect}" }
+          Rails.logger.debug { "----session data is: #{meta_finalize_session.session.to_hash.inspect}" }
           Rails.logger.debug meta_finalize_session.body
         end
 
@@ -423,7 +423,7 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
           text_session.post "/publications/vote/#{text_publication.id}",
                             params: { test_user_id: @board_user.id.to_s, comment: { comment: 'I vote since I yippppppp agree text is great', user_id: @board_user.id, publication_id: text_identifier.publication.id, identifier_id: text_identifier.id, reason: 'vote' }, \
                                       vote: { publication_id: text_identifier.publication.id.to_s, identifier_id: text_identifier.id.to_s, user_id: @board_user.id.to_s, board_id: @text_board.id.to_s, choice: 'ok' } }
-          Rails.logger.debug "--flash is: #{text_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{text_session.flash.inspect}" }
         end
 
         # reload the publication to get the vote associations to go thru?
@@ -465,8 +465,8 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
         end
 
         text_final_publication.reload
-        assert !text_final_publication.needs_rename?,
-               'finalizing publication should not need rename after being renamed'
+        assert_not text_final_publication.needs_rename?,
+                   'finalizing publication should not need rename after being renamed'
 
         # finalize text
         open_session do |text_finalize_session|
@@ -474,10 +474,12 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
                                      params: { test_user_id: @board_user.id.to_s,
                                                comment: 'I agree text is great and now it is final' }
 
-          Rails.logger.debug "--flash is: #{text_finalize_session.flash.inspect}"
-          Rails.logger.debug "----session data from text finalize is:#{text_finalize_session.session.to_hash.inspect}"
+          Rails.logger.debug { "--flash is: #{text_finalize_session.flash.inspect}" }
+          Rails.logger.debug do
+            "----session data from text finalize is:#{text_finalize_session.session.to_hash.inspect}"
+          end
           Rails.logger.debug text_finalize_session.body
-          Rails.logger.debug "--flash is: #{text_finalize_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{text_finalize_session.flash.inspect}" }
         end
 
         text_final_publication.reload

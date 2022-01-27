@@ -135,7 +135,7 @@ class WorkflowTest < ActiveSupport::TestCase
           end
 
           should 'be deleted from editorial board' do
-            assert !Publication.exists?(@new_ddb_submitted.id)
+            assert_not Publication.exists?(@new_ddb_submitted.id)
           end
         end
       end

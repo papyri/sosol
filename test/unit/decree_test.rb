@@ -59,7 +59,7 @@ class DecreeTest < ActiveSupport::TestCase
                             identifier: @ddb_identifier,
                             user: @decree.board.users[0],
                             choice: 'yes')
-          assert !@decree.perform_action?(@ddb_identifier.votes)
+          assert_not @decree.perform_action?(@ddb_identifier.votes)
         end
       end
     end

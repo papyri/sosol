@@ -614,7 +614,7 @@ module HgvMetaIdentifierHelper
       provenanceList = HgvGeo::Provenance.getObjectList(provenanceList)
       result = ''
 
-      if provenanceList && !provenanceList.empty?
+      if provenanceList.present?
 
         provenanceList.each do |provenance|
           begin
@@ -1736,18 +1736,14 @@ module HgvMetaIdentifierHelper
     def self.formatDateFromIsoParts(isoWhen, isoNotBefore = nil, isoNotAfter = nil, certainty = nil)
       date_item = {}
 
-      date1 = if isoWhen && !isoWhen.empty?
-                isoWhen
-              else
-                (isoNotBefore && !isoNotBefore.empty? ? isoNotBefore : nil)
-              end
+      date1 = isoWhen.presence || isoNotBefore.presence
 
       if date1
         date_item[:y] = date1[/^(-?\d\d\d\d)/, 1]
         date_item[:m] = date1[/^-?\d\d\d\d-(\d\d)/, 1]
         date_item[:d] = date1[/^-?\d\d\d\d-\d\d-(\d\d)/, 1]
 
-        date2 = isoNotAfter && !isoNotAfter.empty? ? isoNotAfter : nil
+        date2 = isoNotAfter.presence
 
         if date2
           date_item[:y2] = date2[/^(-?\d\d\d\d)/, 1]
@@ -1795,7 +1791,7 @@ module HgvMetaIdentifierHelper
 
       (precision ? "#{precision} " : '') +
         (date2 && date2.include?(' v.Chr.') ? date1.sub(/ v\.Chr\./, '') : date1) +
-        (date2 && !date2.empty? ? " - #{date2}" : '') +
+        (date2.present? ? " - #{date2}" : '') +
         (certainty ? " #{certainty}" : '')
     end
 

@@ -575,13 +575,13 @@ class BiblioIdentifier < HGVIdentifier
       non_database_attribute[key].each do |person|
         element = @epiDoc.bulldozePath "#{XPATH[key]}[@n='#{index}']"
         unless element.nil?
-          element.text = person.name if person.name && !person.name.empty?
-          if person.firstName && !person.firstName.empty?
+          element.text = person.name if person.name.present?
+          if person.firstName.present?
             child = REXML::Element.new 'forename'
             child.text = person.firstName
             element.add child
           end
-          if person.lastName && !person.lastName.empty?
+          if person.lastName.present?
             child = REXML::Element.new 'surname'
             child.text = person.lastName
             element.add child
@@ -597,7 +597,7 @@ class BiblioIdentifier < HGVIdentifier
 
       index = { 'pubPlace' => 1, 'publisher' => 1 }
       non_database_attribute[:publisherList].each do |publisher|
-        next unless publisher.value && !publisher.value.empty?
+        next unless publisher.value.present?
 
         element = @epiDoc.bulldozePath "#{basePath}#{publisher.publisherType}[@n='#{index[publisher.publisherType]}']"
         element.text = publisher.value
@@ -609,15 +609,13 @@ class BiblioIdentifier < HGVIdentifier
       @epiDoc.elements.delete_all XPATH[key]
       index = 1
       non_database_attribute[key].each do |shorty|
-        next unless shorty.title && !shorty.title.empty?
+        next unless shorty.title.present?
 
         xpath = XPATH[key].sub("[starts-with(@type, 'short')]", "[@type='short']") # make xpath deterministic
 
         element = @epiDoc.bulldozePath "#{xpath}[@n='#{index}']"
         element.text = shorty.title
-        if shorty.responsibility && !shorty.responsibility.empty?
-          element.attributes['type'] += "-#{shorty.responsibility}"
-        end
+        element.attributes['type'] += "-#{shorty.responsibility}" if shorty.responsibility.present?
         index += 1
       end
     end
@@ -627,11 +625,11 @@ class BiblioIdentifier < HGVIdentifier
       path = XPATH[:note][/\A(.+)\[@resp\]\Z/, 1]
       index = 1
       non_database_attribute[:note].each do |note|
-        next unless note.annotation && !note.annotation.empty?
+        next unless note.annotation.present?
 
         element = @epiDoc.bulldozePath "#{path}[@n='#{index}']"
         element.text = note.annotation
-        element.attributes['resp'] = note.responsibility if note.responsibility && !note.responsibility.empty?
+        element.attributes['resp'] = note.responsibility if note.responsibility.present?
         index += 1
       end
     end
@@ -647,38 +645,38 @@ class BiblioIdentifier < HGVIdentifier
       non_database_attribute[:relatedArticleList].each do |relatedArticle|
         element = @epiDoc.bulldozePath "#{xpathBase}[@n='#{index}']#{xpathBibl}"
 
-        if relatedArticle.series && !relatedArticle.series.empty?
+        if relatedArticle.series.present?
           child = REXML::Element.new 'title', element
           child.attributes['level'] = 's'
           child.attributes['type'] = 'short'
           child.text = relatedArticle.series
         end
 
-        if relatedArticle.volume && !relatedArticle.volume.empty?
+        if relatedArticle.volume.present?
           child = REXML::Element.new 'biblScope', element
           child.attributes['type'] = 'vol'
           child.text = relatedArticle.volume
         end
 
-        if relatedArticle.number && !relatedArticle.number.empty?
+        if relatedArticle.number.present?
           child = REXML::Element.new 'biblScope', element
           child.attributes['type'] = 'num'
           child.text = relatedArticle.number
         end
 
-        if relatedArticle.ddb && !relatedArticle.ddb.empty?
+        if relatedArticle.ddb.present?
           child = REXML::Element.new 'idno', element
           child.attributes['type'] = 'ddb'
           child.text = relatedArticle.ddb
         end
 
-        if relatedArticle.tm && !relatedArticle.tm.empty?
+        if relatedArticle.tm.present?
           child = REXML::Element.new 'idno', element
           child.attributes['type'] = 'tm'
           child.text = relatedArticle.tm
         end
 
-        if relatedArticle.inventory && !relatedArticle.inventory.empty?
+        if relatedArticle.inventory.present?
           child = REXML::Element.new 'idno', element
           child.attributes['type'] = 'invNo'
           child.text = relatedArticle.inventory
@@ -965,9 +963,9 @@ class BiblioIdentifier < HGVIdentifier
       non_database_attribute[:originalBp][title] = element.text.strip if element&.text && !element.text.strip.empty?
     end
 
-    if non_database_attribute[:bp] && !non_database_attribute[:bp].empty?
+    if non_database_attribute[:bp].present?
       non_database_attribute[:originalBp]['No'] = non_database_attribute[:bp]
-    elsif non_database_attribute[:bpOld] && !non_database_attribute[:bpOld].empty?
+    elsif non_database_attribute[:bpOld].present?
       non_database_attribute[:originalBp]['Ancien No'] = non_database_attribute[:bpOld]
     end
   end

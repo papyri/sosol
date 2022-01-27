@@ -156,7 +156,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
       end
 
       # contentText: add overview
-      if params[:hgv_meta_identifier][:overview] && !params[:hgv_meta_identifier][:overview].empty?
+      if params[:hgv_meta_identifier][:overview].present?
         overview = { 'value' => params[:hgv_meta_identifier][:overview], 'attributes' => { 'class' => 'overview' } }
         if params[:hgv_meta_identifier][:contentText]
           params[:hgv_meta_identifier][:contentText]['overview'] = overview

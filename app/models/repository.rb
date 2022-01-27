@@ -62,11 +62,11 @@ class Repository
     end
     t2 = Time.now
     Rails.logger.info("Repository.run_command finished (called from #{caller[0]}) in #{t2 - t1} seconds: #{command_string}")
-    unless result.blank?
+    if result.present?
       begin
         Rails.logger.debug(result)
       rescue StandardError => e
-        Rails.logger.debug("Repository.run_command error logging result: #{e.message}")
+        Rails.logger.debug { "Repository.run_command error logging result: #{e.message}" }
       end
     end
     if $CHILD_STATUS.success?
@@ -183,7 +183,7 @@ class Repository
     # Rails.logger.info("JGIT BLOB: #{jgit_blob}")
     jgit_blob = ''
     begin
-      Rails.logger.debug("JGIT Blob ID for #{file} on #{branch} = #{tree_walk.getObjectId(0).name}")
+      Rails.logger.debug { "JGIT Blob ID for #{file} on #{branch} = #{tree_walk.getObjectId(0).name}" }
       jgit_blob = org.apache.commons.io.IOUtils.toString(jgit_repo.open(tree_walk.getObjectId(0)).openStream,
                                                          'UTF-8')
     rescue Java::JavaLang::Exception => e
@@ -191,7 +191,7 @@ class Repository
       Rails.logger.debug(e.backtrace.join("\n"))
       return nil
     end
-    Rails.logger.debug("JGIT BLOB for #{file} on #{branch} in #{path}: #{jgit_blob.force_encoding('UTF-8').length}")
+    Rails.logger.debug { "JGIT BLOB for #{file} on #{branch} in #{path}: #{jgit_blob.force_encoding('UTF-8').length}" }
     jgit_blob
   rescue Java::JavaLang::Exception => e
     Rails.logger.error("JGIT Exception in get_blob_from_branch(#{file}, #{branch}) in #{path}: #{e.inspect}")

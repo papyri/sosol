@@ -444,7 +444,7 @@ module DclpMetaIdentifierHelper
         if init
           if init[:attributes]
             populateAtomFromHash init[:attributes]
-            @alternative = true if @id && !@id.empty?
+            @alternative = true if @id.present?
           end
           if init[:children]
             @author = Author.new(init[:children][:author]) if init[:children][:author]

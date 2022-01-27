@@ -54,7 +54,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
     end
 
     should 'not have the target' do
-      assert !@oac_identifier.has_target?(@test_tb2, @creator_uri)
+      assert_not @oac_identifier.has_target?(@test_tb2, @creator_uri)
     end
 
     should 'raise an error when the annotation exists' do
@@ -87,7 +87,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
 
       should 'retrieve the annotation' do
         annotation = @oac_identifier.get_annotation(@test_uri2)
-        assert !annotation.nil?
+        assert_not annotation.nil?
         assert @oac_identifier.get_targets(annotation).size == 1
         assert @oac_identifier.get_targets(annotation)[0] == @test_tb2
         assert @oac_identifier.get_body(annotation) == @test_tb1
@@ -99,7 +99,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
       should 'delete the annotation' do
         @oac_identifier.delete_annotation(@test_uri2, 'test delete')
         assert @oac_identifier.get_annotation(@test_uri2).nil?
-        assert !@oac_identifier.get_annotation(@test_uri1).nil?
+        assert_not @oac_identifier.get_annotation(@test_uri1).nil?
       end
     end
 
@@ -114,7 +114,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
       end
 
       should 'not have the old annotation' do
-        assert !@oac_identifier.has_target?(@test_tb2, @creator_uri)
+        assert_not @oac_identifier.has_target?(@test_tb2, @creator_uri)
       end
     end
   end

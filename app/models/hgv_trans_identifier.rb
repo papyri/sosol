@@ -64,9 +64,7 @@ class HGVTransIdentifier < HGVIdentifier
   end
 
   # Returns the 'last' DDB Text identifier that is not a reprint in this tranlsations publication
-  def related_text
-    publication.related_text
-  end
+  delegate :related_text, to: :publication
 
   # Place any actions you always want to perform on translation identifier content prior to it being committed in this method
   # - *Args*  :
@@ -252,7 +250,7 @@ class HGVTransIdentifier < HGVIdentifier
     # write back to a string
     modified_xml_content = ''
     original_xml_content.write(modified_xml_content)
-    Rails.logger.debug("HGVTransIdentifier#leiden_translation_to_xml modified_xml_content: #{modified_xml_content}")
+    Rails.logger.debug { "HGVTransIdentifier#leiden_translation_to_xml modified_xml_content: #{modified_xml_content}" }
     modified_xml_content
   end
 

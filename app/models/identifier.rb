@@ -6,7 +6,7 @@ class Identifier < ApplicationRecord
 
   IDENTIFIER_STATUS = %w[new editing submitted approved finalizing committed archived].freeze
 
-  validates_presence_of :name, :type
+  validates :name, :type, presence: true
 
   belongs_to :publication
 
@@ -418,7 +418,7 @@ class Identifier < ApplicationRecord
   #   - title from identifer model
   def title
     if read_attribute(:title).blank?
-      write_attribute(:title, titleize)
+      self[:title] = titleize
       save
     end
     read_attribute(:title)
@@ -461,7 +461,7 @@ class Identifier < ApplicationRecord
     # assume context is from finalizing publication, so parent is board's copy
     parent_classes = parent.owner.identifier_classes
 
-    Comment.where(publication_id: publication.origin.id).each do |c|
+    Comment.where(publication_id: publication.origin.id).find_each do |c|
       next unless parent_classes.include?(c.identifier.class.to_s)
 
       change_desc_content = add_change_desc("#{c.reason.capitalize} - " + c.comment, c.user, change_desc_content,

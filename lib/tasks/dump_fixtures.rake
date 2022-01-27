@@ -11,8 +11,8 @@ task dump_fixtures: :environment do
   %w[documents].each do |table_name|
     i = '000'
     File.binwrite("#{path}/#{table_name}.yml", ActiveRecord::Base.connection.select_all(sql %
-table_name).each_with_object({}) do |record, hash|
-                                                 hash["#{table_name}_#{i.succ!}"] = record
+table_name).index_by do |_record|
+                                                 "#{table_name}_#{i.succ!}"
                                                end.to_yaml)
   end
 end

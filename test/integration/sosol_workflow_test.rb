@@ -39,9 +39,9 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
             id_has_match = true
             Rails.logger.debug 'Identifier match found'
           else
-            Rails.logger.debug "#{a.title} has nill #{aid.class} identifier" if aid.xml_content.nil?
-            Rails.logger.debug "#{b.title} has nill #{bid.class} identifier" if bid.xml_content.nil?
-            Rails.logger.debug "Identifier diffs for #{a.title} #{b.title} #{aid.class} #{aid.title}"
+            Rails.logger.debug { "#{a.title} has nill #{aid.class} identifier" } if aid.xml_content.nil?
+            Rails.logger.debug { "#{b.title} has nill #{bid.class} identifier" } if bid.xml_content.nil?
+            Rails.logger.debug { "Identifier diffs for #{a.title} #{b.title} #{aid.class} #{aid.title}" }
             log_diffs(aid.xml_content.to_s, bid.xml_content.to_s)
             # Rails.logger.debug "full xml a " + aid.xml_content
             # Rails.logger.debug "full xml b " + bid.xml_content
@@ -51,7 +51,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
       unless id_has_match
         pubs_are_matched = false
-        Rails.logger.debug "--Mis matched publication. Id #{aid.title} #{aid.class} is different"
+        Rails.logger.debug { "--Mis matched publication. Id #{aid.title} #{aid.class} is different" }
       end
     end
 
@@ -73,8 +73,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
       end
     end
 
-    Rails.logger.debug "added #{plus_str}"
-    Rails.logger.debug "removed #{minus_str}"
+    Rails.logger.debug { "added #{plus_str}" }
+    Rails.logger.debug { "removed #{minus_str}" }
   end
 end
 
@@ -173,7 +173,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
           publication_session.post '/publications/create_from_templates',
                                    params: { test_user_id: @creator_user.id.to_s }
 
-          Rails.logger.debug "--flash is: #{publication_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{publication_session.flash.inspect}" }
 
           @publication = @creator_user.publications.first
 
@@ -181,17 +181,17 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         end
 
         Rails.logger.debug '---Publication Created---'
-        Rails.logger.debug "--identifier count is: #{@publication.identifiers.count}"
+        Rails.logger.debug { "--identifier count is: #{@publication.identifiers.count}" }
 
         an_array = @publication.identifiers
-        Rails.logger.debug "--identifier length via array is: #{an_array.length}"
+        Rails.logger.debug { "--identifier length via array is: #{an_array.length}" }
 
-        Rails.logger.debug "---Identifiers for publication #{@publication.title} are:"
+        Rails.logger.debug { "---Identifiers for publication #{@publication.title} are:" }
 
         @publication.identifiers.each do |pi|
           Rails.logger.debug '-identifier-'
-          Rails.logger.debug "title is: #{pi.title}"
-          Rails.logger.debug "was it modified?: #{pi.modified?}"
+          Rails.logger.debug { "title is: #{pi.title}" }
+          Rails.logger.debug { "was it modified?: #{pi.modified?}" }
           Rails.logger.debug 'xml:'
           Rails.logger.debug pi.xml_content
         end
@@ -201,7 +201,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
           submit_session.post "/publications/#{@publication.id}/submit/",
                               params: { test_user_id: @creator_user.id.to_s, submit_comment: 'I made a new pub' }
 
-          Rails.logger.debug "--flash is: #{submit_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{submit_session.flash.inspect}" }
         end
         @publication.reload
 
@@ -238,7 +238,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         # vote on it
         meta_publication = meta_publications.first
 
-        assert !meta_publication.creator_commits.empty?, 'submitted publication should have creator commits'
+        assert_not meta_publication.creator_commits.empty?, 'submitted publication should have creator commits'
 
         # find meta identifier
         meta_identifier = nil
@@ -256,7 +256,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                             params: { test_user_id: @board_user.id.to_s, comment: { comment: 'I agree meta is great', user_id: @board_user.id, publication_id: meta_identifier.publication.id, identifier_id: meta_identifier.id, reason: 'vote' }, \
                                       vote: { publication_id: meta_identifier.publication.id.to_s, identifier_id: meta_identifier.id.to_s, user_id: @board_user.id.to_s, board_id: @meta_board.id.to_s, choice: 'ok' } }
 
-          Rails.logger.debug "--flash is: #{meta_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{meta_session.flash.inspect}" }
         end
 
         # reload the publication to get the vote associations to go thru?
@@ -305,8 +305,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.info('meta_final_publication')
         Rails.logger.info(meta_final_publication.inspect)
         Rails.logger.info(meta_final_identifier.inspect)
-        assert !meta_final_publication.needs_rename?,
-               'finalizing publication should not need rename after being renamed'
+        assert_not meta_final_publication.needs_rename?,
+                   'finalizing publication should not need rename after being renamed'
 
         canonical_before_finalize = Repository.new.get_head('master')
 
@@ -315,8 +315,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                                      params: { test_user_id: meta_final_publication.owner.id.to_s,
                                                comment: 'I agree meta is great and now it is final' }
 
-          Rails.logger.debug "--flash is: #{meta_finalize_session.flash.inspect}"
-          Rails.logger.debug "----session data is: #{meta_finalize_session.session.to_hash.inspect}"
+          Rails.logger.debug { "--flash is: #{meta_finalize_session.flash.inspect}" }
+          Rails.logger.debug { "----session data is: #{meta_finalize_session.session.to_hash.inspect}" }
           Rails.logger.debug meta_finalize_session.body
         end
 
@@ -378,7 +378,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
           text_session.post "/publications/vote/#{text_publication.id}",
                             params: { test_user_id: @board_user.id.to_s, comment: { comment: 'I agree text is great', user_id: @board_user.id, publication_id: text_identifier.publication.id, identifier_id: text_identifier.id, reason: 'vote' }, \
                                       vote: { publication_id: text_identifier.publication.id.to_s, identifier_id: text_identifier.id.to_s, user_id: @board_user.id.to_s, board_id: @text_board.id.to_s, choice: 'ok' } }
-          Rails.logger.debug "--flash is: #{text_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{text_session.flash.inspect}" }
         end
 
         # reload the publication to get the vote associations to go thru?
@@ -412,8 +412,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                                      params: { test_user_id: text_final_publication.owner.id.to_s,
                                                comment: 'I agree text is great and now it is final' }
 
-          Rails.logger.debug "--flash is: #{text_finalize_session.flash.inspect}"
-          Rails.logger.debug "----session data is: #{text_finalize_session.session.to_hash.inspect}"
+          Rails.logger.debug { "--flash is: #{text_finalize_session.flash.inspect}" }
+          Rails.logger.debug { "----session data is: #{text_finalize_session.session.to_hash.inspect}" }
           Rails.logger.debug text_finalize_session.body
         end
 
@@ -429,8 +429,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         end
 
         text_final_publication.reload
-        assert !text_final_publication.needs_rename?,
-               'finalizing publication should not need rename after being renamed'
+        assert_not text_final_publication.needs_rename?,
+                   'finalizing publication should not need rename after being renamed'
 
         other_finalizer = (@text_board.users - [text_final_publication.owner]).first
         assert_not_equal other_finalizer, text_final_publication.owner,
@@ -441,8 +441,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         open_session do |mmf_session|
           mmf_session.post "/publications/#{text_publication.id}/become_finalizer",
                            params: { test_user_id: other_finalizer.id.to_s }
-          Rails.logger.debug "--MMF flash is: #{mmf_session.flash.inspect}"
-          Rails.logger.debug "----MMF session data is: #{mmf_session.session.to_hash.inspect}"
+          Rails.logger.debug { "--MMF flash is: #{mmf_session.flash.inspect}" }
+          Rails.logger.debug { "----MMF session data is: #{mmf_session.session.to_hash.inspect}" }
           Rails.logger.debug mmf_session.body
         end
 
@@ -453,8 +453,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         text_final_publication = text_publication.find_finalizer_publication
         assert_equal other_finalizer, text_final_publication.owner,
                      'Other finalizer should be finalizer after make-me-finalizer'
-        assert !text_final_publication.needs_rename?,
-               'finalizing publication should not need rename after being renamed then make-me-finalizered'
+        assert_not text_final_publication.needs_rename?,
+                   'finalizing publication should not need rename after being renamed then make-me-finalizered'
         assert_equal publication_head_original, text_final_publication.head,
                      'New finalizer publication should have the same commit history as the original'
 
@@ -465,11 +465,11 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
                                      params: { test_user_id: text_final_publication.owner.id.to_s,
                                                comment: 'I agree text is great and now it is final' }
 
-          Rails.logger.debug "--flash is: #{text_finalize_session.flash.inspect}"
-          Rails.logger.debug "----session data is: #{text_finalize_session.session.to_hash.inspect}"
+          Rails.logger.debug { "--flash is: #{text_finalize_session.flash.inspect}" }
+          Rails.logger.debug { "----session data is: #{text_finalize_session.session.to_hash.inspect}" }
           Rails.logger.debug text_finalize_session.body
 
-          Rails.logger.debug "--flash is: #{text_finalize_session.flash.inspect}"
+          Rails.logger.debug { "--flash is: #{text_finalize_session.flash.inspect}" }
         end
 
         text_final_publication.reload
@@ -596,7 +596,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
             end
           end
 
-          Rails.logger.debug "submit race threadwaiting on: #{new_active_threads.inspect}"
+          Rails.logger.debug { "submit race threadwaiting on: #{new_active_threads.inspect}" }
           Rails.logger.flush
           # new_active_threads.each(&:join)
           ThreadsWait.all_waits(*new_active_threads)
@@ -743,7 +743,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
               end
             end
 
-            Rails.logger.debug "MMF race threadwaiting on: #{new_active_threads.inspect}"
+            Rails.logger.debug { "MMF race threadwaiting on: #{new_active_threads.inspect}" }
             Rails.logger.flush
             # new_active_threads.each(&:join)
             ThreadsWait.all_waits(*new_active_threads)
@@ -776,7 +776,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
           end
 
           should 'be deleted from editorial board' do
-            assert !Publication.exists?(@new_ddb_submitted_id)
+            assert_not Publication.exists?(@new_ddb_submitted_id)
           end
         end
       end

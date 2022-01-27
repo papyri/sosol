@@ -54,7 +54,7 @@ class ApplicationController < ActionController::Base
     @redirect = true unless request.referer =~ /dashboard$/
     flash[:error] = "We're sorry, but something went wrong."
     @additional_error_information = "We've been notified about this issue and we'll take a look at it shortly."
-    render template: 'common/error_500', layout: false, status: 500
+    render template: 'common/error_500', layout: false, status: :internal_server_error
   end
 
   def render_numbers_error(e)
@@ -63,13 +63,13 @@ class ApplicationController < ActionController::Base
     @redirect = false
     flash.now[:error] = "We're sorry, but the Numbers Server appears to be unresponsive."
     @additional_error_information = "Please contact this site's administrator."
-    render template: 'common/error_500', layout: false, status: 500
+    render template: 'common/error_500', layout: false, status: :internal_server_error
   end
 
   def render_404(e)
     Rails.logger.debug(e.inspect)
     flash[:error] = "The page you were looking for doesn't exist."
-    render template: 'common/error_404', layout: false, status: 404
+    render template: 'common/error_404', layout: false, status: :not_found
   end
 
   def authorize
@@ -93,7 +93,7 @@ class ApplicationController < ActionController::Base
   private
 
   def get_user_id
-    if (ENV['RAILS_ENV'] == 'test') && !params[:test_user_id].blank?
+    if (ENV['RAILS_ENV'] == 'test') && params[:test_user_id].present?
 
       @current_user = User.find_by_id params[:test_user_id].to_s
       session[:user_id] == params[:test_user_id].to_s

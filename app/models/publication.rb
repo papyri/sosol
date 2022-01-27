@@ -24,7 +24,7 @@ class Publication < ApplicationRecord
                           approved_pending].freeze
   @@canon_mutex = Mutex.new
 
-  validates_presence_of :title, :branch
+  validates :title, :branch, presence: true
 
   belongs_to :creator, polymorphic: true
   belongs_to :owner, polymorphic: true
@@ -39,8 +39,8 @@ class Publication < ApplicationRecord
   has_many :votes, dependent: :destroy
   has_many :comments
 
-  validates_uniqueness_of :title, scope: %i[owner_type owner_id status]
-  validates_uniqueness_of :branch, scope: %i[owner_type owner_id]
+  validates :title, uniqueness: { scope: %i[owner_type owner_id status] }
+  validates :branch, uniqueness: { scope: %i[owner_type owner_id] }
 
   validates :status,
             inclusion: { in: PUBLICATION_STATUS, message: '%{value} is not a valid publication status' }
@@ -275,7 +275,7 @@ class Publication < ApplicationRecord
       # boards_identifiers.length > 0
     end
 
-    Rails.logger.debug "Publication#submit_to_next_board for #{self.id}: no more parts to submit"
+    Rails.logger.debug { "Publication#submit_to_next_board for #{self.id}: no more parts to submit" }
     # if we get to this point, there are no more boards to submit to, thus we are done
     if is_community_publication?
       if community.end_user.nil?
@@ -284,7 +284,9 @@ class Publication < ApplicationRecord
         Rails.logger.warn("Publication#submit_to_next_board for #{self.id} reached community publication logic with no community end user")
       else
         # copy to  space
-        Rails.logger.debug "Publication#submit_to_next_board for #{self.id} being assigned to community end user: #{community.end_user.name}"
+        Rails.logger.debug do
+          "Publication#submit_to_next_board for #{self.id} being assigned to community end user: #{community.end_user.name}"
+        end
 
         # community_copy = copy_to_owner( self.community.end_user)
         community_copy = copy_to_end_user
@@ -432,16 +434,22 @@ class Publication < ApplicationRecord
     # finalizer is a user so they dont have a board, must go up until we find a board
     board = find_first_board
     if board
-      Rails.logger.debug("Publication#set_origin_identifier_status called for #{id} (Board: #{board.id}, Origin: #{origin.id}")
+      Rails.logger.debug do
+        "Publication#set_origin_identifier_status called for #{id} (Board: #{board.id}, Origin: #{origin.id}"
+      end
       identifiers.each do |i|
-        Rails.logger.debug("Publication#set_origin_identifier_status for #{id}, checking identifier: #{i.inspect}")
+        Rails.logger.debug { "Publication#set_origin_identifier_status for #{id}, checking identifier: #{i.inspect}" }
         next unless board.identifier_classes&.include?(i.class.to_s)
 
-        Rails.logger.debug("Publication#set_origin_identifier_status for #{id}, changing identifier status to '#{status_in}' for #{i.id} origin identifier: #{i.origin.inspect}")
+        Rails.logger.debug do
+          "Publication#set_origin_identifier_status for #{id}, changing identifier status to '#{status_in}' for #{i.id} origin identifier: #{i.origin.inspect}"
+        end
         i_origin = i.origin
         i_origin.status = status_in
         i_origin.save
-        Rails.logger.debug("Publication#set_origin_identifier_status for #{id}, changed identifier status to '#{status_in}' for #{i.id} origin identifier: #{i.origin.inspect}")
+        Rails.logger.debug do
+          "Publication#set_origin_identifier_status for #{id}, changed identifier status to '#{status_in}' for #{i.id} origin identifier: #{i.origin.inspect}"
+        end
       end
     end
   end
@@ -850,7 +858,7 @@ class Publication < ApplicationRecord
     creator_commit_messages = [reason_comment.nil? ? '' : reason_comment.comment, '']
     controlled_commits.each do |controlled_commit|
       message = Repository.run_command("#{repository.git_command_prefix} log -1 --pretty=format:%s #{controlled_commit}").strip
-      creator_commit_messages << " - #{message}" unless message.blank?
+      creator_commit_messages << " - #{message}" if message.present?
     end
 
     controlled_blobs = board_controlled_paths.collect do |controlled_path|
@@ -1600,9 +1608,7 @@ class Publication < ApplicationRecord
     duplicate
   end
 
-  def repository
-    owner.repository
-  end
+  delegate :repository, to: :owner
 
   # copies this publication's branch to the new_owner's branch
   # returns duplicate publication with new_owner
@@ -1679,7 +1685,7 @@ class Publication < ApplicationRecord
         i.instance_of?(DCLPMetaIdentifier)
       end
     end.each do |i|
-      Rails.logger.debug("Getting comments for: #{i.class}")
+      Rails.logger.debug { "Getting comments for: #{i.class}" }
       where_from = i.class::FRIENDLY_NAME
       ident_title = i.title
 

@@ -15,7 +15,7 @@ class PublicationTest < ActiveSupport::TestCase
     end
 
     should 'not be saved to the database' do
-      assert !@publication.save
+      assert_not @publication.save
     end
   end
 
@@ -84,7 +84,7 @@ class PublicationTest < ActiveSupport::TestCase
     should 'delete its branch upon destruction' do
       publication_branch = @publication.branch
       @publication.destroy
-      assert !@user.repository.branches.include?(publication_branch)
+      assert_not @user.repository.branches.include?(publication_branch)
     end
 
     should 'have valid XML for templates' do

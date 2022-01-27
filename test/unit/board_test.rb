@@ -26,11 +26,11 @@ class BoardTest < ActiveSupport::TestCase
       end
 
       should 'delete its repository' do
-        assert !File.exist?(@path)
+        assert_not File.exist?(@path)
       end
 
       should 'destroy associated decrees' do
-        assert !Decree.exists?(@decree.id)
+        assert_not Decree.exists?(@decree.id)
       end
     end
   end

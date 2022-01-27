@@ -19,16 +19,16 @@ class XmlTest < ActiveSupport::TestCase
     assert REXML::XPath.fully_qualified_and_simple?("/abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@c2='c2']"),
            'should be an accepted path pointing to an attribute'
 
-    assert !REXML::XPath.fully_qualified_and_simple?("abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@c2='c2']"),
-           'does not start from root element'
-    assert !REXML::XPath.fully_qualified_and_simple?("//abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@c2='c2']"),
-           'does not start from root element'
+    assert_not REXML::XPath.fully_qualified_and_simple?("abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@c2='c2']"),
+               'does not start from root element'
+    assert_not REXML::XPath.fully_qualified_and_simple?("//abc/a[@a='a']/b[@b='b']/c[@c1='c1'][@c2='c2']"),
+               'does not start from root element'
     # FIXME?: assert !REXML::XPath::fully_qualified_and_simple?("/abc/a[@a='a']/b[@b='b']/c[@c1='c1' && @c2='c2']"), 'contains logical operation'
-    assert !REXML::XPath.fully_qualified_and_simple?('/abc::a'), 'contains child reference'
-    assert !REXML::XPath.fully_qualified_and_simple?('/abc/a/b/c/text()'), 'contains text reference'
-    assert !REXML::XPath.fully_qualified_and_simple?('/abc/*'), 'contains * reference'
-    assert !REXML::XPath.fully_qualified_and_simple?('Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch'),
-           '?!'
+    assert_not REXML::XPath.fully_qualified_and_simple?('/abc::a'), 'contains child reference'
+    assert_not REXML::XPath.fully_qualified_and_simple?('/abc/a/b/c/text()'), 'contains text reference'
+    assert_not REXML::XPath.fully_qualified_and_simple?('/abc/*'), 'contains * reference'
+    assert_not REXML::XPath.fully_qualified_and_simple?('Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch'),
+               '?!'
   end
 
   def test_rexml_bulldozepath

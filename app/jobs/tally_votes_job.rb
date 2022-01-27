@@ -2,7 +2,9 @@ class TallyVotesJob
   include SuckerPunch::Job
 
   def perform(publication_id, related_votes)
-    Rails.logger.debug("TallyVotesJob started (publication_id: #{publication_id}, related_votes: #{related_votes.inspect})")
+    Rails.logger.debug do
+      "TallyVotesJob started (publication_id: #{publication_id}, related_votes: #{related_votes.inspect})"
+    end
     Rails.logger.flush if Rails.logger.respond_to? :flush
     publication = Publication.find(publication_id)
     publication.with_advisory_lock("tally_votes_#{publication_id}") do
@@ -11,7 +13,7 @@ class TallyVotesJob
       end
     end
   ensure
-    Rails.logger.debug("TallyVotesJob finished (publication_id: #{publication_id})")
+    Rails.logger.debug { "TallyVotesJob finished (publication_id: #{publication_id})" }
     Rails.logger.flush if Rails.logger.respond_to? :flush
   end
 end

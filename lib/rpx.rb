@@ -82,7 +82,7 @@ module Rpx
           raise RpxException.new(resp), "Unexpected HTTP status code from server: #{resp.code}: #{resp.body}"
         end
       rescue OpenSSL::SSL::SSLError => e
-        Rails.logger.debug("OpenSSL::SSL::SSLError in RpxHelper#api_call, falling back to curl: #{e.inspect}")
+        Rails.logger.debug { "OpenSSL::SSL::SSLError in RpxHelper#api_call, falling back to curl: #{e.inspect}" }
         resp_body = `curl -s -X POST -d '#{data}' '#{url}'`
         unless $CHILD_STATUS.success?
           raise RpxException.new(resp),

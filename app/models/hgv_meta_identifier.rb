@@ -396,7 +396,7 @@ class HGVMetaIdentifier < HGVIdentifier
         config[:attributes]&.each_pair do |attribute_key, attribute_config|
           if item[:attributes] && attributeHasAnyContent?(item[:attributes][attribute_key])
             attribute_value = item[:attributes][attribute_key]
-            attribute_value = if attribute_config[:split] && !attribute_config[:split].empty? && attribute_value.is_a?(Hash)
+            attribute_value = if attribute_config[:split].present? && attribute_value.is_a?(Hash)
                                 attribute_value.values.join(attribute_config[:split])
                               else
                                 attribute_value.strip
@@ -475,7 +475,7 @@ class HGVMetaIdentifier < HGVIdentifier
         end
 
       else
-        value = if non_database_attribute[key] && !non_database_attribute[key].empty?
+        value = if non_database_attribute[key].present?
                   config[:children] || config[:attributes] ? non_database_attribute[key][:value] : non_database_attribute[key]
                 end
 
@@ -562,9 +562,7 @@ class HGVMetaIdentifier < HGVIdentifier
     @configuration.toplevel_standalone_attributes.each do |_key, config|
       next unless config[:element_name] == element.name
 
-      if element.attributes[config[:attribute_name].to_s] && !element.attributes[config[:attribute_name].to_s].empty?
-        hasStandaloneAttribute = true
-      end
+      hasStandaloneAttribute = true if element.attributes[config[:attribute_name].to_s].present?
     end
     !element.has_elements? && element.texts.join.strip.empty? && !hasStandaloneAttribute
   end

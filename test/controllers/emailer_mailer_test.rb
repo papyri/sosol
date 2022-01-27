@@ -4,7 +4,7 @@ class EmailerMailerTest < ActionMailer::TestCase
   def test_general_email
     user = 'dummyuser@emailserver.com'
     email = EmailerMailer.general_email(user, 'test subject', 'test body').deliver_now
-    assert !ActionMailer::Base.deliveries.empty?
+    assert_not ActionMailer::Base.deliveries.empty?
 
     assert_equal [user], email.to
     assert_equal 'test subject', email.subject
@@ -15,7 +15,7 @@ class EmailerMailerTest < ActionMailer::TestCase
     user = 'dummyuser@emailserver.com'
     title = 'dummy title'
     email = EmailerMailer.withdraw_note(user, title).deliver_now
-    assert !ActionMailer::Base.deliveries.empty?
+    assert_not ActionMailer::Base.deliveries.empty?
 
     assert_equal [user], email.to
     assert_equal "#{title} has been withdrawn.", email.subject
@@ -54,7 +54,7 @@ class EmailerMailerTest < ActionMailer::TestCase
     should 'identifier_email with simple message no parsing no comments' do
       email = EmailerMailer.identifier_email('submitted', [@ddb_identifier], @board_publication, ['johndoe@example.com'],
                                              false, false, 'Plain message no parsing', nil).deliver_now
-      assert !ActionMailer::Base.deliveries.empty?
+      assert_not ActionMailer::Base.deliveries.empty?
       assert_equal ['johndoe@example.com'], email.to
       assert_equal "submitted: #{@publication.title} #{@ddb_identifier.title}", email.subject
       assert_equal read_fixture('identifier_email').join, email.body.to_s
@@ -63,7 +63,7 @@ class EmailerMailerTest < ActionMailer::TestCase
     should 'identifier_email with simple message no parsing with comments' do
       email = EmailerMailer.identifier_email('submitted', [@ddb_identifier], @board_publication, ['johndoe@example.com'],
                                              false, true, 'Plain message no parsing', '').deliver_now
-      assert !ActionMailer::Base.deliveries.empty?
+      assert_not ActionMailer::Base.deliveries.empty?
       assert_equal ['johndoe@example.com'], email.to
       assert_equal "submitted: #{@publication.title} #{@ddb_identifier.title}", email.subject
       assert_equal read_fixture('identifier_email_comments').join.sub(/CREATED_AT/, @test_comment.created_at.to_formatted_s(:db)),
@@ -73,7 +73,7 @@ class EmailerMailerTest < ActionMailer::TestCase
     should 'identifier_email with full parsing no comments' do
       email = EmailerMailer.identifier_email('submitted', [@ddb_identifier], @board_publication, ['johndoe@example.com'],
                                              false, false, '!IDENTIFIER_TITLES !IDENTIFIER_LINKS !PUBLICATION_TITLE !PUBLICATION_LINK !PUBLICATION_CREATOR_NAME !BOARD_PUBLICATION_LINK !BOARD_OWNER', nil).deliver_now
-      assert !ActionMailer::Base.deliveries.empty?
+      assert_not ActionMailer::Base.deliveries.empty?
       assert_equal ['johndoe@example.com'], email.to
       assert_equal "submitted: #{@publication.title} #{@ddb_identifier.title}", email.subject
       assert_equal read_fixture('identifier_parsing').join.gsub(/!PUBLICATION_ID/, @publication.id.to_s).gsub(/!IDENTIFIER_ID/, @ddb_identifier.id.to_s).gsub(/!BOARD_PUBLICATION_ID/, @board_publication.id.to_s),
@@ -83,7 +83,7 @@ class EmailerMailerTest < ActionMailer::TestCase
     should 'identifier_email with simple message custom subject no parsing no comments' do
       email = EmailerMailer.identifier_email('submitted', [@ddb_identifier], @board_publication, ['johndoe@example.com'],
                                              false, false, 'Plain message no parsing', 'Custom Subject').deliver_now
-      assert !ActionMailer::Base.deliveries.empty?
+      assert_not ActionMailer::Base.deliveries.empty?
       assert_equal ['johndoe@example.com'], email.to
       assert_equal 'Custom Subject', email.subject
       assert_equal read_fixture('identifier_email').join, email.body.to_s
@@ -92,7 +92,7 @@ class EmailerMailerTest < ActionMailer::TestCase
     should 'identifier_email with simple message custom parsed subject no parsing no comments' do
       email = EmailerMailer.identifier_email('submitted', [@ddb_identifier], @board_publication, ['johndoe@example.com'],
                                              false, false, 'Plain message no parsing', 'Custom !TOPIC !IDENTIFIER_TITLES !PUBLICATION_TITLE').deliver_now
-      assert !ActionMailer::Base.deliveries.empty?
+      assert_not ActionMailer::Base.deliveries.empty?
       assert_equal ['johndoe@example.com'], email.to
       assert_equal "Custom submitted #{@ddb_identifier.title} #{@publication.title}", email.subject
       assert_equal read_fixture('identifier_email').join, email.body.to_s

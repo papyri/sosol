@@ -21,7 +21,7 @@ class UserTest < ActiveSupport::TestCase
 
     should 'delete its repository upon destruction' do
       @user.destroy
-      assert !File.exist?(@path)
+      assert_not File.exist?(@path)
     end
   end
 end
