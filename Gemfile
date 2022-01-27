@@ -22,6 +22,10 @@ group :test do
   gem 'rails-controller-testing'
 end
 
+group :development, :test do
+  gem 'rubocop'
+end
+
 gem 'jquery-rails'
 gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/,'')
 gem 'haml-rails', '~> 2.0'
