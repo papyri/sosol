@@ -90,11 +90,7 @@ class HGVTransIdentifier < HGVIdentifier
     doc = REXML::Document.new(xml_content)
     result = REXML::XPath.match(doc, lang_path)
 
-    if result.length.positive?
-      true
-    else
-      false
-    end
+    result.length.positive?
   end
 
   # Stub in Translation XML for a specific based on the format of the DDB Text file (div's, ab's, etc) and saves it
@@ -204,7 +200,7 @@ class HGVTransIdentifier < HGVIdentifier
 
       # transform XML to Leiden+
       begin
-        HGVTransIdentifier.xml2nonxml(body.join('')).force_encoding('UTF-8') # via jrubyHelper
+        HGVTransIdentifier.xml2nonxml(body.join).force_encoding('UTF-8') # via jrubyHelper
       rescue RXSugar::XMLParseError => e
         nil
       end

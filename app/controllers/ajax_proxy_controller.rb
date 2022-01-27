@@ -47,7 +47,7 @@ class AjaxProxyController < ApplicationController
   def get_bibliography
     searchText = params[:searchText].to_s
     # replace space with + to match PN search
-    searchText = searchText.split(' ').join('+')
+    searchText = searchText.split.join('+')
 
     begin
       built_uri = "http://papyri.info/solrbiblio/select/?q=#{searchText}&wt=json&start=0&rows=999&sort=date+asc,sort+asc"

@@ -55,7 +55,7 @@ module Rpx
     def rp_url
       parts = @base_url.split('://', 2)
       parts.insert(1, "://#{@realm}.")
-      parts.join('')
+      parts.join
     end
 
     def api_call(method_name, partial_query = {})

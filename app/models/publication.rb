@@ -481,7 +481,7 @@ class Publication < ApplicationRecord
 
   def similar_branches
     branch_leaf = branch.split('/').last
-    repository.branches.select { |owner_branch| owner_branch =~ /#{branch_leaf}/ }
+    repository.branches.grep(/#{branch_leaf}/)
   end
 
   def recoverable_branch
@@ -952,7 +952,7 @@ class Publication < ApplicationRecord
           finalizing_publication = copy_to_owner(finalizer)
 
           approve_decrees = owner.decrees.select { |d| d.action == 'approve' }
-          approve_choices = approve_decrees.map { |d| d.choices.split(' ') }.flatten
+          approve_choices = approve_decrees.map { |d| d.choices.split }.flatten
           approve_votes = votes.select { |v| approve_choices.include?(v.choice) }
           approve_members = approve_votes.map(&:user)
 

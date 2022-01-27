@@ -78,11 +78,7 @@ class CollectionIdentifier < Identifier
     rdf = REXML::Document.new(xml_content)
 
     xpath = "/rdf:RDF/rdf:Description[@rdf:about = '#{self.class.short_name_to_identifier(short_name)}']"
-    if REXML::XPath.first(rdf, xpath).nil?
-      false
-    else
-      true
-    end
+    !REXML::XPath.first(rdf, xpath).nil?
   end
 
   # Class method for accessing a memoized collection names hash built by parsing +collection.rdf+.

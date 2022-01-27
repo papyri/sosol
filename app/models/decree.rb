@@ -19,7 +19,7 @@ class Decree < ApplicationRecord
   # *Returns*
   #- an array of the possible choices that represent this decree.
   def get_choice_array
-    choices.split(' ')
+    choices.split
   end
 
   # *Args*:

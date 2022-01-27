@@ -34,11 +34,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
     doc = REXML::Document.new(xml_content)
     result = REXML::XPath.match(doc, lang_path)
 
-    if result.length.positive?
-      true
-    else
-      false
-    end
+    result.length.positive?
   end
 
   def related_text

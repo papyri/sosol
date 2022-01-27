@@ -162,7 +162,7 @@ class Board < ApplicationRecord
 
       # extra addresses
       if mailer.extra_addresses
-        extras = mailer.extra_addresses.split(' ')
+        extras = mailer.extra_addresses.split
         extras.each do |extra|
           addresses << extra
         end

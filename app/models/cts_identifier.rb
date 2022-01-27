@@ -117,7 +117,7 @@ class CTSIdentifier < Identifier
   end
 
   def is_reprinted?
-    reprinted_in.nil? ? false : true
+    !reprinted_in.nil?
   end
 
   def urn_attribute

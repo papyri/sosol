@@ -384,7 +384,7 @@ module HgvMetaIdentifierHelper
       # - *Returns* :
       #   - true if +certainty+ is +:low+, false otherwise
       def certain?
-        certainty && certainty.to_sym == :low ? true : false
+        certainty && certainty.to_sym == :low
       end
 
       # Mutator method for member variable +referenceList+
@@ -543,16 +543,16 @@ module HgvMetaIdentifierHelper
       result = ''
 
       ancient = geoList.select do |geo|
-        [:settlement, nil].include?(geo.subtype) && geo.type == :ancient ? true : false
+        [:settlement, nil].include?(geo.subtype) && geo.type == :ancient
       end.shift
       modern = geoList.select do |geo|
-        [:settlement, nil].include?(geo.subtype) && geo.type == :modern ? true : false
+        [:settlement, nil].include?(geo.subtype) && geo.type == :modern
       end.shift
       province = geoList.select do |geo|
-        [:province].include?(geo.subtype) && geo.type == :ancient ? true : false
+        [:province].include?(geo.subtype) && geo.type == :ancient
       end.shift
-      nome      = geoList.select { |geo| [:nome].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
-      region    = geoList.select { |geo| [:region].include?(geo.subtype) && geo.type == :ancient ? true : false }.shift
+      nome      = geoList.select { |geo| [:nome].include?(geo.subtype) && geo.type == :ancient }.shift
+      region    = geoList.select { |geo| [:region].include?(geo.subtype) && geo.type == :ancient }.shift
 
       if ancient && modern
         if ancient.offset
@@ -2059,10 +2059,10 @@ module HgvMetaIdentifierHelper
     #   - HGV formatted date +String+
     # e.g. HgvFuzzy.getChron('', '1976', '2', '', '', '', 'end', :chronMax) => "1976-02-29"
     def self.getChron(c, y, m, d, cq, yq, mq, chron = :chron)
-      c = c.to_i == 0 ? nil : c.to_i
-      y = y.to_i == 0 ? nil : y.to_i
-      m = m.to_i == 0 ? nil : m.to_i
-      d = d.to_i == 0 ? nil : d.to_i
+      c = c.to_i.zero? ? nil : c.to_i
+      y = y.to_i.zero? ? nil : y.to_i
+      m = m.to_i.zero? ? nil : m.to_i
+      d = d.to_i.zero? ? nil : d.to_i
 
       epoch = year = month = day = nil
 
@@ -2260,7 +2260,7 @@ class Integer
   # Returns a roman number string
   def self.roman(roman)
     last = roman[-1, 1]
-    roman.reverse.split('').inject(0) do |result, c|
+    roman.reverse.chars.inject(0) do |result, c|
       if @@roman_values[c] < @@roman_values[last]
         result -= @@roman_values[c]
       else
