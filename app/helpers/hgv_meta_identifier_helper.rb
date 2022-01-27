@@ -1430,7 +1430,11 @@ module HgvMetaIdentifierHelper
                   end
                 end
                 if cert.values.join.to_i > 0
-                  t[:certainty] = cert.delete_if{ |k,v| v == 0 }.keys.collect{ |i| i.to_s[0..-2] }.join('_').to_sym # CL support for plurals goes here
+                  t[:certainty] = cert.delete_if{ |k,v| v == 0 }.
+                    keys.
+                    collect{ |i| i.to_s[0..-2] }.
+                    join('_').
+                    to_sym # CL support for plurals goes here
                 end
               end
 
