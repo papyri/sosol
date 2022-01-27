@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module DclpMetaIdentifierHelper
   module DclpEdition
     # Assembles all valid type options for DCLP edition types (+publication+, +reference+, etc.)

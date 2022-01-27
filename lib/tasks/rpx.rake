@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 namespace :rpx do
   desc 'Unmaps all user mappings for the current environment and drops them from the database'
   task unmap: :environment do

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Holds information about a vote.
 class Vote < ApplicationRecord
   belongs_to :publication

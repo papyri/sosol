@@ -1,15 +1,13 @@
-# frozen_string_literal: true
-
 class TeiCTSIdentifier < CTSIdentifier
-  PATH_PREFIX = 'CTS_XML_TEI'
+  PATH_PREFIX = 'CTS_XML_TEI'.freeze
 
-  FRIENDLY_NAME = 'Manuscript Transcription'
+  FRIENDLY_NAME = 'Manuscript Transcription'.freeze
 
-  IDENTIFIER_NAMESPACE = 'teia_edition'
+  IDENTIFIER_NAMESPACE = 'teia_edition'.freeze
 
   XML_VALIDATOR = JRubyXML::TEIAValidator
 
-  XML_CITATION_PREPROCESSOR = 'preprocess_teia_passage.xsl'
+  XML_CITATION_PREPROCESSOR = 'preprocess_teia_passage.xsl'.freeze
 
   def before_commit(content)
     TeiCTSIdentifier.preprocess(content)

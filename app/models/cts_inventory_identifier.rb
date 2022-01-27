@@ -1,14 +1,12 @@
-# frozen_string_literal: true
-
 # Identifier for CTS Inventory Metadata
 class CTSInventoryIdentifier < Identifier
   require 'json'
 
   attr_accessor :configuration
 
-  PATH_PREFIX = 'CTS_XML_TextInventory'
-  FRIENDLY_NAME = 'TextInventory'
-  IDENTIFIER_NAMESPACE = 'textinventory'
+  PATH_PREFIX = 'CTS_XML_TextInventory'.freeze
+  FRIENDLY_NAME = 'TextInventory'.freeze
+  IDENTIFIER_NAMESPACE = 'textinventory'.freeze
 
   def is_valid_xml?(_content = nil)
     true

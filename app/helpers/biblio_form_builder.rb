@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Helper for creation of forms for class +BiblioIdentifier+
 class BiblioFormBuilder < ActionView::Helpers::FormBuilder
   # Generates a text field with a preceding label tag

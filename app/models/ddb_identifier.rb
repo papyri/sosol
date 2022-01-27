@@ -1,18 +1,16 @@
-# frozen_string_literal: true
-
 # - Sub-class of Identifier
 # - Includes acts_as_leiden_plus defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class DDBIdentifier < Identifier
-  PATH_PREFIX = 'DDB_EpiDoc_XML'
+  PATH_PREFIX = 'DDB_EpiDoc_XML'.freeze
 
-  FRIENDLY_NAME = 'DDbDP Text'
+  FRIENDLY_NAME = 'DDbDP Text'.freeze
 
-  IDENTIFIER_NAMESPACE = 'ddbdp'
-  TEMPORARY_COLLECTION = 'sosol'
+  IDENTIFIER_NAMESPACE = 'ddbdp'.freeze
+  TEMPORARY_COLLECTION = 'sosol'.freeze
 
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
 
-  BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
+  BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n".freeze
 
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_leiden_plus

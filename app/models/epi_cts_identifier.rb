@@ -1,13 +1,11 @@
-# frozen_string_literal: true
-
 class EpiCTSIdentifier < CTSIdentifier
   require 'json'
 
-  PATH_PREFIX = 'CTS_XML_EpiDoc'
+  PATH_PREFIX = 'CTS_XML_EpiDoc'.freeze
 
-  FRIENDLY_NAME = 'Inscription Text'
+  FRIENDLY_NAME = 'Inscription Text'.freeze
 
-  IDENTIFIER_NAMESPACE = 'epigraphy_edition'
+  IDENTIFIER_NAMESPACE = 'epigraphy_edition'.freeze
 
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
 

@@ -1,13 +1,11 @@
-# frozen_string_literal: true
-
 include HgvMetaIdentifierHelper
 
 class HGVMetaIdentifier < HGVIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes
 
-  PATH_PREFIX = 'HGV_meta_EpiDoc'
+  PATH_PREFIX = 'HGV_meta_EpiDoc'.freeze
 
-  FRIENDLY_NAME = 'HGV Meta'
+  FRIENDLY_NAME = 'HGV Meta'.freeze
 
   # Generates HTML preview for hgv metadata using EpiDoc transformation file *start-edition.xsl*
   # - *Args*  :

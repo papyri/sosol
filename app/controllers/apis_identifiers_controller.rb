@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ApisIdentifiersController < IdentifiersController
   before_action :authorize
   before_action :ownership_guard, only: %i[update updatexml]

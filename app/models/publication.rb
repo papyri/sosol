@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # A publication is the basic object of the editorial workflow. The publication consists of a collection of identifiers.
 # The publication has a branch which contains the identifiers.
 # A user creates a publication. Modifies the publication and submits it to the boards.

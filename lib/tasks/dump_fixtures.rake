@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 desc 'Dump a database to yaml fixtures.  Set environment variables DB
 and DEST to specify the target database and destination path for the
 fixtures.  DB defaults to development and DEST defaults to RAILS_ROOT/

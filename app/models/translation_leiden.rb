@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Created as sub-class of HGVTransIdentifier because it already has the acts_as_translation
 #
 # Converts Translation Leiden+ and XML

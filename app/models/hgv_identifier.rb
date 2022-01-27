@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # - Sub-class of Identifier
 # - This is a superclass for HGVMetaIdentifier and HGVTransIdentifier
 #   shared constants and methods. No instances of HGVIdentifier should be
@@ -7,11 +5,11 @@
 class HGVIdentifier < Identifier
   # Should probably be modularized and mixed in.
 
-  IDENTIFIER_NAMESPACE = 'hgv'
-  TEMPORARY_COLLECTION = 'SoSOL'
+  IDENTIFIER_NAMESPACE = 'hgv'.freeze
+  TEMPORARY_COLLECTION = 'SoSOL'.freeze
   XML_VALIDATOR = JRubyXML::HGVEpiDocValidator
 
-  FRIENDLY_NAME = 'HGV Identifier'
+  FRIENDLY_NAME = 'HGV Identifier'.freeze
 
   # Path constructor for born-digital temporary SoSOL identifiers
   def temporary_path

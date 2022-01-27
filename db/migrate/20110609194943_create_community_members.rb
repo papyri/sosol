@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateCommunityMembers < ActiveRecord::Migration[4.2]
   def self.up
     create_table :communities_members, id: false do |t|

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # #Board represents an editorial review board.
 class Board < ApplicationRecord
   has_many :decrees, dependent: :destroy

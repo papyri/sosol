@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 set :application, 'protosite'
 set :repository,  'git://github.com/papyri/sosol.git'
 set :scm, 'git'

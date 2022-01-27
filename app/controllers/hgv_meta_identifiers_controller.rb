@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 include HgvMetaIdentifierHelper
 
 # Controller for all actions concerning the hgv metadata editor, such as edit, update, show preview and some json actions for interactive javascript

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddEmailerIdToUsers < ActiveRecord::Migration[4.2]
   def self.up
     add_column :users, :emailer_id, :integer

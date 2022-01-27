@@ -1,11 +1,9 @@
-# frozen_string_literal: true
-
 class TeiTransCTSIdentifier < TeiCTSIdentifier
-  PATH_PREFIX = 'CTS_XML_TEI'
-  TEMPORARY_COLLECTION = 'TempTrans'
-  TEMPORARY_TITLE = 'New Translation'
-  FRIENDLY_NAME = 'Manuscript Translation'
-  IDENTIFIER_NAMESPACE = 'teia_translation'
+  PATH_PREFIX = 'CTS_XML_TEI'.freeze
+  TEMPORARY_COLLECTION = 'TempTrans'.freeze
+  TEMPORARY_TITLE = 'New Translation'.freeze
+  FRIENDLY_NAME = 'Manuscript Translation'.freeze
+  IDENTIFIER_NAMESPACE = 'teia_translation'.freeze
   XML_VALIDATOR = JRubyXML::TEIAValidator
 
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb

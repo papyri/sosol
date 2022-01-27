@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class HGVTransGlossary < HGVTransIdentifier
   require 'rexml/document'
   include REXML

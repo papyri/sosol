@@ -1,12 +1,10 @@
-# frozen_string_literal: true
-
 class APISIdentifier < HGVMetaIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes
 
-  PATH_PREFIX = 'APIS'
-  IDENTIFIER_NAMESPACE = 'apis'
+  PATH_PREFIX = 'APIS'.freeze
+  IDENTIFIER_NAMESPACE = 'apis'.freeze
   XML_VALIDATOR = JRubyXML::APISEpiDocValidator
-  FRIENDLY_NAME = 'APIS'
+  FRIENDLY_NAME = 'APIS'.freeze
 
   def temporary_path
     # path constructor for born-digital temporary SoSOL identifiers

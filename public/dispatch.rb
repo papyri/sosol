@@ -1,5 +1,4 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
-# frozen_string_literal: true
 
 require "#{File.dirname(__FILE__)}/../config/environment" unless defined?(RAILS_ROOT)
 

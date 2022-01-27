@@ -1,14 +1,12 @@
-# frozen_string_literal: true
-
 # - Sub-class of HGVIdentifier
 # - Includes acts_as_translation defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class HGVTransIdentifier < HGVIdentifier
-  PATH_PREFIX = 'HGV_trans_EpiDoc'
-  IDENTIFIER_NAMESPACE = 'hgvtrans'
+  PATH_PREFIX = 'HGV_trans_EpiDoc'.freeze
+  IDENTIFIER_NAMESPACE = 'hgvtrans'.freeze
 
-  FRIENDLY_NAME = 'Translation'
+  FRIENDLY_NAME = 'Translation'.freeze
 
-  BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n"
+  BROKE_LEIDEN_MESSAGE = "Broken Leiden+ below saved to come back to later:\n".freeze
 
   # defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
   acts_as_translation

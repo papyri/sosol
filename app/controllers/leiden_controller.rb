@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # No associated views - just call the methods to do DDB Text Leiden+ and XML conversions
 class LeidenController < ApplicationController
   # Transform DDB Text XML to Leiden+ - used in the DDB Text Helper menu - used in javascript ajax call

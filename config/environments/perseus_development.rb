@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Settings specified here will take precedence over those in config/environment.rb
 
 # In the development environment your application's code is reloaded on
@@ -38,7 +36,7 @@ config.action_mailer.smtp_settings =
 # and possibly other unversioned secrets for development
 require File.join(File.dirname(__FILE__), 'development_secret')
 
-XSUGAR_STANDALONE_URL = 'http://localhost:9999/'
-XSUGAR_STANDALONE_USE_PROXY = 'true'
-EXIST_STANDALONE_URL = 'http://localhost:8080'
+XSUGAR_STANDALONE_URL = 'http://localhost:9999/'.freeze
+XSUGAR_STANDALONE_USE_PROXY = 'true'.freeze
+EXIST_STANDALONE_URL = 'http://localhost:8080'.freeze
 DEV_INIT_FILES = [].freeze

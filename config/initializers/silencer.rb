@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'silencer/logger'
 
 Sosol::Application.config.middleware.swap Rails::Rack::Logger, Silencer::Logger,

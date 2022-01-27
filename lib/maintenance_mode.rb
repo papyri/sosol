@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Taken from: http://tinyurl.com/kqyeyh
 # Enables cap deploy:web:disable/enable with servers such as Passenger
 # Used as a before_filter in ApplicationController

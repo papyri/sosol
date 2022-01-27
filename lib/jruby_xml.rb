@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module JRubyXML
   class ParseError < ::StandardError
     attr_accessor :line, :column

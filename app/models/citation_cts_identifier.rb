@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 class CitationCTSIdentifier < CTSIdentifier
-  PATH_PREFIX = 'CTS_XML_CITATIONS'
-  IDENTIFIER_NAMESPACE = 'citation'
-  FRIENDLY_NAME = 'Passage Text'
+  PATH_PREFIX = 'CTS_XML_CITATIONS'.freeze
+  IDENTIFIER_NAMESPACE = 'citation'.freeze
+  FRIENDLY_NAME = 'Passage Text'.freeze
 
   def related_text
     parent_urn = CTS::CTSLib.urnObj(urn_attribute).getUrnWithoutPassage

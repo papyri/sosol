@@ -1,6 +1,4 @@
 #!/usr/bin/env jruby
-# frozen_string_literal: true
-
 require 'fileutils'
 
 # path to your application root.

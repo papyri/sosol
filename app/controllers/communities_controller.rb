@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CommunitiesController < ApplicationController
   before_action :authorize
 

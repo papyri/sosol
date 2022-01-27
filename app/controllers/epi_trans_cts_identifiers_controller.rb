@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class EpiTransCtsIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_action :authorize

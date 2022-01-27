@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Be sure to restart your server when you modify this file
 
 # Uncomment below to force Rails into production mode when
@@ -7,7 +5,7 @@
 ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.4'.freeze unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -103,22 +101,22 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector
 
   # RPX application configuration
-  RPX_BASE_URL = 'https://rpxnow.com'
+  RPX_BASE_URL = 'https://rpxnow.com'.freeze
 
-  SITE_NAME = 'Philologist'
-  SITE_FULL_NAME = 'Philologist'
-  SITE_TAG_LINE = 'powered by Son of Suda Online'
-  SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseusupdates/beta-features/perseus-sosol/">the Perseus blog</a>.'
-  SITE_LAYOUT = 'perseus'
-  SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier'
-  SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'
-  SITE_CATALOG_SEARCH = 'View In Catalog'
-  SITE_USER_NAMESPACE = 'data.perseus.org'
-  SITE_OAC_NAMESPACE = 'http://data.perseus.org/annotations/sosol1'
-  EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8800/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'
+  SITE_NAME = 'Philologist'.freeze
+  SITE_FULL_NAME = 'Philologist'.freeze
+  SITE_TAG_LINE = 'powered by Son of Suda Online'.freeze
+  SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseusupdates/beta-features/perseus-sosol/">the Perseus blog</a>.'.freeze
+  SITE_LAYOUT = 'perseus'.freeze
+  SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier'.freeze
+  SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'.freeze
+  SITE_CATALOG_SEARCH = 'View In Catalog'.freeze
+  SITE_USER_NAMESPACE = 'data.perseus.org'.freeze
+  SITE_OAC_NAMESPACE = 'http://data.perseus.org/annotations/sosol1'.freeze
+  EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8800/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'.freeze
 
   REPOSITORY_ROOT = File.join(RAILS_ROOT, 'db', 'git')
   CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
 
-  GITWEB_BASE_URL = 'http://127.0.0.1:1234/?p='
+  GITWEB_BASE_URL = 'http://127.0.0.1:1234/?p='.freeze
 end

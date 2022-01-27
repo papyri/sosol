@@ -1,19 +1,17 @@
-# frozen_string_literal: true
-
 class OACIdentifier < Identifier
   # This is a base class for OAC Annotations.
 
-  PATH_PREFIX = 'XML_OAC'
-  IDENTIFIER_NAMESPACE = 'oac'
-  FRIENDLY_NAME = 'Annotations'
-  TEMPORARY_COLLECTION = 'TempAnnotations'
-  TEMPORARY_TITLE = 'Annotations'
+  PATH_PREFIX = 'XML_OAC'.freeze
+  IDENTIFIER_NAMESPACE = 'oac'.freeze
+  FRIENDLY_NAME = 'Annotations'.freeze
+  TEMPORARY_COLLECTION = 'TempAnnotations'.freeze
+  TEMPORARY_TITLE = 'Annotations'.freeze
   XML_VALIDATOR = JRubyXML::RDFValidator
 
-  NS_RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-  NS_DCTERMS = 'http://purl.org/dc/terms/'
-  NS_FOAF = 'http://xmlns.com/foaf/0.1/'
-  NS_OAC = 'http://www.openannotation.org/ns/'
+  NS_RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'.freeze
+  NS_DCTERMS = 'http://purl.org/dc/terms/'.freeze
+  NS_FOAF = 'http://xmlns.com/foaf/0.1/'.freeze
+  NS_OAC = 'http://www.openannotation.org/ns/'.freeze
 
   def titleize
     'Annotations'

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Decrees represent the possible choices, outcomes and counting methods of a vote.
 class Decree < ApplicationRecord
   belongs_to :board

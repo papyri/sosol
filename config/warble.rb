@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Disable automatic framework detection by uncommenting/setting to false
 # Warbler.framework_detection = false
 

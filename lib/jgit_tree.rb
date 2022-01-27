@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module JGit
   class JGitTree
     attr_accessor :parent, :nodes, :name, :sha, :mode, :repo, :branch

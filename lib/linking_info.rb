@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module LinkingInfo
   class LinkingInfo
     attr_accessor :controller, :action, :id

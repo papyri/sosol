@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class DdbIdentifiersController < IdentifiersController
   # layout 'site'
   before_action :authorize

@@ -1,10 +1,8 @@
-# frozen_string_literal: true
-
 # - Super-class of all identifiers
 class Identifier < ApplicationRecord
   IDENTIFIER_SUBCLASSES = Sosol::Application.config.site_identifiers.split(',')
 
-  FRIENDLY_NAME = 'Base Identifier'
+  FRIENDLY_NAME = 'Base Identifier'.freeze
 
   IDENTIFIER_STATUS = %w[new editing submitted approved finalizing committed archived].freeze
 

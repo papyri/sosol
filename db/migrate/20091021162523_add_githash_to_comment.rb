@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddGithashToComment < ActiveRecord::Migration[4.2]
   def self.up
     add_column :comments, :git_hash, :string

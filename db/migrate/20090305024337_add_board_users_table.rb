@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddBoardUsersTable < ActiveRecord::Migration[4.2]
   def self.up
     create_table :boards_users, id: false do |t|

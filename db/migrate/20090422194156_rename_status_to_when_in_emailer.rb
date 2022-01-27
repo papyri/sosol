@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class RenameStatusToWhenInEmailer < ActiveRecord::Migration[4.2]
   def self.up
     rename_column :emailers, :status, :when_to_send

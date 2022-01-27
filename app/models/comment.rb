@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Comment represents a comment made on an identifier/publication.
 # Standard reasons for a comment are:
 #- *commit* when an identifier is commited

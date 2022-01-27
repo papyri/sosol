@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Superclass of the ddb (Text), hgv_Meta, and hgv_trans controllers
 # - contains methods common to these identifiers
 class IdentifiersController < ApplicationController

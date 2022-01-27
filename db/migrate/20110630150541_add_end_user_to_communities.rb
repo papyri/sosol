@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AddEndUserToCommunities < ActiveRecord::Migration[4.2]
   def self.up
     add_column :communities, :end_user_id, :integer

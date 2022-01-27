@@ -1,13 +1,11 @@
-# frozen_string_literal: true
-
 class DCLPTextIdentifier < DDBIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes, :hybrid
 
-  PATH_PREFIX = 'DCLP'
+  PATH_PREFIX = 'DCLP'.freeze
 
-  FRIENDLY_NAME = 'DCLP Text'
-  IDENTIFIER_NAMESPACE = 'dclp'
-  TEMPORARY_COLLECTION = 'SoSOL'
+  FRIENDLY_NAME = 'DCLP Text'.freeze
+  IDENTIFIER_NAMESPACE = 'dclp'.freeze
+  TEMPORARY_COLLECTION = 'SoSOL'.freeze
   XML_VALIDATOR = JRubyXML::DCLPEpiDocValidator
 
   # cl: at the moment there are no reprints for DCLP

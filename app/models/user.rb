@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Represents a system user.
 class User < ApplicationRecord
   # Include default devise modules. Others available are:

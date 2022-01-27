@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module CTS
   require 'jruby_xml'
   require 'net/http'
@@ -7,10 +5,10 @@ module CTS
 
   CTS_JAR_PATH = File.join(File.dirname(__FILE__), *%w[java cts3.jar])
   GROOVY_JAR_PATH = File.join(File.dirname(__FILE__), *%w[java groovy-all-1.6.2.jar])
-  CTS_NAMESPACE = 'http://chs.harvard.edu/xmlns/cts3/ti'
+  CTS_NAMESPACE = 'http://chs.harvard.edu/xmlns/cts3/ti'.freeze
   if defined?(EXIST_STANDALONE_URL)
-    EXIST_HELPER_REPO = "#{EXIST_STANDALONE_URL}/exist/rest/db/xq/"
-    EXIST_HELPER_REPO_PUT = "#{EXIST_STANDALONE_URL}/exist/rest"
+    EXIST_HELPER_REPO = "#{EXIST_STANDALONE_URL}/exist/rest/db/xq/".freeze
+    EXIST_HELPER_REPO_PUT = "#{EXIST_STANDALONE_URL}/exist/rest".freeze
   end
 
   module CTSLib

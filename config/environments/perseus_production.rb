@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Settings specified here will take precedence over those in config/environment.rb
 
 # The production environment is meant for finished, "live" apps.
@@ -40,9 +38,9 @@ config.action_mailer.smtp_settings =
 # config/environments/production_secret.rb should set
 # RPX_API_KEY and RPX_REALM (site name) for RPX,
 # and possibly other unversioned secrets for production
-REPOSITORY_ROOT = '/usr/local/gitrepos'
+REPOSITORY_ROOT = '/usr/local/gitrepos'.freeze
 CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
-XSUGAR_STANDALONE_URL = 'http://localhost:9999/'
-XSUGAR_STANDALONE_USE_PROXY = 'true'
-EXIST_STANDALONE_URL = 'http://localhost:8800'
+XSUGAR_STANDALONE_URL = 'http://localhost:9999/'.freeze
+XSUGAR_STANDALONE_USE_PROXY = 'true'.freeze
+EXIST_STANDALONE_URL = 'http://localhost:8800'.freeze
 require File.join(File.dirname(__FILE__), 'production_secret')

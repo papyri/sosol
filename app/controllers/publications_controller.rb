@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class PublicationsController < ApplicationController
   # #layout 'site'
   before_action :authorize

@@ -1,6 +1,4 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
-
 ## lib/tasks/git.rake
 #
 # Rake task to fully copy your master database into a new database for current branch.

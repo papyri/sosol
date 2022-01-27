@@ -1,13 +1,11 @@
-# frozen_string_literal: true
-
 class EpiTransCTSIdentifier < EpiCTSIdentifier
-  PATH_PREFIX = 'CTS_XML_EpiDoc'
-  TEMPORARY_COLLECTION = 'TempTrans'
-  TEMPORARY_TITLE = 'New Translation'
+  PATH_PREFIX = 'CTS_XML_EpiDoc'.freeze
+  TEMPORARY_COLLECTION = 'TempTrans'.freeze
+  TEMPORARY_TITLE = 'New Translation'.freeze
 
-  FRIENDLY_NAME = 'Inscription Translation'
+  FRIENDLY_NAME = 'Inscription Translation'.freeze
 
-  IDENTIFIER_NAMESPACE = 'epigraphy_translation'
+  IDENTIFIER_NAMESPACE = 'epigraphy_translation'.freeze
 
   XML_VALIDATOR = JRubyXML::EpiDocP5Validator
 

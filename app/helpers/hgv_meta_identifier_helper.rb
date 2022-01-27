@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Helper functions for complex EpiDoc transformations, date operations and form data for select boxes
 module HgvMetaIdentifierHelper
   # Generates a random six-letter-code

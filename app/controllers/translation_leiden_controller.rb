@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # No associated views - just call the methods to do Translation Leiden+ and XML conversions for translations
 class TranslationLeidenController < ApplicationController
   # Transform Translation XML to Leiden+ - used in the Translation Helper menu - used in javascript ajax call

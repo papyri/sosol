@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'sucker_punch/async_syntax'
 
 # SuckerPunch 2.x

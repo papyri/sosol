@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Controller for all actions concerning the handling of bibliographical data, such as edit and update
 class BiblioIdentifiersController < IdentifiersController
   before_action :authorize

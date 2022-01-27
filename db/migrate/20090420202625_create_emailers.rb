@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CreateEmailers < ActiveRecord::Migration[4.2]
   def self.up
     create_table :emailers do |t|

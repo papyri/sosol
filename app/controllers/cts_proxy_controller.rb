@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CtsProxyController < ApplicationController
   def editions
     response = CTS::CTSLib.getEditionUrns(params[:inventory].to_s)

@@ -1,15 +1,13 @@
-# frozen_string_literal: true
-
 # Model class for bibliography records as they reside in the Biblio folder of idp.data's git repository
 class BiblioIdentifier < HGVIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes
 
   # Repository file path prefix
-  PATH_PREFIX = 'Biblio'
+  PATH_PREFIX = 'Biblio'.freeze
 
-  FRIENDLY_NAME = 'Biblio'
+  FRIENDLY_NAME = 'Biblio'.freeze
 
-  IDENTIFIER_NAMESPACE = 'biblio'
+  IDENTIFIER_NAMESPACE = 'biblio'.freeze
 
   # A map (key → xpath) of all relevant xpaths for data lookup and storage
   XPATH = {

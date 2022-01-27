@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Communities are designed to allow anyone to create their own set of boards and editorial review.
 # The workflow and boards work the same as the standard SoSOL workflow with the exception that the finalized publications is not committed to canonical. Instead it is copied to the chosen end_user for the community.
 

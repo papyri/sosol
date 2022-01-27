@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class VotesController < ApplicationController
   # layout "site"
   before_action :authorize

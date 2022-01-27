@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Created as sub-class of DDBIdentifier because it already has the acts_as_leiden_plus
 #
 # Converts DDB Text Leiden+ and XML

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'rdoc/task'
 
 # clear the doc:app task et al

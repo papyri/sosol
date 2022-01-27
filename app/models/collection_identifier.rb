@@ -1,11 +1,9 @@
-# frozen_string_literal: true
-
 # Used for directly manipulating +collection.rdf+ in the canonical repository.
 # This is assumed to never have an instance belonging to a Publication.
 # - Sub-class of Identifier
 class CollectionIdentifier < Identifier
   # Repository path prefix
-  PATH_PREFIX = 'RDF'
+  PATH_PREFIX = 'RDF'.freeze
 
   # Validator to use for XML validation
   XML_VALIDATOR = JRubyXML::RDFValidator

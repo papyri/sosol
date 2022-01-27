@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class BoardsController < ApplicationController
   # layout "site"
   # layout "header_footer"

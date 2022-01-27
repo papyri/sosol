@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class ChangeCommentToText < ActiveRecord::Migration[4.2]
   def self.up
     change_column :comments, :comment, :text, limit: nil

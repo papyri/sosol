@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class FixVotesUserIdToInteger < ActiveRecord::Migration[4.2]
   def self.up
     if ActiveRecord::Base.connection.adapter_name == 'PostgreSQL'

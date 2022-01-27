@@ -1,12 +1,10 @@
-# frozen_string_literal: true
-
 class DCLPMetaIdentifier < HGVMetaIdentifier
   attr_accessor :hybrid
 
-  PATH_PREFIX = 'DCLP'
+  PATH_PREFIX = 'DCLP'.freeze
 
-  FRIENDLY_NAME = 'DCLP Meta'
-  IDENTIFIER_NAMESPACE = 'dclp'
+  FRIENDLY_NAME = 'DCLP Meta'.freeze
+  IDENTIFIER_NAMESPACE = 'dclp'.freeze
 
   XML_VALIDATOR = JRubyXML::DCLPEpiDocValidator
 

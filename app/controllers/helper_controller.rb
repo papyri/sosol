@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Used to display DDB Text (Helper Menu or Commentary) Pop-up Windows
 class HelperController < ApplicationController
   layout false

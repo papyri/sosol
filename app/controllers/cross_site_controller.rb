@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # The CrossSiteController provides urls for other sites to access PE partials.
 # This is mainly so PN and PE can have the same header, footers and other common layouts.
 # Generally these partials are just html, no stylesheet links etc.

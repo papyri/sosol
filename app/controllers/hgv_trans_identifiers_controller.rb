@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class HgvTransIdentifiersController < IdentifiersController
   # layout 'site'
   before_action :authorize

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class AjaxProxyController < ApplicationController
   skip_before_action :verify_authenticity_token, only: %i[js css images]
 

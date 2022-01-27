@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Sosol::Application.config.middleware.use Rack::Attack
 
 module Rack

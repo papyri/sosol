@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CollectionIdentifiersController < ApplicationController
   before_action :authorize
   before_action :check_ddb

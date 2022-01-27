@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class EscapeComments < ActiveRecord::Migration[4.2]
   def self.up
     # raw_comments = ActiveRecord::Base.connection.execute('SELECT * FROM comments')

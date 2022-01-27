@@ -1,14 +1,12 @@
-# frozen_string_literal: true
-
 require 'net/http'
 require 'jruby_xml'
 
 module NumbersRDF
   # Top-level namespace used for identifiers, e.g. 'papyri.info' in 'papyri.info/hgv/1234'
-  NAMESPACE_IDENTIFIER = 'papyri.info'
+  NAMESPACE_IDENTIFIER = 'papyri.info'.freeze
 
   # Actual server address for the Numbers Server, could in theory be different from NAMESPACE_IDENTIFIER
-  NUMBERS_SERVER_DOMAIN = 'papyri.info'
+  NUMBERS_SERVER_DOMAIN = 'papyri.info'.freeze
   NUMBERS_SERVER_PORT = 443
 
   class Timeout < ::Timeout::Error; end

@@ -1,15 +1,13 @@
-# frozen_string_literal: true
-
 class CTSIdentifier < Identifier
   # This is a superclass for objects using CTS Identifiers, including
   # shared constants and methods. No instances of CTSIdentifier should be
   # created.
-  FRIENDLY_NAME = 'Text'
+  FRIENDLY_NAME = 'Text'.freeze
 
-  IDENTIFIER_PREFIX = 'urn:cts:'
-  IDENTIFIER_NAMESPACE = ''
-  TEMPORARY_COLLECTION = 'TempTexts'
-  TEMPORARY_TITLE = 'New Transcription'
+  IDENTIFIER_PREFIX = 'urn:cts:'.freeze
+  IDENTIFIER_NAMESPACE = ''.freeze
+  TEMPORARY_COLLECTION = 'TempTexts'.freeze
+  TEMPORARY_TITLE = 'New Transcription'.freeze
 
   def titleize
     title = nil
