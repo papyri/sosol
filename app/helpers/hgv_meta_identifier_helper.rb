@@ -1420,7 +1420,7 @@ module HgvMetaIdentifierHelper
               if date_item[:attributes][:certainty]
                 t[:certainty] = date_item[:attributes][:certainty].to_sym
               elsif date_item[:children][:certainty]
-                cert = {:days => 0, :months => 0, :years => 0}
+                cert = {days: 0, months: 0, years: 0}
                 date_item[:children][:certainty].each {|certainty|
                   if certainty[:attributes] && certainty[:attributes][:match]
                     cert.keys.each {|key|
