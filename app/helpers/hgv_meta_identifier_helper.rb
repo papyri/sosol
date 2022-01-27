@@ -1424,12 +1424,12 @@ module HgvMetaIdentifierHelper
                 date_item[:children][:certainty].each do |certainty|
                   next unless certainty[:attributes] && certainty[:attributes][:match]
 
-                  cert.keys.each do |key|
+                  cert.each_key do |key|
                     cert[key] += 1 if certainty[:attributes][:match].include? key.to_s[0..-2]
                   end
                 end
-                if cert.values.join.to_i > 0
-                  t[:certainty] = cert.delete_if { |_k, v| v == 0 }
+                if cert.values.join.to_i.positive?
+                  t[:certainty] = cert.delete_if { |_k, v| v.zero? }
                                       .keys
                                       .collect { |i| i.to_s[0..-2] }
                                       .join('_')
