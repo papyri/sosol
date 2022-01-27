@@ -1421,15 +1421,15 @@ module HgvMetaIdentifierHelper
                 t[:certainty] = date_item[:attributes][:certainty].to_sym
               elsif date_item[:children][:certainty]
                 cert = { days: 0, months: 0, years: 0 }
-                date_item[:children][:certainty].each { |certainty|
+                date_item[:children][:certainty].each do |certainty|
                   if certainty[:attributes] && certainty[:attributes][:match]
-                    cert.keys.each { |key|
+                    cert.keys.each do |key|
                       if certainty[:attributes][:match].include? key.to_s[0..-2]
                         cert[key] += 1
                       end
-                    }
+                    end
                   end
-                }
+                end
                 if cert.values.join.to_i > 0
                   t[:certainty] = cert.delete_if{ |k,v| v == 0 }.keys.collect{ |i| i.to_s[0..-2] }.join('_').to_sym # CL support for plurals goes here
                 end
