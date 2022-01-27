@@ -168,7 +168,7 @@ class APISIdentifier < HGVMetaIdentifier
                         end
 
       item[:optional] = if item.keys.include? :optional
-                          !item[:optional] ? false : true
+                          item[:optional] ? true : false
                         else
                           true
                         end

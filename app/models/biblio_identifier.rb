@@ -456,7 +456,7 @@ class BiblioIdentifier < HGVIdentifier
 
         list[list.length] =
           ShortTitle.new(title[:title].strip,
-                         !title[:responsibility].strip.empty? ? title[:responsibility].strip : nil)
+                         title[:responsibility].strip.empty? ? nil : title[:responsibility].strip)
       end
     end
     non_database_attribute[key] = list
@@ -471,7 +471,7 @@ class BiblioIdentifier < HGVIdentifier
       @post[:note].each_pair do |_index, note|
         unless note[:annotation].strip.empty?
           non_database_attribute[:note][non_database_attribute[:note].length] =
-            Note.new(!note[:responsibility].strip.empty? ? note[:responsibility].strip : nil, note[:annotation].strip)
+            Note.new(note[:responsibility].strip.empty? ? nil : note[:responsibility].strip, note[:annotation].strip)
         end
       end
     end

@@ -191,11 +191,11 @@ class BoardsController < ApplicationController
 
   # Sorts board rankings by given array of board id's and saves new rankings.
   def update_rankings
-    @boards = if !params[:community_id].blank?
-                Board.ranked_by_community_id(params[:community_id].to_s)
-              else
+    @boards = if params[:community_id].blank?
                 # default to sosol boards
                 Board.ranked
+              else
+                Board.ranked_by_community_id(params[:community_id].to_s)
               end
 
     # @boards = Board.all
@@ -214,11 +214,11 @@ class BoardsController < ApplicationController
       rank_count += 1
     end
 
-    if !params[:community_id].blank?
-      redirect_to controller: 'communities', action: 'edit', id: params[:community_id].to_s
-    else
+    if params[:community_id].blank?
       # default to sosol boards
       redirect_to action: 'index'
+    else
+      redirect_to controller: 'communities', action: 'edit', id: params[:community_id].to_s
     end
     nil
   end
@@ -226,11 +226,11 @@ class BoardsController < ApplicationController
   def send_board_reminder_emails
     addresses = []
 
-    if params[:community_id].to_s != ''
+    if params[:community_id].to_s == ''
+      boards = Board.ranked
+    else
       boards = Board.ranked_by_community_id(params[:community_id].to_s)
       community = Community.find_by_id(params[:community_id].to_s)
-    else
-      boards = Board.ranked
     end
 
     body_text = 'Greetings '

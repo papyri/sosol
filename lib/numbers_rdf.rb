@@ -86,9 +86,7 @@ module NumbersRDF
 
       # Applies XPath to an HTTP response (assumed to be XML).
       def apply_xpath_to_numbers_server_response(xpath, response)
-        if response.code != '200'
-          nil
-        else
+        if response.code == '200'
           process_numbers_server_response_body(
             response.body.force_encoding('UTF-8'),
             xpath

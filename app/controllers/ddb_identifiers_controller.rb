@@ -12,16 +12,16 @@ class DdbIdentifiersController < IdentifiersController
       reprint_identifier_string = [NumbersRDF::NAMESPACE_IDENTIFIER, @identifier.class::IDENTIFIER_NAMESPACE,
                                    @identifier.reprinted_in.to_s].join('/')
       reprint_identifier = @identifier.publication.identifiers.to_ary.find { |i| i.name == reprint_identifier_string }
-      if !reprint_identifier.nil?
-        reprint_identifier_path = polymorphic_path([@identifier.publication, reprint_identifier], action: :edit)
+      if reprint_identifier.nil?
         flash.now[:notice] =
-          "This text is reprinted in <a href='#{reprint_identifier_path}'>#{reprint_identifier.title}</a>. Please <a href='#{reprint_identifier_path}'>edit the text there</a>, or <a href='#{polymorphic_path(
+          "This text is reprinted in #{reprint_identifier_string}, which is not associated with this publication (possibly a bug). Please edit the text there, or  <a href='#{polymorphic_path(
             [@identifier.publication,
              @identifier], action: :editxml
           )}'>edit this text's XML</a> to reflect the correct reprint relationship."
       else
+        reprint_identifier_path = polymorphic_path([@identifier.publication, reprint_identifier], action: :edit)
         flash.now[:notice] =
-          "This text is reprinted in #{reprint_identifier_string}, which is not associated with this publication (possibly a bug). Please edit the text there, or  <a href='#{polymorphic_path(
+          "This text is reprinted in <a href='#{reprint_identifier_path}'>#{reprint_identifier.title}</a>. Please <a href='#{reprint_identifier_path}'>edit the text there</a>, or <a href='#{polymorphic_path(
             [@identifier.publication,
              @identifier], action: :editxml
           )}'>edit this text's XML</a> to reflect the correct reprint relationship."

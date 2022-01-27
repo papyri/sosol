@@ -268,7 +268,9 @@ module CTS
               JRubyXML.stream_from_file(File.join(Rails.root,
                                                   %w[data xslt cts extract_reply_text.xsl]))
             )
-            if path != ''
+            if path == ''
+              raise 'no path for put'
+            else
               # inventory put succeeded, now put the document itself
               pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
               put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
@@ -295,8 +297,6 @@ module CTS
               else
                 raise "Put text failed #{put_response.code} #{put_response.msg} #{put_response.body}"
               end
-            else
-              raise 'no path for put'
             end
           else
             raise "Inventory post failed #{response.code} #{response.msg} #{response.body}"
@@ -328,7 +328,9 @@ module CTS
             JRubyXML.stream_from_file(File.join(Rails.root,
                                                 %w[data xslt cts extract_reply_text.xsl]))
           )
-          if path != ''
+          if path == ''
+            raise 'No path for put'
+          else
             pathUri = URI.parse("#{EXIST_HELPER_REPO_PUT}#{path}")
             put_response = Net::HTTP.start(pathUri.host, pathUri.port) do |http|
               headers = { 'Content-Type' => 'text/xml; charset=utf-8' }
@@ -359,8 +361,6 @@ module CTS
             else
               raise "Put text failed #{put_response.code} #{put_response.msg}"
             end
-          else
-            raise 'No path for put'
           end
         else # end post inventory
           raise "Inventory post failed #{response.code} #{response.msg}"

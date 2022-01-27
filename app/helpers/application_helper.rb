@@ -48,7 +48,7 @@ class PrettySsime < REXML::Formatters::Pretty
     s.squeeze!(' ')
     s = wrap(s, @width - @level) if @width.positive?
     s = indent_text(s, @level, ' ', true)
-    output << (' ' * @level + s)
+    output << ((' ' * @level) + s)
   end
 end
 
@@ -154,7 +154,9 @@ module REXML
 
       head = nil
 
-      if element.elements[xpath].class != REXML::Element
+      if element.elements[xpath].instance_of?(REXML::Element)
+        head = element.elements[xpath]
+      else
         Rails.logger.debug("unable to find xpath #{xpath}")
         element.to_s
         lumps = REXML::XPath.breakXpathIntoLumps xpath
@@ -165,8 +167,6 @@ module REXML
             head = head.add_element lump[:element], lump[:attributes]
           end
         end
-      else
-        head = element.elements[xpath]
       end
 
       head.text = value if head && value

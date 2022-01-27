@@ -178,7 +178,7 @@ class HGVMetaIdentifier < HGVIdentifier
             element.attributes[attribute_config[:name]] && !element.attributes[attribute_config[:name]].strip.empty? ? element.attributes[attribute_config[:name]].strip : attribute_config[:default]
           if attribute_config[:split] && node[:attributes][attribute_key] && !node[:attributes][attribute_key].empty?
             node[:attributes][attribute_key] =
-              node[:attributes][attribute_key].split(!attribute_config[:split].empty? ? attribute_config[:split] : ' ')
+              node[:attributes][attribute_key].split(attribute_config[:split].empty? ? ' ' : attribute_config[:split])
           end
         end
 
@@ -480,7 +480,7 @@ class HGVMetaIdentifier < HGVIdentifier
                 end
 
         if config[:split] && value.is_a?(Hash)
-          value = value.values.join(!config[:split].empty? ? config[:split] : ' ')
+          value = value.values.join(config[:split].empty? ? ' ' : config[:split])
         end
 
         if attributeLegal? key # value && !value.empty? # CL: Biblio patch
@@ -705,7 +705,7 @@ class HGVMetaIdentifier < HGVIdentifier
     if !value
       value = default
     elsif value.instance_of? String
-      value = !value.strip.empty? ? value.strip : default
+      value = value.strip.empty? ? default : value.strip
     elsif value.instance_of?(Array)
       value = value.compact.reject { |item| item.strip.empty? }.collect(&:strip)
     elsif value.is_a? Hash

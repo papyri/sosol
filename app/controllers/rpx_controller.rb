@@ -123,11 +123,11 @@ class RpxController < ApplicationController
       session[:user_id] = user.id
       # redirect_to :controller => "welcome", :action => "index"
       # redirect to dashboard
-      if !session[:entry_url].blank?
+      if session[:entry_url].blank?
+        redirect_to controller: 'user', action: 'dashboard'
+      else
         redirect_to session[:entry_url]
         session[:entry_url] = nil
-      else
-        redirect_to controller: 'user', action: 'dashboard'
       end
       nil
     else
@@ -179,12 +179,12 @@ class RpxController < ApplicationController
     session[:user_id] = user.id
     session[:identifier] = nil
 
-    if !session[:entry_url].blank?
+    if session[:entry_url].blank?
+      redirect_to controller: 'welcome', action: 'index'
+    else
       redirect_to session[:entry_url]
       session[:entry_url] = nil
       nil
-    else
-      redirect_to controller: 'welcome', action: 'index'
     end
   end
 

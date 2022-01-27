@@ -76,10 +76,10 @@ module Rpx
       resp_body = ''
       begin
         resp = http.post(url.path, data)
-        if resp.code != '200'
-          raise RpxException.new(resp), "Unexpected HTTP status code from server: #{resp.code}: #{resp.body}"
-        else
+        if resp.code == '200'
           resp_body = resp.body
+        else
+          raise RpxException.new(resp), "Unexpected HTTP status code from server: #{resp.code}: #{resp.body}"
         end
       rescue OpenSSL::SSL::SSLError => e
         Rails.logger.debug("OpenSSL::SSL::SSLError in RpxHelper#api_call, falling back to curl: #{e.inspect}")

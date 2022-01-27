@@ -98,7 +98,7 @@ module HgvMetaIdentifierHelper
                         end
 
       item[:optional] = if item.keys.include? :optional
-                          !item[:optional] ? false : true
+                          item[:optional] ? true : false
                         else
                           true
                         end
@@ -874,18 +874,18 @@ module HgvMetaIdentifierHelper
 
       year = if chron == :chronMax
                if century.positive?
-                 (century * 100 + yearModifier).to_s.rjust(4,
-                                                           '0')
+                 ((century * 100) + yearModifier).to_s.rjust(4,
+                                                             '0')
                else
-                 ((century + 1) * 100 + yearModifier - 1).abs.to_s.rjust(
+                 (((century + 1) * 100) + yearModifier - 1).abs.to_s.rjust(
                    4, '0'
                  )
                end
              elsif century.negative?
-               (century * 100 + yearModifier).abs.to_s.rjust(4,
-                                                             '0')
+               ((century * 100) + yearModifier).abs.to_s.rjust(4,
+                                                               '0')
              else
-               ((century - 1) * 100 + yearModifier + 1).to_s.rjust(
+               (((century - 1) * 100) + yearModifier + 1).to_s.rjust(
                  4, '0'
                )
              end
@@ -947,14 +947,12 @@ module HgvMetaIdentifierHelper
         m = month.to_i
         y = year.to_i
         day_max = if m
-                    if m != 2
-                      if m < 8
-                        m.even? ? 30 : 31
-                      else
-                        (m.even? ? 31 : 30)
-                      end
-                    else
+                    if m == 2
                       (y && (y % 4).zero? && (((y % 100) != 0) || (y % 400).zero?) ? 29 : 28)
+                    elsif m < 8
+                      m.even? ? 30 : 31
+                    else
+                      (m.even? ? 31 : 30)
                     end
                   else
                     31
@@ -984,10 +982,8 @@ module HgvMetaIdentifierHelper
     #   - +Integer+, e.g. +-13+
     # e.g. HgvDate.getCentury(-1234) => "-13"
     def self.getCentury(year)
-      if !year
-        nil
-      else
-        (year.abs / 100 + ((year.abs % 100).zero? ? 0 : 1)) * (year.positive? ? 1 : -1)
+      if year
+        ((year.abs / 100) + ((year.abs % 100).zero? ? 0 : 1)) * (year.positive? ? 1 : -1)
       end
     end
 
@@ -1715,7 +1711,7 @@ module HgvMetaIdentifierHelper
                                             k.to_s.include?('Certainty') && k.to_s[/(Day|Month|Year)/] && !v.empty?
                                           end.collect { |v| v[0].to_s.include?('Certainty') ? v[0].to_s[/(Day|Month|Year)/].downcase : nil }.compact.uniq.sort.join('_')
             data_item[:certaintyPicker] =
-              !data_item[:certaintyPicker].empty? ? data_item[:certaintyPicker] : data_item[:certainty]
+              data_item[:certaintyPicker].empty? ? data_item[:certainty] : data_item[:certaintyPicker]
 
           end
         end
@@ -2063,10 +2059,10 @@ module HgvMetaIdentifierHelper
     #   - HGV formatted date +String+
     # e.g. HgvFuzzy.getChron('', '1976', '2', '', '', '', 'end', :chronMax) => "1976-02-29"
     def self.getChron(c, y, m, d, cq, yq, mq, chron = :chron)
-      c = c.to_i != 0 ? c.to_i : nil
-      y = y.to_i != 0 ? y.to_i : nil
-      m = m.to_i != 0 ? m.to_i : nil
-      d = d.to_i != 0 ? d.to_i : nil
+      c = c.to_i == 0 ? nil : c.to_i
+      y = y.to_i == 0 ? nil : y.to_i
+      m = m.to_i == 0 ? nil : m.to_i
+      d = d.to_i == 0 ? nil : d.to_i
 
       epoch = year = month = day = nil
 
@@ -2138,14 +2134,12 @@ module HgvMetaIdentifierHelper
 
       m ||= month_modifier.to_i
       day_max = if m
-                  if m != 2
-                    if m < 8
-                      m.even? ? 30 : 31
-                    else
-                      (m.even? ? 31 : 30)
-                    end
-                  else
+                  if m == 2
                     (y && (y % 4).zero? && (((y % 100) != 0) || (y % 400).zero?) ? 29 : 28)
+                  elsif m < 8
+                    m.even? ? 30 : 31
+                  else
+                    (m.even? ? 31 : 30)
                   end
                 else
                   31
@@ -2178,18 +2172,18 @@ module HgvMetaIdentifierHelper
         epoch = c.negative? ? '-' : ''
         year = if chron == :chronMax
                  if c.positive?
-                   (c * 100 + year_modifier).to_s.rjust(4,
-                                                        '0')
+                   ((c * 100) + year_modifier).to_s.rjust(4,
+                                                          '0')
                  else
-                   ((c + 1) * 100 + year_modifier - 1).abs.to_s.rjust(
+                   (((c + 1) * 100) + year_modifier - 1).abs.to_s.rjust(
                      4, '0'
                    )
                  end
                elsif c.negative?
-                 (c * 100 + year_modifier).abs.to_s.rjust(4,
-                                                          '0')
+                 ((c * 100) + year_modifier).abs.to_s.rjust(4,
+                                                            '0')
                else
-                 ((c - 1) * 100 + year_modifier + 1).to_s.rjust(
+                 (((c - 1) * 100) + year_modifier + 1).to_s.rjust(
                    4, '0'
                  )
                end

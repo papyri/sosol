@@ -65,29 +65,24 @@ class EmailerMailer < ActionMailer::Base
 
     na_text = I18n.t('mailers.notapplicable')
     @identifier_links = if identifiers.length.positive?
-                          Hash[identifiers.map do |x|
-                                 [x.title, preview_url(x)]
-                               end ]
+                          identifiers.map do |x|
+                            [x.title, preview_url(x)]
+                          end.to_h
                         else
-                          Hash[na_text,
-                               dashboard_url]
+                          { na_text => dashboard_url }
                         end
 
     # publication title and publication link should always give us the publication of origin
     @publication_links = if identifiers.length.positive?
-                           Hash[identifiers.first.publication.origin.title,
-                                url_for(identifiers.first.publication.origin)]
+                           { identifiers.first.publication.origin.title => url_for(identifiers.first.publication.origin) }
                          else
-                           Hash[na_text,
-                                dashboard_url]
+                           { na_text => dashboard_url }
                          end
 
     @board_publication_links = if board_publication.nil?
-                                 Hash[na_text,
-                                      dashboard_url]
+                                 { na_text => dashboard_url }
                                else
-                                 Hash[board_publication.title,
-                                      url_for(board_publication)]
+                                 { board_publication.title => url_for(board_publication) }
                                end
 
     board_owner = if board_publication.nil?

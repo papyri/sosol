@@ -90,10 +90,10 @@ class PublicationsController < ApplicationController
     identifier = params[:id]
     related_identifiers = nil
 
-    related_identifiers = if !(%r{papyri\.info/dclp} =~ identifier) # cromulent dclp hack to circumvent number server
-                            NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
-                          else
+    related_identifiers = if %r{papyri\.info/dclp} =~ identifier
                             [identifier]
+                          else # cromulent dclp hack to circumvent number server
+                            NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
                           end
 
     publication_from_identifier(identifier, related_identifiers)
@@ -519,13 +519,13 @@ class PublicationsController < ApplicationController
     end
 
     @identifier = @publication.identifiers[return_index]
-    if @identifier.class != current_identifier_class
-      # if no longer the same class, we can't assume that the next class as the same edit methods
-      redirect_to edit_polymorphic_path([@publication, @identifier])
-    else
+    if @identifier.instance_of?(current_identifier_class)
       # /publications/1/identifiers/1/action
       redirect_to controller: params[:current_controller_name], action: params[:current_action_name],
                   id: @identifier.id, publication_id: params[:pub_id]
+    else
+      # if no longer the same class, we can't assume that the next class as the same edit methods
+      redirect_to edit_polymorphic_path([@publication, @identifier])
     end
   end
 

@@ -69,14 +69,14 @@ class Repository
         Rails.logger.debug("Repository.run_command error logging result: #{e.message}")
       end
     end
-    if !$CHILD_STATUS.success?
+    if $CHILD_STATUS.success?
+      result
+    else
       Rails.logger.error("Repository.run_command error (called from #{caller[0]}): #{command_string}")
       Rails.logger.error("Repository.run_command exit code: #{$CHILD_STATUS.exitstatus}")
       error_string = "Repository.run_command error running: #{command_string}\n#{result}"
       Airbrake.notify(error_string)
       raise error_string
-    else
-      result
     end
   end
 

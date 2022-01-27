@@ -10,11 +10,9 @@ task dump_fixtures: :environment do
   ActiveRecord::Base.establish_connection(db)
   %w[documents].each do |table_name|
     i = '000'
-    File.open("#{path}/#{table_name}.yml", 'wb') do |file|
-      file.write ActiveRecord::Base.connection.select_all(sql %
-table_name).each_with_object({}) { |record, hash|
-                   hash["#{table_name}_#{i.succ!}"] = record
-                 }.to_yaml
-    end
+    File.binwrite("#{path}/#{table_name}.yml", ActiveRecord::Base.connection.select_all(sql %
+table_name).each_with_object({}) do |record, hash|
+                                                 hash["#{table_name}_#{i.succ!}"] = record
+                                               end.to_yaml)
   end
 end

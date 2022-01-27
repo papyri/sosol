@@ -726,11 +726,11 @@ class Publication < ApplicationRecord
     end
 
     # need to tally votes and see if any action will take place
-    if owner_type != 'Board' # || !self.owner #make sure board still exist...add error message?
+    if owner_type == 'Board'
+      decree_action = owner.tally_votes(user_votes) # since board has decrees let them figure out the vote results
+    else # || !self.owner #make sure board still exist...add error message?
       Rails.logger.warn("Publication#tally_votes for #{id} not owned by a Board")
       return '' # another check to make sure only the board is voting on its copy
-    else
-      decree_action = owner.tally_votes(user_votes) # since board has decrees let them figure out the vote results
     end
 
     Rails.logger.info("Publication#tally_votes for #{id} (origin: #{origin.id}) got decree_action: #{decree_action}")
@@ -1721,9 +1721,7 @@ class Publication < ApplicationRecord
   end
 
   def creatable_identifiers
-    if !mutable?
-      []
-    else
+    if mutable?
       creatable_identifiers = Array.new(Identifier::IDENTIFIER_SUBCLASSES)
 
       # WARNING hardcoded identifier dependency hack
@@ -1777,6 +1775,8 @@ class Publication < ApplicationRecord
       end
 
       creatable_identifiers
+    else
+      []
     end
   end
 

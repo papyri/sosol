@@ -71,7 +71,10 @@ class UserController < ApplicationController
   # default view of stats for the user name entered/linked to
   def show
     @users = [User.find_by_name(params[:user_name])]
-    if !@users.compact.empty?
+    if @users.compact.empty?
+      flash[:error] = 'User not found.'
+      redirect_to dashboard_url
+    else
       @comments = User.stats(@users.first.id)
       @votes = @comments.select { |x| x['reason'] == 'vote' }
       @submits = @comments.select { |x| x['reason'] == 'submit' }
@@ -85,9 +88,6 @@ class UserController < ApplicationController
         format.json { render json: @users.first }
         format.xml  { render xml: @users.first }
       end
-    else
-      flash[:error] = 'User not found.'
-      redirect_to dashboard_url
     end
   end
 
