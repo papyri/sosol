@@ -5,7 +5,7 @@
 config.cache_classes = true
 
 # Use a different logger for distributed setups
-config.logger = Logger.new(STDOUT)
+config.logger = Logger.new($stdout)
 
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = false
@@ -13,8 +13,8 @@ config.action_controller.perform_caching             = false
 config.action_controller.page_cache_directory = "#{RAILS_ROOT}/public/cache/"
 config.log_level = :debug
 # config.cache_store = :file_store, "#{RAILS_ROOT}/public/cache/"
-#config.action_controller.page_cache_directory        = "public/cache"
-#config.action_controller.page_cache_extension        = ".html.erb"
+# config.action_controller.page_cache_directory        = "public/cache"
+# config.action_controller.page_cache_extension        = ".html.erb"
 # config.action_view.cache_template_loading            = true
 
 # Use a different cache store in production
@@ -28,20 +28,19 @@ config.log_level = :debug
 
 config.action_mailer.raise_delivery_errors = true
 config.action_mailer.delivery_method = :smtp
-config.action_mailer.smtp_settings = 
-{	
-	:address			=>	'localhost',
-	:port					=>	25,
-	:domain				=>	'tufts.edu',
-}
-
+config.action_mailer.smtp_settings =
+  {
+    address: 'localhost',
+    port: 25,
+    domain: 'tufts.edu'
+  }
 
 # config/environments/production_secret.rb should set
 # RPX_API_KEY and RPX_REALM (site name) for RPX,
 # and possibly other unversioned secrets for production
-REPOSITORY_ROOT = '/usr/local/gitrepos'
+REPOSITORY_ROOT = '/usr/local/gitrepos'.freeze
 CANONICAL_REPOSITORY = File.join(REPOSITORY_ROOT, 'canonical.git')
-XSUGAR_STANDALONE_URL="http://localhost:9999/"
-XSUGAR_STANDALONE_USE_PROXY="true"
-EXIST_STANDALONE_URL="http://localhost:8800"
+XSUGAR_STANDALONE_URL = 'http://localhost:9999/'.freeze
+XSUGAR_STANDALONE_USE_PROXY = 'true'.freeze
+EXIST_STANDALONE_URL = 'http://localhost:8800'.freeze
 require File.join(File.dirname(__FILE__), 'production_secret')

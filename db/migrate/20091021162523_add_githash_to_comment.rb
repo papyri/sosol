@@ -7,4 +7,3 @@ class AddGithashToComment < ActiveRecord::Migration[4.2]
     remove_column :comments, :git_hash, :string
   end
 end
-  

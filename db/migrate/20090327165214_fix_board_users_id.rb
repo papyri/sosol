@@ -11,7 +11,7 @@ class FixBoardUsersId < ActiveRecord::Migration[4.2]
     if ActiveRecord::Base.connection.adapter_name == 'PostgreSQL'
       change_column :boards_users, :board_id, "string using nullif(board_id, '')::string"
     else
-  		change_column :boards_users, :board_id, :string  
+      change_column :boards_users, :board_id, :string
     end
   end
 end

@@ -1,8 +1,7 @@
 class VotesController < ApplicationController
-  
-  #layout "site"
+  # layout "site"
   before_action :authorize
-    
+
   # GET /votes
   # GET /votes.xml
   def index
@@ -10,7 +9,7 @@ class VotesController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @votes }
+      format.xml  { render xml: @votes }
     end
   end
 
@@ -21,7 +20,7 @@ class VotesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @vote }
+      format.xml  { render xml: @vote }
     end
   end
 
@@ -32,7 +31,7 @@ class VotesController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @vote }
+      format.xml  { render xml: @vote }
     end
   end
 
@@ -50,10 +49,10 @@ class VotesController < ApplicationController
       if @vote.save
         flash[:notice] = 'Vote was successfully created.'
         format.html { redirect_to(@vote) }
-        format.xml  { render :xml => @vote, :status => :created, :location => @vote }
+        format.xml  { render xml: @vote, status: :created, location: @vote }
       else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @vote.errors, :status => :unprocessable_entity }
+        format.html { render action: 'new' }
+        format.xml  { render xml: @vote.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -69,8 +68,8 @@ class VotesController < ApplicationController
         format.html { redirect_to(@vote) }
         format.xml  { head :ok }
       else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @vote.errors, :status => :unprocessable_entity }
+        format.html { render action: 'edit' }
+        format.xml  { render xml: @vote.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -90,6 +89,6 @@ class VotesController < ApplicationController
   private
 
   def vote_params
-    params.require(:vote).permit(:publication,:choice)
+    params.require(:vote).permit(:publication, :choice)
   end
 end

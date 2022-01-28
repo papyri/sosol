@@ -4,6 +4,6 @@ class AddIdentifierIdToVotes < ActiveRecord::Migration[4.2]
   end
 
   def self.down
-   remove_column :votes, :identifier_id
+    remove_column :votes, :identifier_id
   end
 end

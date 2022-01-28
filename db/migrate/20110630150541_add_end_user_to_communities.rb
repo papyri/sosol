@@ -7,4 +7,3 @@ class AddEndUserToCommunities < ActiveRecord::Migration[4.2]
     remove_column :communities, :end_user_id
   end
 end
-

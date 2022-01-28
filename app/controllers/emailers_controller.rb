@@ -1,45 +1,39 @@
 class EmailersController < ApplicationController
   before_action :authorize
-  
+
   def find_board_member
     @emailer = Emailer.find(params[:id].to_s)
   end
-  
 
   def find_sosol_users
     @emailer = Emailer.find(params[:id].to_s)
     @sosol_users = User.all
   end
-  
+
   def add_member
-   @emailer = Emailer.find(params[:id].to_s)
-   user = User.find_by_name(params[:user_name].to_s)
-   
-    if nil == @emailer.users.find_by_id(user.id) 
+    @emailer = Emailer.find(params[:id].to_s)
+    user = User.find_by(name: params[:user_name].to_s)
+
+    if @emailer.users.find_by(id: user.id).nil?
       @emailer.users << user
       @emailer.save
-    end   
-  
-   
-   #redirect_to :action => "edit", :id => @emailer.id
-   redirect_to :controller => "boards", :action => "edit", :id => @emailer.board
+    end
+
+    # redirect_to :action => "edit", :id => @emailer.id
+    redirect_to controller: 'boards', action: 'edit', id: @emailer.board
   end
-  
-  
+
   def remove_member
-  
     user = User.find(params[:user_id].to_s)
-    
+
     @emailer = Emailer.find(params[:id].to_s)
     @emailer.users.delete(user)
-    @emailer.save            
+    @emailer.save
 
-    #redirect_to :action => "edit", :id => @emailer.id
-    redirect_to :controller => "boards", :action => "edit", :id => @emailer.board
+    # redirect_to :action => "edit", :id => @emailer.id
+    redirect_to controller: 'boards', action: 'edit', id: @emailer.board
   end
-  
 
-  
   # GET /emailers
   # GET /emailers.xml
   def index
@@ -47,7 +41,7 @@ class EmailersController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @emailers }
+      format.xml  { render xml: @emailers }
     end
   end
 
@@ -58,7 +52,7 @@ class EmailersController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @emailer }
+      format.xml  { render xml: @emailer }
     end
   end
 
@@ -72,31 +66,31 @@ class EmailersController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @emailer }
+      format.xml  { render xml: @emailer }
     end
   end
 
   # GET /emailers/1/edit
   def edit
     @emailer = Emailer.find(params[:id].to_s)
-    @whens = whens_hash()
-    #@whens = { "New" => "new", "Submitted" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Finalized" => "finalized", "Graffiti" => "graffiti", "Never" => "never" }
+    @whens = whens_hash
+    # @whens = { "New" => "new", "Submitted" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Finalized" => "finalized", "Graffiti" => "graffiti", "Never" => "never" }
   end
 
   # POST /emailers
   # POST /emailers.xml
   def create
     @emailer = Emailer.new(emailer_params)
-    
+
     if @emailer.save
       board = Board.find(@emailer.board_id)
       board.emailers << @emailer
       board.save
-    
+
       flash[:notice] = 'Emailer was successfully created.'
-      redirect_to :controller => 'emailers', :action => 'edit', :id => @emailer.id  
-      #redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  
-        
+      redirect_to controller: 'emailers', action: 'edit', id: @emailer.id
+      # redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id
+
     end
   end
 
@@ -108,12 +102,12 @@ class EmailersController < ApplicationController
     respond_to do |format|
       if params[:emailer].present? && @emailer.update(emailer_params)
         flash[:notice] = 'Emailer was successfully updated.'
-        format.html { redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  }
-        #format.html { redirect_to(@emailer) }
-        #format.xml  { head :ok }
+        format.html { redirect_to controller: 'boards', action: 'edit', id: @emailer.board.id }
+        # format.html { redirect_to(@emailer) }
+        # format.xml  { head :ok }
       else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @emailer.errors, :status => :unprocessable_entity }
+        format.html { render action: 'edit' }
+        format.xml  { render xml: @emailer.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -125,18 +119,20 @@ class EmailersController < ApplicationController
     @emailer.destroy
 
     respond_to do |format|
-      format.html { redirect_to :controller => 'boards', :action => 'edit', :id => @emailer.board.id  }
+      format.html { redirect_to controller: 'boards', action: 'edit', id: @emailer.board.id }
       format.html { redirect_to(emailers_url) }
       format.xml  { head :ok }
     end
   end
 
   private
-    def whens_hash
-      { "Submit" => "submitted", "Approved" => "approved", "Rejected" => "rejected", "Committed" => "committed", "Graffiti" => "graffiti", "Never" => "never" }    
-    end
-    
-    def emailer_params
-      params.require(:emailer).permit(:association,:extra_addresses,:include_document,:message,:board_id)
-    end
+
+  def whens_hash
+    { 'Submit' => 'submitted', 'Approved' => 'approved', 'Rejected' => 'rejected', 'Committed' => 'committed',
+      'Graffiti' => 'graffiti', 'Never' => 'never' }
+  end
+
+  def emailer_params
+    params.require(:emailer).permit(:association, :extra_addresses, :include_document, :message, :board_id)
+  end
 end

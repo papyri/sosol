@@ -1,23 +1,23 @@
 class DCLPTextIdentifier < DDBIdentifier
   attr_accessor :configuration, :valid_epidoc_attributes, :hybrid
 
-  PATH_PREFIX = 'DCLP'
+  PATH_PREFIX = 'DCLP'.freeze
 
-  FRIENDLY_NAME = "DCLP Text"
-  IDENTIFIER_NAMESPACE = 'dclp'
-  TEMPORARY_COLLECTION = 'SoSOL'
+  FRIENDLY_NAME = 'DCLP Text'.freeze
+  IDENTIFIER_NAMESPACE = 'dclp'.freeze
+  TEMPORARY_COLLECTION = 'SoSOL'.freeze
   XML_VALIDATOR = JRubyXML::DCLPEpiDocValidator
-  
+
   # cl: at the moment there are no reprints for DCLP
   # therefore the result is always false
   # needs a proper implementation, though (one day)
   def is_reprinted?
-    return false
+    false
   end
 
   # cl: CROMULENT DCLP ‘View in PN’ hack
   def get_catalog_link
-    '/' + DCLPTextIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+[a-z]*|SoSOL;\d{4};\d{4})$/, 1]
+    "/#{DCLPTextIdentifier::IDENTIFIER_NAMESPACE}/#{name[%r{.+/(\d+[a-z]*|SoSOL;\d{4};\d{4})$}, 1]}"
   end
 
   def self.collection_names_hash
@@ -30,76 +30,81 @@ class DCLPTextIdentifier < DDBIdentifier
   #   - +xsl+ → path to xsl file, relative to +Rails.root+, e.g. +%w{data xslt epidoc my.xsl})+, defaults to +data/xslt/epidoc/start-edition.xsl+
   # - *Returns* :
   #   - result of transformation operation as provided by +JRubyXML.apply_xsl_transform+
-  def preview parameters = {}, xsl = nil
+  def preview(parameters = {}, xsl = nil)
     parameters.reverse_merge!(
-      "apparatus-style" => "ddbdp",
-      "leiden-style" => "dclp"
+      'apparatus-style' => 'ddbdp',
+      'leiden-style' => 'dclp'
     )
     JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(self.xml_content),
+      JRubyXML.stream_from_string(xml_content),
       JRubyXML.stream_from_file(File.join(Rails.root,
-        xsl ? xsl : %w{data xslt epidoc start-edition.xsl})),
-        parameters)
+                                          xsl || %w[data xslt epidoc start-edition.xsl])),
+      parameters
+    )
   end
 
   after_initialize :post_initialization_configuration
   # Loads +HgvMetaConfiguration+ object (HGV xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
   def post_initialization_configuration
-    @configuration = HgvMetaConfiguration.new #YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
+    @configuration = HgvMetaConfiguration.new # YAML::load_file(File.join(Rails.root, %w{config hgv.yml}))[:hgv][:metadata]
     @valid_epidoc_attributes = @configuration.keys
     @hybrid = get_hybrid :dclp
   end
 
   # ?
   def to_path
-    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
-      return self.temporary_path
+    if /#{self.class::TEMPORARY_COLLECTION}/.match?(name)
+      temporary_path
     else
-      path_components = [ PATH_PREFIX ]
+      path_components = [PATH_PREFIX]
       # assume the name is e.g. hgv2302zzr
-      trimmed_name = self.to_components.last # 2302zzr
+      trimmed_name = to_components.last # 2302zzr
       number = trimmed_name.sub(/\D/, '').to_i # 2302
 
       hgv_dir_number = ((number - 1) / 1000) + 1
-      hgv_dir_name = "#{hgv_dir_number}"
-      hgv_xml_path = trimmed_name + '.xml'
+      hgv_dir_name = hgv_dir_number.to_s
+      hgv_xml_path = "#{trimmed_name}.xml"
 
       path_components << hgv_dir_name << hgv_xml_path
 
       # e.g. HGV_meta_EpiDoc/HGV3/2302zzr.xml
-      return File.join(path_components)
+      File.join(path_components)
     end
   end
 
   # Path constructor for born-digital temporary SoSOL identifiers
   def temporary_path
-    trimmed_name = name.sub(/(papyri|litpap).info\/#{IDENTIFIER_NAMESPACE}\//, '')
+    trimmed_name = name.sub(%r{(papyri|litpap).info/#{IDENTIFIER_NAMESPACE}/}, '')
     components = trimmed_name.split(';')
-    return File.join(self.class::PATH_PREFIX, components[0..-2], "#{components[-1]}.xml")
+    File.join(self.class::PATH_PREFIX, components[0..-2], "#{components[-1]}.xml")
   end
-  
+
   # ?
   def id_attribute
-    return "dclpTEMP"
+    'dclpTEMP'
   end
 
   # ?
   def n_attribute
-    text = DCLPTextIdentifier.find_by_publication_id(self.publication.id)
-    meta = DCLPMetaIdentifier.find_by_publication_id(self.publication.id)
+    text = DCLPTextIdentifier.find_by(publication_id: publication.id)
+    meta = DCLPMetaIdentifier.find_by(publication_id: publication.id)
 
-    return meta ? meta.n_attribute : (text ? text.n_attribute : nil)
+    if meta
+      meta.n_attribute
+    else
+      (text ? text.n_attribute : nil)
+    end
   end
-  
+
   def self.new_from_template(publication)
     DCLPMetaIdentifier.new_from_template(publication)
-    return DCLPTextIdentifier.find_by_publication_id(publication.id)
+    DCLPTextIdentifier.find_by(publication_id: publication.id)
   end
 
   # ?
   def xml_title_text
-    return "Description of document"
+    'Description of document'
   end
 
   # Place any actions you always want to perform on HGV Meta identifier content prior to it being committed in this method
@@ -118,15 +123,16 @@ class DCLPTextIdentifier < DDBIdentifier
     JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(Rails.root,
-        %w{data xslt ddb preprocess.xsl})))
+                                          %w[data xslt ddb preprocess.xsl]))
+    )
   end
 
   def self.new_from_dclp_meta_identifier(dclpMetaIdentifier)
-    new_identifier = self.new(:name => dclpMetaIdentifier.name)
+    new_identifier = new(name: dclpMetaIdentifier.name)
 
     Identifier.transaction do
       dclpMetaIdentifier.publication.lock!
-      if dclpMetaIdentifier.publication.identifiers.select{|i| i.class == self}.length > 0
+      if dclpMetaIdentifier.publication.identifiers.count { |i| i.instance_of?(self) }.positive?
         return nil
       else
         new_identifier.publication = dclpMetaIdentifier.publication
@@ -134,18 +140,15 @@ class DCLPTextIdentifier < DDBIdentifier
       end
     end
 
-    #initial_content = new_identifier.file_template
-    #new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
+    # initial_content = new_identifier.file_template
+    # new_identifier.set_content(initial_content, :comment => 'Created from SoSOL template', :actor => (publication.owner.class == User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
 
-    return new_identifier
+    new_identifier
   end
 
   def correspondingDclpMetaIdentifier
-    self.publication.controlled_identifiers.each {|i|
-      if i.class == DCLPMetaIdentifier
-        return i
-      end
-    }
+    publication.controlled_identifiers.each do |i|
+      return i if i.instance_of?(DCLPMetaIdentifier)
+    end
   end
-
 end

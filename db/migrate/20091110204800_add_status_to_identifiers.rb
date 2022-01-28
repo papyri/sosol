@@ -1,6 +1,6 @@
 class AddStatusToIdentifiers < ActiveRecord::Migration[4.2]
   def self.up
-    add_column :identifiers, :status, :string, :default => "editing"
+    add_column :identifiers, :status, :string, default: 'editing'
   end
 
   def self.down

@@ -1,10 +1,10 @@
 class WelcomeController < ApplicationController
-  ##layout 'site'
-  
+  # #layout 'site'
+
   def index
     if @current_user
-      redirect_to :controller => "user", :action => "dashboard"
-      return
+      redirect_to controller: 'user', action: 'dashboard'
+      nil
     end
   end
 end

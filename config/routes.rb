@@ -63,15 +63,15 @@ Sosol::Application.routes.draw do
 
   resources :events
   # resource :session
-  match 'help' => 'user#help', :as => :help, :via => :get
-  match 'usage' => 'user#usage_stats', :as => :usage, :via => :get
-  match 'all_users_links' => 'user#all_users_links', :as => :all_users_links, :via => :get
-  match 'index_user_admins' => 'user#index_user_admins', :as => :index_user_admins, :via => :get
-  match 'dashboard' => 'user#dashboard', :as => :dashboard, :via => :get
-  match 'developer' => 'user#developer', :as => :developer, :via => :get
-  match 'sendmsg' => 'user#create_email_everybody', :as => :sendmsg, :via => :get
-  match 'master_list' => 'publications#master_list', :as => :master_list, :via => :get
-  match 'publications/archive_all' => 'publications#archive_all', :via => :post
+  get 'help' => 'user#help', :as => :help
+  get 'usage' => 'user#usage_stats', :as => :usage
+  get 'all_users_links' => 'user#all_users_links', :as => :all_users_links
+  get 'index_user_admins' => 'user#index_user_admins', :as => :index_user_admins
+  get 'dashboard' => 'user#dashboard', :as => :dashboard
+  get 'developer' => 'user#developer', :as => :developer
+  get 'sendmsg' => 'user#create_email_everybody', :as => :sendmsg
+  get 'master_list' => 'publications#master_list', :as => :master_list
+  post 'publications/archive_all' => 'publications#archive_all'
   resources :publications do
     collection do
       get :advanced_create
@@ -109,7 +109,6 @@ Sosol::Application.routes.draw do
   post 'publications/create_from_dclp_template' => 'publications#create_from_dclp_template'
   post 'publications/create_from_list' => 'publications#create_from_list'
   post 'publications/create_from_selector' => 'publications#create_from_selector'
-
 
   resources :publications do
     resources :ddb_identifiers do
@@ -198,7 +197,6 @@ Sosol::Application.routes.draw do
         get :rename_review
         patch :rename
       end
-
     end
 
     resources :biblio_identifiers do
@@ -359,48 +357,51 @@ Sosol::Application.routes.draw do
   end
 
   get 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
-  match 'users/:user_name' => 'user#show', :user_name => /[^\/]*/, :via => :get
-  match 'peep_user_dashboard/:user_id(/:publication)' => 'user#peep_user_dashboard', :user_id => /\d+/, :publication => /(submitted|editing|new|committed|finalizing|\d+)/, :via => :get
-  match 'user/info' => 'user#info', :via => [:get, :options]
-  match 'editor/user/info' => 'user#info', :via => [:get, :options]
-  %w{apis biblio citation_cts collection cts_inventory cts_oac dclp_meta dclp_text ddb epi_cts epi_trans_cts hgv_meta hgv_trans oac tei_cts tei_trans_cts}.each do |identifier_class|
-    match "publications/:publication_id/#{identifier_class}_identifiers/:id/show_commit/:commit_id", controller: "#{identifier_class}_identifiers", action: :show_commit, constraints: { :commit_id => /[0-9a-fA-F]{40}/ }, :via => :get
+  get 'users/:user_name' => 'user#show', :user_name => %r{[^/]*}
+  get 'peep_user_dashboard/:user_id(/:publication)' => 'user#peep_user_dashboard', :user_id => /\d+/,
+      :publication => /(submitted|editing|new|committed|finalizing|\d+)/
+  match 'user/info' => 'user#info', :via => %i[get options]
+  match 'editor/user/info' => 'user#info', :via => %i[get options]
+  %w[apis biblio citation_cts collection cts_inventory cts_oac dclp_meta dclp_text ddb epi_cts epi_trans_cts hgv_meta
+     hgv_trans oac tei_cts tei_trans_cts].each do |identifier_class|
+    get "publications/:publication_id/#{identifier_class}_identifiers/:id/show_commit/:commit_id",
+        controller: "#{identifier_class}_identifiers", action: :show_commit, constraints: { commit_id: /[0-9a-fA-F]{40}/ }
   end
-  match 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/, :via => :get
-  match 'publications/vote/:id' => 'publications#vote', :via => :post
-  match 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => /[^\/]*/, :via => :get
+  get 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/
+  post 'publications/vote/:id' => 'publications#vote'
+  get 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => %r{[^/]*}
   post 'cts_publications/create_from_selector', to: 'cts_publications#create_from_selector'
-  match 'js/:query' => 'ajax_proxy#js', :query => /.*/, :via => :get
-  match 'css/:query' => 'ajax_proxy#css', :query => /.*/, :via => :get
-  match 'images/:query' => 'ajax_proxy#images', :query => /.*/, :via => :get
-  match 'mulgara/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/, :via => :get
-  match 'ajax_proxy/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/, :via => :get
-  match 'ajax_proxy/get_bibliography/' => 'ajax_proxy#get_bibliography', :via => :get
-  match 'sparql' => 'ajax_proxy#sparql', :via => :get
+  get 'js/:query' => 'ajax_proxy#js', :query => /.*/
+  get 'css/:query' => 'ajax_proxy#css', :query => /.*/
+  get 'images/:query' => 'ajax_proxy#images', :query => /.*/
+  get 'mulgara/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/
+  get 'ajax_proxy/sparql/:query' => 'ajax_proxy#sparql', :query => /.*/
+  get 'ajax_proxy/get_bibliography/' => 'ajax_proxy#get_bibliography'
+  get 'sparql' => 'ajax_proxy#sparql'
   get 'ajax_proxy', to: 'ajax_proxy#index'
-  match 'ajax_proxy/xsugar/' => 'ajax_proxy#xsugar', :via => :post
-  match 'ajax_proxy/hgvnum/' => 'ajax_proxy#hgvnum', :via => :post
-  match 'ajax_proxy/:id' => 'ajax_proxy#proxy', :id => /papyri\.info.*/, :via => :get
-  match 'cts/editions/:inventory' => 'cts_proxy#editions', :inventory => /[^\/]*/, :via => :get
-  match 'cts/translations/:inventory/:urn' => 'cts_proxy#translations', :inventory => /[^\/]*/, :urn => /[^\/]*/, :via => :get
-  match 'cts/citations/:inventory/:urn' => 'cts_proxy#citations', :inventory => /[^\/]*/, :urn => /[^\/]*/, :via => :get
-  match 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => /[^\/]*/, :via => :get
-  match 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities', :via => :get
-  match 'cts/getrepos' => 'cts_proxy#getrepos', :via => :get
-  match 'cts/getvalidreffs' => 'cts_proxy#getvalidreffs', :via => :get
-  match '/' => 'welcome#index', :via => :get
+  post 'ajax_proxy/xsugar/' => 'ajax_proxy#xsugar'
+  post 'ajax_proxy/hgvnum/' => 'ajax_proxy#hgvnum'
+  get 'ajax_proxy/:id' => 'ajax_proxy#proxy', :id => /papyri\.info.*/
+  get 'cts/editions/:inventory' => 'cts_proxy#editions', :inventory => %r{[^/]*}
+  get 'cts/translations/:inventory/:urn' => 'cts_proxy#translations', :inventory => %r{[^/]*}, :urn => %r{[^/]*}
+  get 'cts/citations/:inventory/:urn' => 'cts_proxy#citations', :inventory => %r{[^/]*}, :urn => %r{[^/]*}
+  get 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => %r{[^/]*}
+  get 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities'
+  get 'cts/getrepos' => 'cts_proxy#getrepos'
+  get 'cts/getvalidreffs' => 'cts_proxy#getvalidreffs'
+  get '/' => 'welcome#index'
   # match '/:controller(/:action(/:id))', :via => :get
-  match 'signout' => 'user#signout', :as => :signout, :via => :get
-  match 'signin' => 'user#signin', :as => :signin, :via => :get
+  get 'signout' => 'user#signout', :as => :signout
+  get 'signin' => 'user#signin', :as => :signin
   get 'user/signout', to: 'user#signout'
   get 'user/signin', to: 'user#signin'
-  match 'account' => 'user#account', :as => :account, :via => :get
+  get 'account' => 'user#account', :as => :account
   post 'rpx/login_return', to: 'rpx#login_return'
   post 'rpx/remove_openid', to: 'rpx#remove_openid'
   post 'rpx/associate_return', to: 'rpx#associate_return'
   post 'rpx/associate_really', to: 'rpx#associate_really'
   post 'rpx/create_submit', to: 'rpx#create_submit'
-  match 'identifiers/create', to: 'identifiers#create', :via => [:get, :post]
+  match 'identifiers/create', to: 'identifiers#create', via: %i[get post]
   get 'user/board_dashboard', to: 'user#board_dashboard'
   get 'user/user_dashboard', to: 'user#user_dashboard'
   get 'user/user_community_dashboard', to: 'user#user_community_dashboard'
@@ -413,9 +414,9 @@ Sosol::Application.routes.draw do
   get 'user/download_options', to: 'user#download_options'
   patch 'user/update_personal', to: 'user#update_personal'
   patch 'user/update_admins', to: 'user#update_admins'
-  match 'user/email_everybody' => 'user#email_everybody', via: [:patch, :post]
-  match 'user/refresh_usage' => 'user#refresh_usage', via: [:patch, :post]
-  match 'user/leave_community' => 'user#leave_community', via: [:patch, :post]
+  match 'user/email_everybody' => 'user#email_everybody', via: %i[patch post]
+  match 'user/refresh_usage' => 'user#refresh_usage', via: %i[patch post]
+  match 'user/leave_community' => 'user#leave_community', via: %i[patch post]
   get 'cross_site/footer', to: 'cross_site#footer'
   get 'cross_site/header', to: 'cross_site#header'
   get 'cross_site/advanced_create', to: 'cross_site#advanced_create'

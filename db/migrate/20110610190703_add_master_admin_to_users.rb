@@ -1,6 +1,6 @@
 class AddMasterAdminToUsers < ActiveRecord::Migration[4.2]
   def self.up
-    add_column :users, :is_master_admin, :boolean, :default => false
+    add_column :users, :is_master_admin, :boolean, default: false
   end
 
   def self.down

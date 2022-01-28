@@ -1,0 +1,21 @@
+require:
+  - rubocop-minitest
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rake
+
+Performance/ConstantRegexp:
+  Enabled: false
+
+Performance/StringInclude:
+  Exclude:
+    - 'app/helpers/hgv_meta_identifier_helper.rb'
+
+AllCops:
+  NewCops: enable
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Rails/ApplicationMailer:
+  Enabled: false

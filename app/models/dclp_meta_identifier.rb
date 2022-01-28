@@ -1,10 +1,10 @@
 class DCLPMetaIdentifier < HGVMetaIdentifier
   attr_accessor :hybrid
 
-  PATH_PREFIX = 'DCLP'
+  PATH_PREFIX = 'DCLP'.freeze
 
-  FRIENDLY_NAME = "DCLP Meta"
-  IDENTIFIER_NAMESPACE = 'dclp'
+  FRIENDLY_NAME = 'DCLP Meta'.freeze
+  IDENTIFIER_NAMESPACE = 'dclp'.freeze
 
   XML_VALIDATOR = JRubyXML::DCLPEpiDocValidator
 
@@ -19,28 +19,28 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
 
   # cl: can be made simpler for DCLP needs
   def to_path
-    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
-      return self.temporary_path
+    if /#{self.class::TEMPORARY_COLLECTION}/.match?(name)
+      temporary_path
     else
-      path_components = [ PATH_PREFIX ]
+      path_components = [PATH_PREFIX]
       # assume the name is e.g. hgv2302zzr
-      trimmed_name = self.to_components.last # 2302zzr
+      trimmed_name = to_components.last # 2302zzr
       number = trimmed_name.sub(/\D/, '').to_i # 2302
 
       hgv_dir_number = ((number - 1) / 1000) + 1
-      hgv_dir_name = "#{hgv_dir_number}"
-      hgv_xml_path = trimmed_name + '.xml'
+      hgv_dir_name = hgv_dir_number.to_s
+      hgv_xml_path = "#{trimmed_name}.xml"
 
       path_components << hgv_dir_name << hgv_xml_path
 
       # e.g. HGV_meta_EpiDoc/HGV3/2302zzr.xml
-      return File.join(path_components)
+      File.join(path_components)
     end
   end
 
   # cl: load DCLP text here?
   def n_attribute
-    return nil
+    nil
   end
 
   # cl: does dclp have other needs in terms of preprocessing the data
@@ -54,49 +54,46 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
   # Whenever a DCLP Meta Identifier is renamed, the corresponding DCLP Text Identifier needs to be renamed as well
   def after_rename(options = {})
     super(options)
-    self.publication.controlled_identifiers.each {|i|
-      if i.class == DCLPTextIdentifier && i.name != options[:new_name]
-        i.transaction do
-          relatives = i.relatives
-          i.name = options[:new_name]
-          i.title = i.titleize
-          i.save!
-          relatives.each do |relative|
-            relative.name = i.name
-            relative.title = i.title
-            relative.save!
-          end
+    publication.controlled_identifiers.each do |i|
+      next unless i.instance_of?(DCLPTextIdentifier) && i.name != options[:new_name]
+
+      i.transaction do
+        relatives = i.relatives
+        i.name = options[:new_name]
+        i.title = i.titleize
+        i.save!
+        relatives.each do |relative|
+          relative.name = i.name
+          relative.title = i.title
+          relative.save!
         end
       end
-      }
+    end
   end
 
   def self.new_from_template(publication)
     dclp_meta = super
     DCLPTextIdentifier.new_from_dclp_meta_identifier(dclp_meta) unless dclp_meta.nil?
-    return dclp_meta
+    dclp_meta
   end
 
   def to_string
-   serialization_string = ''
-   @configuration.scheme.each_key do |key|
-     serialization_string += '__' + key.to_s + '__: ' + self[key].to_s
-   end
-   return serialization_string
+    serialization_string = ''
+    @configuration.scheme.each_key do |key|
+      serialization_string += "__#{key}__: #{self[key]}"
+    end
+    serialization_string
   end
 
   # cl: CROMULENT DCLP ‘View in PN’ hack
   # name can be »papyri.info/dclp/SoSOL;2017;0002«
   def get_catalog_link
-    '/' + DCLPMetaIdentifier::IDENTIFIER_NAMESPACE + '/' + self.name[/.+\/(\d+[a-z]*|SoSOL;\d{4};\d{4})$/, 1]
+    "/#{DCLPMetaIdentifier::IDENTIFIER_NAMESPACE}/#{name[%r{.+/(\d+[a-z]*|SoSOL;\d{4};\d{4})$}, 1]}"
   end
 
   def correspondingDclpTextIdentifier
-    self.publication.controlled_identifiers.each {|i|
-      if i.class == DCLPTextIdentifier
-        return i
-      end
-    }
+    publication.controlled_identifiers.each do |i|
+      return i if i.instance_of?(DCLPTextIdentifier)
+    end
   end
-
 end

@@ -1,5 +1,5 @@
-#Comment represents a comment made on an identifier/publication.
-#Standard reasons for a comment are:
+# Comment represents a comment made on an identifier/publication.
+# Standard reasons for a comment are:
 #- *commit* when an identifier is commited
 #- *submit* when a publication is submitted
 #- *vote* when a vote is cast
@@ -10,8 +10,8 @@ class Comment < ApplicationRecord
   belongs_to :user
   belongs_to :publication
   belongs_to :identifier
-  
-  #create named scope for each type of reason
+
+  # create named scope for each type of reason
   scope :commit, -> { where(reason: 'commit') }
   scope :finalizing, -> { where(reason: 'finalizing') }
   scope :submit, -> { where(reason: 'submit') }
@@ -25,10 +25,10 @@ class Comment < ApplicationRecord
   def comment
     CGI.unescape(read_attribute(:comment) || '')
   end
-  
+
   class CombineComment
-    attr_accessor :xmltype, :who, :when, :why, :comment 
-    
+    attr_accessor :xmltype, :who, :when, :why, :comment
+
     def initialize
       @xmltype = ''
       @who = ''
@@ -36,7 +36,5 @@ class Comment < ApplicationRecord
       @why = ''
       @comment = ''
     end
-    
   end
-  
 end

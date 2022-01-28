@@ -1,12 +1,10 @@
-# encoding: utf-8
-
 # I18n.default_locale = :en
 
-LOCALES_DIRECTORY = "#{::Rails.root.to_s}/config/locales/"
+LOCALES_DIRECTORY = "#{::Rails.root}/config/locales/".freeze
 
 LANGUAGES = {
-  'English'        => 'en',
-  'Deutsch'        => 'de',
-  'Italiano'       => 'it',
-  'Français'       => 'fr'
-}
+  'English' => 'en',
+  'Deutsch' => 'de',
+  'Italiano' => 'it',
+  'Français' => 'fr'
+}.freeze
