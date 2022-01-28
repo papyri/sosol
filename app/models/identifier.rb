@@ -173,7 +173,7 @@ class Identifier < ApplicationRecord
     elsif instance_of?(APISIdentifier)
       title = name.split('/').last
     elsif instance_of?(DCLPMetaIdentifier) || instance_of?(DCLPTextIdentifier)
-      title = name.split('/').last unless name =~ /#{self.class::TEMPORARY_COLLECTION}/
+      title = name.split('/').last unless /#{self.class::TEMPORARY_COLLECTION}/.match?(name)
     end
 
     if title.nil?
@@ -192,7 +192,7 @@ class Identifier < ApplicationRecord
                   [collection_name, volume_number, document_number].compact_blank.join(' ')
                 end
 
-        title += ' (reprinted)' if respond_to?('is_reprinted?') && is_reprinted?
+        title += ' (reprinted)' if respond_to?(:is_reprinted?) && is_reprinted?
       else # HGV with no name
         title =  [self.class::FRIENDLY_NAME, name.split('/').last.tr(';', ' ')].join(' ')
       end

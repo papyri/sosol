@@ -69,7 +69,7 @@ class Board < ApplicationRecord
       im = ic.constantize.instance_methods
       match_expression = /(result_action_)/
       im.each do |method_name|
-        retval << method_name.to_s.sub(/(result_action_)/, '') if method_name =~ /(result_action_)/
+        retval << method_name.to_s.sub(/(result_action_)/, '') if /(result_action_)/.match?(method_name)
       end
     end
     retval

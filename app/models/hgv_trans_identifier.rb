@@ -13,7 +13,7 @@ class HGVTransIdentifier < HGVIdentifier
 
   # Returns file path to Translation XML - e.g. HGV_trans_EpiDoc/8881.xml
   def to_path
-    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
+    if /#{self.class::TEMPORARY_COLLECTION}/.match?(name)
       temporary_path
     else
       path_components = [PATH_PREFIX]

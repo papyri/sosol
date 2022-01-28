@@ -37,7 +37,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
     if !params[:term].nil? && /\A[^\d][^\d][^\d][^\d].*\Z/.match(params[:term])
       data = exist("http://localhost:8080/exist/apps/papyrillio/autocomplete_json.xml?term=#{params[:term]}")
       data.each do |key, value|
-        data_array.push({ label: value, value: key[1..-1] }) if /\Ab\d+\Z/.match(key)
+        data_array.push({ label: value, value: key[1..-1] }) if /\Ab\d+\Z/.match?(key)
       end
     end
     render json: data_array, content_type: 'application/json'

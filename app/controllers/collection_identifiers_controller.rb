@@ -13,7 +13,7 @@ class CollectionIdentifiersController < ApplicationController
       redirect_to action: 'update_review', short_name: params[:short_name],
                   long_name: params[:long_name], entry_identifier_id: params[:entry_identifier_id]
       return
-    elsif @short_name =~ %r{/}
+    elsif %r{/}.match?(@short_name)
       flash[:error] =
         'PN collection name cannot contain slashes. Enter only the collection name, not the full papyri.info URL.'
       redirect_to action: 'update_review', short_name: params[:short_name],

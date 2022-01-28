@@ -147,7 +147,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
       teardown do
         count = 0
         [@board_user, @board_user_2, @creator_user, @end_user, @meta_board, @text_board,
-         @translation_board].reverse.each do |entity|
+         @translation_board].reverse_each do |entity|
           count += 1
           # assert_not_equal entity, nil, count.to_s + " cant be destroyed since it is nil."
           unless entity.nil?

@@ -31,7 +31,7 @@ class Ddiff
       next unless bmatches.key? aelem
 
       k = nil
-      bmatches[aelem].reverse.each do |bindex|
+      bmatches[aelem].reverse_each do |bindex|
         if k && (thresh[k] > bindex) && (thresh[k - 1] < bindex)
           thresh[k] = bindex
         else
