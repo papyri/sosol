@@ -106,7 +106,7 @@ class WorkflowTest < ActiveSupport::TestCase
           end
 
           should "have two 'approve' votes" do
-            assert_equal 2, @new_ddb_submitted.votes.select { |v| %(yes no defer).include?(v.choice) }.length
+            assert_equal 2, @new_ddb_submitted.votes.count { |v| %(yes no defer).include?(v.choice) }
           end
 
           should 'be approved' do

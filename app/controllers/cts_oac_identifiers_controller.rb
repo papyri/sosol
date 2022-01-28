@@ -46,7 +46,7 @@ class CtsOacIdentifiersController < IdentifiersController
   def edit_or_create
     # create the OAC identifier if it doesn't exist
     find_publication
-    @parent = @publication.identifiers.select { |pubid| pubid.name == params[:version_id] }.first
+    @parent = @publication.identifiers.find { |pubid| pubid.name == params[:version_id] }
     @identifier = OACIdentifier.find_from_parent(@publication, @parent)
 
     if @identifier.nil?
