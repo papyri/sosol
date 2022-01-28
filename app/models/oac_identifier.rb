@@ -279,7 +279,7 @@ class OACIdentifier < Identifier
 
   # create a dcterms:created element
   def make_created
-    now = Time.new
+    now = Time.zone.now
     created = REXML::Element.new('created')
     created.add_namespace(self.class::NS_DCTERMS)
     created.add_text(now.inspect)

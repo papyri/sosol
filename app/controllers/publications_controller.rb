@@ -35,7 +35,7 @@ class PublicationsController < ApplicationController
 
     # The temp file will be deleted some time...
 
-    filename = "#{@publication.creator.name}_#{file_friendly_name}_#{Time.now.strftime('%a%d%b%Y_%H%M')}"
+    filename = "#{@publication.creator.name}_#{file_friendly_name}_#{Time.zone.now.strftime('%a%d%b%Y_%H%M')}"
     filename = "#{filename.gsub(%r{[\\/:."*?<>|\s]+}, '-')}.zip"
     # raise filename
     send_data File.read(t.path), type: 'application/zip', filename: filename
@@ -452,31 +452,31 @@ class PublicationsController < ApplicationController
 
   def edit_text
     @publication = Publication.find(params[:id].to_s)
-    @identifier = DDBIdentifier.find_by_publication_id(@publication.id)
+    @identifier = DDBIdentifier.find_by(publication_id: @publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
   def edit_meta
     @publication = Publication.find(params[:id].to_s)
-    @identifier = HGVMetaIdentifier.find_by_publication_id(@publication.id)
+    @identifier = HGVMetaIdentifier.find_by(publication_id: @publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
   def edit_apis
     @publication = Publication.find(params[:id].to_s)
-    @identifier = APISIdentifier.find_by_publication_id(@publication.id)
+    @identifier = APISIdentifier.find_by(publication_id: @publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
   def edit_trans
     @publication = Publication.find(params[:id].to_s)
-    @identifier = HGVTransIdentifier.find_by_publication_id(@publication.id)
+    @identifier = HGVTransIdentifier.find_by(publication_id: @publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
   def edit_biblio
     @publication = Publication.find(params[:id].to_s)
-    @identifier = BiblioIdentifier.find_by_publication_id(@publication.id)
+    @identifier = BiblioIdentifier.find_by(publication_id: @publication.id)
     redirect_to edit_polymorphic_path([@publication, @identifier])
   end
 
@@ -776,7 +776,7 @@ class PublicationsController < ApplicationController
   end
 
   def publication_from_identifiers(identifiers)
-    new_title = "Batch_#{Time.now.strftime('%d%b%Y_%H%M')}"
+    new_title = "Batch_#{Time.zone.now.strftime('%d%b%Y_%H%M')}"
     publication_from_identifier('unused_place_holder', identifiers, new_title)
 
     #       #do we need to check for conflicts with the batches?
@@ -825,8 +825,8 @@ class PublicationsController < ApplicationController
     related_identifiers.each do |relid|
       possible_conflicts = Identifier.where(name: relid).includes(:publication)
       actual_conflicts = possible_conflicts.select do |pc|
-        (pc.publication && (pc.publication.owner == @current_user) && !%w[archived
-                                                                          finalized].include?(pc.publication.status))
+        (pc.publication && (pc.publication.owner == @current_user) && %w[archived
+                                                                         finalized].exclude?(pc.publication.status))
       end
       conflicting_identifiers += actual_conflicts
     end

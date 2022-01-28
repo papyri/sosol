@@ -22,7 +22,7 @@ class DDBIdentifier < Identifier
 
     ddb_collection_name.downcase!
 
-    [ddb_collection_name, ddb_volume_number, ddb_document_number].reject(&:blank?).join('.')
+    [ddb_collection_name, ddb_volume_number, ddb_document_number].compact_blank.join('.')
   end
 
   # Returns value for 'n' attribute in DDB Text template

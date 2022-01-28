@@ -70,7 +70,7 @@ class CTSIdentifier < Identifier
 
   def self.next_temporary_identifier(collection, template, pubtype, lang)
     urnObj = CTS::CTSLib.urnObj(template)
-    year = Time.now.year
+    year = Time.zone.now.year
     # we want to take the text group and work from the template urn and create our own edition urn
     # TODO - need to handle differing namespaces on tg and work
     # TODO - use exemplar for version

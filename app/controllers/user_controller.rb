@@ -35,7 +35,7 @@ class UserController < ApplicationController
 
   # view of stats for the user id page shown with optional date limitation
   def refresh_usage
-    @users = [User.find_by_id(params[:save_user_id])]
+    @users = [User.find_by(id: params[:save_user_id])]
     @comments = User.stats(@users.first.id)
 
     # default to 1 year ago if date value not entered
@@ -70,7 +70,7 @@ class UserController < ApplicationController
 
   # default view of stats for the user name entered/linked to
   def show
-    @users = [User.find_by_name(params[:user_name])]
+    @users = [User.find_by(name: params[:user_name])]
     if @users.compact.empty?
       flash[:error] = 'User not found.'
       redirect_to dashboard_url
@@ -98,7 +98,7 @@ class UserController < ApplicationController
   def signin
     reset_session
     if (ENV['RAILS_ENV'] == 'development') && @current_user.nil? && params[:developer]
-      developer = User.find_by_name('developer')
+      developer = User.find_by(name: 'developer')
       if developer.nil?
         developer = User.create(name: 'developer', email: 'developer@example.com',
                                 full_name: 'Development User')
@@ -164,10 +164,10 @@ class UserController < ApplicationController
     end
 
     if !fragment_exist?(action: 'dashboard',
-                        part: 'events_list_time') || (Time.now > (read_fragment(
+                        part: 'events_list_time') || (Time.zone.now > (read_fragment(
                           action: 'dashboard', part: 'events_list_time'
                         ) + 60))
-      write_fragment({ action: 'dashboard', part: 'events_list_time' }, Time.now)
+      write_fragment({ action: 'dashboard', part: 'events_list_time' }, Time.zone.now)
       expire_fragment(action: 'dashboard', part: 'events_list')
     end
 
@@ -289,7 +289,7 @@ class UserController < ApplicationController
     @committed_publications = Publication.where(owner_id: @current_user.id, community_id: cid, owner_type: 'User',
                                                 creator_id: @current_user.id, parent_id: nil, status: 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
 
-    @community = Community.find_by_id(cid)
+    @community = Community.find_by(id: cid)
     render 'user_dashboard'
   end
 
@@ -311,7 +311,7 @@ class UserController < ApplicationController
 
   # Shows dashboard for the current user's board using the specified board_id.
   def board_dashboard
-    @board = Board.find_by_id(params[:board_id])
+    @board = Board.find_by(id: params[:board_id])
 
     # get publications for the member to finalize
     @board_final_pubs = Publication.where(owner_id: @current_user.id, owner_type: 'User',
@@ -378,7 +378,7 @@ class UserController < ApplicationController
 
   def archives
     if params[:board_id]
-      @board = Board.find_by_id(params[:board_id])
+      @board = Board.find_by(id: params[:board_id])
       @publications = @board.publications.where(status: 'archived').includes(:identifiers).order(updated_at: :desc)
     else
       @publications = Publication.where(owner_id: @current_user.id, owner_type: 'User',
@@ -467,7 +467,7 @@ class UserController < ApplicationController
 
   def edit_user_admins
     if current_user_is_master_admin?
-      @user = User.find_by_id(params[:user_id])
+      @user = User.find_by(id: params[:user_id])
     else
       flash[:warning] = 'You do not have permission to edit user admins.'
       redirect_to dashboard_url
@@ -533,7 +533,7 @@ class UserController < ApplicationController
     end
 
     cid = params[:community_id] || nil
-    @community = Community.find_by_id(cid) if cid
+    @community = Community.find_by(id: cid) if cid
 
     @publications = Publication.where(owner_id: @current_user.id, community_id: cid, owner_type: 'User',
                                       creator_id: @current_user.id, parent_id: nil, status: status_wanted).includes(identifiers: [:votes]).order(updated_at: :desc)
@@ -562,7 +562,7 @@ class UserController < ApplicationController
     # add com name
     community = 'PE'
     community = @community.format_name if @community
-    filename = "#{@current_user.name}_#{community}_#{status_wanted}_#{Time.now}.zip"
+    filename = "#{@current_user.name}_#{community}_#{status_wanted}_#{Time.zone.now}.zip"
     send_file t.path, type: 'application/zip', disposition: 'attachment', filename: filename
 
     t.close
@@ -583,7 +583,7 @@ class UserController < ApplicationController
     @committed_publications = Publication.where(owner_id: @current_user.id, community_id: cid, owner_type: 'User',
                                                 creator_id: @current_user.id, parent_id: nil, status: 'committed').includes(identifiers: [:votes]).order(updated_at: :desc)
 
-    @community = Community.find_by_id(cid)
+    @community = Community.find_by(id: cid)
 
     @publications = @submitted_publications + @editing_publications + @new_publications + @committed_publications
     t = Tempfile.new("publication_download_#{@current_user.name}-#{request.remote_ip}")
@@ -603,7 +603,7 @@ class UserController < ApplicationController
     # The temp file will be deleted some time...
     community = 'PE'
     community = @community.format_name if @community
-    filename = "#{@current_user.name}_#{community}_#{Time.now}.zip"
+    filename = "#{@current_user.name}_#{community}_#{Time.zone.now}.zip"
     send_file t.path, type: 'application/zip', disposition: 'attachment', filename: filename
 
     t.close

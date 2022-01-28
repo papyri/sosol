@@ -21,7 +21,7 @@ class Community < ApplicationRecord
   def end_user
     return nil if end_user_id.nil?
 
-    User.find_by_id(end_user_id)
+    User.find_by(id: end_user_id)
   end
 
   # Checks to see whether or not to allow members to submit to the community

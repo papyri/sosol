@@ -8,7 +8,7 @@ class BoardsController < ApplicationController
   def overview
     @board = Board.find(params[:id].to_s)
 
-    if @board.users.find_by_id(@current_user.id) || @current_user.developer
+    if @board.users.find_by(id: @current_user.id) || @current_user.developer
       # return only owner publications
       finalizing_publications = Publication.where(owner_id: @current_user.id, status: 'finalizing')
 
@@ -27,9 +27,9 @@ class BoardsController < ApplicationController
   # Adds the user to the board member list.
   def add_member
     @board = Board.find(params[:id].to_s)
-    user = User.find_by_name(params[:user_name].to_s)
+    user = User.find_by(name: params[:user_name].to_s)
 
-    if @board.users.find_by_id(user.id).nil?
+    if @board.users.find_by(id: user.id).nil?
       @board.users << user
       @board.save
     end
@@ -230,12 +230,12 @@ class BoardsController < ApplicationController
       boards = Board.ranked
     else
       boards = Board.ranked_by_community_id(params[:community_id].to_s)
-      community = Community.find_by_id(params[:community_id].to_s)
+      community = Community.find_by(id: params[:community_id].to_s)
     end
 
     body_text = 'Greetings '
     body_text += "#{community.name} " if community
-    time_str = Time.now.strftime('%Y-%m-%d')
+    time_str = Time.zone.now.strftime('%Y-%m-%d')
     body_text += "Board Members, as of #{time_str}, "
     boards.each do |board|
       # grab addresses for this board

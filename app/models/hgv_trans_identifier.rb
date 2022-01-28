@@ -37,7 +37,7 @@ class HGVTransIdentifier < HGVIdentifier
 
   # Returns value for 'n' attribute in Translation template
   def n_attribute
-    ddb = DDBIdentifier.find_by_publication_id(publication.id)
+    ddb = DDBIdentifier.find_by(publication_id: publication.id)
     ddb.n_attribute
   end
 

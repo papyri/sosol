@@ -87,8 +87,8 @@ class DCLPTextIdentifier < DDBIdentifier
 
   # ?
   def n_attribute
-    text = DCLPTextIdentifier.find_by_publication_id(publication.id)
-    meta = DCLPMetaIdentifier.find_by_publication_id(publication.id)
+    text = DCLPTextIdentifier.find_by(publication_id: publication.id)
+    meta = DCLPMetaIdentifier.find_by(publication_id: publication.id)
 
     if meta
       meta.n_attribute
@@ -99,7 +99,7 @@ class DCLPTextIdentifier < DDBIdentifier
 
   def self.new_from_template(publication)
     DCLPMetaIdentifier.new_from_template(publication)
-    DCLPTextIdentifier.find_by_publication_id(publication.id)
+    DCLPTextIdentifier.find_by(publication_id: publication.id)
   end
 
   # ?

@@ -6,7 +6,7 @@ class RpxController < ApplicationController
   protect_from_forgery except: %i[login_return associate_return]
 
   def remove_openid
-    user_identifier = UserIdentifier.find_by_id(params[:openid].to_s)
+    user_identifier = UserIdentifier.find_by(id: params[:openid].to_s)
     if user_identifier.nil?
       flash[:error] = 'OpenID Disassociation Failed: No such OpenID'
       redirect_to controller: 'user', action: 'account'
@@ -49,7 +49,7 @@ class RpxController < ApplicationController
                           url_for(controller: :rpx, action: :associate_return, only_path: false))
 
     identifier = data['identifier']
-    user_identifier = UserIdentifier.find_by_identifier(identifier)
+    user_identifier = UserIdentifier.find_by(identifier: identifier)
 
     if user_identifier.nil?
       if @current_user.nil?
@@ -100,11 +100,11 @@ class RpxController < ApplicationController
 
     identifier = data['identifier']
 
-    user_identifier = UserIdentifier.find_by_identifier(identifier)
+    user_identifier = UserIdentifier.find_by(identifier: identifier)
     unless user_identifier
       begin
         unless guess_email(data) == '' # some providers don't return email addresses
-          user = User.find_by_email(guess_email(data))
+          user = User.find_by(email: guess_email(data))
           if user
             user_identifier = UserIdentifier.create(identifier: identifier)
             user.user_identifiers << user_identifier

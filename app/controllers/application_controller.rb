@@ -95,15 +95,15 @@ class ApplicationController < ActionController::Base
   def get_user_id
     if (ENV['RAILS_ENV'] == 'test') && params[:test_user_id].present?
 
-      @current_user = User.find_by_id params[:test_user_id].to_s
+      @current_user = User.find_by id: params[:test_user_id].to_s
       session[:user_id] == params[:test_user_id].to_s
 
       return true
     end
 
     user_id = session[:user_id]
-    @current_user = User.find_by_id user_id if user_id
-    @current_user = current_user if current_user.present? && !@current_user.present?
+    @current_user = User.find_by id: user_id if user_id
+    @current_user = current_user if current_user.present? && @current_user.blank?
     true
   end
 

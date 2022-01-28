@@ -399,12 +399,8 @@ class Publication < ApplicationRecord
   #- +true+ if the publication should be changed by some user.
   #- +false+ otherwise.
   def mutable?
-    if !%w[editing
-           new].include?(status) || (parent && advisory_lock_exists?("finalize_#{parent.id}")) || advisory_lock_exists?("submit_#{id}")
-      false
-    else
-      true
-    end
+    !(%w[editing
+         new].exclude?(status) || (parent && advisory_lock_exists?("finalize_#{parent.id}")) || advisory_lock_exists?("submit_#{id}"))
   end
 
   # *Args*
@@ -413,7 +409,7 @@ class Publication < ApplicationRecord
   #- +true+ if the publication should be changed by some the user specifed by check_user.
   #- +false+ otherwise.
   def mutable_by?(check_user)
-    if ((owner.instance_of?(Board) && !owner.users.include?(check_user)) ||
+    if ((owner.instance_of?(Board) && owner.users.exclude?(check_user)) ||
         (check_user != owner)) &&
        !(check_user.developer || check_user.admin)
       false
@@ -643,7 +639,7 @@ class Publication < ApplicationRecord
       old_branch_leaf = old_branch_name.split('/').last
       new_branch_components = [old_branch_leaf]
 
-      new_branch_components.unshift(new_status, Time.now.strftime('%Y/%m/%d')) unless new_status == 'editing'
+      new_branch_components.unshift(new_status, Time.zone.now.strftime('%Y/%m/%d')) unless new_status == 'editing'
 
       if parent && parent.owner.instance_of?(Board)
         new_branch_components.unshift(Repository.sanitize_ref(parent.owner.title))
@@ -652,7 +648,7 @@ class Publication < ApplicationRecord
       new_branch_name = new_branch_components.join('/')
 
       # prevent collisions
-      new_branch_name += Time.now.strftime('-%H.%M.%S') if owner.repository.branches.include?(new_branch_name)
+      new_branch_name += Time.zone.now.strftime('-%H.%M.%S') if owner.repository.branches.include?(new_branch_name)
 
       # wrap changes in transaction, so that if git activity raises an exception
       # the corresponding db changes are rolled back
@@ -688,7 +684,7 @@ class Publication < ApplicationRecord
   def archive
     change_status('archived')
 
-    self.title = self.title + Time.now.strftime(' (%Y/%m/%d-%H.%M.%S)')
+    self.title = self.title + Time.zone.now.strftime(' (%Y/%m/%d-%H.%M.%S)')
     save!
   end
 
@@ -1021,9 +1017,9 @@ class Publication < ApplicationRecord
       new_finalizing_publication = old_finalizing_publication.dup
       new_finalizing_publication.owner = new_finalizer
       new_finalizing_publication.creator = old_finalizing_publication.creator
-      new_title = "#{old_finalizing_publication.parent.owner.name}/#{Time.now.strftime('%Y/%m/%d')}"
+      new_title = "#{old_finalizing_publication.parent.owner.name}/#{Time.zone.now.strftime('%Y/%m/%d')}"
       if new_finalizer.repository.branches.include?(Repository.sanitize_ref("#{new_title}/#{old_finalizing_publication.parent.title}"))
-        new_title += Time.now.strftime('-%H.%M.%S')
+        new_title += Time.zone.now.strftime('-%H.%M.%S')
       end
       new_finalizing_publication.title = "#{new_title}/#{old_finalizing_publication.parent.title}"
       new_finalizing_publication.branch = Repository.sanitize_ref(new_finalizing_publication.title)
@@ -1365,7 +1361,7 @@ class Publication < ApplicationRecord
         # ever gets archived, so the next time the same finalizer tries to finalize the same publication
         # you get an error because the title is already taken. I'm going to add the date time to the title
         # of the finalized publication as a workaround
-        self.title = self.title + Time.now.strftime(' (%Y/%m/%d-%H.%M.%S)')
+        self.title = self.title + Time.zone.now.strftime(' (%Y/%m/%d-%H.%M.%S)')
         save!
       end
     end
@@ -1567,9 +1563,9 @@ class Publication < ApplicationRecord
     duplicate = dup
     duplicate.owner = new_owner
     duplicate.creator = creator
-    new_title = "#{owner.name}/#{Time.now.strftime('%Y/%m/%d')}"
+    new_title = "#{owner.name}/#{Time.zone.now.strftime('%Y/%m/%d')}"
     if new_owner.repository.branches.include?(Repository.sanitize_ref("#{new_title}/#{self.title}"))
-      new_title += Time.now.strftime('-%H.%M.%S')
+      new_title += Time.zone.now.strftime('-%H.%M.%S')
     end
     duplicate.title = "#{new_title}/#{self.title}"
     duplicate.branch = Repository.sanitize_ref(duplicate.title)
@@ -1707,9 +1703,9 @@ class Publication < ApplicationRecord
 
         # parse will convert date to local for consistency so work in sort below
         built_comment.when = if change.attributes['when']
-                               Time.parse(change.attributes['when'])
+                               Time.zone.parse(change.attributes['when'])
                              else
-                               Time.parse('1988-8-8')
+                               Time.zone.parse('1988-8-8')
                              end
 
         built_comment.why = "From #{ident_title} #{where_from} XML"

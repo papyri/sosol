@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-task :nuke_test_repo do
+task nuke_test_repo: :environment do
   FileUtils.rm_rf(Rails.root.join(*%w[db test git canonical.git]))
 end
 

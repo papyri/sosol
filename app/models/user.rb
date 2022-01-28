@@ -128,7 +128,7 @@ class User < ApplicationRecord
   end
 
   def git_author_string
-    local_time = Time.now
+    local_time = Time.zone.now
     "#{author_string} #{local_time.to_i} #{local_time.strftime('%z')}"
   end
 
@@ -175,7 +175,7 @@ class User < ApplicationRecord
     else
       Rails.logger.info('User identifier string will be blank')
     end
-    user_identifier = UserIdentifier.find_by_identifier(user_identifier_string)
+    user_identifier = UserIdentifier.find_by(identifier: user_identifier_string)
     if user_identifier.present?
       Rails.logger.info("Found UserIdentifier: #{user_identifier.inspect}")
       user_identifier.user
@@ -226,7 +226,7 @@ class User < ApplicationRecord
 
   def update_with_password(params, *options)
     if encrypted_password.blank? && params[:password].blank?
-      update_attributes(params, *options)
+      update(params, *options)
     else
       super
     end

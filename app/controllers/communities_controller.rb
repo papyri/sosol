@@ -116,9 +116,9 @@ class CommunitiesController < ApplicationController
   # Adds a member to the community members list. These are the users who can submit to the community.
   def add_member
     @community = Community.find(params[:id].to_s)
-    user = User.find_by_id(params[:user_id].to_s)
+    user = User.find_by(id: params[:user_id].to_s)
 
-    if @community.members.find_by_id(user.id).nil?
+    if @community.members.find_by(id: user.id).nil?
       @community.members << user
       @community.save
     end
@@ -158,11 +158,11 @@ class CommunitiesController < ApplicationController
   def add_admin
     # raise params.inspect
     @community = Community.find(params[:id].to_s)
-    user = User.find_by_id(params[:user_id].to_s)
+    user = User.find_by(id: params[:user_id].to_s)
 
     # raise @community.admins.length.to_s
 
-    if @community.admins.find_by_id(user.id).nil?
+    if @community.admins.find_by(id: user.id).nil?
 
       @community.admins << user
       @community.save
@@ -212,7 +212,7 @@ class CommunitiesController < ApplicationController
   # If this is not set, then publications may not be submitted nor finalized.
   def set_end_user
     @community = Community.find(params[:id].to_s)
-    user = User.find_by_id(params[:user_id].to_s)
+    user = User.find_by(id: params[:user_id].to_s)
 
     @community.end_user_id = user.id
     @community.save

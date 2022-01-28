@@ -392,7 +392,7 @@ module HgvMetaIdentifierHelper
       #   - +value+ → +String+ object that shall be appended to member variable +referenceList+
       # Side effect on +@referenceList+
       def addReference(value)
-        if value.is_a?(String) && !value.empty? && !@referenceList.include?(value)
+        if value.is_a?(String) && !value.empty? && @referenceList.exclude?(value)
           @referenceList[@referenceList.length] = value
         end
       end
@@ -483,8 +483,8 @@ module HgvMetaIdentifierHelper
     def self.getExtras(publicationExtra)
       extras = []
       publicationExtra&.each do |biblScope|
-        if biblScope[:attributes] && biblScope[:attributes][:type] && !%i[volume fascicle numbers
-                                                                          side].include?(biblScope[:attributes][:type].to_sym)
+        if biblScope[:attributes] && biblScope[:attributes][:type] && %i[volume fascicle numbers
+                                                                         side].exclude?(biblScope[:attributes][:type].to_sym)
           extras[extras.length] = { type: biblScope[:attributes][:type], value: biblScope[:value] }
         end
       end
@@ -1383,14 +1383,14 @@ module HgvMetaIdentifierHelper
               end
 
               # precision
-              t[:precision] = if !t.reject do |k, v|
+              t[:precision] = if t.reject do |k, v|
                                    k.to_s.include?('2') || v.nil?
-                                 end.keys.join.include?('x') && t[:ca]
+                                 end.keys.join.exclude?('x') && t[:ca]
                                 :ca
                               end
-              t[:precision2] = if !t.reject do |k, v|
-                                    !k.to_s.include?('2') || v.nil?
-                                  end.keys.join.include?('x') && t[:ca2] && (t[:c2] || t[:y2] || t[:m2] || t[:d2])
+              t[:precision2] = if t.reject do |k, v|
+                                    k.to_s.exclude?('2') || v.nil?
+                                  end.keys.join.exclude?('x') && t[:ca2] && (t[:c2] || t[:y2] || t[:m2] || t[:d2])
                                  :ca
                                end
 

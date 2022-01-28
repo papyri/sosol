@@ -53,7 +53,7 @@ class APISIdentifier < HGVMetaIdentifier
   # - *Returns* :
   #   - temporary identifier name
   def self.next_temporary_identifier(apis_collection)
-    year = Time.now.year
+    year = Time.zone.now.year
     latest = where('name like ?',
                    "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{apis_collection}.apis.#{year}-%").order(name: :desc).limit(1).first
     document_number = if latest.nil?

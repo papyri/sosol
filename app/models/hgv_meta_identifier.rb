@@ -58,7 +58,7 @@ class HGVMetaIdentifier < HGVIdentifier
 
   # ?
   def n_attribute
-    ddb = DDBIdentifier.find_by_publication_id(publication.id)
+    ddb = DDBIdentifier.find_by(publication_id: publication.id)
     ddb&.n_attribute
   end
 

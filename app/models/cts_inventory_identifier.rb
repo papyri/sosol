@@ -32,8 +32,8 @@ class CTSInventoryIdentifier < Identifier
 
   def parentIdentifier
     return
-    TeiCTSIdentifier.find_by_publication_id(publication.id) ||
-      EpiCTSIdentifier.find_by_publication_id(publication.id)
+    TeiCTSIdentifier.find_by(publication_id: publication.id) ||
+      EpiCTSIdentifier.find_by(publication_id: publication.id)
   end
 
   def parse_inventory

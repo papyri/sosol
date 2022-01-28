@@ -12,9 +12,9 @@ class EmailersController < ApplicationController
 
   def add_member
     @emailer = Emailer.find(params[:id].to_s)
-    user = User.find_by_name(params[:user_name].to_s)
+    user = User.find_by(name: params[:user_name].to_s)
 
-    if @emailer.users.find_by_id(user.id).nil?
+    if @emailer.users.find_by(id: user.id).nil?
       @emailer.users << user
       @emailer.save
     end

@@ -50,7 +50,7 @@ class Repository
     Rails.logger.info("Repository.run_command started (called from #{caller[0]}): #{command_string}")
     # JRuby 9.0.0.0+:
     # t1 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    t1 = Time.now
+    t1 = Time.zone.now
     result = ''
     begin
       result = `#{command_string}`
@@ -60,7 +60,7 @@ class Repository
       Rails.logger.error(e.inspect)
       Airbrake.notify(e)
     end
-    t2 = Time.now
+    t2 = Time.zone.now
     Rails.logger.info("Repository.run_command finished (called from #{caller[0]}) in #{t2 - t1} seconds: #{command_string}")
     if result.present?
       begin

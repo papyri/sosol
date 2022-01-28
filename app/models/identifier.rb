@@ -126,7 +126,7 @@ class Identifier < ApplicationRecord
     self.modified = true
     save! unless id.nil?
 
-    publication&.update_attribute(:updated_at, Time.now)
+    publication&.update_attribute(:updated_at, Time.zone.now)
 
     commit_sha
   end
@@ -146,8 +146,8 @@ class Identifier < ApplicationRecord
     commit_data = Repository.run_command("#{repository.git_command_prefix} log -n 1 --pretty=format:\"%s%n%an%n%cn%n%at%n%ct\" #{commit_id}").split("\n")
     commit[:message], commit[:author_name], commit[:committer_name], commit[:authored_date], commit[:committed_date] = commit_data
     commit[:message] = commit[:message].empty? ? '(no commit message)' : commit[:message]
-    commit[:authored_date] = Time.at(commit[:authored_date].to_i)
-    commit[:committed_date] = Time.at(commit[:committed_date].to_i)
+    commit[:authored_date] = Time.zone.at(commit[:authored_date].to_i)
+    commit[:committed_date] = Time.zone.at(commit[:committed_date].to_i)
     commit
   end
 
@@ -189,7 +189,7 @@ class Identifier < ApplicationRecord
         title = if collection_name.nil?
                   name.split('/').last
                 else
-                  [collection_name, volume_number, document_number].reject(&:blank?).join(' ')
+                  [collection_name, volume_number, document_number].compact_blank.join(' ')
                 end
 
         title += ' (reprinted)' if respond_to?('is_reprinted?') && is_reprinted?
@@ -273,7 +273,7 @@ class Identifier < ApplicationRecord
   # - *Returns* :
   #   - temporary identifier name
   def self.next_temporary_identifier
-    year = Time.now.year
+    year = Time.zone.now.year
     latest = Identifier.where('name like ?',
                               "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{self::TEMPORARY_COLLECTION};#{year};%").order('name DESC').limit(1).first
     document_number = if latest.nil?

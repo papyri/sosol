@@ -108,7 +108,7 @@ class BiblioIdentifier < HGVIdentifier
   # - *Returns* :
   #   - temporary identifier name
   def self.next_temporary_identifier
-    year = Time.now.year
+    year = Time.zone.now.year
     latest = where('name like ?',
                    "papyri.info/#{self::IDENTIFIER_NAMESPACE}/#{year}-%").order(name: :desc).limit(1).first
     document_number = if latest.nil?
@@ -597,7 +597,7 @@ class BiblioIdentifier < HGVIdentifier
 
       index = { 'pubPlace' => 1, 'publisher' => 1 }
       non_database_attribute[:publisherList].each do |publisher|
-        next unless publisher.value.present?
+        next if publisher.value.blank?
 
         element = @epiDoc.bulldozePath "#{basePath}#{publisher.publisherType}[@n='#{index[publisher.publisherType]}']"
         element.text = publisher.value
@@ -609,7 +609,7 @@ class BiblioIdentifier < HGVIdentifier
       @epiDoc.elements.delete_all XPATH[key]
       index = 1
       non_database_attribute[key].each do |shorty|
-        next unless shorty.title.present?
+        next if shorty.title.blank?
 
         xpath = XPATH[key].sub("[starts-with(@type, 'short')]", "[@type='short']") # make xpath deterministic
 
@@ -625,7 +625,7 @@ class BiblioIdentifier < HGVIdentifier
       path = XPATH[:note][/\A(.+)\[@resp\]\Z/, 1]
       index = 1
       non_database_attribute[:note].each do |note|
-        next unless note.annotation.present?
+        next if note.annotation.blank?
 
         element = @epiDoc.bulldozePath "#{path}[@n='#{index}']"
         element.text = note.annotation

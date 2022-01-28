@@ -36,8 +36,8 @@ class CtsPublicationsController < PublicationsController
     existing_identifiers = []
     possible_conflicts = Identifier.where(name: versionIdentifier).includes(:publication)
     actual_conflicts = possible_conflicts.select do |pc|
-      (pc.publication && (pc.publication.owner == @current_user) && !%w[archived
-                                                                        finalized].include?(pc.publication.status))
+      (pc.publication && (pc.publication.owner == @current_user) && %w[archived
+                                                                       finalized].exclude?(pc.publication.status))
     end
     existing_identifiers += actual_conflicts
 
@@ -220,8 +220,8 @@ class CtsPublicationsController < PublicationsController
       related_identifiers.each do |relid|
         possible_conflicts = Identifier.where(name: relid).includes(:publication)
         actual_conflicts = possible_conflicts.select do |pc|
-          (pc.publication && (pc.publication.owner == @current_user) && !%w[archived
-                                                                            finalized].include?(pc.publication.status))
+          (pc.publication && (pc.publication.owner == @current_user) && %w[archived
+                                                                           finalized].exclude?(pc.publication.status))
         end
         conflicting_identifiers += actual_conflicts
       end
