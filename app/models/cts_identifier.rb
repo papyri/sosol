@@ -148,7 +148,7 @@ class CTSIdentifier < Identifier
   end
 
   def related_inventory
-    publication.identifiers.reverse.find { |i| i.instance_of?(CTSInventoryIdentifier) }
+    publication.identifiers.select { |i| i.instance_of?(CTSInventoryIdentifier) }.last
   end
 
   def to_urn_components

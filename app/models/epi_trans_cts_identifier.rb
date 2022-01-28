@@ -38,7 +38,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   end
 
   def related_text
-    publication.identifiers.reverse.find { |i| i.instance_of?(EpiCTSIdentifier) && !i.is_reprinted? }
+    publication.identifiers.select { |i| i.instance_of?(EpiCTSIdentifier) && !i.is_reprinted? }.last
   end
 
   def stub_text_structure(lang, urn)

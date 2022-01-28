@@ -196,7 +196,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
         end
 
         open_session do |edit_session|
-          apis_identifier = @publication.identifiers.find { |i| i.instance_of?(APISIdentifier) }
+          apis_identifier = @publication.identifiers.select { |i| i.instance_of?(APISIdentifier) }.first
           assert_not apis_identifier.modified?, 'APIS Identifier should not be modified before we edit it'
           original_content = apis_identifier.xml_content
           modified_content = original_content.sub(/Bobst/, 'APIS Workflow Test')
@@ -429,7 +429,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
           end
 
           should "have two 'approve' votes" do
-            assert_equal 2, @new_ddb_submitted.votes.count { |v| %(yes no defer).include?(v.choice) }
+            assert_equal 2, @new_ddb_submitted.votes.select { |v| %(yes no defer).include?(v.choice) }.length
           end
 
           should 'be copied to a finalizer' do

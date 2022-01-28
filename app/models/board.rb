@@ -176,7 +176,7 @@ class Board < ApplicationRecord
       # it may or may not be the same as the publication that is the subject of the mail as that
       # depends upon what when_to_send status is.  Traversing all the children of the original publication
       # and selecting the last one which has the current board as its owner should work.
-      board_publication = email_identifiers[0].publication.origin.all_children.reverse.find { |p| p.owner == self }
+      board_publication = email_identifiers[0].publication.origin.all_children.select { |p| p.owner == self }.last
       begin
         EmailerMailer.identifier_email(when_to_send, email_identifiers, board_publication, addresses,
                                        mailer.include_document, mailer.include_comments, mailer.message, mailer.subject).deliver_now

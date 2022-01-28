@@ -132,7 +132,7 @@ class DCLPTextIdentifier < DDBIdentifier
 
     Identifier.transaction do
       dclpMetaIdentifier.publication.lock!
-      if dclpMetaIdentifier.publication.identifiers.count { |i| i.instance_of?(self) }.positive?
+      if dclpMetaIdentifier.publication.identifiers.select { |i| i.instance_of?(self) }.length.positive?
         return nil
       else
         new_identifier.publication = dclpMetaIdentifier.publication

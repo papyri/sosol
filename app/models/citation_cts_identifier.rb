@@ -7,7 +7,7 @@ class CitationCTSIdentifier < CTSIdentifier
     parent_urn = CTS::CTSLib.urnObj(urn_attribute).getUrnWithoutPassage
     publication.identifiers.select do |i|
       i.respond_to? :urn_attribute
-    end.reverse.find { |i| i.urn_attribute == parent_urn }
+    end.select { |i| i.urn_attribute == parent_urn }.last
   end
 
   def is_valid_xml?(content = nil)

@@ -76,7 +76,7 @@ class APISIdentifier < HGVMetaIdentifier
     new_identifier = new(name: next_temporary_identifier(collection))
     Identifier.transaction do
       publication.lock!
-      if publication.identifiers.count { |i| i.instance_of?(self) }.positive?
+      if publication.identifiers.select { |i| i.instance_of?(self) }.length.positive?
         return nil
       else
         new_identifier.publication = publication
@@ -148,34 +148,34 @@ class APISIdentifier < HGVMetaIdentifier
       configuration.each_value do |element|
         add_defaults! element
 
-        if element.key?(:attributes)
+        if element.keys.include? :attributes
           element[:attributes].each_value do |attribute|
             add_defaults! attribute
           end
         end
 
-        add_meta_information! element[:children] if element.key?(:children)
+        add_meta_information! element[:children] if element.keys.include? :children
       end
     end
 
     # adds optional attributes (suchs as mulplicity or default value) to a configuration item
     # parameter item may be an element or an attribute
     def add_defaults!(item)
-      item[:multiple] = if item.key?(:multiple)
+      item[:multiple] = if item.keys.include? :multiple
                           item[:multiple] ? true : false
                         else
                           false
                         end
 
-      item[:optional] = if item.key?(:optional)
+      item[:optional] = if item.keys.include? :optional
                           item[:optional] ? true : false
                         else
                           true
                         end
 
-      item[:default] = nil unless item.key?(:default)
+      item[:default] = nil unless item.keys.include? :default
 
-      item[:pattern] = nil unless item.key?(:pattern)
+      item[:pattern] = nil unless item.keys.include? :pattern
 
       # if item.keys.include? :children
       #  item[:structure] = :recursive
@@ -187,7 +187,7 @@ class APISIdentifier < HGVMetaIdentifier
     end
 
     def xpath(key)
-      if @scheme.key?(key)
+      if @scheme.keys.include? key
         @scheme[key][:xpath]
       else
         ''

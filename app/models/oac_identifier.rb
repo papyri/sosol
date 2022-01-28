@@ -26,7 +26,7 @@ class OACIdentifier < Identifier
   # find this identifier from its parent identifier
   def self.find_from_parent(publication, parent)
     temp_name = make_name(parent.name)
-    publication.identifiers.reverse.find { |item| (item.name == temp_name) && item.is_a?(OACIdentifier) }
+    publication.identifiers.select { |item| (item.name == temp_name) && item.is_a?(OACIdentifier) }.last
   end
 
   def self.make_name(parentName)

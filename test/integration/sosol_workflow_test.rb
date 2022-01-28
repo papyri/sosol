@@ -641,7 +641,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
           end
 
           should "have two 'approve' votes" do
-            assert_equal 2, @new_ddb_submitted.votes.count { |v| %(yes no defer).include?(v.choice) }
+            assert_equal 2, @new_ddb_submitted.votes.select { |v| %(yes no defer).include?(v.choice) }.length
           end
 
           should 'be copied to a finalizer' do
