@@ -90,7 +90,7 @@ class PublicationsController < ApplicationController
     identifier = params[:id]
     related_identifiers = nil
 
-    related_identifiers = if %r{papyri\.info/dclp}.match?(identifier)
+    related_identifiers = if %r{papyri\.info/dclp} =~ identifier
                             [identifier]
                           else # cromulent dclp hack to circumvent number server
                             NumbersRDF::NumbersHelper.identifier_to_identifiers(identifier)
@@ -185,7 +185,7 @@ class PublicationsController < ApplicationController
     # clean up the ids
     id_list.map! do |id|
       # FIXME: once biblio is loaded into numbers server, remove this unless clause
-      unless %r{#{NumbersRDF::NAMESPACE_IDENTIFIER}/#{BiblioIdentifier::IDENTIFIER_NAMESPACE}}o.match?(ido)
+      unless id =~ %r{#{NumbersRDF::NAMESPACE_IDENTIFIER}/#{BiblioIdentifier::IDENTIFIER_NAMESPACE}}
         id.chomp!('/')
         id = NumbersRDF::NumbersHelper.identifier_url_to_identifier(id)
         # check if there is a good response from the number server

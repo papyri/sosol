@@ -7,7 +7,7 @@ require "#{File.dirname(__FILE__)}/../config/environment" unless defined?(RAILS_
 require 'dispatcher'
 
 if defined?(Apache::RubyRun)
-  ADDITIONAL_LOAD_PATHS.reverse_each do |dir|
+  ADDITIONAL_LOAD_PATHS.reverse.each do |dir|
     $LOAD_PATH.unshift(dir) if File.directory?(dir)
   end
 end

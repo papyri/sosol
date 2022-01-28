@@ -977,7 +977,7 @@ class BiblioIdentifier < HGVIdentifier
 
     XPATH.each_pair do |_key, xpath|
       xpath = xpath.sub(%r{^(/bibl/[^/]+)(/.+)?$}, '\1')
-      next if %r{^/bibl/@[\w:]+$}.match?(xpath)
+      next unless xpath !~ %r{^/bibl/@[\w:]+$}
 
       order[order.length] = "/bibl/idno[@type='pi']" if xpath == "/bibl/idno[@type='bp']"
 

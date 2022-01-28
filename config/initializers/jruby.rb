@@ -4,7 +4,7 @@ if RUBY_PLATFORM == 'java'
   JAR_PATH = File.join(::Rails.root.to_s, 'lib', 'java')
 
   Dir.entries(JAR_PATH).sort.each do |entry|
-    require File.join(JAR_PATH, entry) if /.jar$/.match?(entry)
+    require File.join(JAR_PATH, entry) if entry =~ /.jar$/
   end
 
   if RUBY_VERSION.to_f < 2.0

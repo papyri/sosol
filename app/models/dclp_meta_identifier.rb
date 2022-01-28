@@ -19,7 +19,7 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
 
   # cl: can be made simpler for DCLP needs
   def to_path
-    if /#{self.class::TEMPORARY_COLLECTION}/o.match?(nameo)
+    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       temporary_path
     else
       path_components = [PATH_PREFIX]

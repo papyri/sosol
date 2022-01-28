@@ -92,7 +92,7 @@ class APISIdentifier < HGVMetaIdentifier
   end
 
   def to_path
-    if /#{self.class::TEMPORARY_COLLECTION}/o.match?(nameo)
+    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       temporary_path
     else
       path_components = [PATH_PREFIX]

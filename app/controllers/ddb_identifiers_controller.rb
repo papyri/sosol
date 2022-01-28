@@ -46,8 +46,8 @@ class DdbIdentifiersController < IdentifiersController
           # get div type=edition from XML in string format for conversion
           abs = DDBIdentifier.get_div_edition(original_xml).join
           # if there’s only an empty stub, add a single line to make it valid for xsugar grammar and add default language if there is none
-          if %r{\A<div[^>]+/>\Z}.match?(abs)
-            abs = "#{abs[0..-3]}#{/xml:lang/.match?(abs) ? '' : ' xml:lang="grc"'}><ab><lb n=\"1\"/></ab></div>"
+          if %r{\A<div[^>]+/>\Z} =~ abs
+            abs = "#{abs[0..-3]}#{/xml:lang/ =~ abs ? '' : ' xml:lang="grc"'}><ab><lb n=\"1\"/></ab></div>"
           end
 
           if @identifier.get_broken_leiden.nil?

@@ -47,7 +47,7 @@ class Publication < ApplicationRecord
 
   validates_each :branch do |model, attr, value|
     Repository::GIT_VALID_REF_REGEXES.each do |git_regex|
-      model.errors.add(attr, "Branch \"#{value}\" contains illegal characters") if value&.match?(git_regex)
+      model.errors.add(attr, "Branch \"#{value}\" contains illegal characters") if value =~ git_regex
     end
   end
 
@@ -1743,7 +1743,7 @@ class Publication < ApplicationRecord
         if i.class.to_s == 'DDBIdentifier' || i.class.to_s == 'DCLPMetaIdentifier' || i.class.to_s == 'DCLPTextIdentifier'
           has_text = true
         end
-        has_cts = true if /CTSIdentifier/.match?(i.class.to_s)
+        has_cts = true if i.class.to_s =~ /CTSIdentifier/
         has_apis = true if i.class.to_s == 'APISIdentifier'
         has_dclp = true if i.class.to_s == 'DCLPMetaIdentifier' || i.class.to_s == 'DCLPTextIdentifier'
       end

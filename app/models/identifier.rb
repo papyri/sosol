@@ -173,11 +173,11 @@ class Identifier < ApplicationRecord
     elsif instance_of?(APISIdentifier)
       title = name.split('/').last
     elsif instance_of?(DCLPMetaIdentifier) || instance_of?(DCLPTextIdentifier)
-      title = name.split('/').last unless /#{self.class::TEMPORARY_COLLECTION}/o.match?(nameo)
+      title = name.split('/').last unless name =~ /#{self.class::TEMPORARY_COLLECTION}/
     end
 
     if title.nil?
-      if instance_of?(DDBIdentifier) || (name =~ /#{self.class::TEMPORARY_COLLECTION}/o)
+      if instance_of?(DDBIdentifier) || (name =~ /#{self.class::TEMPORARY_COLLECTION}/)
         collection_name, volume_number, document_number =
           to_components.last.split(';')
         collection_name =
@@ -192,7 +192,7 @@ class Identifier < ApplicationRecord
                   [collection_name, volume_number, document_number].compact_blank.join(' ')
                 end
 
-        title += ' (reprinted)' if respond_to?(:is_reprinted?) && is_reprinted?
+        title += ' (reprinted)' if respond_to?('is_reprinted?') && is_reprinted?
       else # HGV with no name
         title =  [self.class::FRIENDLY_NAME, name.split('/').last.tr(';', ' ')].join(' ')
       end
@@ -404,7 +404,7 @@ class Identifier < ApplicationRecord
   # - *Returns* :
   #   - true/false
   def needs_rename?
-    if defined?(self.class::TEMPORARY_COLLECTION) && (to_components[2] =~ %r{^#{self.class::TEMPORARY_COLLECTION}[.;/]}o)
+    if defined?(self.class::TEMPORARY_COLLECTION) && (to_components[2] =~ %r{^#{self.class::TEMPORARY_COLLECTION}[.;/]})
       return true
     end
 

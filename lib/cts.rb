@@ -53,7 +53,7 @@ module CTS
       # method which inserts the publication type (i.e. edition or translation) into the path of a CTS urn
       def pathForUrn(a_urn, a_pubtype)
         path_parts = a_urn.sub!(/urn:cts:/, '').split(':')
-        cite_parts = path_parts[1].split('.')
+        cite_parts = path_parts[1].split(/\./)
         passage = path_parts[2]
         last_part = cite_parts.length - 1
         document_path_parts = []
@@ -85,7 +85,7 @@ module CTS
 
       def versionTitleForUrn(a_inventory, a_urn)
         # make sure we have the urn:cts prefix
-        a_urn = "urn:cts:#{a_urn}" unless /^urn:cts:/.match?(a_urn)
+        a_urn = "urn:cts:#{a_urn}" unless a_urn =~ /^urn:cts:/
         urn = urnObj(a_urn)
         response = Net::HTTP.get_response(
           URI.parse("#{getInventoryUrl(a_inventory)}&request=GetCapabilities")

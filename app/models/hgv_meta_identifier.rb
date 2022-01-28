@@ -32,7 +32,7 @@ class HGVMetaIdentifier < HGVIdentifier
 
   # ?
   def to_path
-    if /#{self.class::TEMPORARY_COLLECTION}/o.match?(nameo)
+    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       temporary_path
     else
       path_components = [PATH_PREFIX]
@@ -258,7 +258,7 @@ class HGVMetaIdentifier < HGVIdentifier
     startIndex = getTextStart epiDocXml
     currentIndex = startIndex
 
-    if %r{^<div [^>]*type=["']edition["'][^>]*/>}.match?(epiDocXml[startIndex..-1]) # empty text div
+    if epiDocXml[startIndex..-1] =~ %r{^<div [^>]*type=["']edition["'][^>]*/>} # empty text div
       epiDocXml.index('/>', currentIndex) + '/>'.length
     else # text div with content
       scale = 1

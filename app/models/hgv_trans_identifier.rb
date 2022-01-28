@@ -13,7 +13,7 @@ class HGVTransIdentifier < HGVIdentifier
 
   # Returns file path to Translation XML - e.g. HGV_trans_EpiDoc/8881.xml
   def to_path
-    if /#{self.class::TEMPORARY_COLLECTION}/o.match?(nameo)
+    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
       temporary_path
     else
       path_components = [PATH_PREFIX]
@@ -177,7 +177,7 @@ class HGVTransIdentifier < HGVIdentifier
     else
       brokeleiden = brokeleiden_here.get_text.value
 
-      brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/o, '')
+      brokeleiden.sub(/^#{Regexp.escape(BROKE_LEIDEN_MESSAGE)}/, '')
     end
   end
 
