@@ -76,13 +76,13 @@ module HgvMetaIdentifierHelper
       configuration.each_value do |element|
         add_defaults! element
 
-        if element.keys.include? :attributes
+        if element.key?(:attributes)
           element[:attributes].each_value do |attribute|
             add_defaults! attribute
           end
         end
 
-        add_meta_information! element[:children] if element.keys.include? :children
+        add_meta_information! element[:children] if element.key?(:children)
       end
     end
 
@@ -91,21 +91,21 @@ module HgvMetaIdentifierHelper
     #   - +item+ → may be an element or an attribute
     # Side effect on +item+ (sets default values, adds missing attributes)
     def add_defaults!(item)
-      item[:multiple] = if item.keys.include? :multiple
+      item[:multiple] = if item.key?(:multiple)
                           item[:multiple] ? true : false
                         else
                           false
                         end
 
-      item[:optional] = if item.keys.include? :optional
+      item[:optional] = if item.key?(:optional)
                           item[:optional] ? true : false
                         else
                           true
                         end
 
-      item[:default] = nil unless item.keys.include? :default
+      item[:default] = nil unless item.key?(:default)
 
-      item[:pattern] = nil unless item.keys.include? :pattern
+      item[:pattern] = nil unless item.key?(:pattern)
     end
 
     # Retrieves the xpath for a specified HGV key if the key belongs to a top level HGV configuration node, i.e. for HGV key +:textDate+, but not for HGV key +:when+ which is a child node of +:textDate+
@@ -115,7 +115,7 @@ module HgvMetaIdentifierHelper
     #   - String xpath, string will be empty if xpath cannot be given for the requested key
     # Assumes that +config/hgv.yml+ has been loaded into +@scheme+
     def xpath(key)
-      if @scheme.keys.include? key
+      if @scheme.key?(key)
         @scheme[key][:xpath]
       else
         ''
