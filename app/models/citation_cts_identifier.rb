@@ -36,7 +36,7 @@ class CitationCTSIdentifier < CTSIdentifier
     urnObj = CTS::CTSLib.urnObj("urn:cts:#{passage_urn}")
     citeLevel = urnObj.getCitationDepth
     citeinfo = new_identifier.related_text.related_inventory.parse_inventory
-    passageParts = urnObj.getPassage(citeLevel).split(/\./)
+    passageParts = urnObj.getPassage(citeLevel).split('.')
     titleParts = []
     (0..citeLevel - 1).each do |i|
       titleParts << "#{citeinfo['citations'][i]} #{passageParts[i]}"
@@ -44,7 +44,7 @@ class CitationCTSIdentifier < CTSIdentifier
     new_identifier.title = titleParts.join(' ')
     new_identifier.save!
     begin
-      uuid = publication.id.to_s + passage_urn.gsub(':', '_')
+      uuid = publication.id.to_s + passage_urn.tr(':', '_')
       inventory = new_identifier.related_text.related_inventory.xml_content
       document = new_identifier.related_text.content
       passage_xml = CTS::CTSLib.getPassageFromRepo(inventory, document, new_identifier.urn_attribute, uuid)

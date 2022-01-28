@@ -22,14 +22,14 @@ class CtsProxyController < ApplicationController
   end
 
   def getpassage
-    if params[:id] =~ /^\d+$/
+    if /^\d+$/.match?(params[:id])
       documentIdentifier = Identifier.find(params[:id].to_s)
       inventory_code = documentIdentifier.related_inventory.name.split('/')[0]
       if CTS::CTSLib.getExternalCTSHash.key?(inventory_code)
         response = CTS::CTSLib.proxyGetPassage(inventory_code, params[:urn].to_s)
       else
         inventory = documentIdentifier.related_inventory.xml_content
-        uuid = "#{documentIdentifier.publication.id}#{params[:urn].gsub(':', '_')}_proxyreq"
+        uuid = "#{documentIdentifier.publication.id}#{params[:urn].tr(':', '_')}_proxyreq"
         response = CTS::CTSLib.getPassageFromRepo(inventory, documentIdentifier.content, params[:urn].to_s, uuid)
       end
     else

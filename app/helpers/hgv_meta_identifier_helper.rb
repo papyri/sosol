@@ -226,7 +226,7 @@ module HgvMetaIdentifierHelper
       # Side effect on +@date+
       def date=(value)
         value = value.instance_of?(Symbol) ? value.to_s : value
-        @date = (value if value =~ /\A-?\d\d\d\d(-\d\d(-\d\d)?)?\Z/)
+        @date = (value if /\A-?\d\d\d\d(-\d\d(-\d\d)?)?\Z/.match?(value))
       end
 
       # Mutator method for member variable +value+
@@ -584,7 +584,7 @@ module HgvMetaIdentifierHelper
           provinceNomeAndRegion << HgvProvenance.formatGeoSpot(geoSpot)
         end
 
-        result << (provinceNomeAndRegion =~ /[^, ].*$/ ? provinceNomeAndRegion[/[^, ].*$/] : '')
+        result << (/[^, ].*$/.match?(provinceNomeAndRegion) ? provinceNomeAndRegion[/[^, ].*$/] : '')
 
         result << ')' if ancient || modern
       end
@@ -1138,7 +1138,7 @@ module HgvMetaIdentifierHelper
     # e.g. HgvDate.extractFromIso('1884-08-28', /\A(-?\d\d\d\d)/) => 1884
     def self.extractFromIso(iso, regex)
       if iso
-        iso =~ regex ? iso[regex, 1].to_i : nil
+        iso&.match?(regex) ? iso[regex, 1].to_i : nil
       end
     end
 

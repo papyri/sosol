@@ -51,7 +51,7 @@ class ApplicationController < ActionController::Base
   def render_500(e)
     Rails.logger.debug(e.inspect)
     notify_airbrake(e)
-    @redirect = true unless request.referer =~ /dashboard$/
+    @redirect = true unless /dashboard$/.match?(request.referer)
     flash[:error] = "We're sorry, but something went wrong."
     @additional_error_information = "We've been notified about this issue and we'll take a look at it shortly."
     render template: 'common/error_500', layout: false, status: :internal_server_error

@@ -162,7 +162,7 @@ module DclpMetaIdentifierHelper
             if init[:edition][:children]
               if init[:edition][:children][:link]
                 @link = init[:edition][:children][:link][:value]
-                @biblioId = @link.match(%r{\A.+/(\d+)\Z}) ? @link.match(%r{\A.+/(\d+)\Z}).captures[0] : nil
+                @biblioId = %r{\A.+/(\d+)\Z}.match?(@link) ? @link.match(%r{\A.+/(\d+)\Z}).captures[0] : nil
               end
               if init[:edition][:children][:title] # CROMULENT TITLE HACK
                 @title = init[:edition][:children][:title][:value]

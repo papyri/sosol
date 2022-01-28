@@ -93,7 +93,7 @@ module JRubyXML
     end
 
     def cached_schema_path
-      if @schema_url =~ %r{^https?://}
+      if %r{^https?://}.match?(@schema_url)
         local_path = "#{Rails.root}/data/schemas/#{@schema_url.sub(%r{^https?://}, '')}"
         return local_path if File.exist?(local_path)
       end
@@ -194,12 +194,12 @@ module JRubyXML
 
     def initialize(root_node_attribute_hash)
       @prefixes = {
-        javax.xml.XMLConstants.const_get('DEFAULT_NS_PREFIX') =>
-          javax.xml.XMLConstants.const_get('NULL_NS_URI'),
-        javax.xml.XMLConstants.const_get('XML_NS_PREFIX') =>
-          javax.xml.XMLConstants.const_get('XML_NS_URI'),
-        javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE') =>
-          javax.xml.XMLConstants.const_get('XMLNS_ATTRIBUTE_NS_URI'),
+        javax.xml.XMLConstants.const_get(:DEFAULT_NS_PREFIX) =>
+          javax.xml.XMLConstants.const_get(:NULL_NS_URI),
+        javax.xml.XMLConstants.const_get(:XML_NS_PREFIX) =>
+          javax.xml.XMLConstants.const_get(:XML_NS_URI),
+        javax.xml.XMLConstants.const_get(:XMLNS_ATTRIBUTE) =>
+          javax.xml.XMLConstants.const_get(:XMLNS_ATTRIBUTE_NS_URI),
         'dcterms' =>
           'http://purl.org/dc/terms/',
         'dces' =>
@@ -211,7 +211,7 @@ module JRubyXML
           namespace = attribute_name.split(':').last
           @prefixes[namespace] = uri unless @prefixes[namespace]
         when 'xmlns'
-          @prefixes[javax.xml.XMLConstants.const_get('DEFAULT_NS_PREFIX')] = uri
+          @prefixes[javax.xml.XMLConstants.const_get(:DEFAULT_NS_PREFIX)] = uri
         end
       end
     end
@@ -280,7 +280,7 @@ module JRubyXML
     def get_xpath_namespace_context(document)
       root_xpath = xpath_from_string('/*')
       document_root = xpath_result_to_array(root_xpath.evaluate(document,
-                                                                javax.xml.xpath.XPathConstants.const_get('NODESET'))).first
+                                                                javax.xml.xpath.XPathConstants.const_get(:NODESET))).first
       NamespaceContext.new(document_root[:attributes])
     end
 
@@ -290,7 +290,7 @@ module JRubyXML
                                 namespace_aware ? get_xpath_namespace_context(document) : nil)
 
       xpath_result = xpath.evaluate(document,
-                                    javax.xml.xpath.XPathConstants.const_get('NODESET'))
+                                    javax.xml.xpath.XPathConstants.const_get(:NODESET))
       xpath_result_to_array(xpath_result)
     end
 
@@ -388,7 +388,7 @@ module JRubyXML
     def pretty_print(xml_stream)
       transformer = get_transformer
       transformer.setOutputProperty(
-        javax.xml.transform.OutputKeys.const_get('INDENT'), 'yes'
+        javax.xml.transform.OutputKeys.const_get(:INDENT), 'yes'
       )
       # transformer.setOutputProperty(
       #   "{http://xml.apache.org/xslt}indent-amount", "2")

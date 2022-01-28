@@ -47,7 +47,7 @@ class Repository
   end
 
   def self.run_command(command_string)
-    Rails.logger.info("Repository.run_command started (called from #{caller[0]}): #{command_string}")
+    Rails.logger.info("Repository.run_command started (called from #{caller(1..1).first}): #{command_string}")
     # JRuby 9.0.0.0+:
     # t1 = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     t1 = Time.zone.now
@@ -61,7 +61,7 @@ class Repository
       Airbrake.notify(e)
     end
     t2 = Time.zone.now
-    Rails.logger.info("Repository.run_command finished (called from #{caller[0]}) in #{t2 - t1} seconds: #{command_string}")
+    Rails.logger.info("Repository.run_command finished (called from #{caller(1..1).first}) in #{t2 - t1} seconds: #{command_string}")
     if result.present?
       begin
         Rails.logger.debug(result)
@@ -72,7 +72,7 @@ class Repository
     if $CHILD_STATUS.success?
       result
     else
-      Rails.logger.error("Repository.run_command error (called from #{caller[0]}): #{command_string}")
+      Rails.logger.error("Repository.run_command error (called from #{caller(1..1).first}): #{command_string}")
       Rails.logger.error("Repository.run_command exit code: #{$CHILD_STATUS.exitstatus}")
       error_string = "Repository.run_command error running: #{command_string}\n#{result}"
       Airbrake.notify(error_string)

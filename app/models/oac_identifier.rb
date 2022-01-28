@@ -153,7 +153,7 @@ class OACIdentifier < Identifier
       annot_id = el.attributes['rdf:about']
       REXML::XPath.each(el, 'oac:hasTarget/@rdf:resource') do |tgt|
         Rails.logger.info("Comparing #{tgt} to #{targetUriMatch}")
-        next unless tgt.value =~ /#{targetUriMatch}/
+        next unless /#{targetUriMatch}/.match?(tgt.value)
 
         Rails.logger.info('Matched')
         match = {}

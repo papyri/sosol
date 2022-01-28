@@ -11,7 +11,7 @@ class CTSIdentifier < Identifier
 
   def titleize
     title = nil
-    if name =~ /#{self.class::TEMPORARY_COLLECTION}/
+    if /#{self.class::TEMPORARY_COLLECTION}/o.match?(nameo)
       title = self.class::TEMPORARY_TITLE
     else
       begin
@@ -126,7 +126,7 @@ class CTSIdentifier < Identifier
 
   def id_attribute
     # TODO: figure out best way to handle urn as id attribute (: not allowed)
-    (IDENTIFIER_PREFIX + to_urn_components.join('_')).gsub!(/:/, '_')
+    (IDENTIFIER_PREFIX + to_urn_components.join('_')).tr!(':', '_')
   end
 
   def n_attribute

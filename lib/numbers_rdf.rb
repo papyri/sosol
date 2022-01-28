@@ -16,7 +16,7 @@ module NumbersRDF
     class << self
       # Converts e.g. 'papyri.info/hgv/1234' to '/hgv/1234'
       def identifier_to_local_identifier(identifier)
-        identifier.sub(/^#{NAMESPACE_IDENTIFIER}/, '')
+        identifier.sub(/^#{NAMESPACE_IDENTIFIER}/o, '')
       end
 
       # Converts e.g. 'http://papyri.info/hgv/1234/rdf' to 'papyri.info/hgv/1234'
@@ -52,7 +52,7 @@ module NumbersRDF
 
       # Converts e.g. 'papyri.info/hgv/1234' to 'http://papyri.info/hgv/1234'
       def identifier_to_url(identifier)
-        "http://#{identifier}" if identifier.present? && identifier =~ /^#{NAMESPACE_IDENTIFIER}/
+        "http://#{identifier}" if identifier.present? && identifier =~ /^#{NAMESPACE_IDENTIFIER}/o
       end
 
       # Gets the HTTP response for a given URL path.
