@@ -1,5 +1,9 @@
 require:
+  - rubocop-performance
   - rubocop-rails
+
+Performance/ConstantRegexp:
+  Enabled: false
 
 AllCops:
   NewCops: enable
