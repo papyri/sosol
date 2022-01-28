@@ -236,7 +236,7 @@ class Identifier < ApplicationRecord
 
     Identifier.transaction do
       publication.lock!
-      if publication.identifiers.select { |i| i.instance_of?(self) }.length.positive?
+      if publication.identifiers.count { |i| i.instance_of?(self) }.positive?
         return nil
       else
         new_identifier.publication = publication

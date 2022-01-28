@@ -1783,8 +1783,8 @@ class Publication < ApplicationRecord
   end
 
   def related_text
-    identifiers.select do |i|
+    identifiers.reverse.find do |i|
       ((i.instance_of?(DDBIdentifier) || i.instance_of?(DCLPTextIdentifier)) && !i.is_reprinted?) || i.instance_of?(DCLPMetaIdentifier)
-    end.last
+    end
   end
 end

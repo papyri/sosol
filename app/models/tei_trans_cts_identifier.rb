@@ -27,7 +27,7 @@ class TeiTransCTSIdentifier < TeiCTSIdentifier
   end
 
   def related_text
-    publication.identifiers.select { |i| i.instance_of?(TeiCTSIdentifier) && !i.is_reprinted? }.last
+    publication.identifiers.reverse.find { |i| i.instance_of?(TeiCTSIdentifier) && !i.is_reprinted? }
   end
 
   def stub_text_structure(lang, urn)
