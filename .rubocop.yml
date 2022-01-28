@@ -6,3 +6,6 @@ AllCops:
 
 Style/FrozenStringLiteralComment:
   Enabled: false
+
+Rails/ApplicationMailer:
+  Enabled: false

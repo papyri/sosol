@@ -1,4 +1,4 @@
-class EmailerMailer < ApplicationMailer
+class EmailerMailer < ActionMailer::Base
   include ActionView::Helpers::TextHelper
   default from: (Sosol::Application.config.site_email_from || Sosol::Application.config.site_name).to_s
 
