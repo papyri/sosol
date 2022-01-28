@@ -26,6 +26,7 @@ group :development, :test do
   gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
+  gem 'rubocop-rake'
 end
 
 gem 'haml-rails', '~> 2.0'
