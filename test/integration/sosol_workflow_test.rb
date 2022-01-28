@@ -278,7 +278,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.debug '--Meta publication approved'
 
         meta_final_publication = meta_publication.find_finalizer_publication
-        assert_equal meta_final_publication.status, 'finalizing', "Board user's publication is not for finalizing"
+        assert_equal('finalizing', meta_final_publication.status, "Board user's publication is not for finalizing")
         Rails.logger.debug '---Finalizer has publication'
 
         # call finalize on publication controller

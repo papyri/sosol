@@ -45,7 +45,7 @@ class BoardsControllerTest < ActionController::TestCase
 
   test 'should have max rank default' do
     post :create, params: { board: FactoryBot.build(:board).attributes }
-    assert assigns(:board).rank == Board.count
+    assert_equal assigns(:board).rank, Board.count
     assigns(:board).destroy
   end
 

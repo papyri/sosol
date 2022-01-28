@@ -77,8 +77,8 @@ class PublicationTest < ActiveSupport::TestCase
     end
 
     should 'have a branch with its branch attribute' do
-      assert @user.repository.branches.include?(@publication.branch),
-             "#{@user.repository.branches.inspect} does not include #{@publication.branch}"
+      assert_includes @user.repository.branches, @publication.branch,
+                      "#{@user.repository.branches.inspect} does not include #{@publication.branch}"
     end
 
     should 'delete its branch upon destruction' do
@@ -141,7 +141,7 @@ class PublicationTest < ActiveSupport::TestCase
     end
 
     should 'be a child of its parent' do
-      assert @publication.children.include?(@publication_copy)
+      assert_includes @publication.children, @publication_copy
     end
   end
 
@@ -167,7 +167,7 @@ class PublicationTest < ActiveSupport::TestCase
     end
 
     should 'have the branch' do
-      assert @user.repository.branches.include?(@publication.branch)
+      assert_includes @user.repository.branches, @publication.branch
     end
 
     should 'only have the original branches after deletion' do

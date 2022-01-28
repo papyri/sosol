@@ -9,8 +9,8 @@ class XmlTest < ActiveSupport::TestCase
     @element = REXML::Document.new(@xml).root.elements['//abc']
     @formatter = REXML::Formatters::Default.new
 
-    assert @doc.instance_of?(REXML::Document), "could not create xml document from #{@xml}"
-    assert @element.instance_of?(REXML::Element), "could not create xml element from #{@xml}"
+    assert_instance_of REXML::Document, @doc, "could not create xml document from #{@xml}"
+    assert_instance_of REXML::Element, @element, "could not create xml element from #{@xml}"
   end
 
   def test_rexml_xpath_fully_qualified_and_simple

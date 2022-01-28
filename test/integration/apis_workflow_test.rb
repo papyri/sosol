@@ -286,7 +286,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.debug '--APIS publication approved'
 
         apis_final_publication = apis_publication.find_finalizer_publication
-        assert_equal apis_final_publication.status, 'finalizing', "Board user's publication is not for finalizing"
+        assert_equal('finalizing', apis_final_publication.status, "Board user's publication is not for finalizing")
         Rails.logger.debug '---Finalizer has publication'
 
         # call finalize on publication controller

@@ -17,7 +17,7 @@ class BoardTest < ActiveSupport::TestCase
     end
 
     should 'have a repository' do
-      assert File.exist?(@path)
+      assert_path_exists(@path)
     end
 
     context 'upon destruction' do

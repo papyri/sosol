@@ -16,7 +16,7 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should 'have a repository' do
-      assert File.exist?(@path)
+      assert_path_exists(@path)
     end
 
     should 'delete its repository upon destruction' do

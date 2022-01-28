@@ -40,13 +40,14 @@ class OACIdentifierTest < ActiveSupport::TestCase
       matches = @oac_identifier.matching_targets(
         "#{Regexp.quote('urn:cts:greekLang:tlg0012.tlg001.perseus-grc1:1.1#')}?", @creator_uri
       )
-      assert matches.size == 1
+      assert_equal(1, matches.size)
       Rails.logger.info("Match = #{matches.inspect}")
       assert matches[0]['target'] = @test_uri1
     end
 
     should 'retrieve the target by edition urn' do
-      assert @oac_identifier.matching_targets('urn:cts:greekLang:tlg0012.tlg001.perseus-grc1', @creator_uri).size == 1
+      assert_equal(1,
+                   @oac_identifier.matching_targets('urn:cts:greekLang:tlg0012.tlg001.perseus-grc1', @creator_uri).size)
     end
 
     should 'have the target' do
@@ -72,7 +73,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
     end
 
     should 'find the parent identifier' do
-      assert OACIdentifier.find_from_parent(@publication, @parent) == @oac_identifier
+      assert_equal OACIdentifier.find_from_parent(@publication, @parent), @oac_identifier
     end
 
     context 'with a new annotation ' do
@@ -88,17 +89,17 @@ class OACIdentifierTest < ActiveSupport::TestCase
       should 'retrieve the annotation' do
         annotation = @oac_identifier.get_annotation(@test_uri2)
         assert_not annotation.nil?
-        assert @oac_identifier.get_targets(annotation).size == 1
-        assert @oac_identifier.get_targets(annotation)[0] == @test_tb2
-        assert @oac_identifier.get_body(annotation) == @test_tb1
-        assert @oac_identifier.get_title(annotation) == @test_title
-        assert @oac_identifier.get_creator(annotation) == @creator_uri
-        assert @oac_identifier.get_created(annotation) != ''
+        assert_equal(1, @oac_identifier.get_targets(annotation).size)
+        assert_equal @oac_identifier.get_targets(annotation)[0], @test_tb2
+        assert_equal @oac_identifier.get_body(annotation), @test_tb1
+        assert_equal @oac_identifier.get_title(annotation), @test_title
+        assert_equal @oac_identifier.get_creator(annotation), @creator_uri
+        assert_not_equal @oac_identifier.get_created(annotation), ''
       end
 
       should 'delete the annotation' do
         @oac_identifier.delete_annotation(@test_uri2, 'test delete')
-        assert @oac_identifier.get_annotation(@test_uri2).nil?
+        assert_nil @oac_identifier.get_annotation(@test_uri2)
         assert_not @oac_identifier.get_annotation(@test_uri1).nil?
       end
     end
