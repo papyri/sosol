@@ -150,7 +150,7 @@ GEM
       haml (>= 4.0.6, < 6.0)
       html2haml (>= 1.0.1)
       railties (>= 5.1)
-    handle_invalid_percent_encoding_requests (1.1.0)
+    handle_invalid_percent_encoding_requests (1.1.1)
       rack-utf8_sanitizer
       rails (>= 3.1)
     hashie (4.1.0)
