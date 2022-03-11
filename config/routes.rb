@@ -1,5 +1,6 @@
 Sosol::Application.routes.draw do
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
+  mount Rapporteur::Engine, at: '/status'
   resources :communities do
     member do
       get :find_member
