@@ -891,6 +891,8 @@ class BiblioIdentifier < HGVIdentifier
       non_database_attribute[:publisherList][non_database_attribute[:publisherList].length] =
         Publisher.new(type, value)
     end
+  rescue StandardError => e
+    Rails.logger.error("BiblioIdentifier#populateFromEpiDocPublisher exception: #{e.inspect}")
   end
 
   # Scans EpiDoc document for remarks and annotation and stores them in member +self.non_database_attribute[:note]+
