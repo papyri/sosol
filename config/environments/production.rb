@@ -81,7 +81,11 @@ Sosol::Application.configure do
   # config/environments/production_secret.rb should set
   # RPX_API_KEY and RPX_REALM (site name) for RPX,
   # and possibly other unversioned secrets for development
-  require File.join(File.dirname(__FILE__), 'production_secret')
+  begin
+    require File.join(File.dirname(__FILE__), 'production_secret')
+  rescue LoadError
+    STDERR.puts('WARNING: config/environments/production_secret.rb missing, no secrets loaded!')
+  end
   # configure email parameters
   config.site_email_from = 'admin@localhost'
 end

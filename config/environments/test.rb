@@ -40,7 +40,11 @@ Sosol::Application.configure do
   # and possibly other unversioned secrets for development
   # We set a placeholder RPX realm here for the test environment
   config.rpx_realm = 'sosol-test'
-  require File.join(File.dirname(__FILE__), 'test_secret')
+  begin
+    require File.join(File.dirname(__FILE__), 'test_secret')
+  rescue LoadError
+    STDERR.puts('WARNING: config/environments/test_secret.rb missing, no secrets loaded!')
+  end
 
   # Configure custom application parameters
   config.repository_root = File.join(::Rails.root.to_s, 'db', 'test', 'git')
