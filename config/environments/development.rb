@@ -28,7 +28,7 @@ Sosol::Application.configure do
   begin
     require File.join(File.dirname(__FILE__), 'development_secret')
   rescue LoadError
-    Rails.logger.warn('WARNING: config/environments/development_secret.rb missing, no secrets loaded!')
+    STDERR.puts('WARNING: config/environments/development_secret.rb missing, no secrets loaded!')
   end
   # configure email parameters
   config.site_email_from = 'admin@localhost'
