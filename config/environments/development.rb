@@ -25,7 +25,11 @@ Sosol::Application.configure do
   # config/environments/development_secret.rb should set
   # RPX_API_KEY and RPX_REALM (site name) for RPX,
   # and possibly other unversioned secrets for development
-  require File.join(File.dirname(__FILE__), 'development_secret')
+  begin
+    require File.join(File.dirname(__FILE__), 'development_secret')
+  rescue LoadError
+    Rails.logger.warn('WARNING: config/environments/development_secret.rb missing, no secrets loaded!')
+  end
   # configure email parameters
   config.site_email_from = 'admin@localhost'
   config.action_mailer.default_url_options = { host: 'localhost' }
