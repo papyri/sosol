@@ -11,6 +11,8 @@ on: [push, pull_request]
 
 jobs:
   test:
+    env:
+      RAILS_ENV: test
     runs-on: ubuntu-latest
     services:
       postgres:
