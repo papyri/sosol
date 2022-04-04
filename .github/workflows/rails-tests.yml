@@ -1,0 +1,66 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
+# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+
+name: Rails Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: sosol_test
+          POSTGRES_USER: sosol_test
+          POSTGRES_PASSWORD: sosol_test
+        options:
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev git
+    - name: Configure sysctl limits
+      run: |
+        sudo swapoff -a
+        sudo sysctl -w fs.inotify.max_user_watches=524288
+        sudo sysctl -w vm.swappiness=1
+        sudo sysctl -w fs.file-max=262144
+        sudo sysctl -w vm.max_map_count=262144
+    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
+    # change this to (see https://github.com/ruby/setup-ruby#versioning):
+    # uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@v1.100.0
+      with:
+        ruby-version: jruby-9.3.3.0
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: Configure externals
+      run: bundle exec cap local externals:setup
+    - name: Clone canonical
+      run: bundle exec rake git:db:canonical:clone
+    - name: Run tests
+      run: bundle exec rake test:all
+      env:
+        DATABASE_ADAPTER: postgresql
+        DATABASE_NAME: sosol_test
+        DATABASE_USERNAME: sosol_test
+        DATABASE_PASSWORD: sosol_test
+        DATABASE_HOSTNAME: localhost
+        DATABASE_POOL: 16
+    - name: Upload test logs
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: logs
+        path: log
+        retention-days: 1
