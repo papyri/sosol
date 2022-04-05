@@ -7,7 +7,7 @@
 == Requirements
 
 * Java SE 8+ (1.8+)
-* JRuby (9.2.14.0) - Preferably managed through {rbenv}[https://github.com/sstephenson/rbenv].
+* JRuby (9.3.4.0) - Preferably managed through {rbenv}[https://github.com/sstephenson/rbenv].
 * Bundler (2.2.10+) (gem install bundler)
 * Git (1.7.1+)
 
