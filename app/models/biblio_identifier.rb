@@ -591,7 +591,11 @@ class BiblioIdentifier < HGVIdentifier
       end
     end
 
-    @epiDoc.elements.delete_all XPATH[:publisherList]
+    begin
+      @epiDoc.elements.delete_all XPATH[:publisherList]
+    rescue RuntimeError => e
+      Rails.logger.info("Error deleting publisherList: #{e.inspect}")
+    end
     if non_database_attribute[:publisherList].is_a?(Array)
       basePath = XPATH[:publisherList][/\A(.+)node\(\).+\Z/, 1]
 
