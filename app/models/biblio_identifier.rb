@@ -401,9 +401,13 @@ class BiblioIdentifier < HGVIdentifier
   # Side effect on +@epiDoc+ (changes order of elements)
   def sortEpiDoc
     finalOrder.each do |xpath|
-      @epiDoc.each_element(xpath) do |element|
-        @epiDoc.root.delete element
-        @epiDoc.root.add element
+      begin
+        @epiDoc.each_element(xpath) do |element|
+          @epiDoc.root.delete element
+          @epiDoc.root.add element
+        end
+      rescue RuntimeError => e
+        Rails.logger.error(e.inspect)
       end
     end
   end
