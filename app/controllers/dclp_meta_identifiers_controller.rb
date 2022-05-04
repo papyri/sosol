@@ -247,6 +247,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
         end
       end
 
+      Rails.logger.info("DclpMetaIdentifiersController#complement_params: #{params.inspect}")
     end
   end
 end
