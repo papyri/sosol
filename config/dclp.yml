@@ -114,27 +114,14 @@
               :name: xml:lang
               :pattern: /\Agrc|la\Z/
             :ref:
-              # sample patterns and languages for phi, tlg, stoa and cwkb
+              :name: ref
+              :pattern: /\Ahttps?:\/\//
+              # sample patterns and languages for tm, tlg, stoa and cwkb
               # phi: http://data.perseus.org/catalog/urn:cts:latinLit:phi2200 (Latin)
               # tlg: http://data.perseus.org/catalog/urn:cts:greekLit:tlg2200 (Greek)
               # stoa: http://catalog.perseus.org/catalog/urn:cts:latinLit:stoa0040 (Latin)
               # cwkb: http://cwkb.org/author/id/2402/rdf
-              :phi:
-                :name: ref
-                :pattern: /\Ahttps?:\/\//
-                :split: ' '
-              :tlg:
-                :name: ref
-                :pattern: /\Ahttps?:\/\//
-                :split: ' '
-              :stoa:
-                :name: ref
-                :pattern: /\Ahttps?:\/\//
-                :split: ' '
-              :cwkb:
-                :name: ref
-                :pattern: /\Ahttps?:\/\//
-                :split: ' '
+              :split: ' '
           :children:
             :certainty:
               :xpath: certainty[@cert='low'][@locus='value']/@target
