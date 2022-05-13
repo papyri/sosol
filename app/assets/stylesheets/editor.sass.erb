@@ -51,7 +51,7 @@ $non_underlined_link: #4183c4
     background: #c0c0c0
     border-style: inset
   &:disabled
-    color: $pn_color + 140
+    color: adjust-color($pn_color, $red: 140, $green: 140, $blue: 140)
 
 
 #main
@@ -75,7 +75,7 @@ $non_underlined_link: #4183c4
   //background-color: red
 
 .loading
-  background: gray + 90
+  background: adjust-color(gray, $red: 90, $green: 90, $blue: 90)
   background-image: url("<%= asset_path("ajax_loader.gif") %>")
   background-repeat: no-repeat
   background-position: center center
