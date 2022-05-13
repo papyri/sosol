@@ -7,7 +7,7 @@ gem 'rails', '~> 6.1.5'
 
 # Needed for the new asset pipeline
 gem 'coffee-rails'
-gem 'sass-rails', '~> 5'
+gem 'sass-rails', '~> 6'
 gem 'therubyrhino'
 gem 'uglifier', '>= 1.0.3'
 
