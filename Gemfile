@@ -17,7 +17,6 @@ group :test do
   gem 'mocha'
   gem 'rails-controller-testing'
   gem 'rake'
-  gem 'shoulda'
   gem 'shoulda-context'
   gem 'shoulda-matchers'
 end
