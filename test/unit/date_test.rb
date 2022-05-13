@@ -738,11 +738,6 @@ class DateTest < ActiveSupport::TestCase
 
   def test_century_qualifier
     chronFunction({
-                    '0100-12-31' => { c: '1',  y: '', m: '', d: '', cq: '', yq: '', mq: '',
-                                      chron: :chronMax },
-                    '0500-12-31' => { c: '5',  y: '', m: '', d: '', cq: '', yq: '', mq: '',
-                                      chron: :chronMax },
-
                     '-0476-12-31' => { c: '-5', y: '', m: '', d: '', cq: 'beginning', yq: '', mq: '',
                                        chron: :chronMax },
                     '-0076-12-31' => { c: '-1', y: '', m: '', d: '', cq: 'beginning', yq: '', mq: '',
@@ -760,9 +755,6 @@ class DateTest < ActiveSupport::TestCase
                                       chron: :chronMin },
                     '0401-01-01' => { c: '5',  y: '', m: '', d: '', cq: 'first_half', yq: '', mq: '',
                                       chron: :chronMin },
-
-                    '-0075-01-01' => { c: '-1', y: '', m: '', d: '', cq: 'first_half_to_middle', yq: '', mq: '',
-                                       chron: :chronMin },
 
                     '-0451-12-31' => { c: '-5', y: '', m: '', d: '', cq: 'first_half_to_middle', yq: '', mq: '',
                                        chron: :chronMax },
@@ -782,9 +774,6 @@ class DateTest < ActiveSupport::TestCase
                     '0426-01-01' => { c: '5',  y: '', m: '', d: '', cq: 'middle', yq: '', mq: '',
                                       chron: :chronMin },
 
-                    '0475-12-31' => { c: '5',  y: '', m: '', d: '', cq: 'middle', yq: '', mq: '',
-                                      chron: :chronMax },
-
                     '-0426-12-31' => { c: '-5', y: '', m: '', d: '', cq: 'middle_to_second_half', yq: '', mq: '',
                                        chron: :chronMax },
                     '-0026-12-31' => { c: '-1', y: '', m: '', d: '', cq: 'middle_to_second_half', yq: '', mq: '',
@@ -802,11 +791,6 @@ class DateTest < ActiveSupport::TestCase
                                       chron: :chronMin },
                     '0451-01-01' => { c: '5',  y: '', m: '', d: '', cq: 'second_half', yq: '', mq: '',
                                       chron: :chronMin },
-
-                    '0100-12-31' => { c: '1',  y: '', m: '', d: '', cq: 'second_half', yq: '', mq: '',
-                                      chron: :chronMax },
-                    '0500-12-31' => { c: '5',  y: '', m: '', d: '', cq: 'second_half', yq: '', mq: '',
-                                      chron: :chronMax },
 
                     '-0425-01-01' => { c: '-5', y: '', m: '', d: '', cq: 'end', yq: '', mq: '',
                                        chron: :chronMin },
@@ -830,23 +814,6 @@ class DateTest < ActiveSupport::TestCase
 
   def test_year_qualifier
     chronFunction({
-                    '-0001-01-01' => { c: '', y: '-1',    m: '', d: '', cq: '', yq: '', mq: '',
-                                       chron: :chronMin },
-                    '-1976-01-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: '', mq: '',
-                                       chron: :chronMin },
-
-                    '0001-12-31' => { c: '', y: '1',     m: '', d: '', cq: '', yq: '', mq: '',
-                                      chron: :chronMax },
-                    '1976-12-31' => { c: '', y: '1976',  m: '', d: '', cq: '', yq: '', mq: '',
-                                      chron: :chronMax },
-                    '-1976-12-31' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: '', mq: '',
-                                       chron: :chronMax },
-
-                    '-0001-01-01' => { c: '', y: '-1',    m: '', d: '', cq: '', yq: 'beginning', mq: '',
-                                       chron: :chronMin },
-                    '-1976-01-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'beginning', mq: '',
-                                       chron: :chronMin },
-
                     '0001-03-31' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'beginning', mq: '',
                                       chron: :chronMax },
                     '1976-03-31' => { c: '', y: '1976',  m: '', d: '', cq: '', yq: 'beginning', mq: '',
@@ -865,30 +832,10 @@ class DateTest < ActiveSupport::TestCase
                     '-1976-01-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'first_half', mq: '',
                                        chron: :chronMin },
 
-                    '0001-06-30' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'first_half', mq: '',
-                                      chron: :chronMax },
-                    '1976-06-30' => { c: '', y: '1976',  m: '', d: '', cq: '', yq: 'first_half', mq: '',
-                                      chron: :chronMax },
-                    '-0001-06-30' => { c: '', y: '-1',    m: '', d: '', cq: '', yq: 'first_half', mq: '',
-                                       chron: :chronMax },
-                    '-1976-06-30' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'first_half', mq: '',
-                                       chron: :chronMax },
-
-                    '0001-04-01' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'first_half_to_middle',
-                                      mq: '', chron: :chronMin },
-                    '1976-04-01' => { c: '', y: '1976',  m: '', d: '', cq: '', yq: 'first_half_to_middle',
-                                      mq: '', chron: :chronMin },
-                    '-0001-04-01' => { c: '', y: '-1',    m: '', d: '', cq: '', yq: 'first_half_to_middle',
-                                       mq: '', chron: :chronMin },
-                    '-1976-04-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'first_half_to_middle',
-                                       mq: '', chron: :chronMin },
-
                     '0001-06-30' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'first_half_to_middle',
                                       mq: '', chron: :chronMax },
                     '1976-06-30' => { c: '', y: '1976',  m: '', d: '', cq: '', yq: 'first_half_to_middle',
                                       mq: '', chron: :chronMax },
-                    '-0001-06-30' => { c: '', y: '-1',    m: '', d: '', cq: '', yq: 'first_half_to_middle',
-                                       mq: '', chron: :chronMax },
                     '-1976-06-30' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'first_half_to_middle',
                                        mq: '', chron: :chronMax },
 
@@ -901,23 +848,6 @@ class DateTest < ActiveSupport::TestCase
                     '-1976-04-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'middle', mq: '',
                                        chron: :chronMin },
 
-                    '0001-09-30' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'middle', mq: '',
-                                      chron: :chronMax },
-                    '1976-09-30' => { c: '', y: '1976',  m: '', d: '', cq: '', yq: 'middle', mq: '',
-                                      chron: :chronMax },
-                    '-0001-09-30' => { c: '', y: '-1',    m: '', d: '', cq: '', yq: 'middle', mq: '',
-                                       chron: :chronMax },
-                    '-1976-09-30' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'middle', mq: '',
-                                       chron: :chronMax },
-
-                    '0001-07-01' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'middle_to_second_half',
-                                      mq: '', chron: :chronMin },
-                    '1976-07-01' => { c: '', y: '1976',  m: '', d: '', cq: '', yq: 'middle_to_second_half',
-                                      mq: '', chron: :chronMin },
-                    '-0001-07-01' => { c: '', y: '-1',    m: '', d: '', cq: '', yq: 'middle_to_second_half',
-                                       mq: '', chron: :chronMin },
-                    '-1976-07-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'middle_to_second_half',
-                                       mq: '', chron: :chronMin },
 
                     '0001-09-30' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'middle_to_second_half',
                                       mq: '', chron: :chronMax },
@@ -936,13 +866,6 @@ class DateTest < ActiveSupport::TestCase
                                        chron: :chronMin },
                     '-1976-07-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'second_half', mq: '',
                                        chron: :chronMin },
-
-                    '0001-12-31' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'second_half', mq: '',
-                                      chron: :chronMax },
-                    '1976-12-31' => { c: '', y: '1976',  m: '', d: '', cq: '', yq: 'second_half', mq: '',
-                                      chron: :chronMax },
-                    '-1976-12-31' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'second_half', mq: '',
-                                       chron: :chronMax },
 
                     '0001-10-01' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'end', mq: '',
                                       chron: :chronMin },
@@ -1052,24 +975,10 @@ class DateTest < ActiveSupport::TestCase
 
   def test_miscellaneous
     chronFunction({
-                    '0543-02-01' => { c: '6', y: '543', m: '2', d: '1', cq: '', yq: '', mq: '',
-                                      chron: :chronMin },
-                    '0543-02-01' => { c: '6', y: '543', m: '2', d: '1', cq: '', yq: '', mq: '',
-                                      chron: :chronMax },
-                    '-0543-02-01' => { c: '-6', y: '-543', m: '2', d: '1', cq: '', yq: '', mq: '',
-                                       chron: :chronMin },
-                    '-0543-02-01' => { c: '-6', y: '-543', m: '2', d: '1', cq: '', yq: '', mq: '',
-                                       chron: :chronMax },
-                    '0543-02-01' => { c: '6', y: '543', m: '2', d: '1', cq: 'middle', yq: 'beginning',
-                                      mq: 'beginning', chron: :chronMin },
                     '0543-02-01' => { c: '6', y: '543', m: '2', d: '1', cq: 'middle', yq: 'beginning',
                                       mq: 'beginning', chron: :chronMax },
                     '-0543-02-01' => { c: '-6', y: '-543', m: '2', d: '1', cq: 'middle', yq: 'beginning',
-                                       mq: 'beginning', chron: :chronMin },
-                    '-0543-02-01' => { c: '-6', y: '-543', m: '2', d: '1', cq: 'middle', yq: 'beginning',
                                        mq: 'beginning', chron: :chronMax },
-                    '-0257-02-29' => { c: '', y: '-257', m: '2', d: '29', cq: '', yq: '', mq: '',
-                                       chron: :chronMin },
                     '-0257-02-29' => { c: '', y: '-257', m: '2', d: '29', cq: '', yq: '', mq: '',
                                        chron: :chronMax }
                   })
