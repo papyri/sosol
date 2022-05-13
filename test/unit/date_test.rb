@@ -709,14 +709,8 @@ class DateTest < ActiveSupport::TestCase
                                       chron: :chronMin },
                           '0400' => { c: '4',  y: '', m: '', d: '', cq: '', yq: '', mq: '',
                                       chron: :chronMax },
-                          '-1976' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: '', mq: '',
-                                       chron: :chronMin },
                           '1976' => { c: '', y: '1976', m: '', d: '', cq: '', yq: '', mq: '',
                                       chron: :chronMax },
-                          '-1976-07' => { c: '', y: '-1976', m: 7, d: '', cq: '', yq: '', mq: '',
-                                          chron: :chronMin },
-                          '1976-08' => { c: '', y: '1976', m: 8, d: '', cq: '', yq: '', mq: '',
-                                         chron: :chronMax },
                           '-1976-07-06' => { c: '', y: '-1976', m: 7, d: '6', cq: '', yq: '', mq: '',
                                              chron: :chronMin },
                           '1976-08-07' => { c: '', y: '1976', m: 8, d: '7', cq: '', yq: '', mq: '',
@@ -730,21 +724,8 @@ class DateTest < ActiveSupport::TestCase
                                       chron: :chronMin },
                           '0350' => { c: '4',  y: '', m: '', d: '', cq: 'first_half', yq: '', mq: '',
                                       chron: :chronMax },
-                          '-1976' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'beginning', mq: '',
-                                       chron: :chronMin },
                           '1976' => { c: '', y: '1976', m: '', d: '', cq: '', yq: 'middle', mq: '',
                                       chron: :chronMax },
-                          '-1976-07' => { c: '', y: '-1976', m: 7, d: '', cq: '', yq: '', mq: 'middle',
-                                          chron: :chronMin },
-                          '1976-08' => { c: '', y: '1976', m: 8, d: '', cq: '', yq: '', mq: 'end',
-                                         chron: :chronMax },
-
-                          '' => { c: '-2', y: '', m: '', d: '', cq: '', yq: '', mq: '',
-                                  chron: :chron },
-                          '' => { c: '-1', y: '', m: '', d: '', cq: '', yq: '', mq: '',
-                                  chron: :chron },
-                          '' => { c: '3',  y: '', m: '', d: '', cq: '', yq: '', mq: '',
-                                  chron: :chron },
                           '' => { c: '4',  y: '', m: '', d: '', cq: '', yq: '', mq: '',
                                   chron: :chron },
 
@@ -765,15 +746,6 @@ class DateTest < ActiveSupport::TestCase
 
   def test_century_qualifier
     chronFunction({
-                    '-0500-01-01' => { c: '-5', y: '', m: '', d: '', cq: '', yq: '', mq: '',
-                                       chron: :chronMin },
-                    '-0100-01-01' => { c: '-1', y: '', m: '', d: '', cq: '', yq: '', mq: '',
-                                       chron: :chronMin },
-                    '0001-01-01' => { c: '1',  y: '', m: '', d: '', cq: '', yq: '', mq: '',
-                                      chron: :chronMin },
-                    '0401-01-01' => { c: '5',  y: '', m: '', d: '', cq: '', yq: '', mq: '',
-                                      chron: :chronMin },
-
                     '-0401-12-31' => { c: '-5', y: '', m: '', d: '', cq: '', yq: '', mq: '',
                                        chron: :chronMax },
                     '-0001-12-31' => { c: '-1', y: '', m: '', d: '', cq: '', yq: '', mq: '',
@@ -782,15 +754,6 @@ class DateTest < ActiveSupport::TestCase
                                       chron: :chronMax },
                     '0500-12-31' => { c: '5',  y: '', m: '', d: '', cq: '', yq: '', mq: '',
                                       chron: :chronMax },
-
-                    '-0500-01-01' => { c: '-5', y: '', m: '', d: '', cq: 'beginning', yq: '', mq: '',
-                                       chron: :chronMin },
-                    '-0100-01-01' => { c: '-1', y: '', m: '', d: '', cq: 'beginning', yq: '', mq: '',
-                                       chron: :chronMin },
-                    '0001-01-01' => { c: '1',  y: '', m: '', d: '', cq: 'beginning', yq: '', mq: '',
-                                      chron: :chronMin },
-                    '0401-01-01' => { c: '5',  y: '', m: '', d: '', cq: 'beginning', yq: '', mq: '',
-                                      chron: :chronMin },
 
                     '-0476-12-31' => { c: '-5', y: '', m: '', d: '', cq: 'beginning', yq: '', mq: '',
                                        chron: :chronMax },
@@ -810,8 +773,6 @@ class DateTest < ActiveSupport::TestCase
                     '0401-01-01' => { c: '5',  y: '', m: '', d: '', cq: 'first_half', yq: '', mq: '',
                                       chron: :chronMin },
 
-                    '-0451-12-31' => { c: '-5', y: '', m: '', d: '', cq: 'first_half', yq: '', mq: '',
-                                       chron: :chronMax },
                     '-0051-12-31' => { c: '-1', y: '', m: '', d: '', cq: 'first_half', yq: '', mq: '',
                                        chron: :chronMax },
                     '0050-12-31' => { c: '1',  y: '', m: '', d: '', cq: 'first_half', yq: '', mq: '',
@@ -913,10 +874,6 @@ class DateTest < ActiveSupport::TestCase
 
   def test_year_qualifier
     chronFunction({
-                    '0001-01-01' => { c: '', y: '1', m: '', d: '', cq: '', yq: '', mq: '',
-                                      chron: :chronMin },
-                    '1976-01-01' => { c: '', y: '1976', m: '', d: '', cq: '', yq: '', mq: '',
-                                      chron: :chronMin },
                     '-0001-01-01' => { c: '', y: '-1',    m: '', d: '', cq: '', yq: '', mq: '',
                                        chron: :chronMin },
                     '-1976-01-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: '', mq: '',
@@ -931,10 +888,6 @@ class DateTest < ActiveSupport::TestCase
                     '-1976-12-31' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: '', mq: '',
                                        chron: :chronMax },
 
-                    '0001-01-01' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'beginning', mq: '',
-                                      chron: :chronMin },
-                    '1976-01-01' => { c: '', y: '1976',  m: '', d: '', cq: '', yq: 'beginning', mq: '',
-                                      chron: :chronMin },
                     '-0001-01-01' => { c: '', y: '-1',    m: '', d: '', cq: '', yq: 'beginning', mq: '',
                                        chron: :chronMin },
                     '-1976-01-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'beginning', mq: '',
