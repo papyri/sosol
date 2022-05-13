@@ -63,7 +63,7 @@ gem 'rapporteur'
 gem 'rexml'
 gem 'rubyzip', '~> 1.0'
 gem 'silencer'
-gem 'sucker_punch', '~> 2.0'
+gem 'sucker_punch', '~> 3.0'
 gem 'tzinfo-data', platform: :jruby
 gem 'warbler', '~> 2.0'
 gem 'with_advisory_lock'

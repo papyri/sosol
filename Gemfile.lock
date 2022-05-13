@@ -347,7 +347,7 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    sucker_punch (2.1.2)
+    sucker_punch (3.0.1)
       concurrent-ruby (~> 1.0)
     temple (0.8.2)
     therubyrhino (2.1.2)
@@ -437,7 +437,7 @@ DEPENDENCIES
   shoulda-context
   shoulda-matchers
   silencer
-  sucker_punch (~> 2.0)
+  sucker_punch (~> 3.0)
   therubyrhino
   tzinfo-data
   uglifier (>= 1.0.3)
