@@ -89,7 +89,7 @@ class PublicationTest < ActiveSupport::TestCase
 
     should 'have valid XML for templates' do
       @publication.identifiers.each do |identifier|
-        assert identifier.is_valid_xml?
+        assert_predicate identifier, :is_valid_xml?
       end
     end
 

@@ -718,7 +718,7 @@ class DateTest < ActiveSupport::TestCase
                                       chron: :chronMin },
                           '0350' => { c: '4',  y: '', m: '', d: '', cq: 'first_half', yq: '', mq: '',
                                       chron: :chronMax },
-                          '' => { c: '4',  y: '', m: '', d: '', cq: '', yq: '', mq: '',
+                          '' => { c: '4', y: '', m: '', d: '', cq: '', yq: '', mq: '',
                                   chron: :chron },
 
                           '-1976' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: '', mq: '',
@@ -847,7 +847,6 @@ class DateTest < ActiveSupport::TestCase
                                        chron: :chronMin },
                     '-1976-04-01' => { c: '', y: '-1976', m: '', d: '', cq: '', yq: 'middle', mq: '',
                                        chron: :chronMin },
-
 
                     '0001-09-30' => { c: '', y: '1',     m: '', d: '', cq: '', yq: 'middle_to_second_half',
                                       mq: '', chron: :chronMax },

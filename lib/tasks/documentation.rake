@@ -13,7 +13,7 @@ namespace :doc do
   RDoc::Task.new('app') do |rdoc|
     rdoc.rdoc_dir = 'doc/app'
     rdoc.template = ENV['template'] if ENV['template']
-    rdoc.title    = ENV['title'] || 'Rails Application Documentation'
+    rdoc.title    = ENV.fetch('title', 'Rails Application Documentation')
     rdoc.options << '--line-numbers' << '--inline-source'
     rdoc.options << '--charset' << 'utf-8'
     rdoc.rdoc_files.include('README.rdoc')

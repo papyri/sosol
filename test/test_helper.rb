@@ -80,7 +80,7 @@ module ActiveSupport
     end
 
     def teardown_flock
-      FileUtils.remove_entry_secure ENV['FLOCK_DIR']
+      FileUtils.remove_entry_secure ENV.fetch('FLOCK_DIR', nil)
     end
 
     setup :setup_test_repository
