@@ -43,9 +43,9 @@ jobs:
     # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
     # change this to (see https://github.com/ruby/setup-ruby#versioning):
     # uses: ruby/setup-ruby@v1
-      uses: ruby/setup-ruby@v1.111.0
+      uses: ruby/setup-ruby@v1.115.3
       with:
-        ruby-version: jruby-9.3.6.0
+        ruby-version: jruby-9.3.7.0
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Configure externals
       run: bundle exec cap local externals:setup
