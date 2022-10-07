@@ -135,11 +135,11 @@ GEM
     ffi (1.15.5-java)
     globalid (1.0.0)
       activesupport (>= 5.0)
-    haml (6.0.4)
+    haml (6.0.5)
       temple (>= 0.8.2)
       thor
       tilt
-    haml (6.0.4-java)
+    haml (6.0.5-java)
       temple (>= 0.8.2)
       thor
       tilt
@@ -378,6 +378,7 @@ PLATFORMS
   universal-java-11
   universal-java-17
   universal-java-18
+  universal-java-19
   x86_64-linux
 
 DEPENDENCIES
