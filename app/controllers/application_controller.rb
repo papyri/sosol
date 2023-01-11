@@ -108,15 +108,17 @@ class ApplicationController < ActionController::Base
   end
 
   def rpx_setup
-    if Rails.env.test? && !defined?(Sosol::Application.config.rpx_api_key) && !defined?(Sosol::Application.config.rpx_realm)
-      @rpx = Rpx::RpxHelper.new('', Sosol::Application.config.rpx_base_url, '')
-      return true
-    elsif Sosol::Application.config.rpx_api_key.nil? || Sosol::Application.config.rpx_base_url.nil? || Sosol::Application.config.rpx_realm.nil?
-      render template: 'const_message'
-      return false
+    if Sosol::Application.config.respond_to?(:rpx_api_key)
+      if Rails.env.test? && !defined?(Sosol::Application.config.rpx_api_key) && !defined?(Sosol::Application.config.rpx_realm)
+        @rpx = Rpx::RpxHelper.new('', Sosol::Application.config.rpx_base_url, '')
+        return true
+      elsif Sosol::Application.config.rpx_api_key.nil? || Sosol::Application.config.rpx_base_url.nil? || Sosol::Application.config.rpx_realm.nil?
+        render template: 'const_message'
+        return false
+      end
+      @rpx = Rpx::RpxHelper.new(Sosol::Application.config.rpx_api_key, Sosol::Application.config.rpx_base_url,
+                                Sosol::Application.config.rpx_realm)
     end
-    @rpx = Rpx::RpxHelper.new(Sosol::Application.config.rpx_api_key, Sosol::Application.config.rpx_base_url,
-                              Sosol::Application.config.rpx_realm)
     true
   end
 
