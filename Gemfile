@@ -63,6 +63,7 @@ gem 'rexml'
 gem 'rubyzip', '~> 2'
 gem 'silencer'
 gem 'sucker_punch', '~> 3.0'
+gem 'thwait'
 gem 'tzinfo-data', platform: :jruby
 gem 'webrick'
 gem 'with_advisory_lock'
