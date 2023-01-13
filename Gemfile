@@ -64,5 +64,6 @@ gem 'rubyzip', '~> 2'
 gem 'silencer'
 gem 'sucker_punch', '~> 3.0'
 gem 'tzinfo-data', platform: :jruby
+gem 'webrick'
 gem 'with_advisory_lock'
 gem 'zip-zip'

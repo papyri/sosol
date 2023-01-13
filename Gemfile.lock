@@ -377,6 +377,7 @@ GEM
     version_gem (1.1.1)
     warden (1.2.9)
       rack (>= 2.0.9)
+    webrick (1.7.0)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-driver (0.7.5-java)
@@ -449,6 +450,7 @@ DEPENDENCIES
   therubyrhino
   tzinfo-data
   uglifier (>= 1.0.3)
+  webrick
   with_advisory_lock
   zip-zip
 
