@@ -1,6 +1,5 @@
 require 'English'
 require 'fileutils'
-require 'jgit_tree'
 require 'shellwords'
 
 class Repository
