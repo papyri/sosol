@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 ruby '3.1.0', engine: 'jruby', engine_version: '9.4.2.0'
 
-gem 'rails', '~> 6.1.5'
+gem 'rails', '~> 7.0'
 
 # Needed for the new asset pipeline
 gem 'coffee-rails'
@@ -35,10 +35,10 @@ gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/, '')
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'actionpack-page_caching'
-gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 61', platform: :jruby
-gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 61', platform: :jruby
-gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 61', platform: :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 61', platform: :jruby
+gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 70', platform: :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 70', platform: :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 70', platform: :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 70', platform: :jruby
 gem 'activerecord-session_store'
 gem 'airbrake'
 gem 'capistrano', '~> 2.15.0'
