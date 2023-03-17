@@ -14,9 +14,3 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"
 # end
-
-Rails.autoloaders.each do |autoloader|
-  autoloader.inflector.inflect(
-    "jruby" => "JRuby"
-  )
-end
