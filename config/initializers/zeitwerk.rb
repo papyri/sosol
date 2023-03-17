@@ -10,6 +10,7 @@ Rails.autoloaders.each do |autoloader|
     "dclp" => "DCLP",
     "apis" => "APIS",
     "ddb_identifier" => "DDBIdentifier",
+    "ddb_identifiers_controller" => "DDBIdentifiersController",
     "hgv_identifier" => "HGVIdentifier",
     "hgv_meta_identifier" => "HGVMetaIdentifier",
     "hgv_trans_identifier" => "HGVTransIdentifier",
