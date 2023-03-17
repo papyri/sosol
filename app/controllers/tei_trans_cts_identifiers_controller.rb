@@ -1,4 +1,4 @@
-class TeiTransCtsIdentifiersController < IdentifiersController
+class TEITransCTSIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_action :authorize
   # require 'xml'
@@ -29,10 +29,10 @@ class TeiTransCtsIdentifiersController < IdentifiersController
       # if the inventory doesn't have any edition for the translation then it's a new edition
       # whose urn will be in the CTSIdentifierEditionSelect param
       edition = params[:CTSIdentifierEditionSelect] if edition.nil?
-      @identifier = TeiTransCTSIdentifier.new_from_template(publication, collection, edition, 'translation', lang)
+      @identifier = TEITransCTSIdentifier.new_from_template(publication, collection, edition, 'translation', lang)
     else
       begin
-        @identifier = TeiTransCTSIdentifier.new_from_inventory(publication, collection, edition, 'translation')
+        @identifier = TEITransCTSIdentifier.new_from_inventory(publication, collection, edition, 'translation')
       rescue StandardError => e
         flash[:notice] = e.to_s
         redirect_to dashboard_url
@@ -89,6 +89,6 @@ class TeiTransCtsIdentifiersController < IdentifiersController
   protected
 
   def find_identifier
-    @identifier = TeiTransCTSIdentifier.find(params[:id].to_s)
+    @identifier = TEITransCTSIdentifier.find(params[:id].to_s)
   end
 end

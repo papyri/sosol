@@ -3,6 +3,8 @@ Rails.autoloaders.each do |autoloader|
   autoloader.inflector.inflect(
     "jruby" => "JRuby",
     "cts" => "CTS",
+    "tei" => "TEI",
+    "oac" => "OAC",
     "ddb" => "DDB",
     "hgv" => "HGV",
     "dclp" => "DCLP",

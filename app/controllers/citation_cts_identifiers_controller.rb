@@ -1,4 +1,4 @@
-class CitationCtsIdentifiersController < IdentifiersController
+class CitationCTSIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_action :authorize
 

@@ -1,4 +1,4 @@
-class EpiCtsIdentifiersController < IdentifiersController
+class EpiCTSIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_action :authorize
 

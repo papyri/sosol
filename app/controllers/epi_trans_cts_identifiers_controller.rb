@@ -1,4 +1,4 @@
-class EpiTransCtsIdentifiersController < IdentifiersController
+class EpiTransCTSIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_action :authorize
   # require 'xml'

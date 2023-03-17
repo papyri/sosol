@@ -1,4 +1,4 @@
-class OacIdentifiersController < IdentifiersController
+class OACIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_action :authorize
 

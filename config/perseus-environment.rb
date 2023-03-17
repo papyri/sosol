@@ -108,8 +108,8 @@ Rails::Initializer.run do |config|
   SITE_TAG_LINE = 'powered by Son of Suda Online'.freeze
   SITE_WIKI_LINK = '<a href="http://sites.tufts.edu/perseusupdates/beta-features/perseus-sosol/">the Perseus blog</a>.'.freeze
   SITE_LAYOUT = 'perseus'.freeze
-  SITE_IDENTIFIERS = 'TeiCTSIdentifier,TeiTransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier'.freeze
-  SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'.freeze
+  SITE_IDENTIFIERS = 'TEICTSIdentifier,TEITransCTSIdentifier,CitationCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,OACIdentifier,CTSInventoryIdentifier'.freeze
+  SITE_CTS_INVENTORIES = 'perseus|TEI,epifacs|Epi'.freeze
   SITE_CATALOG_SEARCH = 'View In Catalog'.freeze
   SITE_USER_NAMESPACE = 'data.perseus.org'.freeze
   SITE_OAC_NAMESPACE = 'http://data.perseus.org/annotations/sosol1'.freeze

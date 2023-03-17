@@ -12,19 +12,19 @@ module CTS
 
   module CTSLib
     class << self
-      # method which returns a CtsUrn object from the java chs cts3 library
+      # method which returns a CTSUrn object from the java chs cts3 library
       def urnObj(a_urn)
         if RUBY_PLATFORM == 'java'
           require 'java'
           require CTS_JAR_PATH
           require GROOVY_JAR_PATH
-          include_class('edu.harvard.chs.cts3.CtsUrn') { |_pkg, name| "J#{name}" }
-          urn = JCtsUrn.new(a_urn)
+          include_class('edu.harvard.chs.cts3.CTSUrn') { |_pkg, name| "J#{name}" }
+          urn = JCTSUrn.new(a_urn)
         else
           require 'rubygems'
           require 'rjb'
           Rjb.load(classpath = ".:#{CTS_JAR_PATH}:#{GROOVY_JAR_PATH}", jvmargs = [])
-          cts_urn_class = Rjb.import('edu.harvard.chs.cts3.CtsUrn')
+          cts_urn_class = Rjb.import('edu.harvard.chs.cts3.CTSUrn')
           urn = cts_urn_class.new(a_urn)
         end
         urn

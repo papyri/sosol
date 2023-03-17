@@ -1,4 +1,4 @@
-class CtsPublicationsController < PublicationsController
+class CTSPublicationsController < PublicationsController
   layout Sosol::Application.config.site_layout
   before_action :authorize
   before_action :ownership_guard,
