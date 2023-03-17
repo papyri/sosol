@@ -27,6 +27,7 @@ Rails.autoloaders.each do |autoloader|
     "epi_cts_identifier" => "EpiCTSIdentifier",
     "tei_cts_identifier" => "TEICTSIdentifier",
     "tei_trans_cts_identifier" => "TEITransCTSIdentifier",
+    "oac_identifier" => "OACIdentifier",
     "numbers_rdf" => "NumbersRDF",
     "jruby_xml" => "JRubyXML",
     "jgit" => "JGit"
