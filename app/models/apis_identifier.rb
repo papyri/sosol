@@ -23,10 +23,10 @@ class APISIdentifier < HGVMetaIdentifier
   end
 
   after_initialize :post_initialization_configuration
-  # Loads +ApisConfiguration+ object (APIS xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
+  # Loads +APISConfiguration+ object (APIS xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
   def post_initialization_configuration
-    @configuration = ApisConfiguration.new # YAML::load_file(File.join(Rails.root, %w{config apis.yml}))[:apis][:metadata]
+    @configuration = APISConfiguration.new # YAML::load_file(File.join(Rails.root, %w{config apis.yml}))[:apis][:metadata]
     @valid_epidoc_attributes = @configuration.keys
   end
 
@@ -117,7 +117,7 @@ class APISIdentifier < HGVMetaIdentifier
     'Description of document'
   end
 
-  class ApisConfiguration
+  class APISConfiguration
     attr_reader :scheme, :keys
 
     def initialize

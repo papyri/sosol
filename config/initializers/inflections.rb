@@ -14,4 +14,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym 'DDB'
   inflect.acronym 'HGV'
   inflect.acronym 'DCLP'
+  inflect.acronym 'APIS'
 end

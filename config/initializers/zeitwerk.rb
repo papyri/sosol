@@ -6,6 +6,7 @@ Rails.autoloaders.each do |autoloader|
     "ddb" => "DDB",
     "hgv" => "HGV",
     "dclp" => "DCLP",
+    "apis" => "APIS",
     "ddb_identifier" => "DDBIdentifier",
     "hgv_meta_identifier" => "HGVMetaIdentifier",
     "hgv_meta_identifier_helper" => "HGVMetaIdentifierHelper",
@@ -13,5 +14,6 @@ Rails.autoloaders.each do |autoloader|
     "dclp_meta_identifier_helper" => "DCLPMetaIdentifierHelper",
     "dclp_text_identifier" => "DCLPTextIdentifier",
     "dclp_text_identifier_helper" => "DCLPTextIdentifierHelper"
+    "apis_identifier" => "APISIdentifier"
   )
 end

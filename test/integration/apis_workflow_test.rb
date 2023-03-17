@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'ddiff'
 
-class ApisWorkflowTest < ActionDispatch::IntegrationTest
+class APISWorkflowTest < ActionDispatch::IntegrationTest
   def generate_board_vote_for_decree(_board, decree, identifier, user)
     FactoryBot.create(:vote,
                       publication_id: identifier.publication.id,
@@ -77,7 +77,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
   end
 end
 
-class ApisWorkflowTest < ActionDispatch::IntegrationTest
+class APISWorkflowTest < ActionDispatch::IntegrationTest
   context 'for idp3' do
     context 'apis testing' do
       setup do
