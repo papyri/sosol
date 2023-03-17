@@ -1,6 +1,6 @@
 require 'test_helper'
 
-include HGVMetaIdentifierHelper
+include HgvMetaIdentifierHelper
 
 class DateTest < ActiveSupport::TestCase
   def setup; end
