@@ -24,8 +24,6 @@ class Identifier < ApplicationRecord
 
   attr_accessor :unsaved_xml_content
 
-  require 'jruby_xml'
-
   delegate :url_helpers, to: 'Rails.application.routes'
 
   # - *Returns* :

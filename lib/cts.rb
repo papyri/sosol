@@ -1,5 +1,4 @@
 module CTS
-  require 'jruby_xml'
   require 'net/http'
   require 'uri'
 

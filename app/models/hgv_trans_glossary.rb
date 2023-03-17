@@ -2,8 +2,6 @@ class HGVTransGlossary < HGVTransIdentifier
   require 'rexml/document'
   include REXML
 
-  require 'jruby_xml'
-
   class Entry
     attr_accessor :item, :term, :text
 
