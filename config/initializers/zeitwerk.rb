@@ -17,6 +17,7 @@ Rails.autoloaders.each do |autoloader|
     "apis_identifier" => "APISIdentifier",
     "apis_identifier_helper" => "APISIdentifierHelper",
     "numbers_rdf" => "NumbersRDF",
-    "jruby_xml" => "JRubyXML"
+    "jruby_xml" => "JRubyXML",
+    "jgit" => "JGit"
   )
 end
