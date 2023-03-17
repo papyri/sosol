@@ -1,4 +1,4 @@
-class DdbIdentifiersController < IdentifiersController
+class DDBIdentifiersController < IdentifiersController
   # layout 'site'
   before_action :authorize
   before_action :ownership_guard, only: %i[update updatexml]
