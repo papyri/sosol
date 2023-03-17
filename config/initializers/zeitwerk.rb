@@ -16,6 +16,7 @@ Rails.autoloaders.each do |autoloader|
     "dclp_text_identifier_helper" => "DCLPTextIdentifierHelper",
     "apis_identifier" => "APISIdentifier",
     "apis_identifier_helper" => "APISIdentifierHelper",
+    "numbers_rdf" => "NumbersRDF",
     "jruby_xml" => "JRubyXML"
   )
 end
