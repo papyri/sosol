@@ -1,155 +1,155 @@
 require 'test_helper'
 
-include HgvMetaIdentifierHelper
+include HGVMetaIdentifierHelper
 
 class DateTest < ActiveSupport::TestCase
   def setup; end
 
   def test_get_precision
-    assert_nil            HgvDate.getPrecision(nil, nil, nil, nil),              'HgvDate.getPrecision'
-    assert_equal :medium, HgvDate.getPrecision('ca', nil, nil, nil),             'HgvDate.getPrecision'
-    assert_equal :lowlow, HgvDate.getPrecision(nil, 'beginningCirca', nil, nil), 'HgvDate.getPrecision'
-    assert_equal :lowlow, HgvDate.getPrecision(nil, nil, 'middleCirca', nil),    'HgvDate.getPrecision'
-    assert_equal :lowlow, HgvDate.getPrecision(nil, nil, nil, 'endCirca'),       'HgvDate.getPrecision'
-    assert_equal :low,    HgvDate.getPrecision(nil, 'end', nil, nil),            'HgvDate.getPrecision'
-    assert_equal :low,    HgvDate.getPrecision(nil, nil, 'middle', nil),         'HgvDate.getPrecision'
-    assert_equal :low,    HgvDate.getPrecision(nil, nil, nil, 'beginning'),      'HgvDate.getPrecision'
+    assert_nil            HGVDate.getPrecision(nil, nil, nil, nil),              'HGVDate.getPrecision'
+    assert_equal :medium, HGVDate.getPrecision('ca', nil, nil, nil),             'HGVDate.getPrecision'
+    assert_equal :lowlow, HGVDate.getPrecision(nil, 'beginningCirca', nil, nil), 'HGVDate.getPrecision'
+    assert_equal :lowlow, HGVDate.getPrecision(nil, nil, 'middleCirca', nil),    'HGVDate.getPrecision'
+    assert_equal :lowlow, HGVDate.getPrecision(nil, nil, nil, 'endCirca'),       'HGVDate.getPrecision'
+    assert_equal :low,    HGVDate.getPrecision(nil, 'end', nil, nil),            'HGVDate.getPrecision'
+    assert_equal :low,    HGVDate.getPrecision(nil, nil, 'middle', nil),         'HGVDate.getPrecision'
+    assert_equal :low,    HGVDate.getPrecision(nil, nil, nil, 'beginning'),      'HGVDate.getPrecision'
   end
 
   def test_hgv_to_epidoc
     assert_equal(
       { value: 'Mitte III - Anfang (?) V',
         attributes: { id: nil, when: nil, notBefore: '0226', notAfter: '0425', certainty: nil, precision: nil }, children: { offset: [], precision: [{ value: nil, attributes: { match: '../@notBefore', degree: '0.3' }, children: {} }, { value: nil, attributes: { match: '../@notAfter', degree: '0.1' }, children: {} }], certainty: [] } },
-      HgvDate.hgvToEpidoc({ c: 3, y: nil, m: nil, d: nil, cx: :middle, yx: nil, mx: nil, offset: nil,
+      HGVDate.hgvToEpidoc({ c: 3, y: nil, m: nil, d: nil, cx: :middle, yx: nil, mx: nil, offset: nil,
                             precision: nil, ca: false, c2: 5, y2: nil, m2: nil, d2: nil, cx2: :beginningCirca, yx2: nil, mx2: nil, offset2: nil, precision2: nil, ca2: true, certainty: nil, unknown: nil, error: nil, empty: nil }),
-      'HgvDate.hgvToEpiDoc'
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: '1884',
         attributes: { id: nil, when: '1884', notBefore: nil, notAfter: nil, certainty: nil, precision: nil }, children: { offset: [], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '1884' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '1884' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'vor 1884',
         attributes: { id: nil, when: nil, notBefore: nil, notAfter: '1884', certainty: nil, precision: nil }, children: { offset: [{ value: 'vor', attributes: { type: 'before', position: 1 }, children: {} }], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '1884', offset: 'before' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '1884', offset: 'before' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'nach 1884',
         attributes: { id: nil, when: nil, notBefore: '1884', notAfter: nil, certainty: nil, precision: nil }, children: { offset: [{ value: 'nach', attributes: { type: 'after', position: 1 }, children: {} }], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '1884', offset: 'after' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '1884', offset: 'after' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'Aug. 1884',
         attributes: { id: nil, when: '1884-08', notBefore: nil, notAfter: nil, certainty: nil, precision: nil }, children: { offset: [], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '1884', m: '8' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '1884', m: '8' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'vor Aug. 1884',
         attributes: { id: nil, when: nil, notBefore: nil, notAfter: '1884-08', certainty: nil, precision: nil }, children: { offset: [{ value: 'vor', attributes: { type: 'before', position: 1 }, children: {} }], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '1884', m: '8', offset: 'before' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '1884', m: '8', offset: 'before' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'nach Aug. 1884',
         attributes: { id: nil, when: nil, notBefore: '1884-08', notAfter: nil, certainty: nil, precision: nil }, children: { offset: [{ value: 'nach', attributes: { type: 'after', position: 1 }, children: {} }], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '1884', m: '8', offset: 'after' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '1884', m: '8', offset: 'after' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: '28. Aug. 1884',
         attributes: { id: nil, when: '1884-08-28', notBefore: nil, notAfter: nil, certainty: nil, precision: nil }, children: { offset: [], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '1884', m: '8', d: '28' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '1884', m: '8', d: '28' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'vor 28. Aug. 1884',
         attributes: { id: nil, when: nil, notBefore: nil, notAfter: '1884-08-28', certainty: nil, precision: nil }, children: { offset: [{ value: 'vor', attributes: { type: 'before', position: 1 }, children: {} }], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '1884', m: '8', d: '28', offset: 'before' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '1884', m: '8', d: '28', offset: 'before' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'nach 28. Aug. 1884',
         attributes: { id: nil, when: nil, notBefore: '1884-08-28', notAfter: nil, certainty: nil, precision: nil }, children: { offset: [{ value: 'nach', attributes: { type: 'after', position: 1 }, children: {} }], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '1884', m: '8', d: '28', offset: 'after' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '1884', m: '8', d: '28', offset: 'after' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: '1884 v.Chr.',
         attributes: { id: nil, when: '-1884', notBefore: nil, notAfter: nil, certainty: nil, precision: nil }, children: { offset: [], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '-1884' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '-1884' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'vor Aug. 1884 v.Chr.',
         attributes: { id: nil, when: nil, notBefore: nil, notAfter: '-1884-08', certainty: nil, precision: nil }, children: { offset: [{ value: 'vor', attributes: { type: 'before', position: 1 }, children: {} }], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '-1884', m: '8', offset: 'before' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '-1884', m: '8', offset: 'before' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'nach 28. Aug. 1884 v.Chr.',
         attributes: { id: nil, when: nil, notBefore: '-1884-08-28', notAfter: nil, certainty: nil, precision: nil }, children: { offset: [{ value: 'nach', attributes: { type: 'after', position: 1 }, children: {} }], precision: [], certainty: [] } },
-      HgvDate.hgvToEpidoc({ y: '-1884', m: '8', d: '28', offset: 'after' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '-1884', m: '8', d: '28', offset: 'after' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'vor (?) Aug. 1884 v.Chr.',
         attributes: { id: nil, when: nil, notBefore: nil, notAfter: '-1884-08', certainty: nil, precision: nil }, children: { offset: [{ value: 'vor (?)', attributes: { type: 'before', position: 1 }, children: {} }], precision: [], certainty: [{ value: nil, children: {}, attributes: { match: "../offset[@type='before']" } }] } },
       # {:value=>'', :attributes=>{:id=>nil, :when=>nil, :notBefore=>nil, :notAfter=>'-1884-08', :certainty=>nil, :precision=>nil}, :children=>{:offset=>[{:value => 'vor (?)', :attributes => {:type => 'before'}, :children => {}}], :precision=>[], :certainty=>[{:value => nil, :attribtues => {:match => "../offset[@type='before']"}, :children => {}}]}},
-      HgvDate.hgvToEpidoc({ y: '-1884', m: '8', offset: 'beforeUncertain' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '-1884', m: '8', offset: 'beforeUncertain' }),
+      'HGVDate.hgvToEpiDoc'
     )
 
     assert_equal(
       { value: 'nach (?) 28. Aug. 1884 v.Chr.',
         attributes: { id: nil, when: nil, notBefore: '-1884-08-28', notAfter: nil, certainty: nil, precision: nil }, children: { offset: [{ value: 'nach (?)', attributes: { type: 'after', position: 1 }, children: {} }], precision: [], certainty: [{ value: nil, children: {}, attributes: { match: "../offset[@type='after']" } }] } },
-      HgvDate.hgvToEpidoc({ y: '-1884', m: '8', d: '28', offset: 'afterUncertain' }),
-      'HgvDate.hgvToEpiDoc'
+      HGVDate.hgvToEpidoc({ y: '-1884', m: '8', d: '28', offset: 'afterUncertain' }),
+      'HGVDate.hgvToEpiDoc'
     )
   end
 
   def test_get_year_iso
-    assert_equal '0401', HgvDate.getYearIso(5, nil, :chronMin)
-    assert_equal '0500', HgvDate.getYearIso(5, nil, :chronMax)
-    assert_equal '-0500', HgvDate.getYearIso(-5, nil, :chronMin)
-    assert_equal '-0401', HgvDate.getYearIso(-5, nil, :chronMax)
+    assert_equal '0401', HGVDate.getYearIso(5, nil, :chronMin)
+    assert_equal '0500', HGVDate.getYearIso(5, nil, :chronMax)
+    assert_equal '-0500', HGVDate.getYearIso(-5, nil, :chronMin)
+    assert_equal '-0401', HGVDate.getYearIso(-5, nil, :chronMax)
 
-    assert_equal '0401', HgvDate.getYearIso(5, :beginning, :chronMin)
-    assert_equal '0425', HgvDate.getYearIso(5, :beginning, :chronMax)
-    assert_equal '-0500', HgvDate.getYearIso(-5, :beginning, :chronMin)
-    assert_equal '-0476', HgvDate.getYearIso(-5, :beginning, :chronMax)
+    assert_equal '0401', HGVDate.getYearIso(5, :beginning, :chronMin)
+    assert_equal '0425', HGVDate.getYearIso(5, :beginning, :chronMax)
+    assert_equal '-0500', HGVDate.getYearIso(-5, :beginning, :chronMin)
+    assert_equal '-0476', HGVDate.getYearIso(-5, :beginning, :chronMax)
 
-    assert_equal '0426', HgvDate.getYearIso(5, :middleCirca, :chronMin)
-    assert_equal '0475', HgvDate.getYearIso(5, :middleCirca, :chronMax)
-    assert_equal '-0475', HgvDate.getYearIso(-5, :middleCirca, :chronMin)
-    assert_equal '-0426', HgvDate.getYearIso(-5, :middleCirca, :chronMax)
+    assert_equal '0426', HGVDate.getYearIso(5, :middleCirca, :chronMin)
+    assert_equal '0475', HGVDate.getYearIso(5, :middleCirca, :chronMax)
+    assert_equal '-0475', HGVDate.getYearIso(-5, :middleCirca, :chronMin)
+    assert_equal '-0426', HGVDate.getYearIso(-5, :middleCirca, :chronMax)
 
-    assert_equal '0476', HgvDate.getYearIso(5, :end, :chronMin)
-    assert_equal '0500', HgvDate.getYearIso(5, :end, :chronMax)
-    assert_equal '-0425', HgvDate.getYearIso(-5, :end, :chronMin)
-    assert_equal '-0401', HgvDate.getYearIso(-5, :end, :chronMax)
+    assert_equal '0476', HGVDate.getYearIso(5, :end, :chronMin)
+    assert_equal '0500', HGVDate.getYearIso(5, :end, :chronMax)
+    assert_equal '-0425', HGVDate.getYearIso(-5, :end, :chronMin)
+    assert_equal '-0401', HGVDate.getYearIso(-5, :end, :chronMax)
   end
 
   def test_epidoc_to_hgv
     assert_equal({ c: 3, cx: :middle, ca: false, c2: 5, cx2: :beginningCirca, ca2: true, certainty: :low },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'Mitte III - Anfang (?) V (?)',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -172,10 +172,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ c: 3, ca: true, c2: 5, ca2: true, precision: :ca, precision2: :ca },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'ca. III - ca. V',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -195,10 +195,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, yx: :beginning, ca: false, ca2: false, certainty: :year },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'Anfang 1884 (Jahr unsicher)',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -219,10 +219,10 @@ class DateTest < ActiveSupport::TestCase
                                          ]
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, yx: :summer, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'Sommer 1884',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -238,10 +238,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, yx: :end, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'Ende 1884',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -257,10 +257,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, yx: :end, y2: 1976, yx2: :beginning, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'Ende 1884 - Anfang 1976',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -276,10 +276,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, yx: :end, y2: 1976, m2: 3, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'Ende 1884 - März 1976',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -296,10 +296,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, yx: :end, y2: 1976, m2: 3, d2: 5, ca: false, ca2: false, certainty: :month_year },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'Ende 1884 - 5. März 1976 (Jahr und Monat unsicher)',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -321,10 +321,10 @@ class DateTest < ActiveSupport::TestCase
                                          ]
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, y2: 1976, yx2: :beginning, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: '1884 - Anfang 1976',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -341,10 +341,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, y2: 1976, m2: 3, mx2: :beginning, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: '1884 - Anfang März 1976',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -361,10 +361,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, yx: :end, y2: 1976, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'Ende 1884 - 1976',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -384,10 +384,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, m: 8, d: 28, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: '28. Aug. 1884',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -403,10 +403,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, m: 8, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: 'Aug. 1884',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -422,10 +422,10 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
 
     assert_equal({ y: 1884, ca: false, ca2: false },
-                 HgvDate.epidocToHgv({
+                 HGVDate.epidocToHGV({
                                        value: '1884',
                                        attributes: {
                                          textDateId: 'dateAlternativeX',
@@ -441,262 +441,262 @@ class DateTest < ActiveSupport::TestCase
                                          certainty: []
                                        }
                                      }).delete_if { |_k, v| v.nil? },
-                 'HgvDate.epidocToHgv()')
+                 'HGVDate.epidocToHGV()')
   end
 
   def test_get_century
-    assert_equal 1, HgvDate.getCentury(1), 'HgvDate.getCentury()'
-    assert_equal 1, HgvDate.getCentury(2), 'HgvDate.getCentury()'
-    assert_equal 1, HgvDate.getCentury(3), 'HgvDate.getCentury()'
-    assert_equal 1, HgvDate.getCentury(49), 'HgvDate.getCentury()'
-    assert_equal 1, HgvDate.getCentury(50), 'HgvDate.getCentury()'
-    assert_equal 1, HgvDate.getCentury(51), 'HgvDate.getCentury()'
-    assert_equal 1, HgvDate.getCentury(98), 'HgvDate.getCentury()'
-    assert_equal 1, HgvDate.getCentury(99), 'HgvDate.getCentury()'
-    assert_equal 1, HgvDate.getCentury(100), 'HgvDate.getCentury()'
+    assert_equal 1, HGVDate.getCentury(1), 'HGVDate.getCentury()'
+    assert_equal 1, HGVDate.getCentury(2), 'HGVDate.getCentury()'
+    assert_equal 1, HGVDate.getCentury(3), 'HGVDate.getCentury()'
+    assert_equal 1, HGVDate.getCentury(49), 'HGVDate.getCentury()'
+    assert_equal 1, HGVDate.getCentury(50), 'HGVDate.getCentury()'
+    assert_equal 1, HGVDate.getCentury(51), 'HGVDate.getCentury()'
+    assert_equal 1, HGVDate.getCentury(98), 'HGVDate.getCentury()'
+    assert_equal 1, HGVDate.getCentury(99), 'HGVDate.getCentury()'
+    assert_equal 1, HGVDate.getCentury(100), 'HGVDate.getCentury()'
 
-    assert_equal 2, HgvDate.getCentury(101), 'HgvDate.getCentury()'
-    assert_equal 2, HgvDate.getCentury(102), 'HgvDate.getCentury()'
-    assert_equal 2, HgvDate.getCentury(103), 'HgvDate.getCentury()'
-    assert_equal 2, HgvDate.getCentury(149), 'HgvDate.getCentury()'
-    assert_equal 2, HgvDate.getCentury(150), 'HgvDate.getCentury()'
-    assert_equal 2, HgvDate.getCentury(151), 'HgvDate.getCentury()'
-    assert_equal 2, HgvDate.getCentury(198), 'HgvDate.getCentury()'
-    assert_equal 2, HgvDate.getCentury(199), 'HgvDate.getCentury()'
-    assert_equal 2, HgvDate.getCentury(200), 'HgvDate.getCentury()'
+    assert_equal 2, HGVDate.getCentury(101), 'HGVDate.getCentury()'
+    assert_equal 2, HGVDate.getCentury(102), 'HGVDate.getCentury()'
+    assert_equal 2, HGVDate.getCentury(103), 'HGVDate.getCentury()'
+    assert_equal 2, HGVDate.getCentury(149), 'HGVDate.getCentury()'
+    assert_equal 2, HGVDate.getCentury(150), 'HGVDate.getCentury()'
+    assert_equal 2, HGVDate.getCentury(151), 'HGVDate.getCentury()'
+    assert_equal 2, HGVDate.getCentury(198), 'HGVDate.getCentury()'
+    assert_equal 2, HGVDate.getCentury(199), 'HGVDate.getCentury()'
+    assert_equal 2, HGVDate.getCentury(200), 'HGVDate.getCentury()'
 
-    assert_equal 20, HgvDate.getCentury(1901), 'HgvDate.getCentury()'
-    assert_equal 20, HgvDate.getCentury(1902), 'HgvDate.getCentury()'
-    assert_equal 20, HgvDate.getCentury(1903), 'HgvDate.getCentury()'
-    assert_equal 20, HgvDate.getCentury(1949), 'HgvDate.getCentury()'
-    assert_equal 20, HgvDate.getCentury(1950), 'HgvDate.getCentury()'
-    assert_equal 20, HgvDate.getCentury(1951), 'HgvDate.getCentury()'
-    assert_equal 20, HgvDate.getCentury(1998), 'HgvDate.getCentury()'
-    assert_equal 20, HgvDate.getCentury(1999), 'HgvDate.getCentury()'
-    assert_equal 20, HgvDate.getCentury(2000), 'HgvDate.getCentury()'
+    assert_equal 20, HGVDate.getCentury(1901), 'HGVDate.getCentury()'
+    assert_equal 20, HGVDate.getCentury(1902), 'HGVDate.getCentury()'
+    assert_equal 20, HGVDate.getCentury(1903), 'HGVDate.getCentury()'
+    assert_equal 20, HGVDate.getCentury(1949), 'HGVDate.getCentury()'
+    assert_equal 20, HGVDate.getCentury(1950), 'HGVDate.getCentury()'
+    assert_equal 20, HGVDate.getCentury(1951), 'HGVDate.getCentury()'
+    assert_equal 20, HGVDate.getCentury(1998), 'HGVDate.getCentury()'
+    assert_equal 20, HGVDate.getCentury(1999), 'HGVDate.getCentury()'
+    assert_equal 20, HGVDate.getCentury(2000), 'HGVDate.getCentury()'
 
-    assert_equal(-1, HgvDate.getCentury(-1), 'HgvDate.getCentury()')
-    assert_equal(-1, HgvDate.getCentury(-2), 'HgvDate.getCentury()')
-    assert_equal(-1, HgvDate.getCentury(-3), 'HgvDate.getCentury()')
-    assert_equal(-1, HgvDate.getCentury(-49), 'HgvDate.getCentury()')
-    assert_equal(-1, HgvDate.getCentury(-50), 'HgvDate.getCentury()')
-    assert_equal(-1, HgvDate.getCentury(-51), 'HgvDate.getCentury()')
-    assert_equal(-1, HgvDate.getCentury(-98), 'HgvDate.getCentury()')
-    assert_equal(-1, HgvDate.getCentury(-99), 'HgvDate.getCentury()')
-    assert_equal(-1, HgvDate.getCentury(-100), 'HgvDate.getCentury()')
+    assert_equal(-1, HGVDate.getCentury(-1), 'HGVDate.getCentury()')
+    assert_equal(-1, HGVDate.getCentury(-2), 'HGVDate.getCentury()')
+    assert_equal(-1, HGVDate.getCentury(-3), 'HGVDate.getCentury()')
+    assert_equal(-1, HGVDate.getCentury(-49), 'HGVDate.getCentury()')
+    assert_equal(-1, HGVDate.getCentury(-50), 'HGVDate.getCentury()')
+    assert_equal(-1, HGVDate.getCentury(-51), 'HGVDate.getCentury()')
+    assert_equal(-1, HGVDate.getCentury(-98), 'HGVDate.getCentury()')
+    assert_equal(-1, HGVDate.getCentury(-99), 'HGVDate.getCentury()')
+    assert_equal(-1, HGVDate.getCentury(-100), 'HGVDate.getCentury()')
 
-    assert_equal(-2, HgvDate.getCentury(-101), 'HgvDate.getCentury()')
-    assert_equal(-2, HgvDate.getCentury(-102), 'HgvDate.getCentury()')
-    assert_equal(-2, HgvDate.getCentury(-103), 'HgvDate.getCentury()')
-    assert_equal(-2, HgvDate.getCentury(-149), 'HgvDate.getCentury()')
-    assert_equal(-2, HgvDate.getCentury(-150), 'HgvDate.getCentury()')
-    assert_equal(-2, HgvDate.getCentury(-151), 'HgvDate.getCentury()')
-    assert_equal(-2, HgvDate.getCentury(-198), 'HgvDate.getCentury()')
-    assert_equal(-2, HgvDate.getCentury(-199), 'HgvDate.getCentury()')
-    assert_equal(-2, HgvDate.getCentury(-200), 'HgvDate.getCentury()')
+    assert_equal(-2, HGVDate.getCentury(-101), 'HGVDate.getCentury()')
+    assert_equal(-2, HGVDate.getCentury(-102), 'HGVDate.getCentury()')
+    assert_equal(-2, HGVDate.getCentury(-103), 'HGVDate.getCentury()')
+    assert_equal(-2, HGVDate.getCentury(-149), 'HGVDate.getCentury()')
+    assert_equal(-2, HGVDate.getCentury(-150), 'HGVDate.getCentury()')
+    assert_equal(-2, HGVDate.getCentury(-151), 'HGVDate.getCentury()')
+    assert_equal(-2, HGVDate.getCentury(-198), 'HGVDate.getCentury()')
+    assert_equal(-2, HGVDate.getCentury(-199), 'HGVDate.getCentury()')
+    assert_equal(-2, HGVDate.getCentury(-200), 'HGVDate.getCentury()')
 
-    assert_equal(-20, HgvDate.getCentury(-1901), 'HgvDate.getCentury()')
-    assert_equal(-20, HgvDate.getCentury(-1902), 'HgvDate.getCentury()')
-    assert_equal(-20, HgvDate.getCentury(-1903), 'HgvDate.getCentury()')
-    assert_equal(-20, HgvDate.getCentury(-1949), 'HgvDate.getCentury()')
-    assert_equal(-20, HgvDate.getCentury(-1950), 'HgvDate.getCentury()')
-    assert_equal(-20, HgvDate.getCentury(-1951), 'HgvDate.getCentury()')
-    assert_equal(-20, HgvDate.getCentury(-1998), 'HgvDate.getCentury()')
-    assert_equal(-20, HgvDate.getCentury(-1999), 'HgvDate.getCentury()')
-    assert_equal(-20, HgvDate.getCentury(-2000), 'HgvDate.getCentury()')
+    assert_equal(-20, HGVDate.getCentury(-1901), 'HGVDate.getCentury()')
+    assert_equal(-20, HGVDate.getCentury(-1902), 'HGVDate.getCentury()')
+    assert_equal(-20, HGVDate.getCentury(-1903), 'HGVDate.getCentury()')
+    assert_equal(-20, HGVDate.getCentury(-1949), 'HGVDate.getCentury()')
+    assert_equal(-20, HGVDate.getCentury(-1950), 'HGVDate.getCentury()')
+    assert_equal(-20, HGVDate.getCentury(-1951), 'HGVDate.getCentury()')
+    assert_equal(-20, HGVDate.getCentury(-1998), 'HGVDate.getCentury()')
+    assert_equal(-20, HGVDate.getCentury(-1999), 'HGVDate.getCentury()')
+    assert_equal(-20, HGVDate.getCentury(-2000), 'HGVDate.getCentury()')
   end
 
   def test_get_century_qualifier
-    assert_equal :middle, HgvDate.getCenturyQualifier(126, 175), 'HgvDate.getCenturyQualifier()'
-    assert_equal %i[middle middle], HgvDate.getCenturyQualifier(126, 275), 'HgvDate.getCenturyQualifier()'
+    assert_equal :middle, HGVDate.getCenturyQualifier(126, 175), 'HGVDate.getCenturyQualifier()'
+    assert_equal %i[middle middle], HGVDate.getCenturyQualifier(126, 275), 'HGVDate.getCenturyQualifier()'
   end
 
   def test_format_date
-    assert_equal '', HgvFormat.formatDate({}), 'HgvFormat.formatDate'
-    assert_equal 'V', HgvFormat.formatDate({ c: 5 }), 'HgvFormat.formatDate'
-    assert_equal 'V', HgvFormat.formatDate({ c: '5' }), 'HgvFormat.formatDate'
-    assert_equal 'Anfang V', HgvFormat.formatDate({ c: 5, cx: :beginning }), 'HgvFormat.formatDate'
-    assert_equal 'Anfang V', HgvFormat.formatDate({ c: 5, cx: 'beginning' }), 'HgvFormat.formatDate'
-    assert_equal '1976 - 1984', HgvFormat.formatDate({ y: 1976, y2: 1984 }), 'HgvFormat.formatDate'
-    assert_equal '1976 - 1984', HgvFormat.formatDate({ y: '1976', y2: '1984' }), 'HgvFormat.formatDate'
+    assert_equal '', HGVFormat.formatDate({}), 'HGVFormat.formatDate'
+    assert_equal 'V', HGVFormat.formatDate({ c: 5 }), 'HGVFormat.formatDate'
+    assert_equal 'V', HGVFormat.formatDate({ c: '5' }), 'HGVFormat.formatDate'
+    assert_equal 'Anfang V', HGVFormat.formatDate({ c: 5, cx: :beginning }), 'HGVFormat.formatDate'
+    assert_equal 'Anfang V', HGVFormat.formatDate({ c: 5, cx: 'beginning' }), 'HGVFormat.formatDate'
+    assert_equal '1976 - 1984', HGVFormat.formatDate({ y: 1976, y2: 1984 }), 'HGVFormat.formatDate'
+    assert_equal '1976 - 1984', HGVFormat.formatDate({ y: '1976', y2: '1984' }), 'HGVFormat.formatDate'
     assert_equal 'Ende 1976 - Anfang 1984',
-                 HgvFormat.formatDate({ y: '1976', y2: '1984', yx: :end, yx2: :beginning }), 'HgvFormat.formatDate'
-    assert_equal 'V - III v.Chr.', HgvFormat.formatDate({ c: -5, c2: -3 }), 'HgvFormat.formatDate'
-    assert_equal 'vor V', HgvFormat.formatDate({ c: 5, offset: :before }), 'HgvFormat.formatDate'
-    assert_equal 'vor V', HgvFormat.formatDate({ c: 5, offset: 'before' }), 'HgvFormat.formatDate'
-    assert_equal 'ca. vor Ende V', HgvFormat.formatDate({ c: 5, offset: :before, precision: :ca, cx: :end }),
-                 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ y: '1976', y2: '1984', yx: :end, yx2: :beginning }), 'HGVFormat.formatDate'
+    assert_equal 'V - III v.Chr.', HGVFormat.formatDate({ c: -5, c2: -3 }), 'HGVFormat.formatDate'
+    assert_equal 'vor V', HGVFormat.formatDate({ c: 5, offset: :before }), 'HGVFormat.formatDate'
+    assert_equal 'vor V', HGVFormat.formatDate({ c: 5, offset: 'before' }), 'HGVFormat.formatDate'
+    assert_equal 'ca. vor Ende V', HGVFormat.formatDate({ c: 5, offset: :before, precision: :ca, cx: :end }),
+                 'HGVFormat.formatDate'
     assert_equal 'ca. vor Ende V',
-                 HgvFormat.formatDate({ c: 5, offset: :before, precision: 'ca', cx: :end }), 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ c: 5, offset: :before, precision: 'ca', cx: :end }), 'HGVFormat.formatDate'
     assert_equal 'vor Ende V (?)',
-                 HgvFormat.formatDate({ c: 5, offset: :before, certainty: :low, cx: :end }), 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ c: 5, offset: :before, certainty: :low, cx: :end }), 'HGVFormat.formatDate'
     assert_equal 'vor Ende V (?)',
-                 HgvFormat.formatDate({ c: 5, offset: :before, certainty: 'low', cx: :end }), 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ c: 5, offset: :before, certainty: 'low', cx: :end }), 'HGVFormat.formatDate'
     assert_equal 'nach 1976 - vor 1984',
-                 HgvFormat.formatDate({ y: 1976, y2: 1984, offset: :after, offset2: :before }), 'HgvFormat.formatDate'
-    assert_equal 'V - vor III v.Chr.', HgvFormat.formatDate({ c: -5, c2: -3, offset2: :before }),
-                 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ y: 1976, y2: 1984, offset: :after, offset2: :before }), 'HGVFormat.formatDate'
+    assert_equal 'V - vor III v.Chr.', HGVFormat.formatDate({ c: -5, c2: -3, offset2: :before }),
+                 'HGVFormat.formatDate'
     assert_equal 'nach 6. Juli 1976 - vor 28. Aug. 1984',
-                 HgvFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before }), 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before }), 'HGVFormat.formatDate'
     assert_equal 'nach 6. Juli 1976 - vor 28. Aug. 1984 (Jahr unsicher)',
-                 HgvFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: :year }), 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: :year }), 'HGVFormat.formatDate'
     assert_equal 'nach 6. Juli 1976 - vor 28. Aug. 1984 (Jahr unsicher)',
-                 HgvFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: 'year' }), 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: 'year' }), 'HGVFormat.formatDate'
     assert_equal 'nach 6. Juli 1976 - vor 28. Aug. 1984 (Jahr und Monat unsicher)',
-                 HgvFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: :month_year }), 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: :month_year }), 'HGVFormat.formatDate'
     assert_equal 'nach 6. Juli 1976 - vor 28. Aug. 1984 (Monat und Tag unsicher)',
-                 HgvFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: :day_month }), 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: :day_month }), 'HGVFormat.formatDate'
     assert_equal 'nach 6. Juli 1976 - vor 28. Aug. 1984 (Jahr, Monat und Tag unsicher)',
-                 HgvFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: :day_month_year }), 'HgvFormat.formatDate'
-    assert_equal 'Anfang Jan. 1976', HgvFormat.formatDate({ y: 1976, m: 1, mx: :beginning }),
-                 'HgvFormat.formatDate'
-    assert_equal '1. Hälfte 1976', HgvFormat.formatDate({ y: 1976, yx: :firstHalf }), 'HgvFormat.formatDate'
-    assert_equal 'Mitte - Ende V', HgvFormat.formatDate({ c: 5, cx: :middleToEnd }), 'HgvFormat.formatDate'
+                 HGVFormat.formatDate({ y: 1976, m: 7, d: 6, offset: :after, y2: 1984, m2: 8, d2: 28, offset2: :before, certainty: :day_month_year }), 'HGVFormat.formatDate'
+    assert_equal 'Anfang Jan. 1976', HGVFormat.formatDate({ y: 1976, m: 1, mx: :beginning }),
+                 'HGVFormat.formatDate'
+    assert_equal '1. Hälfte 1976', HGVFormat.formatDate({ y: 1976, yx: :firstHalf }), 'HGVFormat.formatDate'
+    assert_equal 'Mitte - Ende V', HGVFormat.formatDate({ c: 5, cx: :middleToEnd }), 'HGVFormat.formatDate'
   end
 
   def test_format_date_part
-    assert_equal 'Jan.',  HgvFormat.formatDatePart(nil, nil,  1), 'HgvFormat.formatDate'
-    assert_equal 'Febr.', HgvFormat.formatDatePart(nil, nil,  2), 'HgvFormat.formatDate'
-    assert_equal 'März',  HgvFormat.formatDatePart(nil, nil,  3), 'HgvFormat.formatDate'
-    assert_equal 'Apr.',  HgvFormat.formatDatePart(nil, nil,  4), 'HgvFormat.formatDate'
-    assert_equal 'Mai',   HgvFormat.formatDatePart(nil, nil,  5), 'HgvFormat.formatDate'
-    assert_equal 'Juni',  HgvFormat.formatDatePart(nil, nil,  6), 'HgvFormat.formatDate'
-    assert_equal 'Juli',  HgvFormat.formatDatePart(nil, nil,  7), 'HgvFormat.formatDate'
-    assert_equal 'Aug.',  HgvFormat.formatDatePart(nil, nil,  8), 'HgvFormat.formatDate'
-    assert_equal 'Sept.', HgvFormat.formatDatePart(nil, nil,  9), 'HgvFormat.formatDate'
-    assert_equal 'Okt.',  HgvFormat.formatDatePart(nil, nil, 10), 'HgvFormat.formatDate'
-    assert_equal 'Nov.',  HgvFormat.formatDatePart(nil, nil, 11), 'HgvFormat.formatDate'
-    assert_equal 'Dez.',  HgvFormat.formatDatePart(nil, nil, 12), 'HgvFormat.formatDate'
+    assert_equal 'Jan.',  HGVFormat.formatDatePart(nil, nil,  1), 'HGVFormat.formatDate'
+    assert_equal 'Febr.', HGVFormat.formatDatePart(nil, nil,  2), 'HGVFormat.formatDate'
+    assert_equal 'März',  HGVFormat.formatDatePart(nil, nil,  3), 'HGVFormat.formatDate'
+    assert_equal 'Apr.',  HGVFormat.formatDatePart(nil, nil,  4), 'HGVFormat.formatDate'
+    assert_equal 'Mai',   HGVFormat.formatDatePart(nil, nil,  5), 'HGVFormat.formatDate'
+    assert_equal 'Juni',  HGVFormat.formatDatePart(nil, nil,  6), 'HGVFormat.formatDate'
+    assert_equal 'Juli',  HGVFormat.formatDatePart(nil, nil,  7), 'HGVFormat.formatDate'
+    assert_equal 'Aug.',  HGVFormat.formatDatePart(nil, nil,  8), 'HGVFormat.formatDate'
+    assert_equal 'Sept.', HGVFormat.formatDatePart(nil, nil,  9), 'HGVFormat.formatDate'
+    assert_equal 'Okt.',  HGVFormat.formatDatePart(nil, nil, 10), 'HGVFormat.formatDate'
+    assert_equal 'Nov.',  HGVFormat.formatDatePart(nil, nil, 11), 'HGVFormat.formatDate'
+    assert_equal 'Dez.',  HGVFormat.formatDatePart(nil, nil, 12), 'HGVFormat.formatDate'
 
-    assert_equal '1. Jan.',   HgvFormat.formatDatePart(nil, nil,  1,  1), 'HgvFormat.formatDate'
-    assert_equal '2. Febr.',  HgvFormat.formatDatePart(nil, nil,  2,  2), 'HgvFormat.formatDate'
-    assert_equal '3. März',   HgvFormat.formatDatePart(nil, nil,  3,  3), 'HgvFormat.formatDate'
-    assert_equal '4. Apr.',   HgvFormat.formatDatePart(nil, nil,  4,  4), 'HgvFormat.formatDate'
-    assert_equal '5. Mai',    HgvFormat.formatDatePart(nil, nil,  5,  5), 'HgvFormat.formatDate'
-    assert_equal '6. Juni',   HgvFormat.formatDatePart(nil, nil,  6,  6), 'HgvFormat.formatDate'
-    assert_equal '7. Juli',   HgvFormat.formatDatePart(nil, nil,  7,  7), 'HgvFormat.formatDate'
-    assert_equal '8. Aug.',   HgvFormat.formatDatePart(nil, nil,  8,  8), 'HgvFormat.formatDate'
-    assert_equal '9. Sept.',  HgvFormat.formatDatePart(nil, nil,  9,  9), 'HgvFormat.formatDate'
-    assert_equal '10. Okt.',  HgvFormat.formatDatePart(nil, nil, 10, 10), 'HgvFormat.formatDate'
-    assert_equal '11. Nov.',  HgvFormat.formatDatePart(nil, nil, 11, 11), 'HgvFormat.formatDate'
-    assert_equal '12. Dez.',  HgvFormat.formatDatePart(nil, nil, 12, 12), 'HgvFormat.formatDate'
+    assert_equal '1. Jan.',   HGVFormat.formatDatePart(nil, nil,  1,  1), 'HGVFormat.formatDate'
+    assert_equal '2. Febr.',  HGVFormat.formatDatePart(nil, nil,  2,  2), 'HGVFormat.formatDate'
+    assert_equal '3. März',   HGVFormat.formatDatePart(nil, nil,  3,  3), 'HGVFormat.formatDate'
+    assert_equal '4. Apr.',   HGVFormat.formatDatePart(nil, nil,  4,  4), 'HGVFormat.formatDate'
+    assert_equal '5. Mai',    HGVFormat.formatDatePart(nil, nil,  5,  5), 'HGVFormat.formatDate'
+    assert_equal '6. Juni',   HGVFormat.formatDatePart(nil, nil,  6,  6), 'HGVFormat.formatDate'
+    assert_equal '7. Juli',   HGVFormat.formatDatePart(nil, nil,  7,  7), 'HGVFormat.formatDate'
+    assert_equal '8. Aug.',   HGVFormat.formatDatePart(nil, nil,  8,  8), 'HGVFormat.formatDate'
+    assert_equal '9. Sept.',  HGVFormat.formatDatePart(nil, nil,  9,  9), 'HGVFormat.formatDate'
+    assert_equal '10. Okt.',  HGVFormat.formatDatePart(nil, nil, 10, 10), 'HGVFormat.formatDate'
+    assert_equal '11. Nov.',  HGVFormat.formatDatePart(nil, nil, 11, 11), 'HGVFormat.formatDate'
+    assert_equal '12. Dez.',  HGVFormat.formatDatePart(nil, nil, 12, 12), 'HGVFormat.formatDate'
 
-    assert_equal '1. Jan. 1992',  HgvFormat.formatDatePart(nil, 1992,  1,  1), 'HgvFormat.formatDate'
-    assert_equal '2. Febr. 1834', HgvFormat.formatDatePart(nil, 1834,  2,  2), 'HgvFormat.formatDate'
-    assert_equal '3. März 2010',  HgvFormat.formatDatePart(nil, 2010,  3,  3), 'HgvFormat.formatDate'
-    assert_equal '4. Apr. 111',   HgvFormat.formatDatePart(nil,  111,  4,  4), 'HgvFormat.formatDate'
-    assert_equal '5. Mai 434',    HgvFormat.formatDatePart(nil,  434,  5,  5), 'HgvFormat.formatDate'
-    assert_equal '6. Juni 123',   HgvFormat.formatDatePart(nil,  123,  6,  6), 'HgvFormat.formatDate'
-    assert_equal '7. Juli 23',    HgvFormat.formatDatePart(nil,   23,  7,  7), 'HgvFormat.formatDate'
-    assert_equal '8. Aug. 45',    HgvFormat.formatDatePart(nil,   45,  8,  8), 'HgvFormat.formatDate'
-    assert_equal '9. Sept. 34',   HgvFormat.formatDatePart(nil,   34,  9,  9), 'HgvFormat.formatDate'
-    assert_equal '10. Okt. 2',    HgvFormat.formatDatePart(nil,    2, 10, 10), 'HgvFormat.formatDate'
-    assert_equal '11. Nov. 5',    HgvFormat.formatDatePart(nil,    5, 11, 11), 'HgvFormat.formatDate'
-    assert_equal '12. Dez. 8',    HgvFormat.formatDatePart(nil,    8, 12, 12), 'HgvFormat.formatDate'
+    assert_equal '1. Jan. 1992',  HGVFormat.formatDatePart(nil, 1992,  1,  1), 'HGVFormat.formatDate'
+    assert_equal '2. Febr. 1834', HGVFormat.formatDatePart(nil, 1834,  2,  2), 'HGVFormat.formatDate'
+    assert_equal '3. März 2010',  HGVFormat.formatDatePart(nil, 2010,  3,  3), 'HGVFormat.formatDate'
+    assert_equal '4. Apr. 111',   HGVFormat.formatDatePart(nil,  111,  4,  4), 'HGVFormat.formatDate'
+    assert_equal '5. Mai 434',    HGVFormat.formatDatePart(nil,  434,  5,  5), 'HGVFormat.formatDate'
+    assert_equal '6. Juni 123',   HGVFormat.formatDatePart(nil,  123,  6,  6), 'HGVFormat.formatDate'
+    assert_equal '7. Juli 23',    HGVFormat.formatDatePart(nil,   23,  7,  7), 'HGVFormat.formatDate'
+    assert_equal '8. Aug. 45',    HGVFormat.formatDatePart(nil,   45,  8,  8), 'HGVFormat.formatDate'
+    assert_equal '9. Sept. 34',   HGVFormat.formatDatePart(nil,   34,  9,  9), 'HGVFormat.formatDate'
+    assert_equal '10. Okt. 2',    HGVFormat.formatDatePart(nil,    2, 10, 10), 'HGVFormat.formatDate'
+    assert_equal '11. Nov. 5',    HGVFormat.formatDatePart(nil,    5, 11, 11), 'HGVFormat.formatDate'
+    assert_equal '12. Dez. 8',    HGVFormat.formatDatePart(nil,    8, 12, 12), 'HGVFormat.formatDate'
 
-    assert_equal '1. Jan. 1992 v.Chr.',  HgvFormat.formatDatePart(nil, -1992,  1,  1), 'HgvFormat.formatDate'
-    assert_equal '2. Febr. 1834 v.Chr.', HgvFormat.formatDatePart(nil, -1834,  2,  2), 'HgvFormat.formatDate'
-    assert_equal '3. März 2010 v.Chr.',  HgvFormat.formatDatePart(nil, -2010,  3,  3), 'HgvFormat.formatDate'
-    assert_equal '4. Apr. 111 v.Chr.',   HgvFormat.formatDatePart(nil,  -111,  4,  4), 'HgvFormat.formatDate'
-    assert_equal '5. Mai 434 v.Chr.',    HgvFormat.formatDatePart(nil,  -434,  5,  5), 'HgvFormat.formatDate'
-    assert_equal '6. Juni 123 v.Chr.',   HgvFormat.formatDatePart(nil,  -123,  6,  6), 'HgvFormat.formatDate'
-    assert_equal '7. Juli 23 v.Chr.',    HgvFormat.formatDatePart(nil,   -23,  7,  7), 'HgvFormat.formatDate'
-    assert_equal '8. Aug. 45 v.Chr.',    HgvFormat.formatDatePart(nil,   -45,  8,  8), 'HgvFormat.formatDate'
-    assert_equal '9. Sept. 34 v.Chr.',   HgvFormat.formatDatePart(nil,   -34,  9,  9), 'HgvFormat.formatDate'
-    assert_equal '10. Okt. 2 v.Chr.',    HgvFormat.formatDatePart(nil,    -2, 10, 10), 'HgvFormat.formatDate'
-    assert_equal '11. Nov. 5 v.Chr.',    HgvFormat.formatDatePart(nil,    -5, 11, 11), 'HgvFormat.formatDate'
-    assert_equal '12. Dez. 8 v.Chr.',    HgvFormat.formatDatePart(nil,    -8, 12, 12), 'HgvFormat.formatDate'
+    assert_equal '1. Jan. 1992 v.Chr.',  HGVFormat.formatDatePart(nil, -1992,  1,  1), 'HGVFormat.formatDate'
+    assert_equal '2. Febr. 1834 v.Chr.', HGVFormat.formatDatePart(nil, -1834,  2,  2), 'HGVFormat.formatDate'
+    assert_equal '3. März 2010 v.Chr.',  HGVFormat.formatDatePart(nil, -2010,  3,  3), 'HGVFormat.formatDate'
+    assert_equal '4. Apr. 111 v.Chr.',   HGVFormat.formatDatePart(nil,  -111,  4,  4), 'HGVFormat.formatDate'
+    assert_equal '5. Mai 434 v.Chr.',    HGVFormat.formatDatePart(nil,  -434,  5,  5), 'HGVFormat.formatDate'
+    assert_equal '6. Juni 123 v.Chr.',   HGVFormat.formatDatePart(nil,  -123,  6,  6), 'HGVFormat.formatDate'
+    assert_equal '7. Juli 23 v.Chr.',    HGVFormat.formatDatePart(nil,   -23,  7,  7), 'HGVFormat.formatDate'
+    assert_equal '8. Aug. 45 v.Chr.',    HGVFormat.formatDatePart(nil,   -45,  8,  8), 'HGVFormat.formatDate'
+    assert_equal '9. Sept. 34 v.Chr.',   HGVFormat.formatDatePart(nil,   -34,  9,  9), 'HGVFormat.formatDate'
+    assert_equal '10. Okt. 2 v.Chr.',    HGVFormat.formatDatePart(nil,    -2, 10, 10), 'HGVFormat.formatDate'
+    assert_equal '11. Nov. 5 v.Chr.',    HGVFormat.formatDatePart(nil,    -5, 11, 11), 'HGVFormat.formatDate'
+    assert_equal '12. Dez. 8 v.Chr.',    HGVFormat.formatDatePart(nil,    -8, 12, 12), 'HGVFormat.formatDate'
 
-    assert_equal 'Jan. 1',           HgvFormat.formatDatePart(nil,     1,  1), 'HgvFormat.formatDate'
-    assert_equal 'Febr. 1 v.Chr.',   HgvFormat.formatDatePart(nil,    -1,  2), 'HgvFormat.formatDate'
-    assert_equal 'März 23',          HgvFormat.formatDatePart(nil,    23,  3), 'HgvFormat.formatDate'
-    assert_equal 'Apr. 23 v.Chr.',   HgvFormat.formatDatePart(nil,   -23,  4), 'HgvFormat.formatDate'
-    assert_equal 'Mai 345',          HgvFormat.formatDatePart(nil,   345,  5), 'HgvFormat.formatDate'
-    assert_equal 'Juni 345 v.Chr.',  HgvFormat.formatDatePart(nil,  -345,  6), 'HgvFormat.formatDate'
-    assert_equal 'Juli 1921',        HgvFormat.formatDatePart(nil,  1921,  7), 'HgvFormat.formatDate'
-    assert_equal 'Aug. 1921 v.Chr.', HgvFormat.formatDatePart(nil, -1921,  8), 'HgvFormat.formatDate'
-    assert_equal 'Sept. 4',          HgvFormat.formatDatePart(nil, 4, 9), 'HgvFormat.formatDate'
-    assert_equal 'Okt. 45 v.Chr.',   HgvFormat.formatDatePart(nil,   -45, 10), 'HgvFormat.formatDate'
-    assert_equal 'Nov. 678',         HgvFormat.formatDatePart(nil,   678, 11), 'HgvFormat.formatDate'
-    assert_equal 'Dez. 1918 v.Chr.', HgvFormat.formatDatePart(nil, -1918, 12), 'HgvFormat.formatDate'
+    assert_equal 'Jan. 1',           HGVFormat.formatDatePart(nil,     1,  1), 'HGVFormat.formatDate'
+    assert_equal 'Febr. 1 v.Chr.',   HGVFormat.formatDatePart(nil,    -1,  2), 'HGVFormat.formatDate'
+    assert_equal 'März 23',          HGVFormat.formatDatePart(nil,    23,  3), 'HGVFormat.formatDate'
+    assert_equal 'Apr. 23 v.Chr.',   HGVFormat.formatDatePart(nil,   -23,  4), 'HGVFormat.formatDate'
+    assert_equal 'Mai 345',          HGVFormat.formatDatePart(nil,   345,  5), 'HGVFormat.formatDate'
+    assert_equal 'Juni 345 v.Chr.',  HGVFormat.formatDatePart(nil,  -345,  6), 'HGVFormat.formatDate'
+    assert_equal 'Juli 1921',        HGVFormat.formatDatePart(nil,  1921,  7), 'HGVFormat.formatDate'
+    assert_equal 'Aug. 1921 v.Chr.', HGVFormat.formatDatePart(nil, -1921,  8), 'HGVFormat.formatDate'
+    assert_equal 'Sept. 4',          HGVFormat.formatDatePart(nil, 4, 9), 'HGVFormat.formatDate'
+    assert_equal 'Okt. 45 v.Chr.',   HGVFormat.formatDatePart(nil,   -45, 10), 'HGVFormat.formatDate'
+    assert_equal 'Nov. 678',         HGVFormat.formatDatePart(nil,   678, 11), 'HGVFormat.formatDate'
+    assert_equal 'Dez. 1918 v.Chr.', HGVFormat.formatDatePart(nil, -1918, 12), 'HGVFormat.formatDate'
 
-    assert_equal 'I',     HgvFormat.formatDatePart(1), 'HgvFormat.formatDate'
-    assert_equal 'II',    HgvFormat.formatDatePart(2), 'HgvFormat.formatDate'
-    assert_equal 'III',   HgvFormat.formatDatePart(3), 'HgvFormat.formatDate'
-    assert_equal 'IV',    HgvFormat.formatDatePart(4), 'HgvFormat.formatDate'
-    assert_equal 'V',     HgvFormat.formatDatePart(5), 'HgvFormat.formatDate'
-    assert_equal 'VI',    HgvFormat.formatDatePart(6), 'HgvFormat.formatDate'
-    assert_equal 'VII',   HgvFormat.formatDatePart(7), 'HgvFormat.formatDate'
-    assert_equal 'VIII',  HgvFormat.formatDatePart(8), 'HgvFormat.formatDate'
-    assert_equal 'IX',    HgvFormat.formatDatePart(9), 'HgvFormat.formatDate'
-    assert_equal 'X',     HgvFormat.formatDatePart(10), 'HgvFormat.formatDate'
-    assert_equal 'XI',    HgvFormat.formatDatePart(11), 'HgvFormat.formatDate'
-    assert_equal 'XII',   HgvFormat.formatDatePart(12), 'HgvFormat.formatDate'
-    assert_equal 'XIII',  HgvFormat.formatDatePart(13), 'HgvFormat.formatDate'
-    assert_equal 'XIV',   HgvFormat.formatDatePart(14), 'HgvFormat.formatDate'
-    assert_equal 'XV',    HgvFormat.formatDatePart(15), 'HgvFormat.formatDate'
-    assert_equal 'XVI',   HgvFormat.formatDatePart(16), 'HgvFormat.formatDate'
-    assert_equal 'XVII',  HgvFormat.formatDatePart(17), 'HgvFormat.formatDate'
-    assert_equal 'XVIII', HgvFormat.formatDatePart(18), 'HgvFormat.formatDate'
-    assert_equal 'XIX',   HgvFormat.formatDatePart(19), 'HgvFormat.formatDate'
-    assert_equal 'XX',    HgvFormat.formatDatePart(20), 'HgvFormat.formatDate'
+    assert_equal 'I',     HGVFormat.formatDatePart(1), 'HGVFormat.formatDate'
+    assert_equal 'II',    HGVFormat.formatDatePart(2), 'HGVFormat.formatDate'
+    assert_equal 'III',   HGVFormat.formatDatePart(3), 'HGVFormat.formatDate'
+    assert_equal 'IV',    HGVFormat.formatDatePart(4), 'HGVFormat.formatDate'
+    assert_equal 'V',     HGVFormat.formatDatePart(5), 'HGVFormat.formatDate'
+    assert_equal 'VI',    HGVFormat.formatDatePart(6), 'HGVFormat.formatDate'
+    assert_equal 'VII',   HGVFormat.formatDatePart(7), 'HGVFormat.formatDate'
+    assert_equal 'VIII',  HGVFormat.formatDatePart(8), 'HGVFormat.formatDate'
+    assert_equal 'IX',    HGVFormat.formatDatePart(9), 'HGVFormat.formatDate'
+    assert_equal 'X',     HGVFormat.formatDatePart(10), 'HGVFormat.formatDate'
+    assert_equal 'XI',    HGVFormat.formatDatePart(11), 'HGVFormat.formatDate'
+    assert_equal 'XII',   HGVFormat.formatDatePart(12), 'HGVFormat.formatDate'
+    assert_equal 'XIII',  HGVFormat.formatDatePart(13), 'HGVFormat.formatDate'
+    assert_equal 'XIV',   HGVFormat.formatDatePart(14), 'HGVFormat.formatDate'
+    assert_equal 'XV',    HGVFormat.formatDatePart(15), 'HGVFormat.formatDate'
+    assert_equal 'XVI',   HGVFormat.formatDatePart(16), 'HGVFormat.formatDate'
+    assert_equal 'XVII',  HGVFormat.formatDatePart(17), 'HGVFormat.formatDate'
+    assert_equal 'XVIII', HGVFormat.formatDatePart(18), 'HGVFormat.formatDate'
+    assert_equal 'XIX',   HGVFormat.formatDatePart(19), 'HGVFormat.formatDate'
+    assert_equal 'XX',    HGVFormat.formatDatePart(20), 'HGVFormat.formatDate'
 
-    assert_equal 'XLI v.Chr.',    HgvFormat.formatDatePart(-41), 'HgvFormat.formatDate'
-    assert_equal 'XLII v.Chr.',   HgvFormat.formatDatePart(-42), 'HgvFormat.formatDate'
-    assert_equal 'XLIII v.Chr.',  HgvFormat.formatDatePart(-43), 'HgvFormat.formatDate'
-    assert_equal 'XLIV v.Chr.',   HgvFormat.formatDatePart(-44), 'HgvFormat.formatDate'
-    assert_equal 'XLV v.Chr.',    HgvFormat.formatDatePart(-45), 'HgvFormat.formatDate'
-    assert_equal 'XLVI v.Chr.',   HgvFormat.formatDatePart(-46), 'HgvFormat.formatDate'
-    assert_equal 'XLVII v.Chr.',  HgvFormat.formatDatePart(-47), 'HgvFormat.formatDate'
-    assert_equal 'XLVIII v.Chr.', HgvFormat.formatDatePart(-48), 'HgvFormat.formatDate'
-    assert_equal 'XLIX v.Chr.',   HgvFormat.formatDatePart(-49), 'HgvFormat.formatDate'
-    assert_equal 'L v.Chr.',      HgvFormat.formatDatePart(-50), 'HgvFormat.formatDate'
+    assert_equal 'XLI v.Chr.',    HGVFormat.formatDatePart(-41), 'HGVFormat.formatDate'
+    assert_equal 'XLII v.Chr.',   HGVFormat.formatDatePart(-42), 'HGVFormat.formatDate'
+    assert_equal 'XLIII v.Chr.',  HGVFormat.formatDatePart(-43), 'HGVFormat.formatDate'
+    assert_equal 'XLIV v.Chr.',   HGVFormat.formatDatePart(-44), 'HGVFormat.formatDate'
+    assert_equal 'XLV v.Chr.',    HGVFormat.formatDatePart(-45), 'HGVFormat.formatDate'
+    assert_equal 'XLVI v.Chr.',   HGVFormat.formatDatePart(-46), 'HGVFormat.formatDate'
+    assert_equal 'XLVII v.Chr.',  HGVFormat.formatDatePart(-47), 'HGVFormat.formatDate'
+    assert_equal 'XLVIII v.Chr.', HGVFormat.formatDatePart(-48), 'HGVFormat.formatDate'
+    assert_equal 'XLIX v.Chr.',   HGVFormat.formatDatePart(-49), 'HGVFormat.formatDate'
+    assert_equal 'L v.Chr.',      HGVFormat.formatDatePart(-50), 'HGVFormat.formatDate'
 
-    assert_equal 'Anfang Jan. 1976',  HgvFormat.formatDatePart(nil, 1976,  1, nil, nil, nil, 'beginning'),
-                 'HgvFormat.formatDate'
-    assert_equal 'Mitte Juli 1976',   HgvFormat.formatDatePart(nil, 1976,  7, nil, nil, nil, 'middle'),
-                 'HgvFormat.formatDate'
-    assert_equal 'Ende Dez. 1976',    HgvFormat.formatDatePart(nil, 1976, 12, nil, nil, nil, 'end'),
-                 'HgvFormat.formatDate'
-    assert_equal 'Anfang Febr. 1984', HgvFormat.formatDatePart(nil, 1984,  2, nil, nil, nil, :beginning),
-                 'HgvFormat.formatDate'
-    assert_equal 'Mitte Aug. 1984',   HgvFormat.formatDatePart(nil, 1984,  8, nil, nil, nil, :middle),
-                 'HgvFormat.formatDate'
-    assert_equal 'Ende Nov. 1984',    HgvFormat.formatDatePart(nil, 1984, 11, nil, nil, nil, :end),
-                 'HgvFormat.formatDate'
+    assert_equal 'Anfang Jan. 1976',  HGVFormat.formatDatePart(nil, 1976,  1, nil, nil, nil, 'beginning'),
+                 'HGVFormat.formatDate'
+    assert_equal 'Mitte Juli 1976',   HGVFormat.formatDatePart(nil, 1976,  7, nil, nil, nil, 'middle'),
+                 'HGVFormat.formatDate'
+    assert_equal 'Ende Dez. 1976',    HGVFormat.formatDatePart(nil, 1976, 12, nil, nil, nil, 'end'),
+                 'HGVFormat.formatDate'
+    assert_equal 'Anfang Febr. 1984', HGVFormat.formatDatePart(nil, 1984,  2, nil, nil, nil, :beginning),
+                 'HGVFormat.formatDate'
+    assert_equal 'Mitte Aug. 1984',   HGVFormat.formatDatePart(nil, 1984,  8, nil, nil, nil, :middle),
+                 'HGVFormat.formatDate'
+    assert_equal 'Ende Nov. 1984',    HGVFormat.formatDatePart(nil, 1984, 11, nil, nil, nil, :end),
+                 'HGVFormat.formatDate'
 
-    assert_equal 'Anfang XXXI v.Chr.',     HgvFormat.formatDatePart(-31, nil, nil, nil, :beginning),
-                 'HgvFormat.formatDate'
-    assert_equal 'Mitte XXXII v.Chr.',     HgvFormat.formatDatePart(-32, nil, nil, nil, :middle), 'HgvFormat.formatDate'
-    assert_equal 'Ende XXXIII v.Chr.',     HgvFormat.formatDatePart(-33, nil, nil, nil, :end), 'HgvFormat.formatDate'
-    assert_equal '1. Hälfte XXXIV v.Chr.', HgvFormat.formatDatePart(-34, nil, nil, nil, :firstHalf),
-                 'HgvFormat.formatDate'
-    assert_equal '2. Hälfte XXXV v.Chr.',  HgvFormat.formatDatePart(-35, nil, nil, nil, :secondHalf),
-                 'HgvFormat.formatDate'
+    assert_equal 'Anfang XXXI v.Chr.',     HGVFormat.formatDatePart(-31, nil, nil, nil, :beginning),
+                 'HGVFormat.formatDate'
+    assert_equal 'Mitte XXXII v.Chr.',     HGVFormat.formatDatePart(-32, nil, nil, nil, :middle), 'HGVFormat.formatDate'
+    assert_equal 'Ende XXXIII v.Chr.',     HGVFormat.formatDatePart(-33, nil, nil, nil, :end), 'HGVFormat.formatDate'
+    assert_equal '1. Hälfte XXXIV v.Chr.', HGVFormat.formatDatePart(-34, nil, nil, nil, :firstHalf),
+                 'HGVFormat.formatDate'
+    assert_equal '2. Hälfte XXXV v.Chr.',  HGVFormat.formatDatePart(-35, nil, nil, nil, :secondHalf),
+                 'HGVFormat.formatDate'
     assert_equal '1. Hälfte - Mitte XXXVI v.Chr.',
-                 HgvFormat.formatDatePart(-36, nil, nil, nil, :firstHalfToMiddle), 'HgvFormat.formatDate'
+                 HGVFormat.formatDatePart(-36, nil, nil, nil, :firstHalfToMiddle), 'HGVFormat.formatDate'
     assert_equal 'Mitte - 2. Hälfte XXXVII v.Chr.',
-                 HgvFormat.formatDatePart(-37, nil, nil, nil, :middleToSecondHalf), 'HgvFormat.formatDate'
-    assert_equal 'Anfang XXXVIII v.Chr.',  HgvFormat.formatDatePart(-38, nil, nil, nil, 'beginning'),
-                 'HgvFormat.formatDate'
-    assert_equal 'Mitte XXXIX v.Chr.',     HgvFormat.formatDatePart(-39, nil, nil, nil, 'middle'),
-                 'HgvFormat.formatDate'
-    assert_equal 'Ende XL v.Chr.',         HgvFormat.formatDatePart(-40, nil, nil, nil, 'end'), 'HgvFormat.formatDate'
+                 HGVFormat.formatDatePart(-37, nil, nil, nil, :middleToSecondHalf), 'HGVFormat.formatDate'
+    assert_equal 'Anfang XXXVIII v.Chr.',  HGVFormat.formatDatePart(-38, nil, nil, nil, 'beginning'),
+                 'HGVFormat.formatDate'
+    assert_equal 'Mitte XXXIX v.Chr.',     HGVFormat.formatDatePart(-39, nil, nil, nil, 'middle'),
+                 'HGVFormat.formatDate'
+    assert_equal 'Ende XL v.Chr.',         HGVFormat.formatDatePart(-40, nil, nil, nil, 'end'), 'HGVFormat.formatDate'
 
-    assert_equal 'Anfang 1976 v.Chr.',    HgvFormat.formatDatePart(nil, -1976, nil, nil, nil, :beginning),
-                 'HgvFormat.formatDate'
-    assert_equal 'Mitte 1976 v.Chr.',     HgvFormat.formatDatePart(nil, -1976, nil, nil, nil, :middle),
-                 'HgvFormat.formatDate'
-    assert_equal 'Ende 1976 v.Chr.',      HgvFormat.formatDatePart(nil, -1976, nil, nil, nil, :end),
-                 'HgvFormat.formatDate'
-    assert_equal '1. Hälfte 1976 v.Chr.', HgvFormat.formatDatePart(nil, -1976, nil, nil, nil, :firstHalf),
-                 'HgvFormat.formatDate'
-    assert_equal '2. Hälfte 1976 v.Chr.', HgvFormat.formatDatePart(nil, -1976, nil, nil, nil, :secondHalf),
-                 'HgvFormat.formatDate'
+    assert_equal 'Anfang 1976 v.Chr.',    HGVFormat.formatDatePart(nil, -1976, nil, nil, nil, :beginning),
+                 'HGVFormat.formatDate'
+    assert_equal 'Mitte 1976 v.Chr.',     HGVFormat.formatDatePart(nil, -1976, nil, nil, nil, :middle),
+                 'HGVFormat.formatDate'
+    assert_equal 'Ende 1976 v.Chr.',      HGVFormat.formatDatePart(nil, -1976, nil, nil, nil, :end),
+                 'HGVFormat.formatDate'
+    assert_equal '1. Hälfte 1976 v.Chr.', HGVFormat.formatDatePart(nil, -1976, nil, nil, nil, :firstHalf),
+                 'HGVFormat.formatDate'
+    assert_equal '2. Hälfte 1976 v.Chr.', HGVFormat.formatDatePart(nil, -1976, nil, nil, nil, :secondHalf),
+                 'HGVFormat.formatDate'
     assert_equal '1. Hälfte - Mitte 1976 v.Chr.',
-                 HgvFormat.formatDatePart(nil, -1976, nil, nil, nil, :firstHalfToMiddle), 'HgvFormat.formatDate'
+                 HGVFormat.formatDatePart(nil, -1976, nil, nil, nil, :firstHalfToMiddle), 'HGVFormat.formatDate'
     assert_equal 'Mitte - 2. Hälfte 1976 v.Chr.',
-                 HgvFormat.formatDatePart(nil, -1976, nil, nil, nil, :middleToSecondHalf), 'HgvFormat.formatDate'
+                 HGVFormat.formatDatePart(nil, -1976, nil, nil, nil, :middleToSecondHalf), 'HGVFormat.formatDate'
   end
 
   def test_get_chron_simple
@@ -987,7 +987,7 @@ class DateTest < ActiveSupport::TestCase
 
   def chronFunction(testCases)
     testCases.each_pair do |expected, testCase|
-      result = HgvFuzzy.getChron(
+      result = HGVFuzzy.getChron(
         testCase[:c],
         testCase[:y],
         testCase[:m],
@@ -997,13 +997,13 @@ class DateTest < ActiveSupport::TestCase
         testCase[:mq],
         testCase[:chron]
       )
-      assert_equal expected, result, "HgvFuzzy.getChron(#{testCase.values.join(', ')})"
+      assert_equal expected, result, "HGVFuzzy.getChron(#{testCase.values.join(', ')})"
     end
   end
 
   def chronFunctionSimple(testCases)
     testCases.each_pair do |expected, testCase|
-      result = HgvFuzzy.getChronSimple(
+      result = HGVFuzzy.getChronSimple(
         testCase[:c],
         testCase[:y],
         testCase[:m],
@@ -1013,7 +1013,7 @@ class DateTest < ActiveSupport::TestCase
         testCase[:mq],
         testCase[:chron]
       )
-      assert_equal expected, result, "HgvFuzzy.getChronSimple(#{testCase.values.join(', ')})"
+      assert_equal expected, result, "HGVFuzzy.getChronSimple(#{testCase.values.join(', ')})"
     end
   end
 end

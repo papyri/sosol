@@ -60,7 +60,7 @@
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#Publication'
               %td
                 = @identifier.non_database_attribute[:publicationTitle]
-                = HgvPublication.getTitleTail @identifier.non_database_attribute[:publicationExtra]
+                = HGVPublication.getTitleTail @identifier.non_database_attribute[:publicationExtra]
                 = @identifier.non_database_attribute[:tmNo] ? '(TM ' + @identifier.non_database_attribute[:tmNo] + ')' : ''
                 - if !@identifier.non_database_attribute[:otherPublications].empty?
                   %ul
@@ -105,7 +105,7 @@
               %td.edit
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#Provenance'
               %td
-                = HgvProvenance.format @identifier.non_database_attribute[:provenance]
+                = HGVProvenance.format @identifier.non_database_attribute[:provenance]
           - if @identifier.non_database_attribute[:material]
             %tr
               %th=I18n.t('meta.label.material')

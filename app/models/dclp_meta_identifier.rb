@@ -9,10 +9,10 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
   XML_VALIDATOR = JRubyXML::DCLPEpiDocValidator
 
   # cl: needs to load additional xpaths
-  # Loads +HgvMetaConfiguration+ object (HGV xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
+  # Loads +HGVMetaConfiguration+ object (HGV xpath for EpiDoc and options for the editor) and presets valid EpiDoc attributes
   # Side effect on +@configuration+ and + @valid_epidoc_attributes+
   def post_initialization_configuration
-    @configuration = HgvMetaIdentifierHelper::HgvMetaConfiguration.new :dclp
+    @configuration = HGVMetaIdentifierHelper::HGVMetaConfiguration.new :dclp
     @valid_epidoc_attributes = @configuration.keys
     @hybrid = get_hybrid :dclp
   end

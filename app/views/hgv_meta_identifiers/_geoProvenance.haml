@@ -1,5 +1,5 @@
 - @identifier.non_database_attribute[:provenance].each_index do |provenanceIndex| # provenance / events
-  - provenance = HgvGeo::Provenance.new( :provenance => @identifier.non_database_attribute[:provenance][provenanceIndex])
+  - provenance = HGVGeo::Provenance.new( :provenance => @identifier.non_database_attribute[:provenance][provenanceIndex])
   - base = 'hgv_meta_identifier[provenance][' + provenanceIndex.to_s + ']'
   - baseAttributes = base + '[attributes]'
   - baseChildren = base + '[children]'
@@ -7,10 +7,10 @@
   .provenance{:id => 'provenance_' + provenanceIndex.to_s }
     %p
       = label_tag baseAttributes + '[type]', I18n.t('meta.label.type'), :class => 'meta provenanceType', :title => @identifier.configuration.xpath(:provenance)
-      = select_tag baseAttributes + '[type]', options_for_select(HgvProvenance.eventOptions, provenance.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceType'
+      = select_tag baseAttributes + '[type]', options_for_select(HGVProvenance.eventOptions, provenance.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceType'
     
       = label_tag baseAttributes + '[subtype]', I18n.t('meta.label.subtype'), :class => 'meta provenanceSubtype', :title => @identifier.configuration.xpath(:provenance)
-      = select_tag baseAttributes + '[subtype]', options_for_select(HgvProvenance.subtypeOptions, provenance.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceSubtype'
+      = select_tag baseAttributes + '[subtype]', options_for_select(HGVProvenance.subtypeOptions, provenance.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceSubtype'
     
     %p
       = label_tag baseAttributes + '[id]', I18n.t('meta.label.id'), :class => 'meta provenanceId', :title => @identifier.configuration.xpath(:provenance)

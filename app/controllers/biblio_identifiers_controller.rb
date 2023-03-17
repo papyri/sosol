@@ -48,7 +48,7 @@ class BiblioIdentifiersController < IdentifiersController
 
   protected
 
-  # Copypasted from HgvMetaIdentifiersController
+  # Copypasted from HGVMetaIdentifiersController
   def generate_flash_message
     flash[:notice] = 'File updated.'
     if %w[new editing].include? @identifier.publication.status
@@ -56,7 +56,7 @@ class BiblioIdentifiersController < IdentifiersController
     end
   end
 
-  # Copypasted from HgvMetaIdentifiersController
+  # Copypasted from HGVMetaIdentifiersController
   def save_comment(comment, commit_sha)
     if !comment.nil? && comment.strip != ''
       @comment = Comment.new({ git_hash: commit_sha, user_id: @current_user.id,

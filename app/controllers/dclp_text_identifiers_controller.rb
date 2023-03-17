@@ -1,4 +1,4 @@
-include HgvMetaIdentifierHelper
+include HGVMetaIdentifierHelper
 include DclpTextIdentifierHelper
 
 class DclpTextIdentifiersController < DdbIdentifiersController

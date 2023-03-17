@@ -5,28 +5,28 @@
     %p
       = label_tag 'hgv_meta_identifier', I18n.t('meta.label.century'), :title => @identifier.configuration.xpath(:textDate)
       = text_field_tag base + '[c' + i + ']', date_item[('c' + i).to_sym], :disabled => !@identifier.mutable?, :class => 'observechange'
-      = select_tag base + '[cx' + i + ']', options_for_select(HgvDate.centuryOptions, date_item[('cx' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange century'
+      = select_tag base + '[cx' + i + ']', options_for_select(HGVDate.centuryOptions, date_item[('cx' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange century'
     %p
       = label_tag 'hgv_meta_identifier', I18n.t('meta.label.year'), :title => @identifier.configuration.xpath(:textDate)
       = text_field_tag base + '[y' + i + ']', date_item[('y' + i).to_sym], :disabled => !@identifier.mutable?, :class => 'observechange'
-      = select_tag base + '[yx' + i + ']', options_for_select(HgvDate.yearOptions, date_item[('yx' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange year'
+      = select_tag base + '[yx' + i + ']', options_for_select(HGVDate.yearOptions, date_item[('yx' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange year'
     %p
       = label_tag 'hgv_meta_identifier', I18n.t('meta.label.month'), :title => @identifier.configuration.xpath(:textDate)
       = text_field_tag base + '[m' + i + ']', date_item[('m' + i).to_sym], :disabled => !@identifier.mutable?, :class => 'observechange'
-      = select_tag base + '[mx' + i + ']', options_for_select(HgvDate.monthOptions, date_item[('mx' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange month'
+      = select_tag base + '[mx' + i + ']', options_for_select(HGVDate.monthOptions, date_item[('mx' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange month'
     %p
       = label_tag 'hgv_meta_identifier', I18n.t('meta.label.day'), :title => @identifier.configuration.xpath(:textDate)
       = text_field_tag base + '[d' + i + ']', date_item[('d' + i).to_sym], :disabled => !@identifier.mutable?, :class => 'observechange day'
     %p
       = label_tag 'hgv_meta_identifier', I18n.t('meta.label.offset'), :title => @identifier.configuration.xpath(:textDate)
-      = select_tag base + '[offset' + i + ']', options_for_select(HgvDate.offsetOptions, date_item[('offset' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange offset'
+      = select_tag base + '[offset' + i + ']', options_for_select(HGVDate.offsetOptions, date_item[('offset' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange offset'
     %p
       = label_tag 'hgv_meta_identifier', I18n.t('meta.label.precision'), :title => @identifier.configuration.xpath(:textDate)
-      = select_tag base + '[precision' + i + ']', options_for_select(HgvDate.precisionOptions, date_item[('precision' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange precision'
+      = select_tag base + '[precision' + i + ']', options_for_select(HGVDate.precisionOptions, date_item[('precision' + i).to_sym]), :disabled => !@identifier.mutable?, :class => 'observechange precision'
 
 %p
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.certainty'), :title => @identifier.configuration.xpath(:textDate)
-  = select_tag base + '[certainty]', options_for_select(HgvDate.certaintyOptions, date_item[:certainty]), :disabled => !@identifier.mutable?, :class => 'observechange certainty'
+  = select_tag base + '[certainty]', options_for_select(HGVDate.certaintyOptions, date_item[:certainty]), :disabled => !@identifier.mutable?, :class => 'observechange certainty'
 
 %p
   = label_tag 'hgv_meta_identifier', I18n.t('meta.label.unknown'), :title => @identifier.configuration.xpath(:textDate)

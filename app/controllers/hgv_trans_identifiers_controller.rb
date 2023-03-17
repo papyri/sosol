@@ -1,4 +1,4 @@
-class HgvTransIdentifiersController < IdentifiersController
+class HGVTransIdentifiersController < IdentifiersController
   # layout 'site'
   before_action :authorize
   # require 'xml'
