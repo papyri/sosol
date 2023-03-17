@@ -1,5 +1,5 @@
-module DclpMetaIdentifierHelper
-  module DclpEdition
+module DCLPMetaIdentifierHelper
+  module DCLPEdition
     # Assembles all valid type options for DCLP edition types (+publication+, +reference+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
@@ -100,10 +100,10 @@ module DclpMetaIdentifierHelper
       ]
     end
 
-    # Test whether a given value (+test+) is comprised in above list (DclpEdition.extraOptions)
+    # Test whether a given value (+test+) is comprised in above list (DCLPEdition.extraOptions)
     def self.validExtraOption?(test)
       if test.is_a?(Symbol) || test.is_a?(String)
-        DclpEdition.extraOptions.each do |option|
+        DCLPEdition.extraOptions.each do |option|
           return true if test.to_sym == option[1]
         end
       end
@@ -200,7 +200,7 @@ module DclpMetaIdentifierHelper
     end
   end
 
-  module DclpWork
+  module DCLPWork
     # List of all available authorities (+tlg+, +stoa+, +cwkb+, etc.)
     # - *Returns* :
     #   - +Array+ of +Array+s that can be used with rails' +options_for_select+ method
@@ -303,13 +303,13 @@ module DclpMetaIdentifierHelper
         @name      = init[:value]
 
         @ref       = init[:attributes][:ref] || []
-        @phi       = init[:children][:phi] ? init[:children][:phi][:value] : DclpWork.getIdFromUrl(@ref, :phi)
-        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
-        @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
-        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
+        @phi       = init[:children][:phi] ? init[:children][:phi][:value] : DCLPWork.getIdFromUrl(@ref, :phi)
+        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DCLPWork.getIdFromUrl(@ref, :tlg)
+        @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DCLPWork.getIdFromUrl(@ref, :stoa)
+        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DCLPWork.getIdFromUrl(@ref, :cwkb)
         @authority = { phi: @phi, tlg: @tlg, stoa: @stoa, cwkb: @cwkb }
 
-        @language  = init[:attributes][:language] || DclpWork.getLanguageFromUrl(@ref)
+        @language  = init[:attributes][:language] || DCLPWork.getLanguageFromUrl(@ref)
 
         @certainty = init[:children][:certainty] || nil
       end
@@ -327,12 +327,12 @@ module DclpMetaIdentifierHelper
         @name      = init[:value]
 
         @ref       = init[:attributes][:ref] || []
-        @tm        = init[:children][:tm] ? init[:children][:tm][:value] : DclpWork.getIdFromUrl(@ref, :tm)
-        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DclpWork.getIdFromUrl(@ref, :tlg)
-        @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DclpWork.getIdFromUrl(@ref, :stoa)
-        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DclpWork.getIdFromUrl(@ref, :cwkb)
+        @tm        = init[:children][:tm] ? init[:children][:tm][:value] : DCLPWork.getIdFromUrl(@ref, :tm)
+        @tlg       = init[:children][:tlg] ? init[:children][:tlg][:value] : DCLPWork.getIdFromUrl(@ref, :tlg)
+        @stoa      = init[:children][:stoa] ? init[:children][:stoa][:value] : DCLPWork.getIdFromUrl(@ref, :stoa)
+        @cwkb      = init[:children][:cwkb] ? init[:children][:cwkb][:value] : DCLPWork.getIdFromUrl(@ref, :cwkb)
         @authority = { tm: @tm, tlg: @tlg, stoa: @stoa, cwkb: @cwkb }
-        @language  = init[:attributes][:language] || DclpWork.getLanguageFromUrl(@ref)
+        @language  = init[:attributes][:language] || DCLPWork.getLanguageFromUrl(@ref)
 
         @certainty = init[:children][:certainty] || nil
         @date      = init[:children][:date] ? init[:children][:date][:value] : nil
@@ -474,7 +474,7 @@ module DclpMetaIdentifierHelper
     end
   end
 
-  module DclpObject
+  module DCLPObject
     class Collection
       attr_accessor :list
 

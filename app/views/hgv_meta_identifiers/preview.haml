@@ -22,7 +22,7 @@
                 %ul
                   - @identifier.non_database_attribute[:work].each do |work|
                     %li
-                      - work = DclpWork::Work.new(work)
+                      - work = DCLPWork::Work.new(work)
                       - if work.author
                         = work.author.name
                         - if work.author.language && !work.author.language.empty?
@@ -43,7 +43,7 @@
                 %ul
                   - @identifier.non_database_attribute[:edition].each do |edition|
                     %li
-                      - edition = DclpEdition::Edition.new(:edition => edition)
+                      - edition = DCLPEdition::Edition.new(:edition => edition)
                       - if edition.biblioId
                         %a{:href => 'http://papyri.info/biblio/' + edition.biblioId}
                           = edition.biblioId
@@ -162,7 +162,7 @@
                 %a=link_to 'edit', edit_polymorphic_path([@identifier.publication, @identifier]) + '#General'
               %td=@identifier.non_database_attribute[:plannedForFuturePrintRelease]
           -# DCLP
-          - collections = DclpObject::Collection.new(@identifier.non_database_attribute[:collection], @identifier.non_database_attribute[:collectionList])
+          - collections = DCLPObject::Collection.new(@identifier.non_database_attribute[:collection], @identifier.non_database_attribute[:collectionList])
           - if collections.list
             %tr
               %th=I18n.t('dclp.label.collection')

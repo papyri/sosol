@@ -146,7 +146,7 @@ class DCLPTextIdentifier < DDBIdentifier
     new_identifier
   end
 
-  def correspondingDclpMetaIdentifier
+  def correspondingDCLPMetaIdentifier
     publication.controlled_identifiers.each do |i|
       return i if i.instance_of?(DCLPMetaIdentifier)
     end

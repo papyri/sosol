@@ -1,2 +1,2 @@
-module DclpTextIdentifierHelper
+module DCLPTextIdentifierHelper
 end

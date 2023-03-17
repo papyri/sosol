@@ -1,5 +1,5 @@
 - base = 'hgv_meta_identifier[contentText]'
-- contentText = DclpWork::ContentText.new(:contentText => @identifier.non_database_attribute[:contentText])
+- contentText = DCLPWork::ContentText.new(:contentText => @identifier.non_database_attribute[:contentText])
 
 -if !contentText.overview || !contentText.overview.empty?
   %div

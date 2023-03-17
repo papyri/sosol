@@ -36,7 +36,7 @@
 .clear
 
 .multi.collection
-  - collection = DclpObject::Collection.new(@identifier.non_database_attribute[:collection], @identifier.non_database_attribute[:collectionList])
+  - collection = DCLPObject::Collection.new(@identifier.non_database_attribute[:collection], @identifier.non_database_attribute[:collectionList])
   %h5
     =I18n.t('dclp.label.collection')
   = render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => 'collectionList', :multiList => collection.list }

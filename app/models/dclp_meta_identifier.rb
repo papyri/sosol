@@ -91,7 +91,7 @@ class DCLPMetaIdentifier < HGVMetaIdentifier
     "/#{DCLPMetaIdentifier::IDENTIFIER_NAMESPACE}/#{name[%r{.+/(\d+[a-z]*|SoSOL;\d{4};\d{4})$}, 1]}"
   end
 
-  def correspondingDclpTextIdentifier
+  def correspondingDCLPTextIdentifier
     publication.controlled_identifiers.each do |i|
       return i if i.instance_of?(DCLPTextIdentifier)
     end
