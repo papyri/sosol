@@ -13,7 +13,7 @@ Rails.autoloaders.each do |autoloader|
     "dclp_meta_identifier" => "DCLPMetaIdentifier",
     "dclp_meta_identifier_helper" => "DCLPMetaIdentifierHelper",
     "dclp_text_identifier" => "DCLPTextIdentifier",
-    "dclp_text_identifier_helper" => "DCLPTextIdentifierHelper"
+    "dclp_text_identifier_helper" => "DCLPTextIdentifierHelper",
     "apis_identifier" => "APISIdentifier",
     "jruby_xml" => "JRubyXML"
   )
