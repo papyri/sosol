@@ -257,7 +257,7 @@ class Identifier < ApplicationRecord
     template_path = File.join(Rails.root, %w[data templates],
                               "#{self.class.to_s.underscore}.xml.erb")
 
-    template = ERB.new(File.new(template_path).read, nil, '-')
+    template = ERB.new(File.new(template_path).read, trim_mode: '-')
 
     id = id_attribute
     n = n_attribute
