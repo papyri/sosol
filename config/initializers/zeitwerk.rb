@@ -1,6 +1,7 @@
 Rails.autoloaders.each do |autoloader|
   autoloader.inflector = Zeitwerk::Inflector.new
   autoloader.inflector.inflect(
-    "jruby" => "JRuby"
+    "jruby" => "JRuby",
+    "cts" => "CTS"
   )
 end
