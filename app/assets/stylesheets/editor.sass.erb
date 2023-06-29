@@ -1,12 +1,12 @@
 // gray + 90: #dadada
-$main_color: gray + 90
-$main_color_fade: $main_color + 16
-$main_color_fade_medium: $main_color + 20
-$main_color_fade_full: $main_color + 26
-$main_color_fade_max: $main_color + 37
-$main_color_darken: $main_color - 10
-$main_color_darken_medium: $main_color - 31
-$main_color_darken_full: $main_color - 67
+$main_color: adjust-color(gray, $red: 90, $green: 90, $blue: 90)
+$main_color_fade: adjust-color($main_color, $red: 16, $green: 16, $blue: 16)
+$main_color_fade_medium: adjust-color($main_color, $red: 20, $green: 20, $blue: 20)
+$main_color_fade_full: adjust-color($main_color, $red: 26, $green: 26, $blue: 26)
+$main_color_fade_max: adjust-color($main_color, $red: 37, $green: 37, $blue: 37)
+$main_color_darken: adjust-color($main_color, $red: -10, $green: -10, $blue: -10)
+$main_color_darken_medium: adjust-color($main_color, $red: -31, $green: -31, $blue: -31)
+$main_color_darken_full: adjust-color($main_color, $red: -67, $green: -67, $blue: -67)
 $pn_color: #3C2217
 // use a blue-ish color for non-underlined link elements we
 // want to highlight
@@ -51,7 +51,7 @@ $non_underlined_link: #4183c4
     background: #c0c0c0
     border-style: inset
   &:disabled
-    color: $pn_color + 140
+    color: adjust-color($pn_color, $red: 140, $green: 140, $blue: 140)
 
 
 #main
@@ -75,7 +75,7 @@ $non_underlined_link: #4183c4
   //background-color: red
 
 .loading
-  background: gray + 90
+  background: adjust-color(gray, $red: 90, $green: 90, $blue: 90)
   background-image: url("<%= asset_path("ajax_loader.gif") %>")
   background-repeat: no-repeat
   background-position: center center

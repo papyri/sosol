@@ -1,5 +1,4 @@
 require 'English'
-require 'English'
 require 'uri'
 require 'net/http'
 require 'net/https'

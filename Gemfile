@@ -1,13 +1,13 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'https://rubygems.org'
-ruby '2.6.8', engine: 'jruby', engine_version: '9.3.4.0'
+ruby '2.6.8', engine: 'jruby', engine_version: '9.3.9.0'
 
 gem 'rails', '~> 6.1.5'
 
 # Needed for the new asset pipeline
 gem 'coffee-rails'
-gem 'sass-rails', '~> 5'
+gem 'sass-rails', '~> 6'
 gem 'therubyrhino'
 gem 'uglifier', '>= 1.0.3'
 
@@ -17,7 +17,6 @@ group :test do
   gem 'mocha'
   gem 'rails-controller-testing'
   gem 'rake'
-  gem 'shoulda'
   gem 'shoulda-context'
   gem 'shoulda-matchers'
 end
@@ -56,15 +55,15 @@ gem 'omniauth-google-oauth2'
 gem 'omniauth-rails_csrf_protection'
 gem 'pry', '~> 0.14.0'
 gem 'pry-rails', '~> 0.3.9'
-gem 'puma', '>= 5.6.2'
+gem 'puma', '< 7'
 gem 'rack', '>= 1.1.0'
-gem 'rack-attack', '~> 4.0'
+gem 'rack-attack', '~> 6.0'
 gem 'rapporteur'
 gem 'rexml'
-gem 'rubyzip', '~> 1.0'
+gem 'rubyzip', '~> 2'
 gem 'silencer'
-gem 'sucker_punch', '~> 2.0'
+gem 'sucker_punch', '~> 3.0'
 gem 'tzinfo-data', platform: :jruby
-gem 'warbler', '~> 2.0'
+gem 'webrick'
 gem 'with_advisory_lock'
 gem 'zip-zip'

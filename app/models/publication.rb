@@ -15,7 +15,6 @@
 #- commiting to canon
 
 require 'English'
-require 'English'
 require 'jgit_tree'
 require 'shellwords'
 
@@ -198,11 +197,7 @@ class Publication < ApplicationRecord
       Rails.logger.info "---ID title: #{id.title}"
       Rails.logger.info "---ID class:#{id.class}"
       Rails.logger.info '---ID content:'
-      if id.xml_content
-        Rails.logger.info id.xml_content
-      else
-        Rails.logger.info 'NO CONTENT!'
-      end
+      Rails.logger.info id.xml_content || 'NO CONTENT!'
       # Rails.logger.info "== end Owner: " + publication.owner.name
     end
     Rails.logger.info "==end Owner: #{owner.name}"
@@ -1702,11 +1697,7 @@ class Publication < ApplicationRecord
         built_comment.who = (change.attributes['who'] || 'no who attribute')
 
         # parse will convert date to local for consistency so work in sort below
-        built_comment.when = if change.attributes['when']
-                               Time.zone.parse(change.attributes['when'])
-                             else
-                               Time.zone.parse('1988-8-8')
-                             end
+        built_comment.when = (Time.zone.parse(change.attributes['when'] || '1988-8-8'))
 
         built_comment.why = "From #{ident_title} #{where_from} XML"
 

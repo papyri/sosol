@@ -310,8 +310,8 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 
   if ENV['GOOGLE_CLIENT_ID'].present? && ENV['GOOGLE_CLIENT_SECRET'].present?
-    config.omniauth :google_oauth2, ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'], {
-      redirect_uri: ENV['GOOGLE_REDIRECT_URI'], # e.g. http://localhost:8000/users/auth/google/callback
+    config.omniauth :google_oauth2, ENV.fetch('GOOGLE_CLIENT_ID', nil), ENV.fetch('GOOGLE_CLIENT_SECRET', nil), {
+      redirect_uri: ENV.fetch('GOOGLE_REDIRECT_URI', nil), # e.g. http://localhost:8000/users/auth/google/callback
       name: 'google'
     }
   end

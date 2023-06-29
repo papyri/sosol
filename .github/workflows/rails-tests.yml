@@ -29,7 +29,7 @@ jobs:
         ports:
           - 5432:5432
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev git
     - name: Configure sysctl limits
@@ -40,12 +40,9 @@ jobs:
         sudo sysctl -w fs.file-max=262144
         sudo sysctl -w vm.max_map_count=262144
     - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-    # uses: ruby/setup-ruby@v1
-      uses: ruby/setup-ruby@v1.100.0
+      uses: ruby/setup-ruby@v1
       with:
-        ruby-version: jruby-9.3.4.0
+        ruby-version: jruby-9.3.9.0
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Configure externals
       run: bundle exec cap local externals:setup
@@ -61,7 +58,7 @@ jobs:
         DATABASE_HOSTNAME: localhost
         DATABASE_POOL: 16
     - name: Upload test logs
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: always()
       with:
         name: logs

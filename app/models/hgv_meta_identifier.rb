@@ -398,7 +398,7 @@ class HGVMetaIdentifier < HGVIdentifier
             attribute_value = item[:attributes][attribute_key]
             attribute_value = if attribute_config[:split].present? && attribute_value.is_a?(Hash)
                                 attribute_value.values.join(attribute_config[:split])
-                              else
+                              elsif attribute_value.is_a?(String)
                                 attribute_value.strip
                               end
             child.attributes[attribute_config[:name]] = attribute_value

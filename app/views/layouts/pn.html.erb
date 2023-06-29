@@ -44,11 +44,13 @@
     e.type = 'text/javascript';
     e.id = 'janrainAuthWidget';
 
-    if (document.location.protocol === 'https:') {
-      e.src = 'https://rpxnow.com/js/lib/<%= Sosol::Application.config.rpx_realm %>/engage.js';
-    } else {
-      e.src = 'http://widget-cdn.rpxnow.com/js/lib/<%= Sosol::Application.config.rpx_realm %>/engage.js';
-    }
+    <% if Sosol::Application.config.respond_to?(:rpx_realm) %>
+      if (document.location.protocol === 'https:') {
+        e.src = 'https://rpxnow.com/js/lib/<%= Sosol::Application.config.rpx_realm %>/engage.js';
+      } else {
+        e.src = 'http://widget-cdn.rpxnow.com/js/lib/<%= Sosol::Application.config.rpx_realm %>/engage.js';
+      }
+    <% end %>
 
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(e, s);

@@ -27,7 +27,7 @@ class DecreeTest < ActiveSupport::TestCase
       end
 
       should 'have choices' do
-        assert @decree.get_choice_array.length.positive?
+        assert_predicate @decree.get_choice_array.length, :positive?
       end
 
       context 'with votes on a publication/identifier' do

@@ -405,6 +405,8 @@ class BiblioIdentifier < HGVIdentifier
         @epiDoc.root.delete element
         @epiDoc.root.add element
       end
+    rescue RuntimeError => e
+      Rails.logger.error(e.inspect)
     end
   end
 

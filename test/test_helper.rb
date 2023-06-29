@@ -4,8 +4,8 @@ require File.expand_path("#{File.dirname(__FILE__)}/../config/environment")
 require 'rails/test_help'
 require 'factory_bot_rails'
 require 'factory_bot'
-require 'shoulda'
 require 'shoulda/matchers'
+require 'shoulda/context'
 require 'active_support'
 require 'active_support/test_case'
 require 'database_cleaner/active_record'
@@ -80,7 +80,7 @@ module ActiveSupport
     end
 
     def teardown_flock
-      FileUtils.remove_entry_secure ENV['FLOCK_DIR']
+      FileUtils.remove_entry_secure ENV.fetch('FLOCK_DIR', nil)
     end
 
     setup :setup_test_repository

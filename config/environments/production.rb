@@ -84,7 +84,7 @@ Sosol::Application.configure do
   begin
     require File.join(File.dirname(__FILE__), 'production_secret')
   rescue LoadError
-    STDERR.puts('WARNING: config/environments/production_secret.rb missing, no secrets loaded!')
+    warn('WARNING: config/environments/production_secret.rb missing, no secrets loaded!')
   end
   # configure email parameters
   config.site_email_from = 'admin@localhost'

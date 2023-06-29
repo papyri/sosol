@@ -209,7 +209,7 @@ class ApisWorkflowTest < ActionDispatch::IntegrationTest
           Rails.logger.debug { "--APIS flash is: #{edit_session.flash.inspect}" }
 
           apis_identifier.reload
-          assert apis_identifier.modified?, 'APIS Identifier should be modified after we edit it'
+          assert_predicate apis_identifier, :modified?, 'APIS Identifier should be modified after we edit it'
         end
 
         open_session do |submit_session|

@@ -1,6 +1,4 @@
 require 'English'
-require 'English'
-require 'English'
 require 'fileutils'
 require 'jgit_tree'
 require 'shellwords'

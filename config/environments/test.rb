@@ -43,7 +43,7 @@ Sosol::Application.configure do
   begin
     require File.join(File.dirname(__FILE__), 'test_secret')
   rescue LoadError
-    STDERR.puts('WARNING: config/environments/test_secret.rb missing, no secrets loaded!')
+    warn('WARNING: config/environments/test_secret.rb missing, no secrets loaded!')
   end
 
   # Configure custom application parameters

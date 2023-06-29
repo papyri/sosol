@@ -289,7 +289,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         end
 
         assert meta_final_identifier.content, "finalizing publication's identifier should have content"
-        assert meta_final_publication.needs_rename?, 'finalizing publication should need rename before being renamed'
+        assert_predicate meta_final_publication, :needs_rename?,
+                         'finalizing publication should need rename before being renamed'
 
         Rails.logger.info('meta_final_identifier')
         Rails.logger.info(meta_final_identifier.inspect)
@@ -404,7 +405,8 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         end
         assert_not_nil text_final_identifier, 'Finalizer does not have controlled identifier'
 
-        assert text_final_publication.needs_rename?, 'finalizing publication should need rename before being renamed'
+        assert_predicate text_final_publication, :needs_rename?,
+                         'finalizing publication should need rename before being renamed'
 
         # try to finalize without rename
         open_session do |text_finalize_session|

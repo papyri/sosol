@@ -77,11 +77,7 @@ class CommunityWorkflowTest < ActionDispatch::IntegrationTest
       Rails.logger.info "---ID title: #{id.title}"
       Rails.logger.info "---ID class:#{id.class}"
       Rails.logger.info '---ID content:'
-      if id.xml_content
-        Rails.logger.info id.xml_content
-      else
-        Rails.logger.info 'NO CONTENT!'
-      end
+      Rails.logger.info id.xml_content || 'NO CONTENT!'
       # Rails.logger.info "== end Owner: " + publication.owner.name
     end
     Rails.logger.info "==end Owner: #{publication.owner.name}"
