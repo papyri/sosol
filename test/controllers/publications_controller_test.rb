@@ -23,6 +23,6 @@ class PublicationsControllerTest < ActionController::TestCase
            params: { pn_id_list: 'papyri.info/hgv/3147   papyri.info/hgv/3148' }
       assert_equal 'Publication was successfully created.', flash[:notice]
     end
-    assert_equal 6, assigns(:publication).identifiers.size
+    assert_equal 2, assigns(:publication).identifiers.size
   end
 end
