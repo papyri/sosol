@@ -5,7 +5,6 @@ include:
       - /templates/container-flexible.gitlab-ci.yml
       - /templates/environments.gitlab-ci.yml
       - /templates/tag-release-version.gitlab-ci.yml
-  - local: /version.yml
 
 stages:
   - build
