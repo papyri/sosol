@@ -160,7 +160,7 @@ GEM
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     jdbc-mysql (8.0.30)
-    jdbc-postgres (42.2.25)
+    jdbc-postgres (42.6.0)
     jdbc-sqlite3 (3.28.0)
     jquery-rails (4.5.1)
       rails-dom-testing (>= 1, < 3)
