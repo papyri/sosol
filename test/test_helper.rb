@@ -10,6 +10,7 @@ require 'active_support'
 require 'active_support/test_case'
 require 'database_cleaner/active_record'
 require 'sucker_punch/testing/inline'
+require 'minitest/unit'
 require 'mocha/minitest'
 
 module ActiveSupport
