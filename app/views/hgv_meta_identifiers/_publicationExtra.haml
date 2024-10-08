@@ -1,4 +1,4 @@
-- extras = HgvPublication.getExtras @identifier.non_database_attribute[:publicationExtra]
+- extras = HGVPublication.getExtras @identifier.non_database_attribute[:publicationExtra]
 .multi#multi_publicationExtra
   %ul.items#multiItems_publicationExtra
     - extras.each_index do |index|
@@ -10,7 +10,7 @@
   %p.add#multiPlus_publicationExtra
     %label= I18n.t('meta.label.publicationExtraType')
 
-    = select_tag 'publicationExtra_type', options_for_select(HgvPublication.getTypeOptions), :class => 'observechange'
+    = select_tag 'publicationExtra_type', options_for_select(HGVPublication.getTypeOptions), :class => 'observechange'
 
     %label= I18n.t('meta.label.publicationExtraValue')
     %input#publicationExtra_value.observechange

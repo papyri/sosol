@@ -1,4 +1,4 @@
-class TeiCtsIdentifiersController < IdentifiersController
+class TEICTSIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_action :authorize
 
@@ -18,8 +18,8 @@ class TeiCtsIdentifiersController < IdentifiersController
   #    e.g. this range is a quotation, this range is a named entity, this range maps to image coordinates X
 
   # so related identifier types would be:
-  ## TeiCitationCTSIdentifier
-  ## TeiTransCTSIdentifier
+  ## TEICitationCTSIdentifier
+  ## TEITransCTSIdentifier
   ## CITEIndexIdentifier
 
   def edit
@@ -40,7 +40,7 @@ class TeiCtsIdentifiersController < IdentifiersController
     edition = params[:edition_urn]
     collection = params[:CTSIdentifierCollectionSelect]
 
-    @identifier = TeiCTSIdentifier.new_from_template(publication, collection, edition, 'edition', nil)
+    @identifier = TEICTSIdentifier.new_from_template(publication, collection, edition, 'edition', nil)
 
     flash[:notice] = 'File created.'
     expire_publication_cache
@@ -110,7 +110,7 @@ class TeiCtsIdentifiersController < IdentifiersController
   protected
 
   def find_identifier
-    @identifier = TeiCTSIdentifier.find(params[:id].to_s)
+    @identifier = TEICTSIdentifier.find(params[:id].to_s)
   end
 
   def find_publication_and_identifier

@@ -1,4 +1,4 @@
-class ApisIdentifiersController < IdentifiersController
+class APISIdentifiersController < IdentifiersController
   before_action :authorize
   before_action :ownership_guard, only: %i[update updatexml]
   require 'pp'

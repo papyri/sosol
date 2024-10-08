@@ -1,8 +1,8 @@
-include DclpMetaIdentifierHelper
+include DCLPMetaIdentifierHelper
 
 require 'net/http'
 
-class DclpMetaIdentifiersController < HgvMetaIdentifiersController
+class DCLPMetaIdentifiersController < HGVMetaIdentifiersController
   def edit
     find_identifier
     @identifier.get_epidoc_attributes
@@ -247,7 +247,7 @@ class DclpMetaIdentifiersController < HgvMetaIdentifiersController
         end
       end
 
-      Rails.logger.info("DclpMetaIdentifiersController#complement_params: #{params.inspect}")
+      Rails.logger.info("DCLPMetaIdentifiersController#complement_params: #{params.inspect}")
     end
   end
 end

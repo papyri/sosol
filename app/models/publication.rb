@@ -15,7 +15,6 @@
 #- commiting to canon
 
 require 'English'
-require 'jgit_tree'
 require 'shellwords'
 
 class Publication < ApplicationRecord

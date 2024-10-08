@@ -65,23 +65,23 @@
           .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationVolume }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][0][value]', HgvPublication.getVolume(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_field_tag 'hgv_meta_identifier[publicationExtra][0][value]', HGVPublication.getVolume(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][0][attributes][type]', :volume
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationVolume' }
           
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationFascicle }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][1][value]', HgvPublication.getFascicle(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_field_tag 'hgv_meta_identifier[publicationExtra][1][value]', HGVPublication.getFascicle(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][1][attributes][type]', :fascicle
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationFascicle' }
           .clear
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationNumbers }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][2][value]', HgvPublication.getNumbers(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_field_tag 'hgv_meta_identifier[publicationExtra][2][value]', HGVPublication.getNumbers(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][2][attributes][type]', :numbers
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationNumbers' }
 
           = render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationSide }
-          = text_field_tag 'hgv_meta_identifier[publicationExtra][3][value]', HgvPublication.getSide(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
+          = text_field_tag 'hgv_meta_identifier[publicationExtra][3][value]', HGVPublication.getSide(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange'
           = hidden_field_tag 'hgv_meta_identifier[publicationExtra][3][attributes][type]', :side
           = render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationSide' }
           .clear

@@ -2,7 +2,7 @@
   %span.swifty.showDateTabs=I18n.t('meta.label.showDateTabs');
   - ['X', 'Y', 'Z'].each_with_index do |date_id, date_index|
     - date_item_epidoc = @identifier.get_date_item date_id
-    - date_item_hgv = HgvDate.epidocToHgv date_item_epidoc
+    - date_item_hgv = HGVDate.epidocToHGV date_item_epidoc
     
     %div{:class => 'dateItem ' + (date_id == 'X' ? 'dateItemActive': '') + ' dateItem' + date_id}
       .dateTab{:onclick => "openDateTab('" + date_id + "')"}

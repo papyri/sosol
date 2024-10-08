@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class DdbIdentifiersControllerTest < ActionController::TestCase
+class DDBIdentifiersControllerTest < ActionController::TestCase
   def setup
     @user = FactoryBot.create(:user)
     @request.session[:user_id] = @user.id

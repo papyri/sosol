@@ -1,4 +1,4 @@
-- key = HgvMetaIdentifierHelper::generateRandomId 'geoSpot'
+- key = HGVMetaIdentifierHelper::generateRandomId 'geoSpot'
 
 .multi.geoSpot{:id => 'multi_' + key.to_s}
   %ul.items{:id => 'multiItems_' + key.to_s}
@@ -8,9 +8,9 @@
       - geoBaseChildren = geoBase + '[children]'
       - geo = geoSpotList[index]
       %li
-        = select_tag geoBaseAttributes + '[type]', options_for_select(HgvProvenance.epochOptions, geo.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoType'
-        = select_tag geoBaseAttributes + '[subtype]', options_for_select(HgvProvenance.territoryOptions, geo.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoSubtype'
-        = select_tag geoBaseChildren + '[offset][value]', options_for_select(HgvProvenance.offsetOptions, geo.offset), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoOffset'
+        = select_tag geoBaseAttributes + '[type]', options_for_select(HGVProvenance.epochOptions, geo.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoType'
+        = select_tag geoBaseAttributes + '[subtype]', options_for_select(HGVProvenance.territoryOptions, geo.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoSubtype'
+        = select_tag geoBaseChildren + '[offset][value]', options_for_select(HGVProvenance.offsetOptions, geo.offset), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoOffset'
         = text_field_tag geoBase + '[value]', geo.name, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoName'
         = check_box_tag geoBaseAttributes + '[certainty]', :low, geo.certain?, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoCertainty'
         = label_tag geoBaseAttributes + '[certainty]', I18n.t('meta.label.uncertain'), :class => 'geoSpotUncertain'
@@ -26,9 +26,9 @@
 
   .add{:id => 'multiPlus_' + key.to_s}
 
-    = select_tag key + '_type', options_for_select(HgvProvenance.epochOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoType'
-    = select_tag key + '_subtype', options_for_select(HgvProvenance.territoryOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoSubtype'
-    = select_tag key + '_offset', options_for_select(HgvProvenance.offsetOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoOffset'
+    = select_tag key + '_type', options_for_select(HGVProvenance.epochOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoType'
+    = select_tag key + '_subtype', options_for_select(HGVProvenance.territoryOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoSubtype'
+    = select_tag key + '_offset', options_for_select(HGVProvenance.offsetOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoOffset'
     = text_field_tag key + '_name', nil, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoName'
     = check_box_tag key + '_certainty', :low, false, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoCertainty'
     = label_tag key + '_certainty', I18n.t('meta.label.uncertain'), :class => 'geoSpotUncertain'

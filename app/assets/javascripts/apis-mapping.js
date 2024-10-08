@@ -14,7 +14,7 @@ var apis_map = {
      tpl: "<idno type=\"invNo\">$apis_identifier_inventoryNo</idno>"},
     {name: "apisId",
      xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='apisid']",
-     children: [["text()","getApisCollection"],["text()","getApisId"]],
+     children: [["text()","getAPISCollection"],["text()","getAPISId"]],
      tpl: "<idno type=\"apisid\">$apis_identifier_apisCollection.apis.$apis_identifier_apisId</idno>",
      required: true},
     {xpath: "/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']",
@@ -104,10 +104,10 @@ var apis_map = {
     }
   },
   functions: {
-    getApisCollection: function(apisId) {
+    getAPISCollection: function(apisId) {
       return apisId.substring(0,apisId.indexOf("."));
     },
-    getApisId: function(apisId) {
+    getAPISId: function(apisId) {
       return apisId.substring(apisId.lastIndexOf(".") + 1);
     },
     getDate: function(date) {

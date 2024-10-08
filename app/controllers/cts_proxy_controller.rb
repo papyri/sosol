@@ -1,4 +1,4 @@
-class CtsProxyController < ApplicationController
+class CTSProxyController < ApplicationController
   def editions
     response = CTS::CTSLib.getEditionUrns(params[:inventory].to_s)
     render plain: response

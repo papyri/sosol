@@ -1,6 +1,6 @@
 .create
   %p
     = render(:partial => 'publications/cts_translation_selector', :locals => { :edition => edition, :collection => collection, :emend => :showemend, :hide_text => :hide_text, :controller => 'tei_trans_cts_identifiers', :publication_id => publication_id })
-    - link_type = TeiTransCTSIdentifier::FRIENDLY_NAME
+    - link_type = TEITransCTSIdentifier::FRIENDLY_NAME
     - newstyle = 'style="color:white; background-color:#005DAA"'
   %br    

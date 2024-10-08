@@ -1,5 +1,4 @@
 require 'net/http'
-require 'jruby_xml'
 
 module NumbersRDF
   # Top-level namespace used for identifiers, e.g. 'papyri.info' in 'papyri.info/hgv/1234'

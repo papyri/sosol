@@ -65,7 +65,7 @@ class IdentifiersController < ApplicationController
     # TODO: - does this need to be locked down somehow so not get to it via URL entry?
     find_identifier
     if @identifier.instance_of?(DCLPTextIdentifier)
-      redirect_to polymorphic_path([@identifier.publication, @identifier.correspondingDclpMetaIdentifier],
+      redirect_to polymorphic_path([@identifier.publication, @identifier.correspondingDCLPMetaIdentifier],
                                    action: :rename_review) and return
     end
 

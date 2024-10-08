@@ -1,7 +1,7 @@
-include HgvMetaIdentifierHelper
-include DclpTextIdentifierHelper
+include HGVMetaIdentifierHelper
+include DCLPTextIdentifierHelper
 
-class DclpTextIdentifiersController < DdbIdentifiersController
+class DCLPTextIdentifiersController < DDBIdentifiersController
   protected
 
   # Sets the identifier instance variable values

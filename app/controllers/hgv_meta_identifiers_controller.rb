@@ -1,7 +1,7 @@
-include HgvMetaIdentifierHelper
+include HGVMetaIdentifierHelper
 
 # Controller for all actions concerning the hgv metadata editor, such as edit, update, show preview and some json actions for interactive javascript
-class HgvMetaIdentifiersController < IdentifiersController
+class HGVMetaIdentifiersController < IdentifiersController
   # uses standard layout
   # user must be logged in to access these actions
   before_action :authorize
@@ -96,7 +96,7 @@ class HgvMetaIdentifiersController < IdentifiersController
     @identifier = HGVMetaIdentifier.new
     params.permit!
     @identifier.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier].to_h
-    @update = HgvProvenance.format @identifier.non_database_attribute[:provenance]
+    @update = HGVProvenance.format @identifier.non_database_attribute[:provenance]
 
     respond_to do |format|
       format.js
@@ -163,12 +163,12 @@ class HgvMetaIdentifiersController < IdentifiersController
       params[:hgv_meta_identifier][:textDate]&.each do |index, date| # for each textDate, i.e. X, Y, Z
         date[:id] = date[:attributes][:id]
         date.delete_if { |_k, v| !v.instance_of?(String) || v.empty? }
-        params[:hgv_meta_identifier][:textDate][index] = HgvDate.hgvToEpidoc date
+        params[:hgv_meta_identifier][:textDate][index] = HGVDate.hgvToEpidoc date
       end
 
       params[:hgv_meta_identifier][:mentionedDate]&.each do |_index, date|
         if date[:children] && date[:children][:date] && date[:children][:date][:attributes]
-          date[:children][:date][:value] = HgvFormat.formatDateFromIsoParts(date[:children][:date][:attributes][:when], date[:children][:date][:attributes][:notBefore], date[:children][:date][:attributes][:notAfter], date[:certaintyPicker]) # cl: using date[:certaintyPicker] here is actually a hack
+          date[:children][:date][:value] = HGVFormat.formatDateFromIsoParts(date[:children][:date][:attributes][:when], date[:children][:date][:attributes][:notBefore], date[:children][:date][:attributes][:notAfter], date[:certaintyPicker]) # cl: using date[:certaintyPicker] here is actually a hack
         end
       end
 
@@ -176,7 +176,7 @@ class HgvMetaIdentifiersController < IdentifiersController
         hgv = HGVMetaIdentifier.new
         params.permit!
         hgv.populate_epidoc_attributes_from_attributes_hash params[:hgv_meta_identifier].to_h
-        params[:hgv_meta_identifier][:origPlace] = HgvProvenance.format hgv.non_database_attribute[:provenance]
+        params[:hgv_meta_identifier][:origPlace] = HGVProvenance.format hgv.non_database_attribute[:provenance]
 
       else
         params[:hgv_meta_identifier][:origPlace] = 'unbekannt'

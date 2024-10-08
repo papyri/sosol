@@ -1,4 +1,4 @@
-class TeiCTSIdentifier < CTSIdentifier
+class TEICTSIdentifier < CTSIdentifier
   PATH_PREFIX = 'CTS_XML_TEI'.freeze
 
   FRIENDLY_NAME = 'Manuscript Transcription'.freeze
@@ -10,7 +10,7 @@ class TeiCTSIdentifier < CTSIdentifier
   XML_CITATION_PREPROCESSOR = 'preprocess_teia_passage.xsl'.freeze
 
   def before_commit(content)
-    TeiCTSIdentifier.preprocess(content)
+    TEICTSIdentifier.preprocess(content)
   end
 
   def self.preprocess(content)
@@ -25,7 +25,7 @@ class TeiCTSIdentifier < CTSIdentifier
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
-          TeiCTSIdentifier.preprocess(xml_content)
+          TEICTSIdentifier.preprocess(xml_content)
         ),
         JRubyXML.stream_from_file(File.join(Rails.root,
                                             %w[data xslt ddb update_commentary.xsl])),
@@ -43,7 +43,7 @@ class TeiCTSIdentifier < CTSIdentifier
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(
-          TeiCTSIdentifier.preprocess(xml_content)
+          TEICTSIdentifier.preprocess(xml_content)
         ),
         JRubyXML.stream_from_file(File.join(Rails.root,
                                             %w[data xslt ddb update_frontmatter_commentary.xsl])),
