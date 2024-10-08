@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 ruby '3.1.4', engine: 'jruby', engine_version: '9.4.8.0'
 
-gem 'rails', '~> 7.0'
+gem 'rails', '~> 7.0', '< 7.1'
 
 # Needed for the new asset pipeline
 gem 'coffee-rails'
