@@ -1,6 +1,6 @@
 .PHONY: build
 
-build_tag ?= papyri-editor
+CI_REGISTRY_IMAGE ?= sosol
 
 build:
-	docker build -t $(build_tag):latest .
+	docker build -t $(CI_REGISTRY_IMAGE):latest .
