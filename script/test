@@ -1,4 +1,8 @@
 #!/bin/sh
 
-bundle exec rake
+bundle exec cap local externals:setup
+echo "Cloning canonical..."
+bundle exec rake git:db:canonical:clone
+echo "Canonical clone finished."
+bundle exec rake test:all
 
