@@ -12,5 +12,8 @@ rm -rf db/git/users/*
 rm -rf db/git/communities/*
 rm -f .lock-*
 # echo "" > db/git/canonical.git/objects/info/alternates
+bundle exec cap local externals:setup
 bundle exec rake db:migrate:reset
-
+echo "Cloning canonical..."
+bundle exec rake git:db:canonical:clone
+echo "Canonical clone finished."
