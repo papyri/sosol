@@ -67,6 +67,8 @@ Sosol::Application.configure do
   config.action_mailer.delivery_method = :sendmail
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default_url_options = { host: 'papyri.info' }
+  # configure email parameters
+  config.site_email_from = 'admin@localhost'
 
   # Enable threaded mode
   # config.threadsafe!
@@ -86,6 +88,4 @@ Sosol::Application.configure do
   rescue LoadError
     warn('WARNING: config/environments/production_secret.rb missing, no secrets loaded!')
   end
-  # configure email parameters
-  config.site_email_from = 'admin@localhost'
 end
