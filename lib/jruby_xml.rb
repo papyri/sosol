@@ -298,7 +298,7 @@ module JRubyXML
       message_writer = java.io.StringWriter.new
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new)
-      transformer.setMessageEmitter(TransformMessageListener.new(Java::net.sf.saxon.event.PipelineConfiguration.new(Java::net.sf.saxon.Configuration.new)))
+      # transformer.setMessageEmitter(TransformMessageListener.new(Java::net.sf.saxon.event.PipelineConfiguration.new(Java::net.sf.saxon.Configuration.new)))
       parameters.each do |parameter, value|
         # saxon 9.x sees a bit pickier here and throws an error
         # on params with nil values  - check for them here for backwards
@@ -339,10 +339,10 @@ module JRubyXML
     # a transformation which catches xslt transform messages
     # and returns them with the transformed content
     def apply_xsl_transform_catch_messages(xml_stream, xsl_stream, parameters = {})
-      message_listener = TransformMessageListener.new
+      # message_listener = TransformMessageListener.new
       transformer = get_transformer(xsl_stream)
       transformer.setErrorListener(TransformErrorListener.new)
-      transformer.setMessageEmitter(message_listener)
+      # transformer.setMessageEmitter(message_listener)
       parameters.each do |parameter, value|
         next if value.nil?
 
@@ -359,7 +359,7 @@ module JRubyXML
         transformer.transform(xml_stream, result)
         return {
           content: string_writer.toString,
-          messages: message_listener.get_messages
+          messages: [] # message_listener.get_messages
         }
       rescue NativeException => e
         # For some reason Saxon doesn't seem to use the set ErrorListener

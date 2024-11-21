@@ -1,7 +1,7 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'https://rubygems.org'
-ruby '2.6.8', engine: 'jruby', engine_version: '9.3.10.0'
+ruby '3.1.4', engine: 'jruby', engine_version: '9.4.9.0'
 
 gem 'rails', '~> 6.1.5'
 
@@ -35,10 +35,10 @@ gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/, '')
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'actionpack-page_caching'
-gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 61', platform: :jruby
-gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 61', platform: :jruby
-gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 61', platform: :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 61', platform: :jruby
+gem 'activerecord-jdbc-adapter', '>= 61.3', '~> 61', platform: :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 61.3', '~> 61', platform: :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '>= 61.3', '~> 61', platform: :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 61.3', '~> 61', platform: :jruby
 gem 'activerecord-session_store'
 gem 'airbrake'
 gem 'capistrano', '~> 2.15.0'
@@ -63,6 +63,7 @@ gem 'rexml'
 gem 'rubyzip', '~> 2'
 gem 'silencer'
 gem 'sucker_punch', '~> 3.0'
+gem 'thwait'
 gem 'tzinfo-data', platform: :jruby
 gem 'webrick'
 gem 'with_advisory_lock'
