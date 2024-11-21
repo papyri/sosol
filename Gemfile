@@ -51,6 +51,7 @@ gem 'i18n'
 gem 'jdbc-mysql', require: false
 gem 'jdbc-sqlite3', '>= 3.7.2', platform: :jruby
 gem 'json', '>=1.6.6'
+gem 'lograge'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-rails_csrf_protection'
 gem 'pry', '~> 0.14.0'

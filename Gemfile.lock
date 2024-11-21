@@ -170,6 +170,11 @@ GEM
     json (2.6.3)
     json (2.6.3-java)
     jwt (2.7.0)
+    lograge (0.14.0)
+      actionpack (>= 4)
+      activesupport (>= 4)
+      railties (>= 4)
+      request_store (~> 1.0)
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -298,6 +303,8 @@ GEM
     rbtree-jruby (0.2.1)
     rbtree3 (0.7.0)
     regexp_parser (2.7.0)
+    request_store (1.7.0)
+      rack (>= 1.4)
     responders (3.1.0)
       actionpack (>= 5.2)
       railties (>= 5.2)
@@ -426,6 +433,7 @@ DEPENDENCIES
   jquery-rails
   jruby-jars (= 9.4.9.0)
   json (>= 1.6.6)
+  lograge
   mocha
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
