@@ -41,6 +41,7 @@ gem 'activerecord-jdbcpostgresql-adapter', '>= 61.3', '~> 61', platform: :jruby
 gem 'activerecord-jdbcsqlite3-adapter', '>= 61.3', '~> 61', platform: :jruby
 gem 'activerecord-session_store'
 gem 'airbrake'
+gem 'airbrake-ruby', '6.2.0'
 gem 'capistrano', '~> 2.15.0'
 gem 'devise', '~> 4.8'
 gem 'dotenv-rails'
