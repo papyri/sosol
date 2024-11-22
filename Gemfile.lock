@@ -190,7 +190,7 @@ GEM
     method_source (1.1.0)
     mini_mime (1.1.5)
     minitest (5.25.2)
-    mocha (2.0.2)
+    mocha (2.5.0)
       ruby2_keywords (>= 0.0.5)
     multi_json (1.15.0)
     multi_xml (0.6.0)
