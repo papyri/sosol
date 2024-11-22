@@ -356,7 +356,7 @@ GEM
       sprockets-rails
       tilt
     shoulda-context (2.0.0)
-    shoulda-matchers (5.3.0)
+    shoulda-matchers (6.4.0)
       activesupport (>= 5.2.0)
     silencer (2.0.0)
     snaky_hash (2.0.1)
