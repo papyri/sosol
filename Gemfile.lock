@@ -162,7 +162,7 @@ GEM
     httpclient (2.8.3)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
-    jdbc-mysql (8.0.30)
+    jdbc-mysql (8.4.0.1)
     jdbc-postgres (42.6.0)
     jdbc-sqlite3 (3.46.1.1)
     jquery-rails (4.5.1)
