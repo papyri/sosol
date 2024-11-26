@@ -255,10 +255,10 @@ GEM
     parser (3.3.6.0)
       ast (~> 2.4.1)
       racc
-    pry (0.14.2)
+    pry (0.15.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry (0.14.2-java)
+    pry (0.15.0-java)
       coderay (~> 1.1)
       method_source (~> 1.0)
       spoon (~> 0.0)
@@ -463,7 +463,7 @@ DEPENDENCIES
   mocha
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
-  pry (~> 0.14.0)
+  pry (~> 0.15.0)
   pry-rails (~> 0.3.9)
   puma (< 7)
   rack (>= 1.1.0)
