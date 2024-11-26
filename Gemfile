@@ -1,7 +1,7 @@
 # Edit this Gemfile to bundle your application's dependencies.
 # This preamble is the current preamble for Rails 3 apps; edit as needed.
 source 'https://rubygems.org'
-ruby '3.1.4', engine: 'jruby', engine_version: '9.4.8.0'
+ruby '3.1.4', engine: 'jruby', engine_version: '9.4.9.0'
 
 gem 'rails', '~> 7.0', '< 7.1'
 
@@ -35,12 +35,13 @@ gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/, '')
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'actionpack-page_caching'
-gem 'activerecord-jdbc-adapter', '>= 1.3.25', '~> 70', platform: :jruby
-gem 'activerecord-jdbcmysql-adapter', '>= 1.3.25', '~> 70', platform: :jruby
-gem 'activerecord-jdbcpostgresql-adapter', '>= 1.3.25', '~> 70', platform: :jruby
-gem 'activerecord-jdbcsqlite3-adapter', '>= 1.3.25', '~> 70', platform: :jruby
+gem 'activerecord-jdbc-adapter', '>= 61.3', '~> 70', platform: :jruby
+gem 'activerecord-jdbcmysql-adapter', '>= 61.3', '~> 70', platform: :jruby
+gem 'activerecord-jdbcpostgresql-adapter', '>= 61.3', '~> 70', platform: :jruby
+gem 'activerecord-jdbcsqlite3-adapter', '>= 61.3', '~> 70', platform: :jruby
 gem 'activerecord-session_store'
 gem 'airbrake'
+gem 'airbrake-ruby', '6.2.0'
 gem 'capistrano', '~> 2.15.0'
 gem 'devise', '~> 4.8'
 gem 'dotenv-rails'
@@ -51,9 +52,10 @@ gem 'i18n'
 gem 'jdbc-mysql', require: false
 gem 'jdbc-sqlite3', '>= 3.7.2', platform: :jruby
 gem 'json', '>=1.6.6'
+gem 'lograge'
 gem 'omniauth-google-oauth2'
 gem 'omniauth-rails_csrf_protection'
-gem 'pry', '~> 0.14.0'
+gem 'pry', '~> 0.15.0'
 gem 'pry-rails', '~> 0.3.9'
 gem 'puma', '< 7'
 gem 'rack', '>= 1.1.0'

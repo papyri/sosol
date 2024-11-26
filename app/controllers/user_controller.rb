@@ -2,6 +2,7 @@ class UserController < ApplicationController
   # #layout 'site'
   # layout 'header_footer'
   before_action :authorize, except: %i[signin signout show info help all_users_links]
+  skip_before_action :verify_authenticity_token, only: %i[refresh_usage]
 
   def signout
     sign_out current_user if current_user.present?

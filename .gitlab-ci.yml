@@ -1,0 +1,22 @@
+include:
+  - project: devops/ci-config
+    file:
+      - /templates/audit-jobs.gitlab-ci.yml
+      - /templates/container-flexible.gitlab-ci.yml
+      - /templates/environments.gitlab-ci.yml
+      - /templates/tag-release-version.gitlab-ci.yml
+
+stages:
+  - build
+  - test
+
+.job:
+  except:
+    variables:
+      - $CI_SKIP_JOB_STAGE == $CI_JOB_STAGE
+
+build:
+  extends: .build
+
+test:
+  extends: .test

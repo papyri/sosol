@@ -1,0 +1,18 @@
+services:
+  app:
+    image: "${build_tag:-rdr}"
+    build: .
+    environment:
+      RAILS_ENV: test
+      DATABASE_ADAPTER: postgresql
+      DATABASE_NAME: sosol_test
+      DATABASE_PASSWORD: sosol_test
+      DATABASE_HOSTNAME: postgres
+      DATABASE_POOL: 16
+    command: ./script/cleantest
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: sosol_test
+      POSTGRES_USER: sosol_test
+      POSTGRES_PASSWORD: sosol_test
