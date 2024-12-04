@@ -1,5 +1,5 @@
 FROM ubuntu:jammy
-MAINTAINER Ryan Baumann <ryan.baumann@gmail.com>
+LABEL org.opencontainers.image.authors="Ryan Baumann <ryan.baumann@gmail.com>"
 
 # Install the Ubuntu packages.
 # Install Ruby, RubyGems, Bundler, MySQL, Git, wget, svn, java
