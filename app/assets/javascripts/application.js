@@ -1,7 +1,7 @@
 //= require jquery
-//= require jquery_ujs
 //= require prototype
 //= require rails
+//= require rails-ujs
 //= require effects
 //= require dragdrop
 //= require controls
