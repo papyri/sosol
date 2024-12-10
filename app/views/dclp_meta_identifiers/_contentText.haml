@@ -38,4 +38,4 @@
       %input.observechange
       %span{:onclick => "multiAdd('contentText', 6)", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
-    = javascript_tag "Sortable.create('multiItems_contentText', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+    = javascript_tag "Sortable.create(document.getElementById('multiItems_contentText'), {direction: 'horizontal', handle: '.move'});"

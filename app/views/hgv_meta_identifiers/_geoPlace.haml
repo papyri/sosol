@@ -17,6 +17,6 @@
           = render :partial => 'hgv_meta_identifiers/geoSpot', :locals => {:geoSpotList => place.geoList, :placeBaseChildren => placeBaseChildren, :provenanceIndex => provenanceIndex, :placeIndex => placeIndex}
           .clear
 
-  = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_" + key.to_s + "'), {direction: 'horizontal', handle: '.move'});"
   
   %span.swifty.addPlace=I18n.t('meta.label.addPlace')

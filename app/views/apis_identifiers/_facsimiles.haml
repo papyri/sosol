@@ -16,4 +16,4 @@
   %p.add#multiPlus_facsimile
     %span{:onclick => "multiAddFacsimiles()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
     
-  = javascript_tag "Sortable.create('multiItems_facsimile', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_facsimile'), {direction: 'horizontal', handle: '.move'});"

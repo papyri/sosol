@@ -11,4 +11,4 @@
     %input.observechange
     %span{:onclick => "multiAdd('" + key.to_s + "')", :title => I18n.t('meta.tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
-  = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_" + key.to_s + "'), {direction: 'horizontal', handle: '.move'});"

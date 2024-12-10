@@ -40,7 +40,7 @@
               %p.add#multiPlus_workAuthorAuthority
                 %span{:onclick => "multiAddWorkAuthorAuthority(this)", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
               :javascript
-                Sortable.create('multiItems_workAuthorAuthority#{workIndex}', {overlap: 'horizontal', constraint: false, handle: 'move'});
+                Sortable.create(document.getElementById('multiItems_workAuthorAuthority#{workIndex}'), {direction: 'horizontal', handle: '.move'});
 
           = hidden_field_tag baseChildren + '[author][children][certainty][value]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
           .clear
@@ -70,7 +70,7 @@
               %p.add#multiPlus_workTitleAuthority
                 %span{:onclick => "multiAddWorkTitleAuthority(this)", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
               :javascript
-                Sortable.create('multiItems_workTitleAuthority#{workIndex}', {overlap: 'horizontal', constraint: false, handle: 'move'});
+                Sortable.create(document.getElementById('multiItems_workTitleAuthority#{workIndex}'), {direction: 'horizontal', handle: '.move'});
 
             = hidden_field_tag baseChildren + '[title][children][certainty][value]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
             .clear
@@ -95,6 +95,6 @@
           %span.move{:title => I18n.t('tooltip.multiMove')} o
 
     :javascript
-      Sortable.create('multiItems_work', {overlap: 'horizontal', constraint: false, handle: 'move'});
+      Sortable.create(document.getElementById('multiItems_work'), {direction: 'horizontal', handle: '.move'});
       jQuery('input.workAuthorName').autocomplete({ source: window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/ancient_author_autocomplete' : '/dclp_meta_identifiers/ancient_author_autocomplete', delay: 500, minLength: 4, close: function(event, ui){ workAuthorNameChange(this); }});
   .clear

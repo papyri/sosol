@@ -3,7 +3,7 @@
 //= require rails
 //= require rails-ujs
 //= require effects
-//= require dragdrop
+//= require Sortable
 //= require_self
 
 // Place your application-specific JavaScript functions and classes here

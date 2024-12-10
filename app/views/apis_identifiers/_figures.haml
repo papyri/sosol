@@ -11,4 +11,4 @@
       %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add#multiPlus_figure
     %span{:onclick => "multiAddFigures()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
-  = javascript_tag "Sortable.create('multiItems_figure', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_figure'), {direction: 'horizontal', handle: '.move'});"

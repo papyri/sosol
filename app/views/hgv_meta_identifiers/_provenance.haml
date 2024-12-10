@@ -29,6 +29,6 @@
             =render :partial => 'hgv_meta_identifiers/geoPlace', :locals => {:placeList => provenance.placeList, :baseChildren => baseChildren, :provenanceIndex => provenanceIndex}
             .clear    
         
-    = javascript_tag "Sortable.create('multiItems_provenance', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+    = javascript_tag "Sortable.create(document.getElementById('multiItems_provenance'), {direction: 'horizontal', handle: 'move'});"
    
   .clear

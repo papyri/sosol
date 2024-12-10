@@ -16,4 +16,4 @@
     %input#publicationExtra_value.observechange
     %span{:onclick => "multiAddPublicationExtra()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
-  = javascript_tag "Sortable.create('multiItems_publicationExtra', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_publicationExtra'), {direction: 'horizontal', handle: '.move'});"
