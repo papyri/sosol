@@ -4,7 +4,6 @@
 //= require rails-ujs
 //= require effects
 //= require dragdrop
-//= require controls
 //= require_self
 
 // Place your application-specific JavaScript functions and classes here
