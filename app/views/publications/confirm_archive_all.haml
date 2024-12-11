@@ -3,7 +3,7 @@
     //you have to submit the form before class toggle or does not work correctly
     $('archive_all_form').submit();
     $('show_working').toggleClassName('loading');
-    Effect.SlideDown('show_working_div');
+    window.domSlider.slideDown({element: document.getElementById('show_working_div')});
   }
 
 #main

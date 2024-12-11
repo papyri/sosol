@@ -2,7 +2,7 @@
 //= require prototype
 //= require rails
 //= require rails-ujs
-//= require effects
+//= require dom-slider
 //= require Sortable
 //= require_self
 
