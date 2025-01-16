@@ -446,7 +446,6 @@ DEPENDENCIES
   jquery-rails
   jruby-jars (= 9.4.9.0)
   json (>= 1.6.6)
-  logger
   lograge
   mocha
   omniauth-google-oauth2
