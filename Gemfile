@@ -32,7 +32,7 @@ end
 gem 'haml-rails', '~> 2.0'
 gem 'jquery-rails'
 gem 'jruby-jars', File.read('.ruby-version').chomp.sub(/^jruby-/, '')
-gem 'logger'
+gem 'logger', '< 1.6.5'
 gem 'sass'
 # gem 'json-jruby', '>= 1.6.6', :require => 'json', :platform => :jruby
 gem 'actionpack-page_caching'
