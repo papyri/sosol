@@ -1,10 +1,9 @@
-//= require jquery
-//= require jquery_ujs
+//= require jquery3
 //= require prototype
 //= require rails
-//= require effects
-//= require dragdrop
-//= require controls
+//= require rails-ujs
+//= require dom-slider
+//= require Sortable
 //= require_self
 
 // Place your application-specific JavaScript functions and classes here

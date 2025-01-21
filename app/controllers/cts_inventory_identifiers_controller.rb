@@ -1,4 +1,4 @@
-class CtsInventoryIdentifiersController < IdentifiersController
+class CTSInventoryIdentifiersController < IdentifiersController
   layout Sosol::Application.config.site_layout
   before_action :authorize
 

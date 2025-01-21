@@ -2,20 +2,18 @@
 
 :javascript
   window.onload = function()  {
-  Sortable.create("board_elements", {tag:'li'});
+  Sortable.create(document.getElementById("board_elements"));
   //alert(Sortable.serialize('board_elements', {name: "rb"}));
   }
   function getRankings() {
   //put the ranking into a csv list
   
-  var new_rankings =  Sortable.serialize('board_elements');
-  new_rankings = new_rankings.replace(/board_elements\[\]=/g, '');
-  new_rankings = new_rankings.replace(/&/g, ',');
+  // var new_rankings =  Sortable.serialize('board_elements');
+  // new_rankings = new_rankings.replace(/board_elements\[\]=/g, '');
+  // new_rankings = new_rankings.replace(/&/g, ',');
   
-  var rankings_node = document.getElementById('form_board_rankings');
-  rankings_node.value = new_rankings;
-  //$('form_board_rankings').value = new_rankings;
-
+  // var rankings_node = document.getElementById('form_board_rankings');
+  // rankings_node.value = new_rankings;
   }
 
 %h1

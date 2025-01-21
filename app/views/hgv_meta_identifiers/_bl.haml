@@ -17,4 +17,4 @@
     %input#bl_page.observechange
     %span{:onclick => "multiAddBl()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
-  = javascript_tag "Sortable.create('multiItems_bl', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_bl'), {direction: 'horizontal', handle: '.move'});"

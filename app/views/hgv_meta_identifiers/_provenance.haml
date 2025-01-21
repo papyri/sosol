@@ -5,7 +5,7 @@
   .multi.geoSpot{:id => 'multi_provenance', :style => 'display: ' + (@identifier.non_database_attribute[:origPlace] == 'unbekannt' ? 'none' : 'block')}
     %ul.items{:id => 'multiItems_provenance'}
       - @identifier.non_database_attribute[:provenance].each_index do |provenanceIndex|
-        - provenance = HgvGeo::Provenance.new( :provenance => @identifier.non_database_attribute[:provenance][provenanceIndex])
+        - provenance = HGVGeo::Provenance.new( :provenance => @identifier.non_database_attribute[:provenance][provenanceIndex])
         - base = 'hgv_meta_identifier[provenance][' + provenanceIndex.to_s + ']'
         - baseAttributes = base + '[attributes]'
         - baseChildren = base + '[children]'
@@ -14,10 +14,10 @@
           %p.clear
 
           = label_tag baseAttributes + '[type]', I18n.t('meta.label.type'), :class => 'meta provenanceType', :title => @identifier.configuration.xpath(:provenance)
-          = select_tag baseAttributes + '[type]', options_for_select(HgvProvenance.typeOptions, provenance.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceType'
+          = select_tag baseAttributes + '[type]', options_for_select(HGVProvenance.typeOptions, provenance.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceType'
         
           = label_tag baseAttributes + '[subtype]', I18n.t('meta.label.subtype'), :class => 'meta provenanceSubtype', :title => @identifier.configuration.xpath(:provenance)
-          = select_tag baseAttributes + '[subtype]', options_for_select(HgvProvenance.subtypeOptions, provenance.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceSubtype'
+          = select_tag baseAttributes + '[subtype]', options_for_select(HGVProvenance.subtypeOptions, provenance.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceSubtype'
 
           = label_tag baseAttributes + '[date]', I18n.t('meta.label.date'), :class => 'meta provenanceDate', :title => @identifier.configuration.xpath(:provenance)
           = text_field_tag baseAttributes + '[date]', provenance.date, :disabled => !@identifier.mutable?, :class => 'observechange provenanceDate'
@@ -29,6 +29,6 @@
             =render :partial => 'hgv_meta_identifiers/geoPlace', :locals => {:placeList => provenance.placeList, :baseChildren => baseChildren, :provenanceIndex => provenanceIndex}
             .clear    
         
-    = javascript_tag "Sortable.create('multiItems_provenance', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+    = javascript_tag "Sortable.create(document.getElementById('multiItems_provenance'), {direction: 'horizontal', handle: 'move'});"
    
   .clear

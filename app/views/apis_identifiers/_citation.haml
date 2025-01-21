@@ -11,5 +11,5 @@
       %span.move{:title => I18n.t('tooltip.multiMove')} o
   %p.add#multiPlus_citation
     %span{:onclick => "multiAddCitation()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
-  = javascript_tag "Sortable.create('multiItems_citation', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_citation'), {direction: 'horizontal', handle: '.move'});"
 

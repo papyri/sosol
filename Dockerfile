@@ -1,5 +1,5 @@
-FROM ubuntu:jammy
-MAINTAINER Ryan Baumann <ryan.baumann@gmail.com>
+FROM debian:bullseye
+LABEL org.opencontainers.image.authors="Ryan Baumann <ryan.baumann@gmail.com>"
 
 # Install the Ubuntu packages.
 # Install Ruby, RubyGems, Bundler, MySQL, Git, wget, svn, java
@@ -12,7 +12,7 @@ RUN apt-get update && \
   openjdk-11-jre
 
 # Set the locale.
-RUN locale-gen en_US.UTF-8
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && locale-gen
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
@@ -33,7 +33,8 @@ RUN git clone https://github.com/rbenv/rbenv-vars.git $(rbenv root)/plugins/rben
 
 ADD . /root/sosol/
 WORKDIR /root/sosol
-RUN rbenv install && rbenv rehash && gem install bundler:2.2.32 && rbenv rehash && bundle install && jruby -v && java -version && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
+RUN rbenv install && rbenv rehash && gem install bundler:2.5.23 && rbenv rehash && bundle install && jruby -v && java -version && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
+RUN bundle exec cap local externals:setup
 # RUN RAILS_ENV=test ./script/setup
 
 # Finally, start the application

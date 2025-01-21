@@ -108,8 +108,8 @@ Rails::Initializer.run do |config|
   SITE_FULL_NAME = 'Philologist'.freeze
   SITE_TAG_LINE = 'powered by Son of Suda Online'.freeze
   SITE_LAYOUT = 'perseus'.freeze
-  SITE_IDENTIFIERS = 'CitationCTSIdentifier,TeiCTSIdentifier,TeiTransCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,CTSInventoryIdentifier'.freeze
-  SITE_CTS_INVENTORIES = 'perseus|Tei,epifacs|Epi'.freeze
+  SITE_IDENTIFIERS = 'CitationCTSIdentifier,TEICTSIdentifier,TEITransCTSIdentifier,EpiCTSIdentifier,EpiTransCTSIdentifier,CTSInventoryIdentifier'.freeze
+  SITE_CTS_INVENTORIES = 'perseus|TEI,epifacs|Epi'.freeze
   SITE_CATALOG_SEARCH = 'View In Catalog'.freeze
   SITE_USER_NAMESPACE = 'data.perseus.org'.freeze
   EXTERNAL_CTS_REPOS = 'Athenaeus Sources|http://localhost:8080/exist/rest/db/xq/CTS.xq?inv=annotsrc|http://data.perseus.org/citations'.freeze

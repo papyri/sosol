@@ -3,16 +3,16 @@
   .clear
   .multi.work{:id => 'multi_work'}
     = label_tag 'hgv_meta_identifier[workAlternative]', I18n.t('dclp.label.workAlternative'), :class => 'meta workAlternative', :title => @identifier.configuration.xpath(:work)
-    = check_box_tag 'hgv_meta_identifier[workAlternative]', 'alternative', DclpWork::Work.alternative?(@identifier.non_database_attribute[:work]), disabled: !@identifier.mutable?, :class => 'observechange workAlternative'
+    = check_box_tag 'hgv_meta_identifier[workAlternative]', 'alternative', DCLPWork::Work.alternative?(@identifier.non_database_attribute[:work]), disabled: !@identifier.mutable?, :class => 'observechange workAlternative'
     %ul.items{:id => 'multiItems_work'}
       - @identifier.non_database_attribute[:work].each_with_index do |work, workIndex|
-        - work = DclpWork::Work.new(work)
+        - work = DCLPWork::Work.new(work)
         - base = 'hgv_meta_identifier[work][' + workIndex.to_s + ']'
         - baseAttributes = base + '[attributes]'
         - baseChildren = base + '[children]'
 
         %li.work{:id => 'work_' + workIndex.to_s }
-          = select_tag baseAttributes + '[subtype]', options_for_select(DclpWork.subtypeOptions, work.subtype), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
+          = select_tag baseAttributes + '[subtype]', options_for_select(DCLPWork.subtypeOptions, work.subtype), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
           .clear
 
           %h5
@@ -21,7 +21,7 @@
           = text_field_tag baseChildren + '[author][value]', (work.author ? work.author.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workAuthorName'
 
           = label_tag baseChildren + '[author][attributes][language]', I18n.t('biblio.label.language'), :class => 'meta workAuthorLanguage', :title => @identifier.configuration.xpath(:work)
-          = select_tag baseChildren + '[author][attributes][language]', options_for_select(DclpWork.languageOptions, (work.author ? work.author.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
+          = select_tag baseChildren + '[author][attributes][language]', options_for_select(DCLPWork.languageOptions, (work.author ? work.author.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
           .clear
 
           .authorityContainer
@@ -33,14 +33,14 @@
                   - work.author.authority.each do |key, value|
                     - if value
                       %li
-                        = select_tag '', options_for_select(DclpWork.authorityOptions(:author), key), :data => key, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority', :onchange => 'return workAuthorityChange(this);'
+                        = select_tag '', options_for_select(DCLPWork.authorityOptions(:author), key), :data => key, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority', :onchange => 'return workAuthorityChange(this);'
                         = text_field_tag baseChildren + '[author][' + key.to_s + ']', value, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority'
                         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
                         %span.move{:title => I18n.t('tooltip.multiMove')} o
               %p.add#multiPlus_workAuthorAuthority
                 %span{:onclick => "multiAddWorkAuthorAuthority(this)", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
               :javascript
-                Sortable.create('multiItems_workAuthorAuthority#{workIndex}', {overlap: 'horizontal', constraint: false, handle: 'move'});
+                Sortable.create(document.getElementById('multiItems_workAuthorAuthority#{workIndex}'), {direction: 'horizontal', handle: '.move'});
 
           = hidden_field_tag baseChildren + '[author][children][certainty][value]', (work.author ? work.author.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
           .clear
@@ -51,7 +51,7 @@
           = text_field_tag baseChildren + '[title][value]', (work.title ?  work.title.name : ''), :disabled => !@identifier.mutable?, :class => 'observechange workTitleName', :onchange => "workTitleNameChange(this);"
 
           = label_tag baseChildren + '[title][attributes][language]', I18n.t('biblio.label.language'), :class => 'meta workTitleLanguage', :title => @identifier.configuration.xpath(:work)
-          = select_tag baseChildren + '[title][attributes][language]', options_for_select(DclpWork.languageOptions, (work.title ? work.title.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
+          = select_tag baseChildren + '[title][attributes][language]', options_for_select(DCLPWork.languageOptions, (work.title ? work.title.language : '')), :disabled => !@identifier.mutable?, :class => 'observechange workSubtype'
           .clear
 
           .authorityContainer
@@ -63,14 +63,14 @@
                   - work.title.authority.each do |key, value|
                     - if value
                       %li
-                        = select_tag '', options_for_select(DclpWork.authorityOptions(:title), key), :data => key, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority', :onchange => 'return workAuthorityChange(this);'
+                        = select_tag '', options_for_select(DCLPWork.authorityOptions(:title), key), :data => key, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority', :onchange => 'return workAuthorityChange(this);'
                         = text_field_tag baseChildren + '[title][' + key.to_s + ']', value, :disabled => !@identifier.mutable?, :class => 'observechange workAuthority'
                         %span.delete{:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')} x
                         %span.move{:title => I18n.t('tooltip.multiMove')} o
               %p.add#multiPlus_workTitleAuthority
                 %span{:onclick => "multiAddWorkTitleAuthority(this)", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
               :javascript
-                Sortable.create('multiItems_workTitleAuthority#{workIndex}', {overlap: 'horizontal', constraint: false, handle: 'move'});
+                Sortable.create(document.getElementById('multiItems_workTitleAuthority#{workIndex}'), {direction: 'horizontal', handle: '.move'});
 
             = hidden_field_tag baseChildren + '[title][children][certainty][value]', (work.title ? work.title.certainty : ''), :disabled => !@identifier.mutable?, :class => 'observechange workCertainty'
             .clear
@@ -95,6 +95,6 @@
           %span.move{:title => I18n.t('tooltip.multiMove')} o
 
     :javascript
-      Sortable.create('multiItems_work', {overlap: 'horizontal', constraint: false, handle: 'move'});
+      Sortable.create(document.getElementById('multiItems_work'), {direction: 'horizontal', handle: '.move'});
       jQuery('input.workAuthorName').autocomplete({ source: window.location.href.indexOf('/editor/') > 0 ? '/editor/dclp_meta_identifiers/ancient_author_autocomplete' : '/dclp_meta_identifiers/ancient_author_autocomplete', delay: 500, minLength: 4, close: function(event, ui){ workAuthorNameChange(this); }});
   .clear

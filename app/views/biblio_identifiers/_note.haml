@@ -20,4 +20,4 @@
     
     %span{:onclick => "multiAddNote()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
-  = javascript_tag "Sortable.create('multiItems_note', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_note'), {direction: 'horizontal', handle: '.move'});"

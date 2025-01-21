@@ -114,7 +114,7 @@
     comment_on = comment_li.classNames().toArray().first().replace(/comment-on-/,'');
     content = comment_div.innerHTML.strip();
     
-    Effect.SlideUp(comment_div_container.id, {duration: 0.5});
+    window.domSlider.slideUp({element: document.getElementById(comment_div_container.id), slideSpeed: 500});
     
     $(comment_li).insert({
       after: '<li class="input existing_comment"/>' + generateCommentaryForm(comment_on,nval,content,comment_div_container.id)
@@ -127,7 +127,7 @@
 
     $('com_sugar_content').toggleClassName('loading');
 
-    Effect.SlideDown("form-"+comment_on, { queue: 'end'});
+    window.domSlider.slideDown({element: document.getElementById("form-"+comment_on")});
     
     //translate the xml to commentary sugar
     getSugar(originalxml, 'LBL');
@@ -616,8 +616,8 @@
     });
 
     menuInit();
-    
-    Effect.SlideDown("form-"+element.id);
+
+    window.domSlider.slideDown({element: document.getElementById("form-"+element.id)});
     element.stopObserving('click');
     element.removeClassName('clickable');
   }
@@ -643,8 +643,8 @@
     else {
       original_content = original_content[0].value;
     }
-
-    Effect.SlideUp("frontmatter_commentary_container",{queue: 'front', duration: 0.5});
+    
+    window.domSlider.slideUp({element: document.getElementById("frontmatter_commentary_container"), slideSpeed: 500});
     
     $("frontmatter_commentary_container").insert({
       after: generateFrontmatterCommentaryForm(original_content)
@@ -652,7 +652,7 @@
         
     menuInit();
 
-    Effect.SlideDown("form-frontmatter",{queue: 'end'});
+    window.domSlider.slideDown({element: document.getElementById("form-frontmatter")});
     
     element.stopObserving('click');
     event.stop();
@@ -677,8 +677,8 @@
     else {
       original_content = original_content[0].value;
     }
-    
-    Effect.SlideUp("frontmatter_commentary_container",{queue: 'front', duration: 0.5});
+
+    window.domSlider.slideUp({element: document.getElementById("frontmatter_commentary_container"), slideSpeed: 500});
     
     $("frontmatter_commentary_container").insert({
       after: generateFrontmatterCommentaryForm(original_content)
@@ -691,7 +691,7 @@
 
     $('fm_sugar_content').toggleClassName('loading');
 
-    Effect.SlideDown("form-frontmatter",{queue: 'end'});
+    window.domSlider.slideDown({element: document.getElementById("form-frontmatter")});
 
     //translate the xml to commentary sugar
     getSugar(original_content, 'FM');

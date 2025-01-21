@@ -143,10 +143,10 @@
           %div{:id => "more_comments", :style => "display:none;"}
             = render :partial => "publications/commentall", :object => @all_comments[max_visible_comments..-1]
           %div{:id => "more_comments_link"}
-            %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_comments');Effect.SlideUp('more_comments_link');Effect.SlideDown('less_comments_link');return false;"}
+            %a{:class => 'morelink', :href => '#', :onclick => "window.domSlider.slideDown({element: document.getElementById('more_comments')});window.domSlider.slideUp({element: document.getElementById('more_comments_link')});window.domSlider.slideDown({element: document.getElementById('less_comments_link')});return false;"}
               More...
           %div{:id => "less_comments_link", :style => "display:none;"}
-            %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_comments');Effect.SlideDown('more_comments_link');Effect.SlideUp('less_comments_link');return false;"}
+            %a{:class => 'lesslink', :href => '#', :onclick => "window.domSlider.slideUp({element: document.getElementById('more_comments')});window.domSlider.slideDown({element: document.getElementById('more_comments_link')});window.domSlider.slideUp({element: document.getElementById('less_comments_link')});return false;"}
               Less...  
      
     - if @xml_only_comments != nil
@@ -162,10 +162,10 @@
           %div{:id => "more_xml_comments", :style => "display:none;"}
             = render :partial => "publications/commentall", :object => @xml_only_comments[max_visible_comments..-1]
           %div{:id => "more_xml_comments_link"}
-            %a{:class => 'morelink', :href => '#', :onclick => "Effect.SlideDown('more_xml_comments');Effect.SlideUp('more_xml_comments_link');Effect.SlideDown('less_xml_comments_link');return false;"}
+            %a{:class => 'morelink', :href => '#', :onclick => "window.domSlider.slideDown({element: document.getElementById('more_xml_comments')});window.domSlider.slideUp({element: document.getElementById('more_xml_comments_link')});window.domSlider.slideDown({element: document.getElementById('less_xml_comments_link')});return false;"}
               More...
           %div{:id => "less_xml_comments_link", :style => "display:none;"}
-            %a{:class => 'lesslink', :href => '#', :onclick => "Effect.SlideUp('more_xml_comments');Effect.SlideDown('more_xml_comments_link');Effect.SlideUp('less_xml_comments_link');return false;"}
+            %a{:class => 'lesslink', :href => '#', :onclick => "window.domSlider.slideUp({element: document.getElementById('more_xml_comments')});window.domSlider.slideDown({element: document.getElementById('more_xml_comments_link')});window.domSlider.slideUp({element: document.getElementById('less_xml_comments_link')});return false;"}
               Less...  
             
     - if @other_user_publications != nil && @other_user_publications.length > 0

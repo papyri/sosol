@@ -1,4 +1,4 @@
-class TeiTransCTSIdentifier < TeiCTSIdentifier
+class TEITransCTSIdentifier < TEICTSIdentifier
   PATH_PREFIX = 'CTS_XML_TEI'.freeze
   TEMPORARY_COLLECTION = 'TempTrans'.freeze
   TEMPORARY_TITLE = 'New Translation'.freeze
@@ -27,7 +27,7 @@ class TeiTransCTSIdentifier < TeiCTSIdentifier
   end
 
   def related_text
-    publication.identifiers.reverse.find { |i| i.instance_of?(TeiCTSIdentifier) && !i.is_reprinted? }
+    publication.identifiers.reverse.find { |i| i.instance_of?(TEICTSIdentifier) && !i.is_reprinted? }
   end
 
   def stub_text_structure(lang, urn)

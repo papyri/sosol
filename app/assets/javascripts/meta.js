@@ -175,7 +175,7 @@ function multiAddProvenanceRaw(e){
 
   multiUpdate('provenance', item);
 
-  Sortable.create('multiItems_' + geoPlaceKey, {overlap: 'horizontal', constraint: false, handle: 'move'});
+  Sortable.create(document.getElementById('multiItems_' + geoPlaceKey), {direction: 'horizontal', handle: '.move'});
   $(addPlaceKey).observe('click', function(ev){ multiAddPlaceRaw(this); });
 }
 
@@ -253,7 +253,7 @@ function multiAddPlaceRaw(e){
              '             </p>' +
              '             <script type="text/javascript">' +
              '             //&lt;![CDATA[' +
-             '             Sortable.create(\'multiItems_' + geoReferenceKey + '\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
+             '             Sortable.create(document.getElementById(\'multiItems_' + geoReferenceKey + '\'), {direction: \'horizontal\', handle: \'.move\'});' +
              '             //]]&gt;' +
              '             </script>' +
              '           </div>' +
@@ -262,7 +262,7 @@ function multiAddPlaceRaw(e){
              '       </div>' +
              '       <script type="text/javascript">' +
              '       //&lt;![CDATA[' +
-             '       Sortable.create(\'multiItems_' + geoSpotKey + '\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
+             '       Sortable.create(document.getElementById(\'multiItems_' + geoSpotKey + '\'), {direction: \'horizontal\', handle: \'.move\'});' +
              '       //]]&gt;' +
              '       </script>' +
              '     </div>' +
@@ -345,7 +345,7 @@ function multiAddGeoSpot(key, provenanceIndex, placeIndex)
   multiUpdate(key, item);
   
   // create sortables for reference List
-  //Sortable.create('multiItems_' + referenceKey, {overlap: 'horizontal', constraint: false, handle: 'move'});
+  //Sortable.create(document.getElementById('multiItems_' + referenceKey), {direction: 'horizontal', handle: '.move'});
   
   // clear
   $$('#multiPlus_' + key + ' > div.paragraph > div.geoReference > ul > li > input').each(function(item){
@@ -459,7 +459,7 @@ function multiUpdate(id, newItem)
   $$('#multiPlus_' + id + ' > input').each(function(item){item.clear();});
   $$('#multiPlus_' + id + ' > select').each(function(item){item.clear();});
 
-  Sortable.create('multiItems_' + id, {overlap: 'horizontal', constraint: false, handle: 'move'});
+  Sortable.create(document.getElementById('multiItems_' + id), {direction: 'horizontal', handle: '.move'});
 }
 
 function multiRemove(item)

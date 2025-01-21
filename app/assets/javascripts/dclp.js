@@ -252,7 +252,7 @@ function multiAddWork(e){
 '                            <span onclick="multiAddWorkAuthorAuthority(this)" title="✓">add</span>' +
 '                          </p>' +
 '                          <script>' +
-'                            Sortable.create(\'multiItems_workAuthorAuthority' + workIndex +'\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
+'                            Sortable.create(document.getElementById(\'multiItems_workAuthorAuthority' + workIndex +'\'), {direction: \'horizontal\', handle: \'.move\'});' +
 '                          </script>' +
 '                        </div>' +
 '                      </div>' +
@@ -274,7 +274,7 @@ function multiAddWork(e){
 '                            <span onclick="multiAddWorkTitleAuthority(this)" title="✓">add</span>' +
 '                          </p>' +
 '                          <script>' +
-'                            Sortable.create(\'multiItems_workTitleAuthority' + workIndex +'\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
+'                            Sortable.create(document.getElementById(\'multiItems_workTitleAuthority' + workIndex +'\'), {direction: \'horizontal\', handle: \'.move\'});' +
 '                          </script>' +
 '                        </div>' +
 '                        <input class="observechange workCertainty" id="hgv_meta_identifier_work_' + workIndex +'_children_title_children_certainty_value" name="hgv_meta_identifier[work][' + workIndex +'][children][title][children][certainty][value]" type="hidden">' +
@@ -297,7 +297,7 @@ function multiAddWork(e){
 '                            <span onclick="multiAddWorkExtraAnd(this)" title="✓">add and</span>' +
 '                          </p>' +
 '                          <script>' +
-'                            Sortable.create(\'multiItems_workExtra' + workIndex +'\', {overlap: \'horizontal\', constraint: false, handle: \'move\'});' +
+'                            Sortable.create(document.getElementById(\'multiItems_workExtra' + workIndex +'\'), {direction: \'horizontal\', handle: \'.move\'});' +
 '                          </script>' +
 '                        </div>' +
 '                        <div class="clear"></div>' +

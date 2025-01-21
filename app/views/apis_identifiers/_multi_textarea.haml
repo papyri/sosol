@@ -8,4 +8,4 @@
     %textarea.observechange
     %span{:onclick => "multiAddTextarea('" + key.to_s + "')", :title => I18n.t('tooltip.multiAdd')}=I18n.t('tooltip.multiAdd')
 
-  = javascript_tag "Sortable.create('multiItems_" + key.to_s + "', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_" + key.to_s + "'), {direction: 'horizontal', handle: '.move'});"

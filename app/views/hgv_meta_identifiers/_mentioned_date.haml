@@ -1,6 +1,6 @@
-- data = HgvMentionedDate::dateInformation @identifier.non_database_attribute[:mentionedDate]
-- certaintyOptions = HgvMentionedDate::certaintyOptions
-- dateIdOptions = HgvMentionedDate::dateIdOptions
+- data = HGVMentionedDate::dateInformation @identifier.non_database_attribute[:mentionedDate]
+- certaintyOptions = HGVMentionedDate::certaintyOptions
+- dateIdOptions = HGVMentionedDate::dateIdOptions
 
 %p.label
   %label.mentionedDateReference
@@ -65,4 +65,4 @@
     = select_tag 'mentionedDate_dateId', options_for_select(dateIdOptions), :title => I18n.t('meta.tooltip.multiMentionedDateDateId'), :disabled => !@identifier.mutable?, :class => 'observechange dateId'
     %span{:onclick => "multiAddMentionedDate()", :title => I18n.t('tooltip.multiAdd')}=I18n.t('label.multiAdd')
 
-  = javascript_tag "Sortable.create('multiItems_mentionedDate', {overlap: 'horizontal', constraint: false, handle: 'move'});"
+  = javascript_tag "Sortable.create(document.getElementById('multiItems_mentionedDate'), {direction: 'horizontal', handle: '.move'});"
