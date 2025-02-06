@@ -14,6 +14,7 @@ jobs:
     env:
       RAILS_ENV: test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     services:
       postgres:
         image: postgres:13
