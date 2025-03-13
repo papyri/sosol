@@ -9,6 +9,7 @@ include:
 stages:
   - build
   - test
+  - deploy
 
 .job:
   except:
@@ -20,3 +21,23 @@ build:
 
 test:
   extends: .test
+
+deploy-dev-deb-12:
+  tags:
+    - deploy
+  stage: deploy
+  script:
+    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
+    - sudo /usr/bin/systemctl start papyri-editor-dev-deploy-playbook.service
+    - sudo /usr/bin/journalctl -u papyri-editor-dev-deploy-playbook --since "${CURRENT_TIME}"
+  when: manual
+
+deploy-prod-deb-12:
+  tags:
+    - deploy
+  stage: deploy
+  script:
+    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
+    - sudo /usr/bin/systemctl start papyri-editor-deploy-playbook.service
+    - sudo /usr/bin/journalctl -u papyri-editor-deploy-playbook --since "${CURRENT_TIME}"
+  when: manual
