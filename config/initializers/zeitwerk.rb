@@ -50,6 +50,7 @@ Rails.autoloaders.each do |autoloader|
     "oac_identifiers_controller" => "OACIdentifiersController",
     "numbers_rdf" => "NumbersRDF",
     "jruby_xml" => "JRubyXML",
+    "epidocinator" => "Epidocinator",
     "jgit" => "JGit"
   )
 end

@@ -94,10 +94,23 @@ class Identifier < ApplicationRecord
   #   - +content+ -> XML to validate if passed in, pulled from repository if not passed in
   # - *Returns* :
   #   - true/false
+  # todo use epidocinator validator instead
   def is_valid_xml?(content = nil)
     content = xml_content if content.nil?
     self.class::XML_VALIDATOR.instance.validate(
       JRubyXML.input_source_from_string(content)
+    )
+  end
+
+  def xsl_transform_params
+    {}
+  end
+
+  def preview(parameters = {}, xsl = nil)
+    # Seems to be missing aparatus?
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(xml_content),
+      xsl_transform_params
     )
   end
 
@@ -319,6 +332,8 @@ class Identifier < ApplicationRecord
   # - *Returns* :
   #   - the content of the associated identifier's XML file
   def xml_content
+    Rails.logger.info("identifer@xml_content:324 unsaved_xml_content.presence = #{unsaved_xml_content.presence}")
+    Rails.logger.info("identifer@xml_content:325 \n content: \n #{content}")
     unsaved_xml_content.presence || content
   end
 
