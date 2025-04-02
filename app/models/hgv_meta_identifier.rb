@@ -14,11 +14,12 @@ class HGVMetaIdentifier < HGVIdentifier
   # - *Returns* :
   #   - result of transformation operation as provided by +JRubyXML.apply_xsl_transform+
   def preview(parameters = {}, xsl = nil)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          xsl || %w[data xslt metadata preview.xsl])),
-      parameters
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(xml_content),
+      {
+        'xsl' => 'previewmetadata',
+        'collection' => 'hgvmeta',
+      }
     )
   end
 

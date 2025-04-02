@@ -6,18 +6,15 @@ require 'stringio'
 module Epidocinator
 
   class << self
-    # def initialize
-    #   @epidocinator = EpidocinatorClient.new
-    # end
-
-    def validate_document(document)
-      @epidocinator = EpidocinatorClient.new
-      @epidocinator.process(document)
+    
+    def validate(xml_document, parameters)
+      epidocinator = EpidocinatorClient.new
+      epidocinator.validate_xml(xml_document, parameters)
     end
 
-    def apply_xsl_transform(xml_stream, parameters = {})
-      @epidocinator = EpidocinatorClient.new
-      @epidocinator.transform_xml(xml_stream, parameters)
+    def apply_xsl_transform(xml_stream, parameters)
+      epidocinator = EpidocinatorClient.new
+      epidocinator.transform_xml(xml_stream, parameters)
     end
     
     def stream_from_string(input_string)
@@ -34,6 +31,8 @@ module Epidocinator
     class EpidocinatorHostError < StandardError; end
     class EpidocinatorAPIRequestError < StandardError; end
 
+    XML_CONTENT_HEADERS = { 'Content-Type' => 'text/xml; charset=UTF-8' }
+
     def initialize
       # if Sosol::Application.config.respond_to?(:epidocinator_standalone_url)
       #   epidoc_host = Sosol::Application.config.epidocinator_standalone_url
@@ -43,17 +42,28 @@ module Epidocinator
       # end
       
       @client = HTTPClient.new
-      @client.base_url = 'http://epidocinator:8085'
+      @client.base_url = 'http://epidocinator:8085'      
     end
 
-    def transform_xml(xml_string, parameters)
+    def validate_xml(xml_document, parameters = {})
+      url = get_request_url('/relaxng', parameters)
+      post(url, xml_document, XML_CONTENT_HEADERS)
+    end
+
+    def transform_xml(xml_string, parameters = {})
       body = xml_string.string
-      uri = URI(@client.base_url + '/transform')
-      uri.query = URI.encode_www_form(parameters)
-      res = post(uri.to_s, body, { 'Content-Type' => 'text/xml; charset=UTF-8'})
+      url = get_request_url('/transform', parameters)
+      puts "#{url} hi Isaiah"
+      post(url, body, XML_CONTENT_HEADERS)
     end
 
     private
+
+    def get_request_url(path, parameters)
+      uri = URI(@client.base_url + '/transform')
+      uri.query = URI.encode_www_form(parameters)
+      uri.to_s
+    end
 
     def get(url, headers = {})
       execute_request { @client.get(url, nil, headers) }

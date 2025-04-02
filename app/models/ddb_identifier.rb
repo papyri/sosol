@@ -2,7 +2,7 @@
 # - Includes acts_as_leiden_plus defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class DDBIdentifier < Identifier
   # todo: path prefix needs a bit of customization not sure if this really becomes absolute path
-  PATH_PREFIX = '/root/sosol/db/git/canonical.git/DDB_EpiDoc_XML'.freeze
+  PATH_PREFIX = 'DDB_EpiDoc_XML'.freeze
 
   FRIENDLY_NAME = 'DDbDP Text'.freeze
 
@@ -352,11 +352,19 @@ class DDBIdentifier < Identifier
     set_xml_content(modified_xml_content, comment: commit_comment)
   end
 
-  def xsl_transform_params
-    {
-      'xsl' => 'makehtmlfragment',
-      'collection' => IDENTIFIER_NAMESPACE
-    }
+  # - Retrieves the current version of XML for this DDBIdentifier
+  # - Processes XML with preview.xsl XSLT
+  #
+  # - *Returns* :
+  #   -  Preview HTML
+  def preview(parameters = {}, xsl = nil)
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(xml_content),
+      {
+        'xsl' => 'makehtmlfragment',
+        'collection' => IDENTIFIER_NAMESPACE,
+      }
+    )
   end
 
   # - Mass substitute alternate keyboard characters for Leiden+ grammar characters

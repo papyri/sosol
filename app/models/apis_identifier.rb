@@ -14,11 +14,13 @@ class APISIdentifier < HGVMetaIdentifier
   end
 
   def preview(parameters = {}, xsl = nil)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          xsl || %w[data xslt epidoc start-edition.xsl])),
-      parameters
+    # Seems to be missing aparatus?
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(xml_content),
+      {
+        'xsl' => 'makehtmlfragment',
+        'collection' => IDENTIFIER_NAMESPACE
+      }
     )
   end
 

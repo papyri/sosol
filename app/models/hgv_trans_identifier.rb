@@ -150,13 +150,12 @@ class HGVTransIdentifier < HGVIdentifier
   # - *Returns* :
   #   -  Preview HTML
   def preview
-    parameters = { 'edn-structure' => 'ddbdp',
-                   'css-loc' => '' }
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          %w[data xslt translation preview.xsl])),
-      parameters
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(xml_content),
+      {
+        'xsl' => 'previewtranslation',
+        'collection' => IDENTIFIER_NAMESPACE,
+      }
     )
   end
 

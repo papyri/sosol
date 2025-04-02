@@ -52,7 +52,14 @@ class HGVMetaIdentifiersController < IdentifiersController
   # Side effect on +@identifier+
   def preview
     find_identifier
-    @identifier.get_epidoc_attributes
+    
+    begin
+      @identifier_html_preview = @identifier.preview
+    rescue JRubyXML::ParseError => e
+      flash[:error] = "Error parsing XML for preview. #{e.to_str}"
+      redirect_to polymorphic_path([@identifier.publication, @identifier],
+                                   action: :editxml)
+    end
     @is_editor_view = true
   end
 

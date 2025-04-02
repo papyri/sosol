@@ -102,18 +102,6 @@ class Identifier < ApplicationRecord
     )
   end
 
-  def xsl_transform_params
-    {}
-  end
-
-  def preview(parameters = {}, xsl = nil)
-    # Seems to be missing aparatus?
-    Epidocinator.apply_xsl_transform(
-      Epidocinator.stream_from_string(xml_content),
-      xsl_transform_params
-    )
-  end
-
   # Put stuff in here you want to do do all identifiers before a commit is done
   # - currently no logic is in here - just returns whatever was passed in
   # - intended to be overridden by Identifier subclasses, if necessary
