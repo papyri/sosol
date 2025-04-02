@@ -72,10 +72,12 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   end
 
   def preview
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          %w[data xslt pn start-divtrans-portlet.xsl]))
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(xml_content),
+      {
+        'xsl' => 'makehtmlfragment',
+        'collection' => IDENTIFIER_NAMESPACE
+      }
     )
   end
 end

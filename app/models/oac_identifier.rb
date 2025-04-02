@@ -354,11 +354,12 @@ class OACIdentifier < Identifier
   # if the annotation_uri parameter is not supplied, it will provide a list of links to preview
   # each annotation in the oac.xml file
   def preview(parameters = {}, xsl = nil)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          xsl || %w[data xslt oac html_preview.xsl])),
-      parameters
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(xml_content),
+      {
+        'xsl' => 'makehtmlfragment',
+        'collection' => IDENTIFIER_NAMESPACE
+      }
     )
   end
 end
