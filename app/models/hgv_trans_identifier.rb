@@ -70,10 +70,12 @@ class HGVTransIdentifier < HGVIdentifier
   # - *Args*  :
   #   - +content+ -> Translation XML as string
   def before_commit(content)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          %w[data xslt translation preprocess.xsl]))
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(content),
+      {
+        'xsl' => 'preprocesstranslation',
+        'collection' => IDENTIFIER_NAMESPACE
+      }
     )
   end
 
@@ -97,12 +99,15 @@ class HGVTransIdentifier < HGVIdentifier
   #   - +lang+ -> the new language to add (used in 'xml:lang' attribute)
   def stub_text_structure(lang)
     translation_stub_xsl =
-      JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(related_text.content),
-        JRubyXML.stream_from_file(File.join(Rails.root,
-                                            %w[data xslt translation ddb_to_translation_xsl.xsl]))
+      Epidocinator.apply_xsl_transform(
+        Epidocinator.stream_from_string(related_text.content),
+        {
+          'xsl' => 'ddbtotranslation',
+          'collection' => IDENTIFIER_NAMESPACE
+        }
       )
 
+    # todo: replace with what transform?
     rewritten_xml =
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(content),
@@ -126,18 +131,20 @@ class HGVTransIdentifier < HGVIdentifier
         i.to_components.last if i.instance_of?(DDBIdentifier)
       end.compact
       rewritten_xml =
-        JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(Rails.root,
-                                              %w[data xslt translation update_header.xsl])),
-          filename_text: to_components.last,
-          HGV_text: related_hgv.join(' '),
-          DDB_text: related_ddb.join(' '),
-          TM_text: related_hgv.collect { |h| h.gsub(/\D/, '') }.uniq.join(' '),
-          title_text: NumbersRDF::NumbersHelper.identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,
-                                                                     HGVIdentifier::IDENTIFIER_NAMESPACE, to_components.last].join('/')),
-          reprint_from_text: options[:set_dummy_header] ? options[:original].title : '',
-          reprint_ref_attribute: options[:set_dummy_header] ? options[:original].to_components.last : ''
+        Epidocinator.apply_xsl_transform(
+          Epidocinator.stream_from_string(content),
+          {
+            'xsl' => 'updatetranslation',
+            'collection' => IDENTIFIER_NAMESPACE,
+            'filename_text' => to_components.last,
+            'HGV_text' => related_hgv.join(' '),
+            'DDB_text' =>  related_ddb.join(' '),
+            'TM_text' =>  related_hgv.collect { |h| h.gsub(/\D/, '') }.uniq.join(' '),
+            'title_text' => NumbersRDF::NumbersHelper.identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,
+                                                                      HGVIdentifier::IDENTIFIER_NAMESPACE, to_components.last].join('/')),
+            'reprint_from_text' => options[:set_dummy_header] ? options[:original].title : '',
+            'reprint_ref_attribute' => options[:set_dummy_header] ? options[:original].to_components.last : ''
+          }
         )
 
       set_xml_content(rewritten_xml, comment: "Update header to reflect new identifier '#{name}'")

@@ -21,10 +21,12 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   end
 
   def before_commit(content)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          %w[data xslt translation preprocess.xsl]))
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(content),
+      {
+        'xsl' => 'preprocesstranslation',
+        'collection' => IDENTIFIER_NAMESPACE
+      }
     )
   end
 
@@ -44,6 +46,7 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   def stub_text_structure(lang, urn)
     Rails.logger.info("transforming template for #{urn}")
     translation_stub_xml =
+      # todo : replace with what transform?
       JRubyXML.apply_xsl_transform(
         JRubyXML.stream_from_string(related_text.xml_content),
         JRubyXML.stream_from_file(File.join(Rails.root,
@@ -58,13 +61,15 @@ class EpiTransCTSIdentifier < EpiCTSIdentifier
   def after_rename(options = {})
     if options[:update_header]
       rewritten_xml =
-        JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(Rails.root,
-                                              %w[data xslt translation update_header.xsl])),
-          filename_text: to_components.last,
-          title_text: NumbersRDF::NumbersHelper.identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,
-                                                                     CTSIdentifier::IDENTIFIER_NAMESPACE, to_components.last].join('/'))
+        Epidocinator.apply_xsl_transform(
+          Epidocinator.stream_from_string(content),
+          {
+            'xsl' => 'updateheader',
+            'collection' => IDENTIFIER_NAMESPACE,
+            'filename_text' => to_components.last,
+            'title_text' => NumbersRDF::NumbersHelper.identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,
+                                                                      CTSIdentifier::IDENTIFIER_NAMESPACE, to_components.last].join('/'))
+          }
         )
 
       set_xml_content(rewritten_xml, comment: "Update header to reflect new identifier '#{name}'")

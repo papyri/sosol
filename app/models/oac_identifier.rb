@@ -6,7 +6,6 @@ class OACIdentifier < Identifier
   FRIENDLY_NAME = 'Annotations'.freeze
   TEMPORARY_COLLECTION = 'TempAnnotations'.freeze
   TEMPORARY_TITLE = 'Annotations'.freeze
-  XML_VALIDATOR = JRubyXML::RDFValidator
 
   NS_RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'.freeze
   NS_DCTERMS = 'http://purl.org/dc/terms/'.freeze

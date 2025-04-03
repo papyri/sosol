@@ -15,6 +15,7 @@ class CitationCTSIdentifier < CTSIdentifier
     # Before checking for validity, preprocess according to requirements of the parent text
     xslt = related_text.class::XML_CITATION_PREPROCESSOR
     Rails.logger.info("Preprocessing citation xml with #{xslt}")
+    # todo: replace with what transform
     fixed = JRubyXML.apply_xsl_transform(
       JRubyXML.stream_from_string(content),
       JRubyXML.stream_from_file(File.join(Rails.root,

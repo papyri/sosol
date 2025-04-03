@@ -3,7 +3,6 @@ class APISIdentifier < HGVMetaIdentifier
 
   PATH_PREFIX = 'APIS'.freeze
   IDENTIFIER_NAMESPACE = 'apis'.freeze
-  XML_VALIDATOR = JRubyXML::APISEpiDocValidator
   FRIENDLY_NAME = 'APIS'.freeze
 
   def temporary_path
@@ -18,6 +17,7 @@ class APISIdentifier < HGVMetaIdentifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(xml_content),
       {
+        # replaces start-edition.xsl, not sure if correct transform
         'xsl' => 'makehtmlfragment',
         'collection' => IDENTIFIER_NAMESPACE
       }

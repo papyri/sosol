@@ -23,17 +23,19 @@ class TEICTSIdentifier < CTSIdentifier
 
   def update_commentary(line_id, reference, comment_content = '', original_item_id = '', delete_comment = false)
     rewritten_xml =
-      JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(
+      Epidocinator.apply_xsl_transform(
+        Epidocinator.stream_from_string(
           TEICTSIdentifier.preprocess(xml_content)
         ),
-        JRubyXML.stream_from_file(File.join(Rails.root,
-                                            %w[data xslt ddb update_commentary.xsl])),
-        line_id: line_id,
-        reference: reference,
-        content: comment_content,
-        original_item_id: original_item_id,
-        delete_comment: (delete_comment ? 'true' : '')
+        {
+          'xsl' => 'updatecommentary',
+          'collection' => IDENTIFIER_NAMESPACE,
+          'line_id' => line_id,
+          'reference' => reference,
+          'content' => comment_content,
+          'original_item_id' => original_item_id,
+          'delete_comment' => (delete_comment ? 'true' : '')
+        }
       )
 
     set_xml_content(rewritten_xml, comment: '')
@@ -41,14 +43,16 @@ class TEICTSIdentifier < CTSIdentifier
 
   def update_frontmatter_commentary(commentary_content, delete_commentary = false)
     rewritten_xml =
-      JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(
+      Epidocinator.apply_xsl_transform(
+        Epidocinator.stream_from_string(
           TEICTSIdentifier.preprocess(xml_content)
         ),
-        JRubyXML.stream_from_file(File.join(Rails.root,
-                                            %w[data xslt ddb update_frontmatter_commentary.xsl])),
-        content: commentary_content,
-        delete_commentary: (delete_commentary ? 'true' : '')
+        {
+          'xsl' => 'updatefrontmatter',
+          'collection' => IDENTIFIER_NAMESPACE,
+          'content' => commentary_content,
+          'delete_commentary' => (delete_commentary ? 'true' : '')
+        }
       )
 
     set_xml_content(rewritten_xml, comment: '')
