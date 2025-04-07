@@ -24,7 +24,7 @@ class BiblioIdentifiersController < IdentifiersController
 
       expire_publication_cache
       generate_flash_message
-    rescue JRubyXML::ParseError => e
+    rescue Epidocinator::ParseError => e
       flash[:error] = "Error updating file: #{e.message}. This file was NOT SAVED."
       redirect_to polymorphic_path([@identifier.publication, @identifier],
                                    action: :edit)

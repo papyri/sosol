@@ -29,7 +29,7 @@ class APISIdentifiersController < IdentifiersController
       if %w[new editing].include? @identifier.publication.status
         flash[:notice] += " Go to the <a href='#{url_for(@identifier.publication)}'>publication overview</a> if you would like to submit."
       end
-    rescue JRubyXML::ParseError => e
+    rescue Epidocinator::ParseError => e
       flash[:error] = "#{e.to_str}. This file was NOT SAVED."
     end
     redirect_to action: :edit, id: @identifier.id

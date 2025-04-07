@@ -105,7 +105,7 @@ class HGVTransIdentifiersController < IdentifiersController
         render template: 'hgv_trans_identifiers/edit'
 
       # invalid xml
-      rescue JRubyXML::ParseError => e
+      rescue Epidocinator::ParseError => e
         flash.now[:error] =
           "#{e.to_str}.  This message is because the XML created from Leiden+ below did not pass Relax NG validation.  This file was NOT SAVED.  "
         @identifier.non_database_attribute[:leiden_trans] = params[:hgv_trans_identifier][:leiden_trans]

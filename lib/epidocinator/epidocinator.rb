@@ -5,6 +5,21 @@ require 'stringio'
 
 module Epidocinator
 
+  class ParseError < ::StandardError
+    attr_accessor :line, :column
+
+    def initialize(line, column)
+      @line = line
+      @column = column
+    end
+
+    def to_str
+      # message can have XML elements in it that we want escaped
+      # move to view?
+      "Error at line #{@line}, column #{@column}: #{CGI.escapeHTML(message)}"
+    end
+  end
+  
   class << self
     
     def validate(xml_document, parameters)
