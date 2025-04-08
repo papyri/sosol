@@ -193,9 +193,7 @@ class BiblioIdentifier < HGVIdentifier
   #   - true/false
   def is_valid_xml?(content = nil)
     content = xml_content if content.nil?
-    self.class::XML_VALIDATOR.instance.validate(
-      JRubyXML.input_source_from_string(wrap_xml(content))
-    )
+    Epidocinator.validate(wrap_xml(content))
   end
 
   # Wrap biblio xml stub in biblio xml wrapper to make it valid TEI

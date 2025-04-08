@@ -22,9 +22,9 @@ module Epidocinator
   
   class << self
     
-    def validate(xml_document, parameters)
+    def validate(xml_document)
       epidocinator = EpidocinatorClient.new
-      epidocinator.validate_xml(xml_document, parameters)
+      epidocinator.validate_xml(xml_document)
     end
 
     def apply_xsl_transform(xml_stream, parameters)
@@ -60,8 +60,9 @@ module Epidocinator
       @client.base_url = 'http://epidocinator:8085'      
     end
 
-    def validate_xml(xml_document, parameters = {})
-      url = get_request_url('/relaxng', parameters)
+    def validate_xml(xml_document)
+      url = get_request_url('/relaxng', {})
+      puts "Validating XML document at #{url}"
       post(url, xml_document, XML_CONTENT_HEADERS)
     end
 
@@ -75,7 +76,7 @@ module Epidocinator
     private
 
     def get_request_url(path, parameters)
-      uri = URI(@client.base_url + '/transform')
+      uri = URI(@client.base_url + path)
       uri.query = URI.encode_www_form(parameters)
       uri.to_s
     end

@@ -97,9 +97,7 @@ class Identifier < ApplicationRecord
   # todo use epidocinator validator instead
   def is_valid_xml?(content = nil)
     content = xml_content if content.nil?
-    self.class::XML_VALIDATOR.instance.validate(
-      JRubyXML.input_source_from_string(content)
-    )
+    Epidocinator.validate(content)
   end
 
   # Put stuff in here you want to do do all identifiers before a commit is done
