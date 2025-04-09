@@ -57,7 +57,7 @@ module Epidocinator
       # end
       
       @client = HTTPClient.new
-      @client.base_url = 'http://epidocinator:8085'      
+      @client.base_url = Sosol::Application.config.epidocinator.host[:url]
     end
 
     def validate_xml(xml_document)

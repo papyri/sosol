@@ -72,6 +72,9 @@ module Sosol
     # URL for the standalone XSugar server
     config.xsugar_standalone_url = ''
 
+    # Epidocinator config options 
+    config.epidocinator = config_for(:epidocinator)
+
     config.assets.enabled = true
     config.assets.version = '1.0'
     config.assets.precompile += ['*.css', '*.css.scss', '*.css.sass', '*.sass.erb', '*.scss.erb']
