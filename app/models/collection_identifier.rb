@@ -5,9 +5,6 @@ class CollectionIdentifier < Identifier
   # Repository path prefix
   PATH_PREFIX = 'RDF'.freeze
 
-  # Validator to use for XML validation
-  XML_VALIDATOR = JRubyXML::RDFValidator
-
   # *Returns*:
   # - path to +collection.rdf+ in repository as string
   def to_path

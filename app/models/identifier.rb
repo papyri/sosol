@@ -432,14 +432,16 @@ class Identifier < ApplicationRecord
   # - *Returns* :
   #   - string of the XML containing the added 'change' tag
   def add_change_desc(text = '', user_info = publication.creator, input_content = nil, timestamp = Time.now.xmlschema)
-    doc = JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(input_content.nil? ? xml_content : input_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          %w[data xslt common add_change.xsl])),
-      who: url_helpers.url_for(host: Sosol::Application.config.site_user_namespace, controller: 'user',
+    doc = Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(input_content.nil? ? xml_content : input_content),
+      {
+        'xsl' => 'addchange',
+        'collection' => defined?(self.class::IDENTIFIER_NAMESPACE) ? self.class::IDENTIFIER_NAMESPACE : 'ddbdp', # default value maybe unnecessary
+        'who' => url_helpers.url_for(host: Sosol::Application.config.site_user_namespace, controller: 'user',
                                action: 'show', user_name: user_info.name, only_path: false),
-      comment: text,
-      when: timestamp
+        'comment' => text,
+        'when' => timestamp,
+      }
     )
 
     doc.to_s

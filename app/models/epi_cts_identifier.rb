@@ -14,10 +14,12 @@ class EpiCTSIdentifier < CTSIdentifier
   end
 
   def self.preprocess(content)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          %w[data xslt ddb preprocess.xsl]))
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(content),
+      {
+        'xsl' => 'preprocess',
+        'collection' => IDENTIFIER_NAMESPACE
+      }
     )
   end
 
@@ -27,10 +29,12 @@ class EpiCTSIdentifier < CTSIdentifier
       original = options[:original]
       dummy_comment_text = "Add dummy header for original identifier '#{original.name}' pointing to new identifier '#{name}'"
       dummy_header =
-        JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(Rails.root,
-                                              %w[data xslt ddb dummyize.xsl]))
+        Epidocinator.apply_xsl_transform(
+          Epidocinator.stream_from_string(content),
+          {
+            'xsl' => 'dummyize',
+            'collection' => IDENTIFIER_NAMESPACE
+          }
         )
 
       original.save!
@@ -55,13 +59,15 @@ class EpiCTSIdentifier < CTSIdentifier
 
     if options[:update_header]
       rewritten_xml =
-        JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(Rails.root,
-                                              %w[data xslt ddb update_header.xsl])),
-          title_text: xml_title_text,
-          human_title_text: titleize,
-          filename_text: urn_attribute
+        Epidocinator.apply_xsl_transform(
+          Epidocinator.stream_from_string(content),
+          {
+            'xsl' => 'updateheader',
+            'collection' => IDENTIFIER_NAMESPACE,
+            'title_text' => xml_title_text,
+            'human_title_text' => titleize,
+            'filename_text' => urn_attribute
+          }
         )
 
       set_xml_content(rewritten_xml, comment: "Update header to reflect new identifier '#{name}'")
@@ -70,17 +76,19 @@ class EpiCTSIdentifier < CTSIdentifier
 
   def update_commentary(line_id, reference, comment_content = '', original_item_id = '', delete_comment = false)
     rewritten_xml =
-      JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(
+      Epidocinator.apply_xsl_transform(
+        Epidocinator.stream_from_string(
           EpiCTSIdentifier.preprocess(xml_content)
         ),
-        JRubyXML.stream_from_file(File.join(Rails.root,
-                                            %w[data xslt ddb update_commentary.xsl])),
-        line_id: line_id,
-        reference: reference,
-        content: comment_content,
-        original_item_id: original_item_id,
-        delete_comment: (delete_comment ? 'true' : '')
+        {
+          'xsl' => 'updatecommentary',
+          'collection' => IDENTIFIER_NAMESPACE,
+          'line_id' => line_id,
+          'reference' => reference,
+          'content' => comment_content,
+          'original_item_id' => original_item_id,
+          'delete_comment' => (delete_comment ? 'true' : '')
+        }
       )
 
     set_xml_content(rewritten_xml, comment: '')
@@ -88,14 +96,16 @@ class EpiCTSIdentifier < CTSIdentifier
 
   def update_frontmatter_commentary(commentary_content, delete_commentary = false)
     rewritten_xml =
-      JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(
+      Epidocinator.apply_xsl_transform(
+        Epidocinator.stream_from_string(
           EpiCTSIdentifier.preprocess(xml_content)
         ),
-        JRubyXML.stream_from_file(File.join(Rails.root,
-                                            %w[data xslt ddb update_frontmatter_commentary.xsl])),
-        content: commentary_content,
-        delete_commentary: (delete_commentary ? 'true' : '')
+        {
+          'xsl' => 'updatefrontmatter',
+          'collection' => IDENTIFIER_NAMESPACE,
+          'content' => commentary_content,
+          'delete_commentary' => (delete_commentary ? 'true' : '')
+        }
       )
 
     set_xml_content(rewritten_xml, comment: '')

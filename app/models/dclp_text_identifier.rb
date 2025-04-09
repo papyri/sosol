@@ -6,7 +6,6 @@ class DCLPTextIdentifier < DDBIdentifier
   FRIENDLY_NAME = 'DCLP Text'.freeze
   IDENTIFIER_NAMESPACE = 'dclp'.freeze
   TEMPORARY_COLLECTION = 'SoSOL'.freeze
-  XML_VALIDATOR = JRubyXML::DCLPEpiDocValidator
 
   # cl: at the moment there are no reprints for DCLP
   # therefore the result is always false
@@ -29,17 +28,17 @@ class DCLPTextIdentifier < DDBIdentifier
   #   - +parameters+ → xsl parameter hash, e.g. +{:leiden-style => 'ddb'}+, defaults to empty hash
   #   - +xsl+ → path to xsl file, relative to +Rails.root+, e.g. +%w{data xslt epidoc my.xsl})+, defaults to +data/xslt/epidoc/start-edition.xsl+
   # - *Returns* :
-  #   - result of transformation operation as provided by +JRubyXML.apply_xsl_transform+
+  #   - result of transformation operation as provided by +Epidocinator.apply_xsl_transform+
   def preview(parameters = {}, xsl = nil)
-    parameters.reverse_merge!(
-      'apparatus-style' => 'ddbdp',
-      'leiden-style' => 'dclp'
-    )
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(xml_content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          xsl || %w[data xslt epidoc start-edition.xsl])),
-      parameters
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(xml_content),
+      {
+        # not confident about this xsl
+        'xsl' => 'commentary',
+        'collection' => IDENTIFIER_NAMESPACE,
+        'apparatus-style' => 'ddbbdp',
+        'leiden-style' => 'dclp',
+      }
     )
   end
 
@@ -120,10 +119,12 @@ class DCLPTextIdentifier < DDBIdentifier
   # - *Returns* :
   #   - modified 'content'
   def self.preprocess(content)
-    JRubyXML.apply_xsl_transform(
-      JRubyXML.stream_from_string(content),
-      JRubyXML.stream_from_file(File.join(Rails.root,
-                                          %w[data xslt ddb preprocess.xsl]))
+    Epidocinator.apply_xsl_transform(
+      Epidocinator.stream_from_string(content),
+      {
+        'xsl' => 'preprocess',
+        'collection' => IDENTIFIER_NAMESPACE
+      }
     )
   end
 

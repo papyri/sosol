@@ -7,7 +7,6 @@ class HGVIdentifier < Identifier
 
   IDENTIFIER_NAMESPACE = 'hgv'.freeze
   TEMPORARY_COLLECTION = 'SoSOL'.freeze
-  XML_VALIDATOR = JRubyXML::HGVEpiDocValidator
 
   FRIENDLY_NAME = 'HGV Identifier'.freeze
 

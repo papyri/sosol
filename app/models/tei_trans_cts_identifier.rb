@@ -47,15 +47,17 @@ class TEITransCTSIdentifier < TEICTSIdentifier
   def after_rename(options = {})
     if options[:update_header]
       rewritten_xml =
-        JRubyXML.apply_xsl_transform(
-          JRubyXML.stream_from_string(content),
-          JRubyXML.stream_from_file(File.join(Rails.root,
-                                              %w[data xslt translation update_header.xsl])),
-          filename_text: to_components.last,
-          title_text: NumbersRDF::NumbersHelper.identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,
-                                                                     CTSIdentifier::IDENTIFIER_NAMESPACE, to_components.last].join('/')),
-          reprint_from_text: options[:set_dummy_header] ? options[:original].title : '',
-          reprint_ref_attribute: options[:set_dummy_header] ? options[:original].to_components.last : ''
+        Epidocinator.apply_xsl_transform(
+          Epidocinator.stream_from_string(content),
+          {
+            'xsl' => 'updatetranslation',
+            'collection' => IDENTIFIER_NAMESPACE,
+            'filename_text' => to_components.last,
+            'title_text' => NumbersRDF::NumbersHelper.identifier_to_title([NumbersRDF::NAMESPACE_IDENTIFIER,
+                                                                      CTSIdentifier::IDENTIFIER_NAMESPACE, to_components.last].join('/')),
+            'reprint_from_text' => options[:set_dummy_header] ? options[:original].title : '',
+            'reprint_ref_attribute' => options[:set_dummy_header] ? options[:original].to_components.last : ''
+          }
         )
 
       set_xml_content(rewritten_xml, comment: "Update header to reflect new identifier '#{name}'")
