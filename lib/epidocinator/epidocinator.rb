@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'httpclient'
+require 'nokogiri'
 require 'stringio'
 
 module Epidocinator
-
   class ParseError < ::StandardError
     attr_accessor :line, :column
 
@@ -19,9 +19,8 @@ module Epidocinator
       "Error at line #{@line}, column #{@column}: #{CGI.escapeHTML(message)}"
     end
   end
-  
+
   class << self
-    
     def validate(xml_document)
       epidocinator = EpidocinatorClient.new
       epidocinator.validate_xml(xml_document)
@@ -31,7 +30,7 @@ module Epidocinator
       epidocinator = EpidocinatorClient.new
       epidocinator.transform_xml(xml_stream, parameters)
     end
-    
+
     def stream_from_string(input_string)
       StringIO.new(input_string)
     end
@@ -39,14 +38,46 @@ module Epidocinator
     def stream_from_file(input_file)
       File.open(input_file, 'r')
     end
+
+    def named_node_map_to_hash(attributes)
+      return nil if attributes.nil? || attributes.empty?
+
+      attributes.each_with_object({}) do |attr, result_hash|
+        result_hash[attr.name] = attr.value
+      end
+    end
+
+    def xpath_result_to_array(xpath_result)
+      xpath_result.map do |node|
+        if node.text? # Check if the node is a text node
+          {
+            name: "#text",
+            value: node.text,
+            attributes: named_node_map_to_hash(node.attributes)
+          }
+        else
+          {
+            name: "#{node.namespace&.prefix}:#{node.name}",
+            value: node.value,
+            attributes: named_node_map_to_hash(node.attributes)
+          }
+        end
+      end
+    end
+
+    def apply_xpath(input_document_string, input_xpath_string, namespace_aware = false)
+      doc = Nokogiri::XML(input_document_string)
+      xpath_result = doc.xpath(input_xpath_string)
+      xpath_result_to_array(xpath_result)
+    end
+
   end
 
   class EpidocinatorClient
-
     class EpidocinatorHostError < StandardError; end
     class EpidocinatorAPIRequestError < StandardError; end
 
-    XML_CONTENT_HEADERS = { 'Content-Type' => 'text/xml; charset=UTF-8' }
+    XML_CONTENT_HEADERS = { 'Content-Type' => 'text/xml; charset=UTF-8' }.freeze
 
     def initialize
       # if Sosol::Application.config.respond_to?(:epidocinator_standalone_url)
@@ -55,21 +86,19 @@ module Epidocinator
       #   # throw no epidoc host error
       #   raise NoEpidocinatorHostError, 'No Epidocinator host URL provided'
       # end
-      
+
       @client = HTTPClient.new
       @client.base_url = Sosol::Application.config.epidocinator.host[:url]
     end
 
     def validate_xml(xml_document)
       url = get_request_url('/relaxng', {})
-      puts "Validating XML document at #{url}"
       post(url, xml_document, XML_CONTENT_HEADERS)
     end
 
     def transform_xml(xml_string, parameters = {})
       body = xml_string.string
       url = get_request_url('/transform', parameters)
-      puts "#{url} hi Isaiah"
       post(url, body, XML_CONTENT_HEADERS)
     end
 
@@ -98,15 +127,14 @@ module Epidocinator
     end
 
     def execute_request
-      begin
-        response = yield
-        unless response.status >= 200 && response.status < 300
-          raise EpidocinatorAPIRequestError, "Request failed with status: #{response.status}, body: #{response.body}"
-        end
-        response.body
-      rescue StandardError => e
-        handle_error(e)
+      response = yield
+      unless response.status >= 200 && response.status < 300
+        raise EpidocinatorAPIRequestError, "Request failed with status: #{response.status}, body: #{response.body}"
       end
+
+      response.body
+    rescue StandardError => e
+      handle_error(e)
     end
 
     def handle_error(error)
