@@ -23,7 +23,11 @@ RUN git clone https://github.com/rbenv/rbenv.git .rbenv
 ENV PATH /root/.rbenv/bin:/root/.rbenv/shims:$PATH
 RUN echo 'eval "$(rbenv init -)"' > /etc/profile.d/rbenv.sh
 RUN chmod +x /etc/profile.d/rbenv.sh
-RUN git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build && cd "$(rbenv root)"/plugins/ruby-build && git checkout v20241105
+# Removed specific ruby-build version someone seems to have mistakenly considered jruby.sh a 
+# windows only file and launcher (remove_windows_files) deletes the file
+# https://github.com/rbenv/ruby-build/pull/2517 https://github.com/jruby/jruby-launcher/pull/48#issuecomment-2772272290
+RUN git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build && cd "$(rbenv root)"/plugins/ruby-build
+
 RUN git clone https://github.com/rbenv/rbenv-vars.git $(rbenv root)/plugins/rbenv-vars
 
 # Copy in secret files
