@@ -211,122 +211,6 @@ Sosol::Application.routes.draw do
       end
     end
 
-    resources :epi_cts_identifiers do
-      collection do
-        post :create_from_selector
-      end
-
-      member do
-        get :history
-        get :preview
-        get :editxml
-        patch :updatexml
-        patch :link_translation
-        get :rename_review
-        patch :rename
-        get :commentary
-        patch :update_commentary
-        patch :update_frontmatter_commentary
-        delete :delete_commentary
-        delete :delete_frontmatter_commentary
-        get :link_translation
-      end
-    end
-
-    resources :epi_trans_cts_identifiers do
-      collection do
-        post :create_from_selector
-      end
-
-      member do
-        get :history
-        get :preview
-        get :editxml
-        patch :updatexml
-        get :rename_review
-        patch :rename
-        post :create
-      end
-    end
-
-    resources :citation_cts_identifiers do
-      member do
-        get :confirm_edit_or_annotate
-        get :history
-        get :preview
-        get :editxml
-        patch :updatexml
-        get :rename_review
-        patch :rename
-        get :create
-        post :edit_or_create
-        post :select
-      end
-    end
-
-    resources :tei_cts_identifiers do
-      collection do
-        post :create_from_selector
-      end
-
-      member do
-        get :history
-        get :preview
-        get :editxml
-        patch :updatexml
-        get :exportxml
-        get :rename_review
-        patch :rename
-        get :commentary
-        patch :update_commentary
-        patch :update_frontmatter_commentary
-        delete :delete_commentary
-        delete :delete_frontmatter_commentary
-        get :link_translation
-        get :link_citation
-      end
-    end
-
-    resources :tei_trans_cts_identifiers do
-      collection do
-        post :create_from_selector
-      end
-
-      member do
-        post :create
-        get :history
-        get :preview
-        get :editxml
-        patch :updatexml
-        get :exportxml
-        get :rename_review
-        patch :rename
-        get :commentary
-        patch :update_commentary
-        patch :update_frontmatter_commentary
-        delete :delete_commentary
-        delete :delete_frontmatter_commentary
-      end
-    end
-
-    resources :cts_inventory_identifiers do
-      member do
-        post :create
-        get :history
-        get :preview
-        get :editxml
-        patch :updatexml
-        get :exportxml
-        get :rename_review
-        patch :rename
-        get :commentary
-        patch :update_commentary
-        patch :update_frontmatter_commentary
-        delete :delete_commentary
-        delete :delete_frontmatter_commentary
-      end
-    end
-
     resources :oac_identifiers do
       member do
         post :create
@@ -341,20 +225,6 @@ Sosol::Application.routes.draw do
         patch :rename
       end
     end
-
-    resources :cts_oac_identifiers do
-      member do
-        post :create
-        get :history
-        get :preview
-        get :editxml
-        patch :updatexml
-        get :exportxml
-        post :edit_or_create
-        post :append
-        patch :delete_annotation
-      end
-    end
   end
 
   get 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
@@ -363,15 +233,13 @@ Sosol::Application.routes.draw do
       :publication => /(submitted|editing|new|committed|finalizing|\d+)/
   match 'user/info' => 'user#info', :via => %i[get options]
   match 'editor/user/info' => 'user#info', :via => %i[get options]
-  %w[apis biblio citation_cts collection cts_inventory cts_oac dclp_meta dclp_text ddb epi_cts epi_trans_cts hgv_meta
-     hgv_trans oac tei_cts tei_trans_cts].each do |identifier_class|
+  %w[apis biblio collection dclp_meta dclp_text ddb hgv_meta
+     hgv_trans oac].each do |identifier_class|
     get "publications/:publication_id/#{identifier_class}_identifiers/:id/show_commit/:commit_id",
         controller: "#{identifier_class}_identifiers", action: :show_commit, constraints: { commit_id: /[0-9a-fA-F]{40}/ }
   end
   get 'publications/create_from_identifier/:id' => 'publications#create_from_identifier', :id => /papyri\.info.*/
   post 'publications/vote/:id' => 'publications#vote'
-  get 'cts_publications/create_from_linked_urn/:urn' => 'cts_publications#create_from_linked_urn', :urn => %r{[^/]*}
-  post 'cts_publications/create_from_selector', to: 'cts_publications#create_from_selector'
   get 'js/:query' => 'ajax_proxy#js', :query => /.*/
   get 'css/:query' => 'ajax_proxy#css', :query => /.*/
   get 'images/:query' => 'ajax_proxy#images', :query => /.*/
@@ -383,13 +251,6 @@ Sosol::Application.routes.draw do
   post 'ajax_proxy/xsugar/' => 'ajax_proxy#xsugar'
   post 'ajax_proxy/hgvnum/' => 'ajax_proxy#hgvnum'
   get 'ajax_proxy/:id' => 'ajax_proxy#proxy', :id => /papyri\.info.*/
-  get 'cts/editions/:inventory' => 'cts_proxy#editions', :inventory => %r{[^/]*}
-  get 'cts/translations/:inventory/:urn' => 'cts_proxy#translations', :inventory => %r{[^/]*}, :urn => %r{[^/]*}
-  get 'cts/citations/:inventory/:urn' => 'cts_proxy#citations', :inventory => %r{[^/]*}, :urn => %r{[^/]*}
-  get 'cts/getpassage/:id/:urn' => 'cts_proxy#getpassage', :urn => %r{[^/]*}
-  get 'cts/getcapabilities/:collection' => 'cts_proxy#getcapabilities'
-  get 'cts/getrepos' => 'cts_proxy#getrepos'
-  get 'cts/getvalidreffs' => 'cts_proxy#getvalidreffs'
   get '/' => 'welcome#index'
   # match '/:controller(/:action(/:id))', :via => :get
   get 'signout' => 'user#signout', :as => :signout
