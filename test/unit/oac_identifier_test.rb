@@ -15,6 +15,10 @@ class OACIdentifierTest < ActiveSupport::TestCase
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
       @parent = FactoryBot.create(:TEICTSIdentifier, title: 'Test Text')
+
+      # Mock validation step
+      Epidocinator.any_instance.stubs(:validate).returns(true)
+
       @oac_identifier = OACIdentifier.new_from_template(@publication, @parent)
       @test_uri1 = 'http://data.perseus.org/annotations/abcd'
       @test_uri2 = 'http://data.perseus.org/annotations/efgh'

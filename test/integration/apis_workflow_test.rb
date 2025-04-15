@@ -202,6 +202,9 @@ class APISWorkflowTest < ActionDispatch::IntegrationTest
           modified_content = original_content.sub(/Bobst/, 'APIS Workflow Test')
           assert_not_equal original_content, modified_content, 'Modified content should be modified'
 
+          # Return mock response for modified xml content Epidocinator
+          Epidocinator.any_instance.stubs(:apply_xsl_transform).returns('')
+
           edit_session.patch "/publications/#{@publication.id}/apis_identifiers/#{apis_identifier.id}/",
                              params: { test_user_id: @creator_user.id.to_s, apis_identifier: { xml_content: modified_content },
                                        comment: 'APIS Workflow Test' }
