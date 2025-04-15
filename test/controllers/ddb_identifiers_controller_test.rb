@@ -18,6 +18,7 @@ class DDBIdentifiersControllerTest < ActionController::TestCase
     @identifier.repository.class.any_instance.stubs(:commit_content).raises(Exceptions::CommitError.new('Commit failed'))
     # Return mock response for Epidocinator
     Epidocinator.stubs(:apply_xsl_transform).returns('')
+    Epidocinator.stubs(:validate).returns(true)
     # just make a nonsense change to the content
     content = { xml_content: @identifier.xml_content.sub('English', 'Gobbleygook') }
     get :editxml, params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s }

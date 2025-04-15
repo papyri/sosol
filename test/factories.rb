@@ -165,8 +165,4 @@ FactoryBot.define do
     f.publication_id { :publication_id }
   end
 
-  factory :TEICTSIdentifier do |f|
-    f.name { FactoryBot.generate(:tei_cts_identifier_string) }
-    f.title { :title }
-  end
 end

@@ -297,6 +297,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
         # Mock transform
         Epidocinator.stubs(:apply_xsl_transform).returns('')
+        Epidocinator.stubs(:validate).returns(true)
 
         # do rename
         open_session do |meta_rename_session|

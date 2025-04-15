@@ -13,7 +13,7 @@ class OACIdentifierTest < ActiveSupport::TestCase
       @publication = FactoryBot.create(:publication, owner: @creator, creator: @creator, status: 'new')
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
-      @parent = FactoryBot.create(:OACIdentifier, title: 'Test Text')
+      @parent = FactoryBot.create(:DDBIdentifier, title: 'Test Text')
 
       # Mock validation step
       Epidocinator.stubs(:validate).returns(true)
