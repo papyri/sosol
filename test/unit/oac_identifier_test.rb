@@ -6,18 +6,17 @@ class OACIdentifierTest < ActiveSupport::TestCase
   context 'identifier test' do
     setup do
       @original_site_identifiers = Sosol::Application.config.site_identifiers
-      Sosol::Application.config.site_identifiers = (@original_site_identifiers.split(',') | %w[OACIdentifier
-                                                                                               TEICTSIdentifier]).join(',')
+      Sosol::Application.config.site_identifiers = (@original_site_identifiers.split(',') | %w[OACIdentifier]).join(',')
 
       @creator = FactoryBot.create(:user, name: 'Creator')
       @creator2 = FactoryBot.create(:user, name: 'Creator2')
       @publication = FactoryBot.create(:publication, owner: @creator, creator: @creator, status: 'new')
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
-      @parent = FactoryBot.create(:TEICTSIdentifier, title: 'Test Text')
+      @parent = FactoryBot.create(:OACIdentifier, title: 'Test Text')
 
       # Mock validation step
-      Epidocinator.any_instance.stubs(:validate).returns(true)
+      Epidocinator.stubs(:validate).returns(true)
 
       @oac_identifier = OACIdentifier.new_from_template(@publication, @parent)
       @test_uri1 = 'http://data.perseus.org/annotations/abcd'

@@ -296,7 +296,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         Rails.logger.info(meta_final_identifier.inspect)
 
         # Mock transform
-        Epidocinator.any_instance.stubs(:apply_xsl_transform).returns('')
+        Epidocinator.stubs(:apply_xsl_transform).returns('')
 
         # do rename
         open_session do |meta_rename_session|
