@@ -35,7 +35,6 @@ class DCLPTextIdentifier < DDBIdentifier
       {
         # not confident about this xsl
         'xsl' => 'commentary',
-        'collection' => IDENTIFIER_NAMESPACE,
         'apparatus-style' => 'ddbbdp',
         'leiden-style' => 'dclp',
       }
@@ -122,8 +121,7 @@ class DCLPTextIdentifier < DDBIdentifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(content),
       {
-        'xsl' => 'preprocess',
-        'collection' => IDENTIFIER_NAMESPACE
+        'xsl' => 'preprocess'
       }
     )
   end

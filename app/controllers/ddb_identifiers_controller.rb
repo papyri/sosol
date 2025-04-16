@@ -40,8 +40,7 @@ class DDBIdentifiersController < IdentifiersController
           original_xml = Epidocinator.apply_xsl_transform(
             Epidocinator.stream_from_string(original_xml),
             {
-              'xsl' => 'striplbids',
-              'collection' => @identifier.class::IDENTIFIER_NAMESPACE
+              'xsl' => 'striplbids'
             }
           )
 
@@ -171,8 +170,7 @@ class DDBIdentifiersController < IdentifiersController
             DDBIdentifier.preprocess(@identifier.xml_content)
           ),
           {
-            'xsl' => 'commentary',
-            'collection' => @identifier.class::IDENTIFIER_NAMESPACE
+            'xsl' => 'commentary'
           }
         )
     rescue Epidocinator::ParseError => e

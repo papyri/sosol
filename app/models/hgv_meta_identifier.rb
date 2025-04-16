@@ -83,8 +83,7 @@ class HGVMetaIdentifier < HGVIdentifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(content),
       {
-        'xsl' => 'preprocessmetadata',
-        'collection' => 'hgvmeta'
+        'xsl' => 'preprocessmetadata'
       }
     )
   end
@@ -290,7 +289,6 @@ class HGVMetaIdentifier < HGVIdentifier
           Epidocinator.stream_from_string(content),
           {
             'xsl' => 'updatemetadata',
-            'collection' => 'hgvmeta',
             'filename_text' => to_components.last,
             'reprint_from_text' => options[:set_dummy_header] ? options[:original].title : '',
             'reprent_ref_attirbute' => options[:set_dummy_header] ? options[:original].to_components.last : '',

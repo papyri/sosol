@@ -148,8 +148,7 @@ class HGVTransGlossary < HGVTransIdentifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(xml_content),
       {
-        'xsl' => 'glossarytochooser',
-        'collection' => IDENTIFIER_NAMESPACE
+        'xsl' => 'glossarytochooser'
       }
     )
   end

@@ -73,8 +73,7 @@ class HGVTransIdentifier < HGVIdentifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(content),
       {
-        'xsl' => 'preprocesstranslation',
-        'collection' => IDENTIFIER_NAMESPACE
+        'xsl' => 'preprocesstranslation'
       }
     )
   end
@@ -102,8 +101,7 @@ class HGVTransIdentifier < HGVIdentifier
       Epidocinator.apply_xsl_transform(
         Epidocinator.stream_from_string(related_text.content),
         {
-          'xsl' => 'ddbtotranslation',
-          'collection' => IDENTIFIER_NAMESPACE
+          'xsl' => 'ddbtotranslation'
         }
       )
 
@@ -135,7 +133,6 @@ class HGVTransIdentifier < HGVIdentifier
           Epidocinator.stream_from_string(content),
           {
             'xsl' => 'updatetranslation',
-            'collection' => IDENTIFIER_NAMESPACE,
             'filename_text' => to_components.last,
             'HGV_text' => related_hgv.join(' '),
             'DDB_text' =>  related_ddb.join(' '),
@@ -160,8 +157,7 @@ class HGVTransIdentifier < HGVIdentifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(xml_content),
       {
-        'xsl' => 'previewtranslation',
-        'collection' => IDENTIFIER_NAMESPACE,
+        'xsl' => 'previewtranslation'
       }
     )
   end

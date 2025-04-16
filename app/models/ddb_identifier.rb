@@ -1,7 +1,6 @@
 # - Sub-class of Identifier
 # - Includes acts_as_leiden_plus defined in vendor/plugins/rxsugar/lib/jruby_helper.rb
 class DDBIdentifier < Identifier
-  # todo: path prefix needs a bit of customization not sure if this really becomes absolute path
   PATH_PREFIX = 'DDB_EpiDoc_XML'.freeze
 
   FRIENDLY_NAME = 'DDbDP Text'.freeze
@@ -92,8 +91,7 @@ class DDBIdentifier < Identifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(content),
       {
-        'xsl' => 'preprocess',
-        'collection' => IDENTIFIER_NAMESPACE
+        'xsl' => 'preprocess'
       }
     )
   end
@@ -114,7 +112,6 @@ class DDBIdentifier < Identifier
           Epidocinator.stream_from_string(content),
           {
             'xsl' =>'dummyize',
-            'collection' => IDENTIFIER_NAMESPACE,
             'reprint_in_text' => title,
             'ddb_hybrid_ref_attribute' => n_attribute
           }
@@ -150,7 +147,6 @@ class DDBIdentifier < Identifier
           Epidocinator.stream_from_string(content),
           {
             'xsl' => 'updateheader',
-            'collection' => IDENTIFIER_NAMESPACE,
             'title_text' => xml_title_text,
             'human_title_text' => titleize,
             'filename_text' => id_attribute,
@@ -185,7 +181,6 @@ class DDBIdentifier < Identifier
         ),
         {
           'xsl' => 'updatecommentary',
-          'collection' => IDENTIFIER_NAMESPACE,
           'line_id' => line_id,
           'reference' => reference,
           'content' =>comment_content,
@@ -213,7 +208,6 @@ class DDBIdentifier < Identifier
         ),
         {
           'xsl' => 'updatefrontmatter',
-          'collection' => IDENTIFIER_NAMESPACE,
           'content' => commentary_content,
           'delete_commentary' => (delete_commentary ? 'true' : '')
         }
@@ -257,8 +251,7 @@ class DDBIdentifier < Identifier
     original_xml = Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(original_xml),
       {
-        'xsl' => 'striplbids',
-        'collection' => IDENTIFIER_NAMESPACE
+        'xsl' => 'striplbids'
       }
     )
 
@@ -335,7 +328,6 @@ class DDBIdentifier < Identifier
       Epidocinator.stream_from_string(xml_content),
       {
         'xsl' => 'updateedition',
-        'collection' => IDENTIFIER_NAMESPACE,
         'new_edition' => nonx2x.force_encoding('UTF-8')
       }
     )
@@ -354,7 +346,6 @@ class DDBIdentifier < Identifier
         Epidocinator.stream_from_string(xml_content),
         {
           'xsl' => 'updateeditionbrokenleiden',
-          'collection' => IDENTIFIER_NAMESPACE,
           'new_brokeleiden' => brokeleiden.force_encoding('UTF-8'),
           'brokeleiden_message' => BROKE_LEIDEN_MESSAGE
         }
@@ -375,8 +366,11 @@ class DDBIdentifier < Identifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(xml_content),
       {
-        'xsl' => 'makehtmlfragment',
-        'collection' => IDENTIFIER_NAMESPACE,
+        'leiden-style' => 'ddbdp',
+        'apparatus-style' => 'ddbdp',
+        'edn-structure' => 'ddbdp',
+        'css-loc' => '',
+        'xsl' => 'previewddb'
       }
     )
   end

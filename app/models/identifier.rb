@@ -94,7 +94,6 @@ class Identifier < ApplicationRecord
   #   - +content+ -> XML to validate if passed in, pulled from repository if not passed in
   # - *Returns* :
   #   - true/false
-  # todo use epidocinator validator instead
   def is_valid_xml?(content = nil)
     content = xml_content if content.nil?
     Epidocinator.validate(content)
@@ -318,8 +317,6 @@ class Identifier < ApplicationRecord
   # - *Returns* :
   #   - the content of the associated identifier's XML file
   def xml_content
-    Rails.logger.info("identifer@xml_content:324 unsaved_xml_content.presence = #{unsaved_xml_content.presence}")
-    Rails.logger.info("identifer@xml_content:325 \n content: \n #{content}")
     unsaved_xml_content.presence || content
   end
 
@@ -436,7 +433,6 @@ class Identifier < ApplicationRecord
       Epidocinator.stream_from_string(input_content.nil? ? xml_content : input_content),
       {
         'xsl' => 'addchange',
-        'collection' => defined?(self.class::IDENTIFIER_NAMESPACE) ? self.class::IDENTIFIER_NAMESPACE : 'ddbdp', # default value maybe unnecessary
         'who' => url_helpers.url_for(host: Sosol::Application.config.site_user_namespace, controller: 'user',
                                action: 'show', user_name: user_info.name, only_path: false),
         'comment' => text,
