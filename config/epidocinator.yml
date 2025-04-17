@@ -1,3 +1,3 @@
 shared:
   host:
-    url: <%= ENV.fetch('EPIDOCINATOR_URL', 'https://papyri-epidocinator-dev.lib.duke.edu/') %>
+    url: <%= ENV.fetch('EPIDOCINATOR_URL', 'https://papyri-epidocinator-dev.lib.duke.edu') %>
