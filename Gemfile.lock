@@ -449,6 +449,7 @@ DEPENDENCIES
   logger
   lograge
   mocha
+  nokogiri
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
   pry (~> 0.15.0)
