@@ -6,9 +6,10 @@ require 'stringio'
 
 module Epidocinator
   class ParseError < ::StandardError
-    attr_accessor :line, :column
+    attr_accessor :line, :column, :api_failure
 
-    def initialize(line, column)
+    def initialize(api_failure = false, line = nil, column = nil)
+      @api_failure = api_failure
       @line = line
       @column = column
     end
@@ -16,14 +17,21 @@ module Epidocinator
     def to_str
       # message can have XML elements in it that we want escaped
       # move to view?
-      "Error at line #{@line}, column #{@column}: #{CGI.escapeHTML(message)}"
+      return "Error at line #{@line}, column #{@column}: #{CGI.escapeHTML(message)}" unless api_failure
+
+      'An error occurred'
     end
   end
 
   class << self
     def validate(xml_document)
       epidocinator = EpidocinatorClient.new
-      epidocinator.validate_xml(xml_document)
+      validation = epidocinator.validate_xml(xml_document)
+      validation_json = JSON.parse(validation)
+      return true if validation_json['result']
+
+      errors = validation_json['errors'].first
+      raise ParseError.new(false, errors['lineNumber'], errors['columnNumber']), errors['message']
     end
 
     def apply_xsl_transform(xml_stream, parameters)
@@ -74,19 +82,11 @@ module Epidocinator
   end
 
   class EpidocinatorClient
-    class EpidocinatorHostError < StandardError; end
     class EpidocinatorAPIRequestError < StandardError; end
 
     XML_CONTENT_HEADERS = { 'Content-Type' => 'text/xml; charset=UTF-8' }.freeze
 
     def initialize
-      # if Sosol::Application.config.respond_to?(:epidocinator_standalone_url)
-      #   epidoc_host = Sosol::Application.config.epidocinator_standalone_url
-      # else
-      #   # throw no epidoc host error
-      #   raise NoEpidocinatorHostError, 'No Epidocinator host URL provided'
-      # end
-
       @client = HTTPClient.new
       @client.base_url = Sosol::Application.config.epidocinator.host[:url]
     end
@@ -139,8 +139,8 @@ module Epidocinator
 
     def handle_error(error)
       # Log the error or handle it as needed
-      Rails.logger.error "An error occurred: #{error.message}"
-      raise EpidocinatorAPIRequestError, error.message
+      Rails.logger.error "An error occurred proccessing Epidocinator API Request: #{error.message}"
+      raise ParseError.new(true), 'Epidocinator API Failure'
     end
   end
 end
