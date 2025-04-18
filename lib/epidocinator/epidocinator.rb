@@ -36,7 +36,8 @@ module Epidocinator
 
     def apply_xsl_transform(xml_stream, parameters)
       epidocinator = EpidocinatorClient.new
-      epidocinator.transform_xml(xml_stream, parameters)
+      transform = epidocinator.transform_xml(xml_stream, parameters)
+      transform.force_encoding('UTF-8')
     end
 
     def stream_from_string(input_string)
