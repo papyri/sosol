@@ -33,11 +33,11 @@ class DCLPTextIdentifier < DDBIdentifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(xml_content),
       {
-        'xsl' => 'makehtmlfragment',
         # MakeFragment.xsl does not have a template for dclp
+        'xsl' => 'previewddb',
         'collection' => 'ddbdp',
-        'apparatus-style' => 'ddbbdp',
-        'leiden-style' => 'dclp',
+        'apparatus-style' => 'ddbdp',
+        'leiden-style' => 'ddbdp'
       }
     )
   end
