@@ -33,8 +33,8 @@ class DCLPTextIdentifier < DDBIdentifier
     Epidocinator.apply_xsl_transform(
       Epidocinator.stream_from_string(xml_content),
       {
-        # not confident about this xsl
-        'xsl' => 'commentary',
+        'xsl' => 'makehtmlfragment',
+        'collection' => IDENTIFIER_NAMESPACE,
         'apparatus-style' => 'ddbbdp',
         'leiden-style' => 'dclp',
       }
