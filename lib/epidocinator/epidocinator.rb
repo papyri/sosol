@@ -40,6 +40,12 @@ module Epidocinator
       transform.force_encoding('UTF-8')
     end
 
+    def apply_multipart_xsl_transform(xml_streams, parameters)
+      epidocinator = EpidocinatorClient.new
+      transform = epidocinator.transform_multipart_xml(xml_streams, parameters)
+      transform.force_encoding('UTF-8')
+    end
+
     def stream_from_string(input_string)
       StringIO.new(input_string)
     end
@@ -95,6 +101,20 @@ module Epidocinator
     def validate_xml(xml_document)
       url = get_request_url('/relaxng', {})
       post(url, xml_document, XML_CONTENT_HEADERS)
+    end
+
+    def transform_multipart_xml(xml_streams, parameters = {})
+      body = xml_streams.map do |stream|
+        {
+          :name => stream['name'],
+          :filename => stream['name'],
+          'Content-Disposition' => "form-data; name=\"#{stream['name']}\"; filename=\"#{stream['name']}\"",
+          :content_type => 'text/xml; charset=UTF-8',
+          :content => stream[:content]
+        }
+      end
+      url = get_request_url('/transform', parameters)
+      post(url, body, { 'Content-Type' => 'multipart/form-data' })
     end
 
     def transform_xml(xml_string, parameters = {})

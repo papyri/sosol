@@ -97,23 +97,22 @@ class HGVTransIdentifier < HGVIdentifier
   # - *Args*  :
   #   - +lang+ -> the new language to add (used in 'xml:lang' attribute)
   def stub_text_structure(lang)
-    translation_stub_xsl =
-      Epidocinator.apply_xsl_transform(
-        Epidocinator.stream_from_string(related_text.content),
+    rewritten_xml = Epidocinator.apply_multipart_xsl_transform(
+      [
         {
-          'xsl' => 'ddbtotranslation'
+          :content => Epidocinator.stream_from_string(content),
+          'name' => 'translation_content'
+        },
+        {
+          :content => Epidocinator.stream_from_string(related_text.content),
+          'name' => 'template_content'
         }
-      )
-
-    # todo: replace with what transform?
-    rewritten_xml =
-      JRubyXML.apply_xsl_transform(
-        JRubyXML.stream_from_string(content),
-        JRubyXML.stream_from_string(translation_stub_xsl),
-        # :lang => 'en'
-        # assumed that hard coded 'en' is remnant and should be
-        lang: lang
-      )
+      ],
+      {
+        'xsl' => 'ddbtotranslation',
+        'lang' => lang
+      }
+    )
 
     set_xml_content(rewritten_xml, comment: "Update translation with stub for @xml:lang='#{lang}'")
   end
