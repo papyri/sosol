@@ -1,6 +1,6 @@
 - pseudoId = rand(1000000).to_s
 %span.quickHelp{:class => 'quickHelp_' + i18nId.gsub(/\./, '_')}
-  %span.hook{:onmouseover => "document.getElementById('" + pseudoId + "').classList.replace('fade-hide', 'fade-show');", :onmouseout => "document.getElementById('" + pseudoId + "').classList.replace('fade-show', 'fade-hide');"}
+  %span.hook{:onclick => "document.getElementById('" + pseudoId + "').classList.replace('fade-hide', 'fade-show');", :onmouseout => "document.getElementById('" + pseudoId + "').classList.replace('fade-show', 'fade-hide');"}
     ?
     %span.message{:id => pseudoId, :class => 'fade-hide' }
       = I18n.t(i18nId)
