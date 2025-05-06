@@ -324,11 +324,19 @@ class DDBIdentifier < Identifier
     # remove namespace from XML returned from XSugar
     nonx2x.sub!(%r{ xmlns:xml="http://www.w3.org/XML/1998/namespace"}, '')
 
-    Epidocinator.apply_xsl_transform(
-      Epidocinator.stream_from_string(xml_content),
+    Epidocinator.apply_multipart_xsl_transform(
+      [
+        {
+          :content => Epidocinator.stream_from_string(xml_content),
+          'name' => 'xml_content'
+        },
+        {
+          :content => nonx2x.force_encoding('UTF-8'),
+          'name' => 'new_edition'
+        }
+      ],
       {
-        'xsl' => 'updateedition',
-        'new_edition' => nonx2x.force_encoding('UTF-8')
+        'xsl' => 'updateedition'
       }
     )
   end
