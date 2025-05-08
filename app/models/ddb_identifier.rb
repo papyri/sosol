@@ -376,6 +376,7 @@ class DDBIdentifier < Identifier
       {
         'leiden-style' => 'ddbdp',
         'apparatus-style' => 'ddbdp',
+        'internal-app-style' => 'ddbdp',
         'edn-structure' => 'ddbdp',
         'css-loc' => '',
         'xsl' => 'previewddb'
