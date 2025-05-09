@@ -37,6 +37,7 @@ class DCLPTextIdentifier < DDBIdentifier
         'xsl' => 'previewddb',
         'collection' => 'ddbdp',
         'apparatus-style' => 'ddbdp',
+        'internal-app-style' => 'ddbdp',
         'leiden-style' => 'ddbdp'
       }
     )
