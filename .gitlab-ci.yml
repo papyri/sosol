@@ -34,6 +34,7 @@ integration-tests:
   extends: .trigger_downstream_pipeline
   variables:
     DOWNSTREAM_PROJECT: "papyri/papyri-docker"
+    DOWNSTREAM_BRANCH: "master"
   allow_failure: true
   # Might be annoying to have this run on every commit, but it is useful to have
   when: manual
@@ -42,7 +43,7 @@ update_submodules:
   stage: publish
   extends: .update_submodule
   rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"
 
 deploy-dev-deb-12:
   tags:
