@@ -324,30 +324,53 @@ class Repository
     jgit_tree.commit(comment, actor)
   end
 
+  def commit_content_cgit(file, branch, data, comment, actor)
+    if @path == Sosol::Application.config.canonical_repository && file != CollectionIdentifier.new.to_path
+      raise 'Cannot commit directly to canonical repository'
+    end
+
+    new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
+    tree_builder = Rugged::Tree::Builder.new(cgit_repo)
+    tree_builder << { type: :blob,
+                      name: file,
+                      oid: new_blob.oid,
+                      filemode: 0100644 }
+    commit_options = {}
+    commit_options[:tree] = tree_builder.write
+    commit_options[:message] ||= comment
+    commit_options[:parents] = get_head(branch)
+
+    return Rugged::Commit.create(cgit_repo, commit_options)
+  end
+
   # Returns a String of the SHA1 of the commit
   def commit_content(file, branch, data, comment, actor)
     if @path == Sosol::Application.config.canonical_repository && file != CollectionIdentifier.new.to_path
       raise 'Cannot commit directly to canonical repository'
     end
 
-    begin
-      inserter = jgit_repo.newObjectInserter
-      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                                data.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
+    if RUBY_PLATFORM == 'java'
+      begin
+        inserter = jgit_repo.newObjectInserter
+        file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
+                                  data.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
 
-      last_commit_id = jgit_repo.resolve(branch)
+        last_commit_id = jgit_repo.resolve(branch)
 
-      jgit_tree = JGit::JGitTree.new
-      jgit_tree.load_from_repo(jgit_repo, branch)
-      jgit_tree.add_blob(file, file_id.name)
+        jgit_tree = JGit::JGitTree.new
+        jgit_tree.load_from_repo(jgit_repo, branch)
+        jgit_tree.add_blob(file, file_id.name)
 
-      jgit_tree.commit(comment, actor)
-      inserter.flush
-      inserter.release
-    rescue Java::JavaLang::Exception => e
-      Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}")
-      Rails.logger.debug(e.backtrace.join("\n"))
-      raise Exceptions::CommitError, "Commit failed. #{e.message}"
+        jgit_tree.commit(comment, actor)
+        inserter.flush
+        return inserter.release
+      rescue Java::JavaLang::Exception => e
+        Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}")
+        Rails.logger.debug(e.backtrace.join("\n"))
+        raise Exceptions::CommitError, "Commit failed. #{e.message}"
+      end
+    else
+      return commit_content_cgit(file, branch, data, comment, actor)
     end
   end
 end
