@@ -340,6 +340,7 @@ class Repository
     commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:message] ||= comment
     commit_options[:parents] = [get_head(branch)]
+    commit_options[:update_ref] = "refs/heads/#{branch}"
 
     return Rugged::Commit.create(cgit_repo, commit_options)
   end
