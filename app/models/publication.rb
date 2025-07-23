@@ -1053,7 +1053,7 @@ class Publication < ApplicationRecord
   end
 
   def head
-    owner.repository.jgit_repo.resolve(branch).name
+    owner.repository.get_head(branch)
   end
 
   def merge_base(branch = 'master')
