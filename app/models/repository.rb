@@ -333,7 +333,7 @@ class Repository
     tree_builder = Rugged::Tree::Builder.new(cgit_repo)
     tree_builder << { type: :blob,
                       name: file,
-                      oid: new_blob.oid,
+                      oid: new_blob,
                       filemode: 0100644 }
     commit_options = {}
     commit_options[:tree] = tree_builder.write
