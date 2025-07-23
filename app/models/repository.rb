@@ -330,16 +330,14 @@ class Repository
     end
 
     new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
-    existing_tree = cgit_repo.lookup(get_head(branch)).tree
-    tree_builder = Rugged::Tree::Builder.new(cgit_repo, existing_tree)
-    tree_builder << { type: :blob,
-                      name: file,
-                      oid: new_blob,
-                      filemode: 0100644 }
+
+    repo_index = cgit_repo.index
+    repo_index.add(path: file, oid: new_blob, mode: 0100644)
+
     commit_options = {}
-    commit_options[:tree] = tree_builder.write
+    commit_options[:tree] = repo_index.write_tree(cgit_repo)
     commit_options[:message] ||= comment
-    commit_options[:parents] = get_head(branch)
+    commit_options[:parents] = [get_head(branch)]
 
     return Rugged::Commit.create(cgit_repo, commit_options)
   end
