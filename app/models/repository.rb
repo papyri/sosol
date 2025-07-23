@@ -336,8 +336,8 @@ class Repository
 
     commit_options = {}
     commit_options[:tree] = repo_index.write_tree(cgit_repo)
-    options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
-    options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
+    commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
+    commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:message] ||= comment
     commit_options[:parents] = [get_head(branch)]
 
