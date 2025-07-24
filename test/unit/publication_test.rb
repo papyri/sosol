@@ -24,7 +24,6 @@ class PublicationTest < ActiveSupport::TestCase
       @user = FactoryBot.create(:user)
 
       @pubtitle = 'P.Lond. Herm.'
-      @user.repository.create_branch(@branchname)
       @publication = FactoryBot.build(:publication, owner: @user, creator: @user, title: @pubtitle)
     end
 
@@ -43,7 +42,6 @@ class PublicationTest < ActiveSupport::TestCase
       @user = FactoryBot.create(:user)
 
       @pubtitle = "P:.#{1.chr}~L..o[n^d?.\t He......r\\m."
-      @user.repository.create_branch(@branchname)
       @publication = FactoryBot.build(:publication, owner: @user, creator: @user, title: @pubtitle)
     end
 
