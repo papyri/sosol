@@ -303,10 +303,13 @@ class Repository
   def rename_file_cgit(original_path, new_path, branch, comment, actor)
     repo_index = cgit_repo.index
     repo_index.add(path: new_path, oid: cgit_repo.rev_parse("#{branch}:#{original_path}").oid, mode: 0100644)
-    repo_index.remove(original_path)
+    
+    tree_builder = Rugged::Tree::Builder.new(cgit_repo, repo_index.write_tree(cgit_repo))
 
+    tree_builder.remove(original_path)
+    
     commit_options = {}
-    commit_options[:tree] = repo_index.write_tree(cgit_repo)
+    commit_options[:tree] = tree_builder.write
     commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:message] ||= comment
