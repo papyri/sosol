@@ -300,6 +300,22 @@ class Repository
     end
   end
 
+  def rename_file_cgit(original_path, new_path, branch, comment, actor)
+    repo_index = cgit_repo.index
+    repo_index.add(path: new_path, oid: cgit_repo.rev_parse("#{branch}:#{original_path}").oid, mode: 0100644)
+    repo_index.remove(original_path)
+
+    commit_options = {}
+    commit_options[:tree] = repo_index.write_tree(cgit_repo)
+    commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
+    commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
+    commit_options[:message] ||= comment
+    commit_options[:parents] = [get_head(branch)]
+    commit_options[:update_ref] = "refs/heads/#{branch}"
+
+    return Rugged::Commit.create(cgit_repo, commit_options)
+  end
+
   def rename_file(original_path, new_path, branch, comment, actor)
     content = get_file_from_branch(original_path, branch)
     new_blob = get_blob_from_branch(new_path, branch)
@@ -311,18 +327,22 @@ class Repository
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
 
-    # TODO: just get the object id instead of reinserting
-    inserter = jgit_repo.newObjectInserter
-    file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                              content.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
-    inserter.flush
-    inserter.release
+    if RUBY_PLATFORM == 'java'
+      # TODO: just get the object id instead of reinserting
+      inserter = jgit_repo.newObjectInserter
+      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
+                                content.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
+      inserter.flush
+      inserter.release
 
-    jgit_tree = JGit::JGitTree.new
-    jgit_tree.load_from_repo(jgit_repo, branch)
-    jgit_tree.add_blob(new_path, file_id.name)
-    jgit_tree.del(original_path)
-    jgit_tree.commit(comment, actor)
+      jgit_tree = JGit::JGitTree.new
+      jgit_tree.load_from_repo(jgit_repo, branch)
+      jgit_tree.add_blob(new_path, file_id.name)
+      jgit_tree.del(original_path)
+      jgit_tree.commit(comment, actor)
+    else
+      rename_file_cgit(original_path, new_path, branch, comment, actor)
+    end
   end
 
   def commit_content_cgit(file, branch, data, comment, actor)
