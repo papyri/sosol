@@ -208,7 +208,7 @@ class Repository
       get_blob_from_branch(file, branch)
     else
       # self.class.run_command("#{git_command_prefix} show #{Shellwords.escape(branch)}:#{Shellwords.escape(file)} 2> /dev/null").chomp
-      cgit_repo.blob_at(cgit_repo.rev_parse(branch).oid, file).content
+      cgit_repo.blob_at(cgit_repo.rev_parse(branch).oid, file)&.content
     end
   end
 
