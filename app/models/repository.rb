@@ -303,7 +303,9 @@ class Repository
   end
 
   def rename_file_cgit(original_path, new_path, branch, comment, actor)
-    unless get_file_from_branch(new_path, branch).nil?
+    new_blob = get_file_from_branch(new_path, branch)
+    Rails.logger.info("CGIT RENAME #{original_path} -> #{new_path} = #{new_blob.inspect} - nil?: #{new_blob.nil?}")
+    unless new_blob.nil?
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
 
