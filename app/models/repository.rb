@@ -204,6 +204,8 @@ class Repository
   end
 
   def get_file_from_branch(file, branch = 'master')
+    return nil if file.nil? || branch.nil?
+
     if RUBY_PLATFORM == 'java'
       get_blob_from_branch(file, branch)
     else
