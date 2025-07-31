@@ -303,7 +303,7 @@ class Repository
   end
 
   def rename_file_cgit(original_path, new_path, branch, comment, actor)
-    if get_file_from_branch(new_path, branch).nil?
+    unless get_file_from_branch(new_path, branch).nil?
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
 
