@@ -30,6 +30,10 @@ class DDBIdentifierTest < ActiveSupport::TestCase
     end
 
     should 'raise an error when the destination exists' do
+      bgu_1_1 = FactoryBot.build(:DDBIdentifier, name: 'papyri.info/ddbdp/bgu;1;1')
+      assert_not_nil bgu_1_1.content
+      Rails.logger.info("RENAME CONFLICT TEST: #{bgu_1_1.content.inspect}")
+
       assert_raise RuntimeError do
         @ddb_identifier.rename('papyri.info/ddbdp/bgu;1;1')
       end

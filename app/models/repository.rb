@@ -204,11 +204,13 @@ class Repository
   end
 
   def get_file_from_branch(file, branch = 'master')
+    return nil if file.nil? || branch.nil?
+
     if RUBY_PLATFORM == 'java'
       get_blob_from_branch(file, branch)
     else
       # self.class.run_command("#{git_command_prefix} show #{Shellwords.escape(branch)}:#{Shellwords.escape(file)} 2> /dev/null").chomp
-      cgit_repo.blob_at(cgit_repo.rev_parse(branch).oid, file).content
+      cgit_repo.blob_at(cgit_repo.rev_parse(branch).oid, file)&.content
     end
   end
 
@@ -244,7 +246,8 @@ class Repository
         Rails.logger.debug(e.backtrace.join("\n"))
       end
     else
-      self.class.run_command("#{git_command_prefix} branch --force #{Shellwords.escape(name)} #{Shellwords.escape(source_name)}")
+      # self.class.run_command("#{git_command_prefix} branch --force #{Shellwords.escape(name)} #{Shellwords.escape(source_name)}")
+      cgit_repo.branches.create(name, cgit_repo.rev_parse(source_name).oid, force: force)
     end
     # Rails.logger.debug("Branched #{ref.getName()} from #{source_name} = #{ref.getObjectId().name()}")
   end
@@ -300,6 +303,31 @@ class Repository
     end
   end
 
+  def rename_file_cgit(original_path, new_path, branch, comment, actor)
+    new_blob = get_file_from_branch(new_path, branch)
+    Rails.logger.info("CGIT RENAME #{original_path} -> #{new_path} = #{new_blob.inspect} - nil?: #{new_blob.nil?}")
+    unless new_blob.nil?
+      raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
+    end
+
+    repo_index = cgit_repo.index
+    repo_index.add(path: new_path, oid: cgit_repo.rev_parse("#{branch}:#{original_path}").oid, mode: 0100644)
+    
+    tree_builder = Rugged::Tree::Builder.new(cgit_repo, cgit_repo.rev_parse(repo_index.write_tree(cgit_repo)))
+
+    tree_builder.remove(original_path)
+    
+    commit_options = {}
+    commit_options[:tree] = tree_builder.write
+    commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
+    commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
+    commit_options[:message] ||= comment
+    commit_options[:parents] = [get_head(branch)]
+    commit_options[:update_ref] = "refs/heads/#{branch}"
+
+    return Rugged::Commit.create(cgit_repo, commit_options)
+  end
+
   def rename_file(original_path, new_path, branch, comment, actor)
     content = get_file_from_branch(original_path, branch)
     new_blob = get_blob_from_branch(new_path, branch)
@@ -311,18 +339,22 @@ class Repository
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
 
-    # TODO: just get the object id instead of reinserting
-    inserter = jgit_repo.newObjectInserter
-    file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                              content.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
-    inserter.flush
-    inserter.release
+    if RUBY_PLATFORM == 'java'
+      # TODO: just get the object id instead of reinserting
+      inserter = jgit_repo.newObjectInserter
+      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
+                                content.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
+      inserter.flush
+      inserter.release
 
-    jgit_tree = JGit::JGitTree.new
-    jgit_tree.load_from_repo(jgit_repo, branch)
-    jgit_tree.add_blob(new_path, file_id.name)
-    jgit_tree.del(original_path)
-    jgit_tree.commit(comment, actor)
+      jgit_tree = JGit::JGitTree.new
+      jgit_tree.load_from_repo(jgit_repo, branch)
+      jgit_tree.add_blob(new_path, file_id.name)
+      jgit_tree.del(original_path)
+      jgit_tree.commit(comment, actor)
+    else
+      rename_file_cgit(original_path, new_path, branch, comment, actor)
+    end
   end
 
   def commit_content_cgit(file, branch, data, comment, actor)
