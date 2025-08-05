@@ -21,7 +21,7 @@ class DDBIdentifiersControllerTest < ActionController::TestCase
     Epidocinator.stubs(:validate).returns(true)
     # just make a nonsense change to the content
     content = { xml_content: @identifier.xml_content.sub('English', 'Gobbleygook') }
-    get :editxml, params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s }
+    get :editxml, params: { id: @identifier.id.to_s.encode('utf-8'), publication_id: @identifier.publication.id.to_s.encode('utf-8') }
     put :updatexml,
         params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s, comment: 'test',
                   ddb_identifier: content }
