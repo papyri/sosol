@@ -316,7 +316,7 @@ class Repository
     
     branch_head = get_head(branch)
     tree_builder = Rugged::Tree::Builder.new(cgit_repo, Rugged::Commit.lookup(cgit_repo, branch_head).tree)
-    tree_builder.insert(path: new_path, oid: original_oid, mode: 0100644)
+    tree_builder.insert(name: new_path, oid: original_oid, filemode: 0100644)
     tree_builder.remove(original_path)
     
     commit_options = {}
@@ -367,7 +367,7 @@ class Repository
     branch_head = get_head(branch)
     tree_builder = Rugged::Tree::Builder.new(cgit_repo, Rugged::Commit.lookup(cgit_repo, branch_head).tree)
     new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
-    tree_builder.insert(path: file, oid: new_blob, mode: 0100644)
+    tree_builder.insert(name: file, oid: new_blob, filemode: 0100644)
 
     commit_options = {}
     commit_options[:tree] = tree_builder.write
