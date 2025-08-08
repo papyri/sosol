@@ -33,6 +33,7 @@ class DDBIdentifierTest < ActiveSupport::TestCase
       bgu_1_1 = FactoryBot.build(:DDBIdentifier, name: 'papyri.info/ddbdp/bgu;1;1')
       assert_not_nil bgu_1_1.content
       Rails.logger.info("RENAME CONFLICT TEST: #{bgu_1_1.content.inspect}")
+      Rails.logger.info("RENAME CONFLICT TEST on publication branch: #{@creator.repository.get_file_from_branch(bgu_1_1.to_path, @publication.branch).inspect}")
 
       assert_raise RuntimeError do
         @ddb_identifier.rename('papyri.info/ddbdp/bgu;1;1')
