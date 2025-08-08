@@ -219,7 +219,11 @@ class Repository
   end
 
   def get_head(branch)
-    self.class.run_command("#{git_command_prefix} rev-list -n 1 refs/heads/#{Shellwords.escape(branch)}").chomp
+    if RUBY_PLATFORM == 'java'
+      self.class.run_command("#{git_command_prefix} rev-list -n 1 refs/heads/#{Shellwords.escape(branch)}").chomp
+    else
+      cgit_repo.rev_parse(branch).oid
+    end
   end
 
   def update_ref(branch, sha1)
