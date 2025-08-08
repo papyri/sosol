@@ -313,12 +313,10 @@ class Repository
 
     original_oid = cgit_repo.rev_parse("#{branch}:#{original_path}").oid
     Rails.logger.info("CGIT RENAME: using #{original_oid} from #{original_path} at #{new_path} (new_blob content: #{new_blob.inspect}) (ls-tree: #{self.class.run_command("#{git_command_prefix} ls-tree -r #{Shellwords.escape(branch)} --name-only")}")
-
-    repo_index = cgit_repo.index
-    repo_index.add(path: new_path, oid: original_oid, mode: 0100644)
     
-    tree_builder = Rugged::Tree::Builder.new(cgit_repo, cgit_repo.rev_parse(repo_index.write_tree(cgit_repo)))
-
+    branch_head = get_head(branch)
+    tree_builder = Rugged::Tree::Builder.new(cgit_repo, branch_head)
+    tree_builder.insert(path: new_path, oid: original_oid, mode: 0100644)
     tree_builder.remove(original_path)
     
     commit_options = {}
@@ -326,7 +324,7 @@ class Repository
     commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:message] ||= comment
-    commit_options[:parents] = [get_head(branch)]
+    commit_options[:parents] = [branch_head]
     commit_options[:update_ref] = "refs/heads/#{branch}"
 
     return Rugged::Commit.create(cgit_repo, commit_options)
@@ -366,17 +364,17 @@ class Repository
       raise 'Cannot commit directly to canonical repository'
     end
 
+    branch_head = get_head(branch)
+    tree_builder = Rugged::Tree::Builder.new(cgit_repo, branch_head)
     new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
-
-    repo_index = cgit_repo.index
-    repo_index.add(path: file, oid: new_blob, mode: 0100644)
+    tree_builder.insert(path: file, oid: new_blob, mode: 0100644)
 
     commit_options = {}
-    commit_options[:tree] = repo_index.write_tree(cgit_repo)
+    commit_options[:tree] = tree_builder.write
     commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:message] ||= comment
-    commit_options[:parents] = [get_head(branch)]
+    commit_options[:parents] = [branch_head]
     commit_options[:update_ref] = "refs/heads/#{branch}"
 
     return Rugged::Commit.create(cgit_repo, commit_options)
