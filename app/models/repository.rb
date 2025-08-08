@@ -310,8 +310,11 @@ class Repository
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
 
+    original_oid = cgit_repo.rev_parse("#{branch}:#{original_path}").oid
+    Rails.logger.info("CGIT RENAME: using #{original_oid} from #{original_path} at #{new_path} (new_blob content: #{new_blob.inspect})")
+
     repo_index = cgit_repo.index
-    repo_index.add(path: new_path, oid: cgit_repo.rev_parse("#{branch}:#{original_path}").oid, mode: 0100644)
+    repo_index.add(path: new_path, oid: original_oid, mode: 0100644)
     
     tree_builder = Rugged::Tree::Builder.new(cgit_repo, cgit_repo.rev_parse(repo_index.write_tree(cgit_repo)))
 
