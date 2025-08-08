@@ -312,7 +312,7 @@ class Repository
     end
 
     original_oid = cgit_repo.rev_parse("#{branch}:#{original_path}").oid
-    Rails.logger.info("CGIT RENAME: using #{original_oid} from #{original_path} at #{new_path} (new_blob content: #{new_blob.inspect}) (last commit: #{self.class.run_command("#{git_command_prefix} log -n 1 #{Shellwords.escape(branch)}")}")
+    Rails.logger.info("CGIT RENAME: using #{original_oid} from #{original_path} at #{new_path} (new_blob content: #{new_blob.inspect}) (last commit: #{self.class.run_command("#{git_command_prefix} log -n 3 #{Shellwords.escape(branch)}")}")
 
     repo_index = cgit_repo.index
     repo_index.add(path: new_path, oid: original_oid, mode: 0100644)
