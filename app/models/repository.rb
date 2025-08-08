@@ -227,7 +227,11 @@ class Repository
   end
 
   def update_ref(branch, sha1)
-    self.class.run_command("#{git_command_prefix} update-ref refs/heads/#{Shellwords.escape(branch)} #{sha1}")
+    if RUBY_PLATFORM == 'java'
+      self.class.run_command("#{git_command_prefix} update-ref refs/heads/#{Shellwords.escape(branch)} #{sha1}")
+    else
+      cgit_repo.references.update("refs/heads/#{branch}", sha1)
+    end
   end
 
   def update_master_from_canonical
