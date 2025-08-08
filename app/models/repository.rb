@@ -255,7 +255,9 @@ class Repository
       end
     else
       # self.class.run_command("#{git_command_prefix} branch --force #{Shellwords.escape(name)} #{Shellwords.escape(source_name)}")
-      cgit_repo.branches.create(name, cgit_repo.rev_parse(source_name).oid, force: force)
+      new_oid = cgit_repo.rev_parse(source_name).oid
+      cgit_repo.branches.create(name, new_oid, force: force)
+      update_ref(name, new_oid)
     end
     # Rails.logger.debug("Branched #{ref.getName()} from #{source_name} = #{ref.getObjectId().name()}")
   end
