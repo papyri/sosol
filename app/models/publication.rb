@@ -1366,8 +1366,8 @@ class Publication < ApplicationRecord
     end
   end
 
-  def branch_from_master
-    owner.repository.create_branch(branch)
+  def branch_from_master(force = true)
+    owner.repository.create_branch(branch, 'master', force)
   end
 
   # Determines which identifiers are controlled by this publication's board.
