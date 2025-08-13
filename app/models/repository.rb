@@ -316,7 +316,7 @@ class Repository
     
     branch_head = get_head(branch)
     tree_builder = Rugged::Tree::Builder.new(cgit_repo, Rugged::Commit.lookup(cgit_repo, branch_head).tree)
-    tree_builder.insert(name: new_path, oid: original_oid, filemode: 0100644)
+    tree_builder[File.dirname(new_path)].insert(name: File.basename(new_path), oid: original_oid, filemode: 0100644)
     tree_builder.remove(original_path)
     
     commit_options = {}
