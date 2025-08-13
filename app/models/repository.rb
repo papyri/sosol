@@ -370,16 +370,21 @@ class Repository
     new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
     Rails.logger.info("CGIT COMMIT: file #{file} on #{branch} (new_blob: #{new_blob.inspect})")
     subdir = tree_builder
-    File.dirname(file).split('/').map do |dirname_node|
-      if subdir[dirname_node].nil?
-        Rails.logger.info("TreeBuilder hit nil at #{dirname_node}")
-        subdir.insert(name: dirname_node, oid: Rugged::Tree.empty(cgit_repo), filemode: 0100755)
-        subdir = subdir[dirname_node]
-        Rails.logger.info("TreeBuilder subdir now: #{subdir.inspect}")
-      else
-        Rails.logger.info("TreeBuilder hit something at #{dirname_node}")
-        subdir = subdir[dirname_node]
-      end
+    # File.dirname(file).split('/').map do |dirname_node|
+    #   if subdir[dirname_node].nil?
+    #     Rails.logger.info("TreeBuilder hit nil at #{dirname_node}")
+    #     subdir.insert(name: dirname_node, oid: Rugged::Tree.empty(cgit_repo), filemode: 0100755)
+    #      subdir = subdir[dirname_node]
+    #     Rails.logger.info("TreeBuilder subdir now: #{subdir.inspect}")
+    #   else
+    #     Rails.logger.info("TreeBuilder hit something at #{dirname_node}")
+    #     subdir = subdir[dirname_node]
+    #   end
+    # end
+    if tree_builder[File.dirname(file)].nil?
+      Rails.logger.info("Inserting empty tree for #{File.dirname(file)}")
+      tree_builder.insert(name: File.dirname(file), oid: Rugged::Tree.empty(cgit_repo), filemode: 0100755)
+      Rails.logger.info("#{File.dirname(file)} now: #{tree_builder[File.dirname(file)].inspect}")
     end
     tree_builder[File.dirname(file)].insert(name: File.basename(file), oid: new_blob, filemode: 0100644)
 
