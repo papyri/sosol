@@ -368,7 +368,16 @@ class Repository
     branch_head_tree = Rugged::Commit.lookup(cgit_repo, branch_head).tree
     tree_builder = Rugged::Tree::Builder.new(cgit_repo, branch_head_tree)
     new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
-    Rails.logger.info("CGIT COMMIT: file #{file} on #{branch} (new_blob: #{new_blob.inspect}) ls-tree: #{self.class.run_command("#{git_command_prefix} ls-tree -r #{Shellwords.escape(branch)} --name-only")}")
+    Rails.logger.info("CGIT COMMIT: file #{file} on #{branch} (new_blob: #{new_blob.inspect})")
+    subdir = tree_builder
+    File.dirname(file).split('/').map do |dirname_node|
+      if subdir[dirname_node].nil?
+        Rails.logger.info("TreeBuilder hit nil at #{dirname_node}")
+      else
+        Rails.logger.info("TreeBuilder hit something at #{dirname_node}")
+        subdir = subdir[dirname_node]
+      end
+    end
     tree_builder[File.dirname(file)].insert(name: File.basename(file), oid: new_blob, filemode: 0100644)
 
     commit_options = {}
