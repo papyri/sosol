@@ -383,7 +383,7 @@ class Repository
     # end
     if tree_builder[File.dirname(file)].nil?
       Rails.logger.info("Inserting empty tree for #{File.dirname(file)}")
-      tree_builder.insert(name: File.dirname(file), oid: Rugged::Tree.empty(cgit_repo), filemode: 0100755)
+      tree_builder.insert(name: File.dirname(file), oid: Rugged::Tree.empty(cgit_repo).oid, filemode: 0100755)
       Rails.logger.info("#{File.dirname(file)} now: #{tree_builder[File.dirname(file)].inspect}")
     end
     tree_builder[File.dirname(file)].insert(name: File.basename(file), oid: new_blob, filemode: 0100644)
