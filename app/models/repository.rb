@@ -373,6 +373,9 @@ class Repository
     File.dirname(file).split('/').map do |dirname_node|
       if subdir[dirname_node].nil?
         Rails.logger.info("TreeBuilder hit nil at #{dirname_node}")
+        subdir.insert(name: dirname_node, oid: Rugged::Tree.empty(cgit_repo), filemode: 0100755)
+        subdir = subdir[dirname_node]
+        Rails.logger.info("TreeBuilder subdir now: #{subdir.inspect}")
       else
         Rails.logger.info("TreeBuilder hit something at #{dirname_node}")
         subdir = subdir[dirname_node]
