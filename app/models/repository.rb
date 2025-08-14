@@ -366,13 +366,14 @@ class Repository
 
     branch_head = get_head(branch)
 
-    # branch_head_tree = Rugged::Commit.lookup(cgit_repo, branch_head).tree
+    branch_head_tree = Rugged::Commit.lookup(cgit_repo, branch_head).tree
     # tree_builder = Rugged::Tree::Builder.new(cgit_repo, branch_head_tree)
 
     new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
     Rails.logger.info("CGIT COMMIT: file #{file} on #{branch} (new_blob: #{new_blob.inspect})")
 
     repo_index = cgit_repo.index
+    repo_index.read_tree(branch_head_tree)
     repo_index.add(path: file, oid: new_blob, mode: 0100644)
 
     # subdir = tree_builder
