@@ -366,40 +366,40 @@ class Repository
 
     branch_head = get_head(branch)
 
-    branch_head_tree = Rugged::Commit.lookup(cgit_repo, branch_head).tree
-    tree_builder = Rugged::Tree::Builder.new(cgit_repo, branch_head_tree)
+    # branch_head_tree = Rugged::Commit.lookup(cgit_repo, branch_head).tree
+    # tree_builder = Rugged::Tree::Builder.new(cgit_repo, branch_head_tree)
 
     new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
     Rails.logger.info("CGIT COMMIT: file #{file} on #{branch} (new_blob: #{new_blob.inspect})")
 
-    # repo_index = cgit_repo.index
-    # repo_index.add(path: file, oid: new_blob, mode: 0100644)
+    repo_index = cgit_repo.index
+    repo_index.add(path: file, oid: new_blob, mode: 0100644)
 
-    subdir = tree_builder
-    subdir_stack = []
-    File.dirname(file).split('/').map do |dirname_node|
-      subdir_stack << dirname_node
-      if subdir[dirname_node].nil?
-        Rails.logger.info("TreeBuilder hit nil at #{dirname_node}")
-        tree_builder.insert(name: subdir_stack.join('/'), oid: Rugged::Tree.empty(cgit_repo).oid, filemode: 0100755)
-        subdir = subdir[dirname_node]
-        Rails.logger.info("TreeBuilder subdir now: #{subdir.inspect}")
-      else
-        Rails.logger.info("TreeBuilder hit something at #{dirname_node}")
-        subdir = subdir[dirname_node]
-      end
-    end
-    if tree_builder[File.dirname(file)].nil?
-      Rails.logger.info("Inserting empty tree for #{File.dirname(file)}")
-      tree_builder.insert(name: File.dirname(file), oid: Rugged::Tree.empty(cgit_repo).oid, filemode: 0100755)
-      Rails.logger.info("#{File.dirname(file)} now: #{tree_builder[File.dirname(file)].inspect}")
-    end
-    Rails.logger.info("#{File.dirname(file)} now: #{tree_builder[File.dirname(file)].inspect}")
-    tree_builder[File.dirname(file)].insert(name: File.basename(file), oid: new_blob, filemode: 0100644)
+    # subdir = tree_builder
+    # subdir_stack = []
+    # File.dirname(file).split('/').map do |dirname_node|
+    #   subdir_stack << dirname_node
+    #   if subdir[dirname_node].nil?
+    #     Rails.logger.info("TreeBuilder hit nil at #{dirname_node}")
+    #     tree_builder.insert(name: subdir_stack.join('/'), oid: Rugged::Tree.empty(cgit_repo).oid, filemode: 0100755)
+    #     subdir = subdir[dirname_node]
+    #     Rails.logger.info("TreeBuilder subdir now: #{subdir.inspect}")
+    #   else
+    #     Rails.logger.info("TreeBuilder hit something at #{dirname_node}")
+    #     subdir = subdir[dirname_node]
+    #   end
+    # end
+    # if tree_builder[File.dirname(file)].nil?
+    #   Rails.logger.info("Inserting empty tree for #{File.dirname(file)}")
+    #   tree_builder.insert(name: File.dirname(file), oid: Rugged::Tree.empty(cgit_repo).oid, filemode: 0100755)
+    #   Rails.logger.info("#{File.dirname(file)} now: #{tree_builder[File.dirname(file)].inspect}")
+    # end
+    # Rails.logger.info("#{File.dirname(file)} now: #{tree_builder[File.dirname(file)].inspect}")
+    # tree_builder[File.dirname(file)].insert(name: File.basename(file), oid: new_blob, filemode: 0100644)
 
     commit_options = {}
-    # commit_options[:tree] = repo_index.write_tree(cgit_repo)
-    commit_options[:tree] = tree_builder.write
+    commit_options[:tree] = repo_index.write_tree(cgit_repo)
+    # commit_options[:tree] = tree_builder.write
     commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:message] ||= comment
