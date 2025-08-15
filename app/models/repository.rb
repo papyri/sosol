@@ -315,12 +315,21 @@ class Repository
     Rails.logger.info("CGIT RENAME: using #{original_oid} from #{original_path} at #{new_path} (new_blob content: #{new_blob.inspect}) (ls-tree: #{self.class.run_command("#{git_command_prefix} ls-tree -r #{Shellwords.escape(branch)} --name-only")}")
     
     branch_head = get_head(branch)
-    tree_builder = Rugged::Tree::Builder.new(cgit_repo, Rugged::Commit.lookup(cgit_repo, branch_head).tree)
-    tree_builder[File.dirname(new_path)].insert(name: File.basename(new_path), oid: original_oid, filemode: 0100644)
-    tree_builder.remove(original_path)
+    branch_head_tree = Rugged::Commit.lookup(cgit_repo, branch_head).tree
+
+    repo_index = cgit_repo.index
+    repo_index.read_tree(branch_head_tree)
+
+    repo_index.add(path: new_path, oid: original_oid, mode: 0100644)
+    repo_index.remove(original_path)
+
+    # tree_builder = Rugged::Tree::Builder.new(cgit_repo, Rugged::Commit.lookup(cgit_repo, branch_head).tree)
+    # tree_builder[File.dirname(new_path)].insert(name: File.basename(new_path), oid: original_oid, filemode: 0100644)
+    # tree_builder.remove(original_path)
     
     commit_options = {}
-    commit_options[:tree] = tree_builder.write
+    commit_options[:tree] = repo_index.write_tree(cgit_repo)
+    # commit_options[:tree] = tree_builder.write
     commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:message] ||= comment
