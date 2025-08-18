@@ -375,12 +375,13 @@ class Repository
     new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
     Rails.logger.info("CGIT COMMIT: file #{file} on #{branch} (new_blob: #{new_blob.inspect})")
 
-    repo_index = cgit_repo.index
-    repo_index.read_tree(branch_head_tree)
-    repo_index.add(path: file, oid: new_blob, mode: 0100644)
+    # repo_index = cgit_repo.index
+    # repo_index.read_tree(branch_head_tree)
+    # repo_index.add(path: file, oid: new_blob, mode: 0100644)
 
     commit_options = {}
-    commit_options[:tree] = repo_index.write_tree(cgit_repo)
+    # commit_options[:tree] = repo_index.write_tree(cgit_repo)
+    commit_options[:tree] = branch_head_tree.update([{action: :upsert, path: file, oid: new_blob, filemode: 0100644}])
     commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
     commit_options[:message] ||= comment
