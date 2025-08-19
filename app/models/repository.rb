@@ -327,8 +327,8 @@ class Repository
     # commit_options[:tree] = repo_index.write_tree(cgit_repo)
     commit_options[:tree] = branch_head_tree.update([{action: :upsert, path: new_path, oid: original_oid, filemode: 0100644},
                                                      {action: :remove, path: original_path}])
-    commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
-    commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
+    commit_options[:author] = actor
+    commit_options[:committer] = actor
     commit_options[:message] ||= comment
     commit_options[:parents] = [branch_head]
     commit_options[:update_ref] = "refs/heads/#{branch}"
@@ -384,8 +384,8 @@ class Repository
     commit_options = {}
     # commit_options[:tree] = repo_index.write_tree(cgit_repo)
     commit_options[:tree] = branch_head_tree.update([{action: :upsert, path: file, oid: new_blob, filemode: 0100644}])
-    commit_options[:author] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
-    commit_options[:committer] = { :email => "testuser@example.com", :name => 'Test Author', :time => Time.now }
+    commit_options[:author] = actor
+    commit_options[:committer] = actor
     commit_options[:message] ||= comment
     commit_options[:parents] = [branch_head]
     commit_options[:update_ref] = "refs/heads/#{branch}"

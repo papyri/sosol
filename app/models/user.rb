@@ -106,6 +106,10 @@ class User < ApplicationRecord
     org.eclipse.jgit.lib.PersonIdent.new(full_name, email) if RUBY_PLATFORM == 'java'
   end
 
+  def cgit_actor
+    {name: full_name, email: email, time: Time.now}
+  end
+
   # Copied from: https://raw.github.com/mojombo/grit/v2.4.1/lib/grit/actor.rb
   # Outputs an actor string for Git commits.
   #

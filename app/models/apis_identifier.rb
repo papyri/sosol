@@ -87,8 +87,16 @@ class APISIdentifier < HGVMetaIdentifier
     end
 
     initial_content = new_identifier.file_template
+
+    commit_actor = nil
+    if RUBY_PLATFORM == 'java'
+      commit_actor = publication.owner.instance_of?(User) ? publication.owner.jgit_actor : publication.creator.jgit_actor
+    else
+      commit_actor = publication.owner.instance_of?(User) ? publication.owner.cgit_actor : publication.creator.cgit_actor
+    end
+
     new_identifier.set_content(initial_content, comment: 'Created from SoSOL template',
-                                                actor: publication.owner.instance_of?(User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
+                                                actor: commit_actor)
 
     new_identifier
   end
