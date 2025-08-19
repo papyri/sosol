@@ -1366,7 +1366,7 @@ class Publication < ApplicationRecord
     end
   end
 
-  def branch_from_master(force = true)
+  def branch_from_master(force = false)
     owner.repository.create_branch(branch, 'master', force)
   end
 
