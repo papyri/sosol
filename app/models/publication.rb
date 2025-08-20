@@ -815,6 +815,16 @@ class Publication < ApplicationRecord
     rev_list
   end
 
+  # converts an array of file paths into a hash with
+  # the key as the path and the value as the blob
+  def paths_blobs(file_paths)
+    controlled_blobs = file_paths.collect do |controlled_path|
+      owner.repository.get_blob_from_branch(controlled_path, branch)
+    end
+
+    Hash[*file_paths.zip(controlled_blobs).flatten]
+  end
+
   def flatten_commits(finalizing_publication, finalizer, board_members)
     # finalizing_publication.repository.fetch_objects(self.repository)
 
@@ -832,8 +842,7 @@ class Publication < ApplicationRecord
     owner.repository.update_master_from_canonical
     reason_comment = submission_reason
 
-    board_controlled_paths = controlled_paths
-    Rails.logger.info("Controlled Paths: #{board_controlled_paths.inspect}")
+    Rails.logger.info("Controlled Paths: #{controlled_paths.inspect}")
 
     controlled_commits = creator_commits.reject do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
@@ -851,15 +860,7 @@ class Publication < ApplicationRecord
       creator_commit_messages << " - #{message}" if message.present?
     end
 
-    controlled_blobs = board_controlled_paths.collect do |controlled_path|
-      owner.repository.get_blob_from_branch(controlled_path, branch)
-    end
-
-    controlled_paths_blobs =
-      Hash[*board_controlled_paths.zip(controlled_blobs).flatten]
-
-    Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
-    Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
+    controlled_paths_blobs = self.paths_blobs(controlled_paths)
 
     signed_off_messages = []
     board_members.each do |board_member|
@@ -1084,23 +1085,14 @@ class Publication < ApplicationRecord
     # controlled paths are from the finalizer (this) publication
     # uncontrolled paths are from the origin publication
 
-    controlled_paths = Array.new(self.controlled_paths)
-    # get the controlled blobs from the local branch (the finalizer's)
-    # controlled_blobs are the files that the board controls and have changed
-    controlled_blobs = controlled_paths.collect do |controlled_path|
-      owner.repository.get_blob_from_branch(controlled_path, branch)
-    end
-    # combine controlled paths and blobs into a hash
-    controlled_paths_blobs = Hash[*controlled_paths.zip(controlled_blobs).flatten]
+    controlled_paths_blobs = self.paths_blobs(controlled_paths)
 
     # determine existing uncontrolled paths & blobs
     # uncontrolled are taken from the origin, they have not been changed by board
     origin_identifier_paths = origin.identifiers.collect(&:to_path)
     uncontrolled_paths = origin_identifier_paths - controlled_paths
-    uncontrolled_blobs = uncontrolled_paths.collect do |ucp|
-      origin.repository.get_blob_from_branch(ucp, origin.branch)
-    end
-    uncontrolled_paths_blobs = Hash[*uncontrolled_paths.zip(uncontrolled_blobs).flatten]
+    
+    uncontrolled_paths_blobs = self.paths_blobs(uncontrolled_paths)
 
     #       Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect
     #       Rails.logger.info "--uncontrolled paths: "  + uncontrolled_paths.inspect
@@ -1149,16 +1141,7 @@ class Publication < ApplicationRecord
           # Both the merged commit and HEAD are independent and must be tied
           # together by a merge commit that has both of them as its parents.
 
-          # TODO: DRY from flatten_commits
-          controlled_blobs = canon_controlled_paths.collect do |controlled_path|
-            owner.repository.get_blob_from_branch(controlled_path, branch)
-          end
-
-          controlled_paths_blobs =
-            Hash[*canon_controlled_paths.zip(controlled_blobs).flatten]
-
-          Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
-          Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
+          controlled_paths_blobs = self.paths_blobs(canon_controlled_paths)
 
           # roll a tree SHA1 by reading the canonical master tree,
           # adding controlled path blobs, then writing the modified tree
