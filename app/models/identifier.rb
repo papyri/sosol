@@ -339,6 +339,8 @@ class Identifier < ApplicationRecord
       org.eclipse.jgit.lib.PersonIdent.new(Sosol::Application.config.site_full_name,
                                            Sosol::Application.config.site_email_from)
       default_actor = owner.jgit_actor unless owner.nil?
+    else
+      default_actor = owner.cgit_actor unless owner.nil?
     end
 
     options.reverse_merge!(
