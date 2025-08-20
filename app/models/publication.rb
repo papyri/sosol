@@ -846,7 +846,7 @@ class Publication < ApplicationRecord
 
     controlled_commits = creator_commits.reject do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
-      commit_touches_path = Repository.run_command("#{repository.git_command_prefix} log #{creator_commit}^..#{creator_commit} -- #{board_controlled_paths.clone.map do |p|
+      commit_touches_path = Repository.run_command("#{repository.git_command_prefix} log #{creator_commit}^..#{creator_commit} -- #{controlled_paths.clone.map do |p|
                                                                                                                                       Shellwords.escape(p)
                                                                                                                                     end.join(' ')}")
       commit_touches_path.blank?
