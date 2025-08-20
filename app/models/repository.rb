@@ -128,6 +128,10 @@ class Repository
   def fork_bare(destination_path)
     unless Dir.exist?(destination_path)
       Rails.logger.info(self.class.run_command("git clone --bare -q -s #{Shellwords.escape(path)} #{Shellwords.escape(destination_path)} 2>&1"))
+
+      unless @master.nil? || (RUBY_PLATFORM == 'java')
+        cgit_repo.config['user.name'] = @master.name
+      end
     end
   end
 
