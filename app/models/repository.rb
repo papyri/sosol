@@ -308,6 +308,10 @@ class Repository
     end
   end
 
+  def get_blob_oid_for_file_path_on_branch(file_path, branch)
+    cgit_repo.rev_parse("#{branch}:#{file_path}").oid
+  end
+
   def rename_file_cgit(original_path, new_path, branch, comment, actor)
     new_blob = get_file_from_branch(new_path, branch)
     Rails.logger.info("CGIT RENAME #{original_path} -> #{new_path} = #{new_blob.inspect} - nil?: #{new_blob.nil?}")
@@ -315,7 +319,7 @@ class Repository
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
 
-    original_oid = cgit_repo.rev_parse("#{branch}:#{original_path}").oid
+    original_oid = get_blob_oid_for_file_path_on_branch(original_path, branch)
     Rails.logger.info("CGIT RENAME: using #{original_oid} from #{original_path} at #{new_path} (new_blob content: #{new_blob.inspect}) (ls-tree: #{self.class.run_command("#{git_command_prefix} ls-tree -r #{Shellwords.escape(branch)} --name-only")}")
     
     branch_head = get_head(branch)

@@ -825,6 +825,16 @@ class Publication < ApplicationRecord
     Hash[*file_paths.zip(controlled_blobs).flatten]
   end
 
+  # converts an array of file paths into a hash with
+  # the key as the path and the value as the blob oids (SHA1s) 
+  def paths_blobs_oids(file_paths)
+    controlled_blobs = file_paths.collect do |controlled_path|
+      owner.repository.get_blob_oid_for_file_path_on_branch(controlled_path, branch)
+    end
+
+    Hash[*file_paths.zip(controlled_blobs).flatten]
+  end
+
   # builds a JGit::JGitTree and loads it from a branch on a repo,
   # then updates it using the Hash paths_blobs_to_add
   def paths_blobs_to_jgit_tree(repo_to_load, branch_to_load, paths_blobs_to_add)
