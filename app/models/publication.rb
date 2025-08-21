@@ -825,6 +825,24 @@ class Publication < ApplicationRecord
     Hash[*file_paths.zip(controlled_blobs).flatten]
   end
 
+  # builds a JGit::JGitTree and loads it from a branch on a repo,
+  # then updates it using the Hash paths_blobs_to_add
+  def paths_blobs_to_jgit_tree(repo_to_load, branch_to_load, paths_blobs_to_add)
+    jgit_tree = JGit::JGitTree.new
+    jgit_tree.load_from_repo(repo_to_load, branch_to_load)
+    inserter = repo_to_load.newObjectInserter
+    paths_blobs_to_add.each_pair do |path, blob|
+      next if blob.nil?
+
+      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
+                                blob.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
+      jgit_tree.add_blob(path, file_id.name)
+    end
+    inserter.flush
+
+    return jgit_tree
+  end
+
   def flatten_commits(finalizing_publication, finalizer, board_members)
     # finalizing_publication.repository.fetch_objects(self.repository)
 
@@ -880,18 +898,7 @@ class Publication < ApplicationRecord
     finalizer.repository.update_master_from_canonical
 
     if RUBY_PLATFORM == 'java'
-      jgit_tree = JGit::JGitTree.new
-      jgit_tree.load_from_repo(finalizing_publication.repository.jgit_repo, 'master')
-      inserter = finalizing_publication.repository.jgit_repo.newObjectInserter
-      controlled_paths_blobs.each_pair do |path, blob|
-        next if blob.nil?
-
-        file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                                  blob.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
-        jgit_tree.add_blob(path, file_id.name)
-      end
-      inserter.flush
-
+      jgit_tree = paths_blobs_to_jgit_tree(finalizing_publication.repository.jgit_repo, 'master', controlled_paths_blobs)
       tree_sha1 = jgit_tree.update_sha
 
       Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
@@ -1094,30 +1101,7 @@ class Publication < ApplicationRecord
     
     uncontrolled_paths_blobs = self.paths_blobs(uncontrolled_paths)
 
-    #       Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect
-    #       Rails.logger.info "--uncontrolled paths: "  + uncontrolled_paths.inspect
-    #
-    #       Rails.logger.info "-----Uncontrolled Blobs are:"
-    #       uncontrolled_blobs.each do |cb|
-    #         Rails.logger.info "-" + cb.to_s
-    #       end
-    #       Rails.logger.info "-----Controlled Blobs are:"
-    #       controlled_blobs.each do |cb|
-    #         Rails.logger.info "-" + cb.to_s
-    #       end
-
-    jgit_tree = JGit::JGitTree.new
-    jgit_tree.load_from_repo(origin.owner.repository.jgit_repo, origin.branch)
-    inserter = origin.owner.repository.jgit_repo.newObjectInserter
-    controlled_paths_blobs.merge(uncontrolled_paths_blobs).each_pair do |path, blob|
-      next if blob.nil?
-
-      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                                blob.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
-      jgit_tree.add_blob(path, file_id.name)
-    end
-    inserter.flush
-
+    jgit_tree = paths_blobs_to_jgit_tree(origin.owner.repository.jgit_repo, origin.branch, controlled_paths_blobs.merge(uncontrolled_paths_blobs))
     jgit_tree.commit(commit_comment, committer_user.jgit_actor)
 
     origin.save
@@ -1140,25 +1124,14 @@ class Publication < ApplicationRecord
         else
           # Both the merged commit and HEAD are independent and must be tied
           # together by a merge commit that has both of them as its parents.
-
           controlled_paths_blobs = self.paths_blobs(canon_controlled_paths)
 
           # roll a tree SHA1 by reading the canonical master tree,
           # adding controlled path blobs, then writing the modified tree
           # (happens on the finalizer's repo)
           owner.repository.update_master_from_canonical
-          jgit_tree = JGit::JGitTree.new
-          jgit_tree.load_from_repo(owner.repository.jgit_repo, 'master')
-          inserter = owner.repository.jgit_repo.newObjectInserter
-          controlled_paths_blobs.each_pair do |path, blob|
-            next if blob.nil?
 
-            file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                                      blob.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
-            jgit_tree.add_blob(path, file_id.name)
-          end
-          inserter.flush
-
+          jgit_tree = paths_blobs_to_jgit_tree(owner.repository.jgit_repo, 'master', controlled_paths_blobs)
           tree_sha1 = jgit_tree.update_sha
 
           Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
