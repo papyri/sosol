@@ -911,6 +911,7 @@ class Publication < ApplicationRecord
       commit.setEncoding('UTF-8')
       commit.setMessage(commit_message)
 
+      inserter = finalizing_publication.repository.jgit_repo.newObjectInserter
       flattened_commit_sha1 = inserter.insert(commit).name
       inserter.flush
       inserter.release
