@@ -312,6 +312,20 @@ class Repository
     cgit_repo.rev_parse("#{branch}:#{file_path}").oid
   end
 
+  def commit_tree_to_branch_cgit(tree, branch, author, committer, comment, parents)
+    commit_options = {}
+    commit_options[:tree] = tree
+    commit_options[:author] = author
+    commit_options[:committer] = committer
+    commit_options[:message] = comment
+    commit_options[:parents] = parents
+    unless branch.nil?
+      commit_options[:update_ref] = "refs/heads/#{branch}"
+    end
+
+    return Rugged::Commit.create(cgit_repo, commit_options)
+  end
+
   def rename_file_cgit(original_path, new_path, branch, comment, actor)
     new_blob = get_file_from_branch(new_path, branch)
     Rails.logger.info("CGIT RENAME #{original_path} -> #{new_path} = #{new_blob.inspect} - nil?: #{new_blob.nil?}")
@@ -331,17 +345,10 @@ class Repository
     # repo_index.add(path: new_path, oid: original_oid, mode: 0100644)
     # repo_index.remove(original_path)
 
-    commit_options = {}
-    # commit_options[:tree] = repo_index.write_tree(cgit_repo)
-    commit_options[:tree] = branch_head_tree.update([{action: :upsert, path: new_path, oid: original_oid, filemode: 0100644},
-                                                     {action: :remove, path: original_path}])
-    commit_options[:author] = actor
-    commit_options[:committer] = actor
-    commit_options[:message] ||= comment
-    commit_options[:parents] = [branch_head]
-    commit_options[:update_ref] = "refs/heads/#{branch}"
+    tree_sha1 = branch_head_tree.update([{action: :upsert, path: new_path, oid: original_oid, filemode: 0100644},
+                                         {action: :remove, path: original_path}])
 
-    return Rugged::Commit.create(cgit_repo, commit_options)
+    commit_tree_to_branch_cgit(tree_sha1, branch, actor, actor, comment, [branch_head])
   end
 
   def rename_file(original_path, new_path, branch, comment, actor)
@@ -389,16 +396,9 @@ class Repository
     # repo_index.read_tree(branch_head_tree)
     # repo_index.add(path: file, oid: new_blob, mode: 0100644)
 
-    commit_options = {}
-    # commit_options[:tree] = repo_index.write_tree(cgit_repo)
-    commit_options[:tree] = branch_head_tree.update([{action: :upsert, path: file, oid: new_blob, filemode: 0100644}])
-    commit_options[:author] = actor
-    commit_options[:committer] = actor
-    commit_options[:message] ||= comment
-    commit_options[:parents] = [branch_head]
-    commit_options[:update_ref] = "refs/heads/#{branch}"
+    tree_sha1 = branch_head_tree.update([{action: :upsert, path: file, oid: new_blob, filemode: 0100644}])
 
-    return Rugged::Commit.create(cgit_repo, commit_options)
+    commit_tree_to_branch_cgit(tree_sha1, branch, actor, actor, comment, [branch_head])
   end
 
   # Returns a String of the SHA1 of the commit
