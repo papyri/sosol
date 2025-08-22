@@ -1144,6 +1144,8 @@ class Publication < ApplicationRecord
       
       uncontrolled_paths_blobs_oids = origin.paths_blobs_oids(uncontrolled_paths)
 
+      Rails.logger.info("COPY_BACK_TO_USER controlled_paths_blobs_oids: #{controlled_paths_blobs_oids.inspect} uncontrolled_paths_blobs_oids: #{uncontrolled_paths_blobs_oids.inspect}")
+
       tree_sha1 = paths_blobs_oids_to_cgit_tree(origin.owner.repository, origin.branch, controlled_paths_blobs_oids.merge(uncontrolled_paths_blobs_oids))
       origin.owner.repository.commit_tree_to_branch_cgit(tree_sha1, origin.branch, committer_user.cgit_actor, committer_user.cgit_actor, commit_comment, [origin.head])
     end
