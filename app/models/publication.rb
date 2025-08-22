@@ -1146,6 +1146,12 @@ class Publication < ApplicationRecord
 
       Rails.logger.info("COPY_BACK_TO_USER controlled_paths_blobs_oids: #{controlled_paths_blobs_oids.inspect} uncontrolled_paths_blobs_oids: #{uncontrolled_paths_blobs_oids.inspect}")
 
+      # we need to write the actual blob contents for controlled paths back to the origin repository
+      # so that the blob oids can resolve
+      self.paths_blobs(controlled_paths).each_value do |blob_content|
+        origin.owner.repository.cgit_repo.write(blob_content, :blob)
+      end
+
       tree_sha1 = paths_blobs_oids_to_cgit_tree(origin.owner.repository, origin.branch, controlled_paths_blobs_oids.merge(uncontrolled_paths_blobs_oids))
       origin.owner.repository.commit_tree_to_branch_cgit(tree_sha1, origin.branch, committer_user.cgit_actor, committer_user.cgit_actor, commit_comment, [origin.head])
     end
