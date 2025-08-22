@@ -853,6 +853,18 @@ class Publication < ApplicationRecord
     return jgit_tree
   end
 
+  def paths_blobs_oids_to_cgit_tree(repo_to_load, branch_to_load, paths_blobs_oids_to_add)
+    branch_head = repo_to_load.get_head(branch_to_load)
+    branch_head_tree = Rugged::Commit.lookup(repo_to_load.cgit_repo, branch_head).tree
+
+    tree_actions = []
+    paths_blobs_oids_to_add.each_pair do |path, blob_oid|
+      tree_actions << {action: :upsert, path: path, oid: blob_oid, filemode: 0100644}
+    end
+    
+    branch_head_tree.update(tree_actions)
+  end
+
   def flatten_commits(finalizing_publication, finalizer, board_members)
     # finalizing_publication.repository.fetch_objects(self.repository)
 
@@ -888,8 +900,6 @@ class Publication < ApplicationRecord
       creator_commit_messages << " - #{message}" if message.present?
     end
 
-    controlled_paths_blobs = self.paths_blobs(controlled_paths)
-
     signed_off_messages = []
     board_members.each do |board_member|
       signed_off_messages << "Signed-off-by: #{board_member.author_string}"
@@ -908,6 +918,8 @@ class Publication < ApplicationRecord
     finalizer.repository.update_master_from_canonical
 
     if RUBY_PLATFORM == 'java'
+      controlled_paths_blobs = self.paths_blobs(controlled_paths)
+
       jgit_tree = paths_blobs_to_jgit_tree(finalizing_publication.repository.jgit_repo, 'master', controlled_paths_blobs)
       tree_sha1 = jgit_tree.update_sha
 
@@ -925,13 +937,19 @@ class Publication < ApplicationRecord
       flattened_commit_sha1 = inserter.insert(commit).name
       inserter.flush
       inserter.release
+
       finalizing_publication.repository.create_branch(
         finalizing_publication.branch, flattened_commit_sha1, true)
     else
       # flattened_commit_sha1 = finalizing_publication.
       # copy branch to new owner
-      finalizing_publication.owner.repository.copy_branch_from_repo(self.branch,
-                                                                    finalizing_publication.branch, self.owner.repository)
+      # finalizing_publication.owner.repository.copy_branch_from_repo(self.branch,
+      #                                                               finalizing_publication.branch, self.owner.repository)
+
+      controlled_paths_blobs_oids = self.paths_blobs_oids(controlled_paths)
+      tree_sha1 = paths_blobs_oids_to_cgit_tree(finalizing_publication.repository, 'master', controlled_paths_blobs_oids)
+
+      finalizing_publication.repository.commit_tree_to_branch_cgit(tree_sha1, finalizing_publication.branch, creator.cgit_actor, finalizer.cgit_actor, commit_message, parent_commit)
     end
 
     # rewrite commits by EB
