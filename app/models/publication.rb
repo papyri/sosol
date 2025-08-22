@@ -949,7 +949,7 @@ class Publication < ApplicationRecord
       controlled_paths_blobs_oids = self.paths_blobs_oids(controlled_paths)
       tree_sha1 = paths_blobs_oids_to_cgit_tree(finalizing_publication.repository, 'master', controlled_paths_blobs_oids)
 
-      finalizing_publication.repository.commit_tree_to_branch_cgit(tree_sha1, finalizing_publication.branch, creator.cgit_actor, finalizer.cgit_actor, commit_message, parent_commit)
+      finalizing_publication.repository.commit_tree_to_branch_cgit(tree_sha1, finalizing_publication.branch, creator.cgit_actor, finalizer.cgit_actor, commit_message, [parent_commit])
     end
 
     # rewrite commits by EB
