@@ -1122,17 +1122,31 @@ class Publication < ApplicationRecord
     # controlled paths are from the finalizer (this) publication
     # uncontrolled paths are from the origin publication
 
-    controlled_paths_blobs = self.paths_blobs(controlled_paths)
+    if RUBY_PLATFORM == 'java'
+      controlled_paths_blobs = self.paths_blobs(controlled_paths)
 
-    # determine existing uncontrolled paths & blobs
-    # uncontrolled are taken from the origin, they have not been changed by board
-    origin_identifier_paths = origin.identifiers.collect(&:to_path)
-    uncontrolled_paths = origin_identifier_paths - controlled_paths
-    
-    uncontrolled_paths_blobs = self.paths_blobs(uncontrolled_paths)
+      # determine existing uncontrolled paths & blobs
+      # uncontrolled are taken from the origin, they have not been changed by board
+      origin_identifier_paths = origin.identifiers.collect(&:to_path)
+      uncontrolled_paths = origin_identifier_paths - controlled_paths
+      
+      uncontrolled_paths_blobs = self.paths_blobs(uncontrolled_paths)
 
-    jgit_tree = paths_blobs_to_jgit_tree(origin.owner.repository.jgit_repo, origin.branch, controlled_paths_blobs.merge(uncontrolled_paths_blobs))
-    jgit_tree.commit(commit_comment, committer_user.jgit_actor)
+      jgit_tree = paths_blobs_to_jgit_tree(origin.owner.repository.jgit_repo, origin.branch, controlled_paths_blobs.merge(uncontrolled_paths_blobs))
+      jgit_tree.commit(commit_comment, committer_user.jgit_actor)
+    else
+      controlled_paths_blobs_oids = self.paths_blobs_oids(controlled_paths)
+
+      # determine existing uncontrolled paths & blobs
+      # uncontrolled are taken from the origin, they have not been changed by board
+      origin_identifier_paths = origin.identifiers.collect(&:to_path)
+      uncontrolled_paths = origin_identifier_paths - controlled_paths
+      
+      uncontrolled_paths_blobs_oids = self.paths_blobs_oids(uncontrolled_paths)
+
+      tree_sha1 = paths_blobs_oids_to_cgit_tree(origin.owner.repository, origin.branch, controlled_paths_blobs_oids.merge(uncontrolled_paths_blobs_oids))
+      origin.owner.repository.commit_tree_to_branch_cgit(tree_sha1, origin.branch, committer_user.cgit_actor, committer_user.cgit_actor, commit_comment, [origin.head])
+    end
 
     origin.save
   end
