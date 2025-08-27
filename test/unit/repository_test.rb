@@ -12,7 +12,7 @@ class RepositoryTest < ActiveSupport::TestCase
           @repo.commit_content('README.TXT', 'master', 'TEST', 'TEST',
                                org.eclipse.jgit.lib.PersonIdent.new('TEST', 'TEST'))
         else
-          @repo.commit_content('README.TXT', 'master', 'TEST', 'TEST', nil)
+          @repo.commit_content('README.TXT', 'master', 'TEST', 'TEST', {name: 'Test User', email: 'test@example.com', time: Time.now})
         end
       end
     end
