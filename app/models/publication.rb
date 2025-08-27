@@ -1141,10 +1141,7 @@ class Publication < ApplicationRecord
       # uncontrolled are taken from the origin, they have not been changed by board
       origin_identifier_paths = origin.identifiers.collect(&:to_path)
       uncontrolled_paths = origin_identifier_paths - controlled_paths
-      
       uncontrolled_paths_blobs_oids = origin.paths_blobs_oids(uncontrolled_paths)
-
-      Rails.logger.info("COPY_BACK_TO_USER controlled_paths_blobs_oids: #{controlled_paths_blobs_oids.inspect} uncontrolled_paths_blobs_oids: #{uncontrolled_paths_blobs_oids.inspect}")
 
       # we need to write the actual blob contents for controlled paths back to the origin repository
       # so that the blob oids can resolve
@@ -1172,44 +1169,61 @@ class Publication < ApplicationRecord
         if merge_base(canonical_sha) == canonical_sha
           # nothing new from canon, trivial merge by updating HEAD
           # e.g. "Fast-forward" merge, HEAD is already contained in the commit
-
         else
           # Both the merged commit and HEAD are independent and must be tied
           # together by a merge commit that has both of them as its parents.
-          controlled_paths_blobs = self.paths_blobs(canon_controlled_paths)
+          if RUBY_PLATFORM == 'java'
+            controlled_paths_blobs = self.paths_blobs(canon_controlled_paths)
 
-          # roll a tree SHA1 by reading the canonical master tree,
-          # adding controlled path blobs, then writing the modified tree
-          # (happens on the finalizer's repo)
-          owner.repository.update_master_from_canonical
+            # roll a tree SHA1 by reading the canonical master tree,
+            # adding controlled path blobs, then writing the modified tree
+            # (happens on the finalizer's repo)
+            owner.repository.update_master_from_canonical
 
-          jgit_tree = paths_blobs_to_jgit_tree(owner.repository.jgit_repo, 'master', controlled_paths_blobs)
-          tree_sha1 = jgit_tree.update_sha
+            jgit_tree = paths_blobs_to_jgit_tree(owner.repository.jgit_repo, 'master', controlled_paths_blobs)
+            tree_sha1 = jgit_tree.update_sha
 
-          Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+            Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
-          commit_message = "Finalization merge of branch '#{branch}' into canonical master"
+            commit_message = "Finalization merge of branch '#{branch}' into canonical master"
 
-          inserter = owner.repository.jgit_repo.newObjectInserter
+            inserter = owner.repository.jgit_repo.newObjectInserter
 
-          commit = org.eclipse.jgit.lib.CommitBuilder.new
-          commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
-          commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),
-                              org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
-          commit.setAuthor(owner.jgit_actor)
-          commit.setCommitter(owner.jgit_actor)
-          commit.setEncoding('UTF-8')
-          commit.setMessage(commit_message)
+            commit = org.eclipse.jgit.lib.CommitBuilder.new
+            commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
+            commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),
+                                org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
+            commit.setAuthor(owner.jgit_actor)
+            commit.setCommitter(owner.jgit_actor)
+            commit.setEncoding('UTF-8')
+            commit.setMessage(commit_message)
 
-          finalized_commit_sha1 = inserter.insert(commit).name
-          inserter.flush
-          inserter.release
+            finalized_commit_sha1 = inserter.insert(commit).name
+            inserter.flush
+            inserter.release
 
-          Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
+            Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
 
-          # Update our own head first
-          owner.repository.update_ref(branch, finalized_commit_sha1)
+            # Update our own head first
+            owner.repository.update_ref(branch, finalized_commit_sha1)
+          else
+            controlled_paths_blobs_oids = self.paths_blobs_oids(canon_controlled_paths)
 
+            # roll a tree SHA1 by reading the canonical master tree,
+            # adding controlled path blobs, then writing the modified tree
+            # (happens on the finalizer's repo)
+            owner.repository.update_master_from_canonical
+            
+            tree_sha1 = paths_blobs_oids_to_cgit_tree(owner.repository, 'master', controlled_paths_blobs_oids)
+
+            Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+            commit_message = "Finalization merge of branch '#{branch}' into canonical master"
+
+            finalized_commit_sha1 = owner.repository.commit_tree_to_branch_cgit(tree_sha1, branch, owner.cgit_actor, owner.cgit_actor, commit_message, [canonical_sha1, publication_sha])
+
+            Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
+          end
         end
         canon.copy_branch_from_repo(branch, 'master', owner.repository)
         change_status('committed')
