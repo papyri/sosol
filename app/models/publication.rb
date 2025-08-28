@@ -865,20 +865,15 @@ class Publication < ApplicationRecord
     branch_head_tree.update(tree_actions)
   end
 
+  # flatten commits by original publication creator
+  # - use the submission reason as the main comment
+  # - concatenate all non-empty commit messages into a list
+  # - write a 'Signed-off-by:' line for each Ed. Board member
+  # - rewrite the committer to the finalizer
+  # - parent will be the branch point from canon (merge-base)
+  # - tree will be from creator's last commit
+  # - see http://idp.atlantides.org/trac/idp/wiki/SoSOL/Attribution
   def flatten_commits(finalizing_publication, finalizer, board_members)
-    # finalizing_publication.repository.fetch_objects(self.repository)
-
-    # flatten commits by original publication creator
-    # - use the submission reason as the main comment
-    # - concatenate all non-empty commit messages into a list
-    # - write a 'Signed-off-by:' line for each Ed. Board member
-    # - rewrite the committer to the finalizer
-    # - parent will be the branch point from canon (merge-base)
-    # - tree will be from creator's last commit
-    # - see http://idp.atlantides.org/trac/idp/wiki/SoSOL/Attribution
-    # X insert a change in the XML revisionDesc header
-    #   should instead happen at submit so EB sees it?
-
     owner.repository.update_master_from_canonical
     reason_comment = submission_reason
 
@@ -939,22 +934,14 @@ class Publication < ApplicationRecord
       finalizing_publication.repository.create_branch(
         finalizing_publication.branch, flattened_commit_sha1, true)
     else
-      # flattened_commit_sha1 = finalizing_publication.
-      # copy branch to new owner
-      # finalizing_publication.owner.repository.copy_branch_from_repo(self.branch,
-      #                                                               finalizing_publication.branch, self.owner.repository)
-
       controlled_paths_blobs_oids = self.paths_blobs_oids(controlled_paths)
       tree_sha1 = paths_blobs_oids_to_cgit_tree(finalizing_publication.repository, 'master', controlled_paths_blobs_oids)
+      
+      Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
       finalizing_publication.repository.delete_branch(finalizing_publication.branch)
       finalizing_publication.repository.commit_tree_to_branch_cgit(tree_sha1, finalizing_publication.branch, creator.cgit_actor, finalizer.cgit_actor, commit_message, [parent_commit])
     end
-
-    # rewrite commits by EB
-    # - write a 'Signed-off-by:' line for each Ed. Board member
-    # - rewrite the committer to the finalizer
-    # - change parent lineage to flattened commits
   end
 
   # Finalizer is a user who is responsible for preparing the publication for the final commit to canon. They will be given a copy of the publication to edit.
