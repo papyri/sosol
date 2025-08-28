@@ -908,14 +908,12 @@ class Publication < ApplicationRecord
     commit_message =
       (creator_commit_messages + [''] + signed_off_messages).join("\n").chomp
 
-    # parent commit should ALWAYS be canonical master head
-    # FIXME: handle racing during finalization
-    parent_commit = Repository.new.get_head('master')
-
     # roll a tree SHA1 by reading the canonical master tree,
     # adding controlled path blobs, then writing the modified tree
     # (happens on the finalizer's repo)
     finalizer.repository.update_master_from_canonical
+    # parent commit should ALWAYS be canonical master head
+    parent_commit = finalizer.repository.get_head('master')
 
     if RUBY_PLATFORM == 'java'
       controlled_paths_blobs = self.paths_blobs(controlled_paths)
