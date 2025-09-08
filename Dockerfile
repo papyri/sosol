@@ -2,6 +2,9 @@ FROM debian:bullseye
 LABEL org.opencontainers.image.authors="Ryan Baumann <ryan.baumann@gmail.com>"
 
 ARG RUBY_VERSION="jruby-9.4.9.0"
+ARG BUNDLE_GEMFILE="Gemfile.jruby-9.4.9.0"
+ENV RBENV_VERSION=$RUBY_VERSION
+ENV BUNDLE_GEMFILE=$BUNDLE_GEMFILE
 
 # Install the Ubuntu packages.
 # Install Ruby, RubyGems, Bundler, MySQL, Git, wget, svn, java
