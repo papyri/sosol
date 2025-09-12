@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ['3.2', 'jruby-9.4.9.0']
+        ruby: ['3.2', 'jruby-9.4.13.0']
     steps:
     - uses: actions/checkout@v3
     - name: Install dependencies

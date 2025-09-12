@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 if RUBY_PLATFORM == 'java'
-  ruby '3.1.4', engine: 'jruby', engine_version: '9.4.9.0'
+  ruby '3.1.4', engine: 'jruby', engine_version: '9.4.13.0'
 else
   ruby '3.2.9'
 end

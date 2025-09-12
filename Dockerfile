@@ -35,8 +35,8 @@ RUN git clone https://github.com/rbenv/rbenv-vars.git $(rbenv root)/plugins/rben
 ADD . /root/sosol/
 WORKDIR /root/sosol
 
-ARG RUBY_VERSION="jruby-9.4.9.0"
-ARG BUNDLE_GEMFILE="Gemfile.jruby-9.4.9.0"
+ARG RUBY_VERSION="jruby-9.4.13.0"
+ARG BUNDLE_GEMFILE="Gemfile.jruby-9.4.13.0"
 ENV RBENV_VERSION=$RUBY_VERSION
 ENV BUNDLE_GEMFILE=$BUNDLE_GEMFILE
 
