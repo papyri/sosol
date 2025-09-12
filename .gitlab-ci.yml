@@ -11,6 +11,8 @@ variables:
   COMMIT_MESSAGE: "Update submodule to latest commit"
   DOWNSTREAM_PROJECT: "papyri/papyri-docker"
   DOWNSTREAM_BRANCH: "master"
+  BUNDLE_GEMFILE: "Gemfile.jruby-9.4.9.0"
+  RBENV_VERSION: "jruby-9.4.9.0"
 
 stages:
   - build
@@ -28,6 +30,20 @@ build:
 
 test:
   extends: .test
+
+build-cruby:
+  extends: .build
+  variables:
+    build_tag: "$CI_REGISTRY_IMAGE/builds/cruby:$CI_COMMIT_SHORT_SHA"
+    BUNDLE_GEMFILE: "Gemfile.3.2"
+    RBENV_VERSION: "3.2.9"
+
+test-cruby:
+  extends: .test
+  variables:
+    build_tag: "$CI_REGISTRY_IMAGE/builds/cruby:$CI_COMMIT_SHORT_SHA"
+    BUNDLE_GEMFILE: "Gemfile.3.2"
+    RBENV_VERSION: "3.2.9"
 
 integration-tests:
   stage: test

@@ -815,29 +815,73 @@ class Publication < ApplicationRecord
     rev_list
   end
 
+  # converts an array of file paths into a hash with
+  # the key as the path and the value as the blob
+  def paths_blobs(file_paths)
+    controlled_blobs = file_paths.collect do |controlled_path|
+      owner.repository.get_blob_from_branch(controlled_path, branch)
+    end
+
+    Hash[*file_paths.zip(controlled_blobs).flatten]
+  end
+
+  # converts an array of file paths into a hash with
+  # the key as the path and the value as the blob oids (SHA1s) 
+  def paths_blobs_oids(file_paths)
+    controlled_blobs = file_paths.collect do |controlled_path|
+      owner.repository.get_blob_oid_for_file_path_on_branch(controlled_path, branch)
+    end
+
+    Hash[*file_paths.zip(controlled_blobs).flatten]
+  end
+
+  # builds a JGit::JGitTree and loads it from a branch on a repo,
+  # then updates it using the Hash paths_blobs_to_add
+  def paths_blobs_to_jgit_tree(repo_to_load, branch_to_load, paths_blobs_to_add)
+    jgit_tree = JGit::JGitTree.new
+    jgit_tree.load_from_repo(repo_to_load, branch_to_load)
+    inserter = repo_to_load.newObjectInserter
+    paths_blobs_to_add.each_pair do |path, blob|
+      next if blob.nil?
+
+      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
+                                blob.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
+      jgit_tree.add_blob(path, file_id.name)
+    end
+    inserter.flush
+
+    return jgit_tree
+  end
+
+  def paths_blobs_oids_to_cgit_tree(repo_to_load, branch_to_load, paths_blobs_oids_to_add)
+    branch_head = repo_to_load.get_head(branch_to_load)
+    branch_head_tree = Rugged::Commit.lookup(repo_to_load.cgit_repo, branch_head).tree
+
+    tree_actions = []
+    paths_blobs_oids_to_add.each_pair do |path, blob_oid|
+      tree_actions << {action: :upsert, path: path, oid: blob_oid, filemode: 0100644}
+    end
+    
+    branch_head_tree.update(tree_actions)
+  end
+
+  # flatten commits by original publication creator
+  # - use the submission reason as the main comment
+  # - concatenate all non-empty commit messages into a list
+  # - write a 'Signed-off-by:' line for each Ed. Board member
+  # - rewrite the committer to the finalizer
+  # - parent will be the branch point from canon (merge-base)
+  # - tree will be from creator's last commit
+  # - see http://idp.atlantides.org/trac/idp/wiki/SoSOL/Attribution
   def flatten_commits(finalizing_publication, finalizer, board_members)
-    # finalizing_publication.repository.fetch_objects(self.repository)
-
-    # flatten commits by original publication creator
-    # - use the submission reason as the main comment
-    # - concatenate all non-empty commit messages into a list
-    # - write a 'Signed-off-by:' line for each Ed. Board member
-    # - rewrite the committer to the finalizer
-    # - parent will be the branch point from canon (merge-base)
-    # - tree will be from creator's last commit
-    # - see http://idp.atlantides.org/trac/idp/wiki/SoSOL/Attribution
-    # X insert a change in the XML revisionDesc header
-    #   should instead happen at submit so EB sees it?
-
     owner.repository.update_master_from_canonical
     reason_comment = submission_reason
 
-    board_controlled_paths = controlled_paths
-    Rails.logger.info("Controlled Paths: #{board_controlled_paths.inspect}")
+    Rails.logger.info("Controlled Paths: #{controlled_paths.inspect}")
 
     controlled_commits = creator_commits.reject do |creator_commit|
       Rails.logger.info("Checking Creator Commit id: #{creator_commit}")
-      commit_touches_path = Repository.run_command("#{repository.git_command_prefix} log #{creator_commit}^..#{creator_commit} -- #{board_controlled_paths.clone.map do |p|
+      commit_touches_path = Repository.run_command("#{repository.git_command_prefix} log #{creator_commit}^..#{creator_commit} -- #{controlled_paths.clone.map do |p|
                                                                                                                                       Shellwords.escape(p)
                                                                                                                                     end.join(' ')}")
       commit_touches_path.blank?
@@ -851,16 +895,6 @@ class Publication < ApplicationRecord
       creator_commit_messages << " - #{message}" if message.present?
     end
 
-    controlled_blobs = board_controlled_paths.collect do |controlled_path|
-      owner.repository.get_blob_from_branch(controlled_path, branch)
-    end
-
-    controlled_paths_blobs =
-      Hash[*board_controlled_paths.zip(controlled_blobs).flatten]
-
-    Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
-    Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-
     signed_off_messages = []
     board_members.each do |board_member|
       signed_off_messages << "Signed-off-by: #{board_member.author_string}"
@@ -869,51 +903,45 @@ class Publication < ApplicationRecord
     commit_message =
       (creator_commit_messages + [''] + signed_off_messages).join("\n").chomp
 
-    # parent commit should ALWAYS be canonical master head
-    # FIXME: handle racing during finalization
-    parent_commit = Repository.new.get_head('master')
-
     # roll a tree SHA1 by reading the canonical master tree,
     # adding controlled path blobs, then writing the modified tree
     # (happens on the finalizer's repo)
     finalizer.repository.update_master_from_canonical
+    # parent commit should ALWAYS be canonical master head
+    parent_commit = finalizer.repository.get_head('master')
 
-    jgit_tree = JGit::JGitTree.new
-    jgit_tree.load_from_repo(finalizing_publication.repository.jgit_repo, 'master')
-    inserter = finalizing_publication.repository.jgit_repo.newObjectInserter
-    controlled_paths_blobs.each_pair do |path, blob|
-      next if blob.nil?
+    if RUBY_PLATFORM == 'java'
+      controlled_paths_blobs = self.paths_blobs(controlled_paths)
 
-      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                                blob.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
-      jgit_tree.add_blob(path, file_id.name)
+      jgit_tree = paths_blobs_to_jgit_tree(finalizing_publication.repository.jgit_repo, 'master', controlled_paths_blobs)
+      tree_sha1 = jgit_tree.update_sha
+
+      Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+      commit = org.eclipse.jgit.lib.CommitBuilder.new
+      commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
+      commit.setParentId(org.eclipse.jgit.lib.ObjectId.fromString(parent_commit))
+      commit.setAuthor(creator.jgit_actor)
+      commit.setCommitter(finalizer.jgit_actor)
+      commit.setEncoding('UTF-8')
+      commit.setMessage(commit_message)
+
+      inserter = finalizing_publication.repository.jgit_repo.newObjectInserter
+      flattened_commit_sha1 = inserter.insert(commit).name
+      inserter.flush
+      inserter.release
+
+      finalizing_publication.repository.create_branch(
+        finalizing_publication.branch, flattened_commit_sha1, true)
+    else
+      controlled_paths_blobs_oids = self.paths_blobs_oids(controlled_paths)
+      tree_sha1 = paths_blobs_oids_to_cgit_tree(finalizing_publication.repository, 'master', controlled_paths_blobs_oids)
+      
+      Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+      finalizing_publication.repository.delete_branch(finalizing_publication.branch)
+      finalizing_publication.repository.commit_tree_to_branch_cgit(tree_sha1, finalizing_publication.branch, creator.cgit_actor, finalizer.cgit_actor, commit_message, [parent_commit])
     end
-    inserter.flush
-
-    tree_sha1 = jgit_tree.update_sha
-
-    Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
-
-    commit = org.eclipse.jgit.lib.CommitBuilder.new
-    commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
-    commit.setParentId(org.eclipse.jgit.lib.ObjectId.fromString(parent_commit))
-    commit.setAuthor(creator.jgit_actor)
-    commit.setCommitter(finalizer.jgit_actor)
-    commit.setEncoding('UTF-8')
-    commit.setMessage(commit_message)
-
-    flattened_commit_sha1 = inserter.insert(commit).name
-    inserter.flush
-    inserter.release
-
-    finalizing_publication.repository.create_branch(
-      finalizing_publication.branch, flattened_commit_sha1, true
-    )
-
-    # rewrite commits by EB
-    # - write a 'Signed-off-by:' line for each Ed. Board member
-    # - rewrite the committer to the finalizer
-    # - change parent lineage to flattened commits
   end
 
   # Finalizer is a user who is responsible for preparing the publication for the final commit to canon. They will be given a copy of the publication to edit.
@@ -1053,7 +1081,7 @@ class Publication < ApplicationRecord
   end
 
   def head
-    owner.repository.jgit_repo.resolve(branch).name
+    owner.repository.get_head(branch)
   end
 
   def merge_base(branch = 'master')
@@ -1079,49 +1107,36 @@ class Publication < ApplicationRecord
     # controlled paths are from the finalizer (this) publication
     # uncontrolled paths are from the origin publication
 
-    controlled_paths = Array.new(self.controlled_paths)
-    # get the controlled blobs from the local branch (the finalizer's)
-    # controlled_blobs are the files that the board controls and have changed
-    controlled_blobs = controlled_paths.collect do |controlled_path|
-      owner.repository.get_blob_from_branch(controlled_path, branch)
+    if RUBY_PLATFORM == 'java'
+      controlled_paths_blobs = self.paths_blobs(controlled_paths)
+
+      # determine existing uncontrolled paths & blobs
+      # uncontrolled are taken from the origin, they have not been changed by board
+      origin_identifier_paths = origin.identifiers.collect(&:to_path)
+      uncontrolled_paths = origin_identifier_paths - controlled_paths
+      
+      uncontrolled_paths_blobs = self.paths_blobs(uncontrolled_paths)
+
+      jgit_tree = paths_blobs_to_jgit_tree(origin.owner.repository.jgit_repo, origin.branch, controlled_paths_blobs.merge(uncontrolled_paths_blobs))
+      jgit_tree.commit(commit_comment, committer_user.jgit_actor)
+    else
+      controlled_paths_blobs_oids = self.paths_blobs_oids(controlled_paths)
+
+      # determine existing uncontrolled paths & blobs
+      # uncontrolled are taken from the origin, they have not been changed by board
+      origin_identifier_paths = origin.identifiers.collect(&:to_path)
+      uncontrolled_paths = origin_identifier_paths - controlled_paths
+      uncontrolled_paths_blobs_oids = origin.paths_blobs_oids(uncontrolled_paths)
+
+      # we need to write the actual blob contents for controlled paths back to the origin repository
+      # so that the blob oids can resolve
+      self.paths_blobs(controlled_paths).each_value do |blob_content|
+        origin.owner.repository.cgit_repo.write(blob_content, :blob)
+      end
+
+      tree_sha1 = paths_blobs_oids_to_cgit_tree(origin.owner.repository, origin.branch, controlled_paths_blobs_oids.merge(uncontrolled_paths_blobs_oids))
+      origin.owner.repository.commit_tree_to_branch_cgit(tree_sha1, origin.branch, committer_user.cgit_actor, committer_user.cgit_actor, commit_comment, [origin.head])
     end
-    # combine controlled paths and blobs into a hash
-    controlled_paths_blobs = Hash[*controlled_paths.zip(controlled_blobs).flatten]
-
-    # determine existing uncontrolled paths & blobs
-    # uncontrolled are taken from the origin, they have not been changed by board
-    origin_identifier_paths = origin.identifiers.collect(&:to_path)
-    uncontrolled_paths = origin_identifier_paths - controlled_paths
-    uncontrolled_blobs = uncontrolled_paths.collect do |ucp|
-      origin.repository.get_blob_from_branch(ucp, origin.branch)
-    end
-    uncontrolled_paths_blobs = Hash[*uncontrolled_paths.zip(uncontrolled_blobs).flatten]
-
-    #       Rails.logger.info "----Controlled paths for community publication are:" + controlled_paths.inspect
-    #       Rails.logger.info "--uncontrolled paths: "  + uncontrolled_paths.inspect
-    #
-    #       Rails.logger.info "-----Uncontrolled Blobs are:"
-    #       uncontrolled_blobs.each do |cb|
-    #         Rails.logger.info "-" + cb.to_s
-    #       end
-    #       Rails.logger.info "-----Controlled Blobs are:"
-    #       controlled_blobs.each do |cb|
-    #         Rails.logger.info "-" + cb.to_s
-    #       end
-
-    jgit_tree = JGit::JGitTree.new
-    jgit_tree.load_from_repo(origin.owner.repository.jgit_repo, origin.branch)
-    inserter = origin.owner.repository.jgit_repo.newObjectInserter
-    controlled_paths_blobs.merge(uncontrolled_paths_blobs).each_pair do |path, blob|
-      next if blob.nil?
-
-      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                                blob.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
-      jgit_tree.add_blob(path, file_id.name)
-    end
-    inserter.flush
-
-    jgit_tree.commit(commit_comment, committer_user.jgit_actor)
 
     origin.save
   end
@@ -1139,64 +1154,61 @@ class Publication < ApplicationRecord
         if merge_base(canonical_sha) == canonical_sha
           # nothing new from canon, trivial merge by updating HEAD
           # e.g. "Fast-forward" merge, HEAD is already contained in the commit
-
         else
           # Both the merged commit and HEAD are independent and must be tied
           # together by a merge commit that has both of them as its parents.
+          if RUBY_PLATFORM == 'java'
+            controlled_paths_blobs = self.paths_blobs(canon_controlled_paths)
 
-          # TODO: DRY from flatten_commits
-          controlled_blobs = canon_controlled_paths.collect do |controlled_path|
-            owner.repository.get_blob_from_branch(controlled_path, branch)
+            # roll a tree SHA1 by reading the canonical master tree,
+            # adding controlled path blobs, then writing the modified tree
+            # (happens on the finalizer's repo)
+            owner.repository.update_master_from_canonical
+
+            jgit_tree = paths_blobs_to_jgit_tree(owner.repository.jgit_repo, 'master', controlled_paths_blobs)
+            tree_sha1 = jgit_tree.update_sha
+
+            Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+            commit_message = "Finalization merge of branch '#{branch}' into canonical master"
+
+            inserter = owner.repository.jgit_repo.newObjectInserter
+
+            commit = org.eclipse.jgit.lib.CommitBuilder.new
+            commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
+            commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),
+                                org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
+            commit.setAuthor(owner.jgit_actor)
+            commit.setCommitter(owner.jgit_actor)
+            commit.setEncoding('UTF-8')
+            commit.setMessage(commit_message)
+
+            finalized_commit_sha1 = inserter.insert(commit).name
+            inserter.flush
+            inserter.release
+
+            Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
+
+            # Update our own head first
+            owner.repository.update_ref(branch, finalized_commit_sha1)
+          else
+            controlled_paths_blobs_oids = self.paths_blobs_oids(canon_controlled_paths)
+
+            # roll a tree SHA1 by reading the canonical master tree,
+            # adding controlled path blobs, then writing the modified tree
+            # (happens on the finalizer's repo)
+            owner.repository.update_master_from_canonical
+            
+            tree_sha1 = paths_blobs_oids_to_cgit_tree(owner.repository, 'master', controlled_paths_blobs_oids)
+
+            Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
+
+            commit_message = "Finalization merge of branch '#{branch}' into canonical master"
+
+            finalized_commit_sha1 = owner.repository.commit_tree_to_branch_cgit(tree_sha1, branch, owner.cgit_actor, owner.cgit_actor, commit_message, [canonical_sha1, publication_sha])
+
+            Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
           end
-
-          controlled_paths_blobs =
-            Hash[*canon_controlled_paths.zip(controlled_blobs).flatten]
-
-          Rails.logger.info("Controlled Blobs: #{controlled_blobs.inspect}")
-          Rails.logger.info("Controlled Paths => Blobs: #{controlled_paths_blobs.inspect}")
-
-          # roll a tree SHA1 by reading the canonical master tree,
-          # adding controlled path blobs, then writing the modified tree
-          # (happens on the finalizer's repo)
-          owner.repository.update_master_from_canonical
-          jgit_tree = JGit::JGitTree.new
-          jgit_tree.load_from_repo(owner.repository.jgit_repo, 'master')
-          inserter = owner.repository.jgit_repo.newObjectInserter
-          controlled_paths_blobs.each_pair do |path, blob|
-            next if blob.nil?
-
-            file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                                      blob.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
-            jgit_tree.add_blob(path, file_id.name)
-          end
-          inserter.flush
-
-          tree_sha1 = jgit_tree.update_sha
-
-          Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
-
-          commit_message = "Finalization merge of branch '#{branch}' into canonical master"
-
-          inserter = owner.repository.jgit_repo.newObjectInserter
-
-          commit = org.eclipse.jgit.lib.CommitBuilder.new
-          commit.setTreeId(org.eclipse.jgit.lib.ObjectId.fromString(tree_sha1))
-          commit.setParentIds(org.eclipse.jgit.lib.ObjectId.fromString(canonical_sha),
-                              org.eclipse.jgit.lib.ObjectId.fromString(publication_sha))
-          commit.setAuthor(owner.jgit_actor)
-          commit.setCommitter(owner.jgit_actor)
-          commit.setEncoding('UTF-8')
-          commit.setMessage(commit_message)
-
-          finalized_commit_sha1 = inserter.insert(commit).name
-          inserter.flush
-          inserter.release
-
-          Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
-
-          # Update our own head first
-          owner.repository.update_ref(branch, finalized_commit_sha1)
-
         end
         canon.copy_branch_from_repo(branch, 'master', owner.repository)
         change_status('committed')
@@ -1361,8 +1373,8 @@ class Publication < ApplicationRecord
     end
   end
 
-  def branch_from_master
-    owner.repository.create_branch(branch)
+  def branch_from_master(force = true)
+    owner.repository.create_branch(branch, 'master', force)
   end
 
   # Determines which identifiers are controlled by this publication's board.

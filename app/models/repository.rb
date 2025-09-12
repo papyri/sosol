@@ -5,7 +5,7 @@ require 'shellwords'
 class Repository
   attr_reader :master, :path
 
-  @@jgit_repo_cache = java.util.WeakHashMap.new
+  @@jgit_repo_cache = java.util.WeakHashMap.new if RUBY_PLATFORM == 'java'
 
   # Repository#copy_branch_from_repo uses double quotes for the subshell.
   # Thus $ ` \ ! " in a quoted string won't work as expected.
@@ -30,9 +30,7 @@ class Repository
   # Returns input string in a form acceptable to  ".git/refs/"
   def self.sanitize_ref(input_ref)
     # convert spaces to underscores and strip accents and terminal dot
-    no_accents_or_spaces = java.text.Normalizer.normalize(input_ref.tr(' ', '_'), java.text.Normalizer::Form::NFD).gsub(/\p{M}/, '').sub(
-      /\.$/, ''
-    )
+    no_accents_or_spaces = input_ref.tr(' ', '_').unicode_normalize(:nfd).gsub(/\p{M}/, '').sub(/\.$/, '')
     # iterate over each path component, replacing invalid characters
     output_refs = no_accents_or_spaces.split('/')
     output_refs.map do |output_ref|
@@ -109,6 +107,10 @@ class Repository
     result
   end
 
+  def cgit_repo
+    Rugged::Repository.new(@path) if File.exist?(@path) && RUBY_PLATFORM != 'java'
+  end
+
   def owner
     @master
   end
@@ -126,6 +128,10 @@ class Repository
   def fork_bare(destination_path)
     unless Dir.exist?(destination_path)
       Rails.logger.info(self.class.run_command("git clone --bare -q -s #{Shellwords.escape(path)} #{Shellwords.escape(destination_path)} 2>&1"))
+
+      unless @master.nil? || (RUBY_PLATFORM == 'java')
+        cgit_repo.config['user.name'] = @master.name
+      end
     end
   end
 
@@ -133,12 +139,14 @@ class Repository
     # master.update_attribute :has_repository, true
     # create a git repository
     Repository.new.fork_bare(path)
-    begin
-      @@jgit_repo_cache.put(path,
-                            org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment.findGitDir.build)
-    rescue Java::JavaLang::Exception => e
-      Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}")
-      Rails.logger.debug(e.backtrace.join("\n"))
+    if RUBY_PLATFORM == 'java'
+      begin
+        @@jgit_repo_cache.put(path,
+                              org.eclipse.jgit.storage.file.FileRepositoryBuilder.new.setGitDir(java.io.File.new(path)).readEnvironment.findGitDir.build)
+      rescue Java::JavaLang::Exception => e
+        Rails.logger.error("JGIT CorruptObjectException: #{e.inspect}")
+        Rails.logger.debug(e.backtrace.join("\n"))
+      end
     end
   end
 
@@ -155,6 +163,8 @@ class Repository
   # returns the blob that represents the given file
   # the given file is the filename + path to the file
   def get_blob_from_branch(file, branch = 'master')
+    return get_file_from_branch(file, branch) unless RUBY_PLATFORM == 'java'
+
     if jgit_repo.nil?
       # Rails.logger.info("JGIT NIL")
       return nil
@@ -198,7 +208,14 @@ class Repository
   end
 
   def get_file_from_branch(file, branch = 'master')
-    get_blob_from_branch(file, branch)
+    return nil if file.nil? || branch.nil?
+
+    if RUBY_PLATFORM == 'java'
+      get_blob_from_branch(file, branch)
+    else
+      # self.class.run_command("#{git_command_prefix} show #{Shellwords.escape(branch)}:#{Shellwords.escape(file)} 2> /dev/null").chomp
+      cgit_repo.blob_at(cgit_repo.rev_parse(branch).oid, file)&.content
+    end
   end
 
   def get_log_for_file_from_branch(file, branch = 'master', limit = 1)
@@ -206,11 +223,19 @@ class Repository
   end
 
   def get_head(branch)
-    self.class.run_command("#{git_command_prefix} rev-list -n 1 refs/heads/#{Shellwords.escape(branch)}").chomp
+    if RUBY_PLATFORM == 'java'
+      self.class.run_command("#{git_command_prefix} rev-list -n 1 refs/heads/#{Shellwords.escape(branch)}").chomp
+    else
+      cgit_repo.rev_parse(branch).oid
+    end
   end
 
   def update_ref(branch, sha1)
-    self.class.run_command("#{git_command_prefix} update-ref refs/heads/#{Shellwords.escape(branch)} #{sha1}")
+    if RUBY_PLATFORM == 'java'
+      self.class.run_command("#{git_command_prefix} update-ref refs/heads/#{Shellwords.escape(branch)} #{sha1}")
+    else
+      cgit_repo.references.update("refs/heads/#{branch}", sha1)
+    end
   end
 
   def update_master_from_canonical
@@ -225,17 +250,28 @@ class Repository
     # We always assume we want to branch from master by default
     update_master_from_canonical if source_name == 'master'
 
-    begin
-      ref = org.eclipse.jgit.api.Git.new(jgit_repo).branchCreate.setName(name).setStartPoint(source_name).setForce(force).call
-      # Rails.logger.debug("Branched #{ref.getName()} from #{source_name} = #{ref.getObjectId().name()}")
-    rescue Java::JavaLang::Exception => e
-      Rails.logger.error("create_branch exception: #{e.inspect}")
-      Rails.logger.debug(e.backtrace.join("\n"))
+    if RUBY_PLATFORM == 'java'
+      begin
+        ref = org.eclipse.jgit.api.Git.new(jgit_repo).branchCreate.setName(name).setStartPoint(source_name).setForce(force).call
+      rescue ::Java::JavaLang::Exception => e
+        Rails.logger.error("create_branch exception: #{e.inspect}")
+        Rails.logger.debug(e.backtrace.join("\n"))
+      end
+    else
+      # self.class.run_command("#{git_command_prefix} branch --force #{Shellwords.escape(name)} #{Shellwords.escape(source_name)}")
+      new_oid = cgit_repo.rev_parse(source_name).oid
+      cgit_repo.branches.create(name, new_oid, force: force)
+      update_ref(name, new_oid)
     end
+    # Rails.logger.debug("Branched #{ref.getName()} from #{source_name} = #{ref.getObjectId().name()}")
   end
 
   def delete_branch(name)
-    org.eclipse.jgit.api.Git.new(jgit_repo).branchDelete.setBranchNames("refs/heads/#{name}").setForce(true).call
+    if RUBY_PLATFORM == 'java'
+      org.eclipse.jgit.api.Git.new(jgit_repo).branchDelete.setBranchNames("refs/heads/#{name}").setForce(true).call
+    else
+      self.class.run_command("#{git_command_prefix} branch --delete --force #{Shellwords.escape(name)}")
+    end
   end
 
   # (from_branch, to_branch, from_repo)
@@ -251,22 +287,13 @@ class Repository
     # $ ` \ ! "
     # See the bash man page QUOTING section on double quotes.
     # See also Repository.sanitize_ref
-    fallback_git_command = "bash -c \"set -o pipefail; #{git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{Shellwords.escape(branch)}:#{Shellwords.escape(new_branch)} 2>&1 | iconv -c -t UTF-8\""
-    self.class.run_command(fallback_git_command)
+    if RUBY_PLATFORM == 'java'
+      fallback_git_command = "bash -c \"set -o pipefail; #{git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{Shellwords.escape(branch)}:#{Shellwords.escape(new_branch)} 2>&1 | iconv -c -t UTF-8\""
+      self.class.run_command(fallback_git_command)
+    else
+      cgit_repo.remotes.create_anonymous(other_repo.path).fetch("#{branch}:#{new_branch}")
+    end
     # end
-  end
-
-  def add_remote(other_repo)
-    remote_configs = org.eclipse.jgit.transport.RemoteConfig.getAllRemoteConfigs(jgit_repo.getConfig).to_a
-    unless remote_configs.map(&:getName).include?(other_repo.name)
-      remote_config = org.eclipse.jgit.transport.RemoteConfig.new(jgit_repo.getConfig, other_repo.name)
-      remote_config.addURI(org.eclipse.jgit.transport.URIish.new("file://#{other_repo.path}"))
-      remote_config.update(jgit_repo.getConfig)
-    end
-    unless system("#{git_command_prefix} config #{Shellwords.escape("remote.#{other_repo.name}.url")}")
-      Rails.logger.info("Git remote URL not found for #{other_repo.name} inside #{name}, adding using fallback Git command")
-      self.class.run_command("#{git_command_prefix} remote add #{Shellwords.escape(other_repo.name)} #{Shellwords.escape(other_repo.path)}")
-    end
   end
 
   def name
@@ -274,7 +301,54 @@ class Repository
   end
 
   def branches
-    org.eclipse.jgit.api.Git.new(jgit_repo).branchList.call.map { |e| e.getName.sub(%r{^refs/heads/}, '') }
+    if RUBY_PLATFORM == 'java'
+      org.eclipse.jgit.api.Git.new(jgit_repo).branchList.call.map { |e| e.getName.sub(%r{^refs/heads/}, '') }
+    else
+      cgit_repo.branches.each_name().sort
+    end
+  end
+
+  def get_blob_oid_for_file_path_on_branch(file_path, branch)
+    cgit_repo.rev_parse("#{branch}:#{file_path}").oid
+  end
+
+  def commit_tree_to_branch_cgit(tree, branch, author, committer, comment, parents)
+    commit_options = {}
+    commit_options[:tree] = tree
+    commit_options[:author] = author
+    commit_options[:committer] = committer
+    commit_options[:message] = comment
+    commit_options[:parents] = parents
+    unless branch.nil?
+      commit_options[:update_ref] = "refs/heads/#{branch}"
+    end
+
+    return Rugged::Commit.create(cgit_repo, commit_options)
+  end
+
+  def rename_file_cgit(original_path, new_path, branch, comment, actor)
+    new_blob = get_file_from_branch(new_path, branch)
+    Rails.logger.info("CGIT RENAME #{original_path} -> #{new_path} = #{new_blob.inspect} - nil?: #{new_blob.nil?}")
+    unless new_blob.nil?
+      raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
+    end
+
+    original_oid = get_blob_oid_for_file_path_on_branch(original_path, branch)
+    Rails.logger.info("CGIT RENAME: using #{original_oid} from #{original_path} at #{new_path} (new_blob content: #{new_blob.inspect}) (ls-tree: #{self.class.run_command("#{git_command_prefix} ls-tree -r #{Shellwords.escape(branch)} --name-only")}")
+    
+    branch_head = get_head(branch)
+    branch_head_tree = Rugged::Commit.lookup(cgit_repo, branch_head).tree
+
+    # repo_index = cgit_repo.index
+    # repo_index.read_tree(branch_head_tree)
+
+    # repo_index.add(path: new_path, oid: original_oid, mode: 0100644)
+    # repo_index.remove(original_path)
+
+    tree_sha1 = branch_head_tree.update([{action: :upsert, path: new_path, oid: original_oid, filemode: 0100644},
+                                         {action: :remove, path: original_path}])
+
+    commit_tree_to_branch_cgit(tree_sha1, branch, actor, actor, comment, [branch_head])
   end
 
   def rename_file(original_path, new_path, branch, comment, actor)
@@ -288,18 +362,43 @@ class Repository
       raise "Rename error: Destination file '#{new_path}' already exists on branch '#{branch}'"
     end
 
-    # TODO: just get the object id instead of reinserting
-    inserter = jgit_repo.newObjectInserter
-    file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                              content.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
-    inserter.flush
-    inserter.release
+    if RUBY_PLATFORM == 'java'
+      # TODO: just get the object id instead of reinserting
+      inserter = jgit_repo.newObjectInserter
+      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
+                                content.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
+      inserter.flush
+      inserter.release
 
-    jgit_tree = JGit::JGitTree.new
-    jgit_tree.load_from_repo(jgit_repo, branch)
-    jgit_tree.add_blob(new_path, file_id.name)
-    jgit_tree.del(original_path)
-    jgit_tree.commit(comment, actor)
+      jgit_tree = JGit::JGitTree.new
+      jgit_tree.load_from_repo(jgit_repo, branch)
+      jgit_tree.add_blob(new_path, file_id.name)
+      jgit_tree.del(original_path)
+      jgit_tree.commit(comment, actor)
+    else
+      rename_file_cgit(original_path, new_path, branch, comment, actor)
+    end
+  end
+
+  def commit_content_cgit(file, branch, data, comment, actor)
+    if @path == Sosol::Application.config.canonical_repository && file != CollectionIdentifier.new.to_path
+      raise 'Cannot commit directly to canonical repository'
+    end
+
+    branch_head = get_head(branch)
+
+    branch_head_tree = Rugged::Commit.lookup(cgit_repo, branch_head).tree
+
+    new_blob = Rugged::Blob.from_buffer(cgit_repo, data)
+    Rails.logger.info("CGIT COMMIT: file #{file} on #{branch} (new_blob: #{new_blob.inspect})")
+
+    # repo_index = cgit_repo.index
+    # repo_index.read_tree(branch_head_tree)
+    # repo_index.add(path: file, oid: new_blob, mode: 0100644)
+
+    tree_sha1 = branch_head_tree.update([{action: :upsert, path: file, oid: new_blob, filemode: 0100644}])
+
+    commit_tree_to_branch_cgit(tree_sha1, branch, actor, actor, comment, [branch_head])
   end
 
   # Returns a String of the SHA1 of the commit
@@ -308,24 +407,28 @@ class Repository
       raise 'Cannot commit directly to canonical repository'
     end
 
-    begin
-      inserter = jgit_repo.newObjectInserter
-      file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
-                                data.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
+    if RUBY_PLATFORM == 'java'
+      begin
+        inserter = jgit_repo.newObjectInserter
+        file_id = inserter.insert(org.eclipse.jgit.lib.Constants::OBJ_BLOB,
+                                  data.to_java_string.getBytes(java.nio.charset.Charset.forName('UTF-8')))
 
-      last_commit_id = jgit_repo.resolve(branch)
+        last_commit_id = jgit_repo.resolve(branch)
 
-      jgit_tree = JGit::JGitTree.new
-      jgit_tree.load_from_repo(jgit_repo, branch)
-      jgit_tree.add_blob(file, file_id.name)
+        jgit_tree = JGit::JGitTree.new
+        jgit_tree.load_from_repo(jgit_repo, branch)
+        jgit_tree.add_blob(file, file_id.name)
 
-      jgit_tree.commit(comment, actor)
-      inserter.flush
-      inserter.release
-    rescue Java::JavaLang::Exception => e
-      Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}")
-      Rails.logger.debug(e.backtrace.join("\n"))
-      raise Exceptions::CommitError, "Commit failed. #{e.message}"
+        jgit_tree.commit(comment, actor)
+        inserter.flush
+        return inserter.release
+      rescue Java::JavaLang::Exception => e
+        Rails.logger.error("JGIT COMMIT exception #{file} on #{branch} comment #{comment}: #{e.inspect}")
+        Rails.logger.debug(e.backtrace.join("\n"))
+        raise Exceptions::CommitError, "Commit failed. #{e.message}"
+      end
+    else
+      return commit_content_cgit(file, branch, data, comment, actor)
     end
   end
 end

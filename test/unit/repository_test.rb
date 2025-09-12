@@ -8,8 +8,12 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should 'not be able to have direct commits' do
       assert_raise RuntimeError do
-        @repo.commit_content('README.TXT', 'master', 'TEST', 'TEST',
-                             org.eclipse.jgit.lib.PersonIdent.new('TEST', 'TEST'))
+        if RUBY_PLATFORM == 'java'
+          @repo.commit_content('README.TXT', 'master', 'TEST', 'TEST',
+                               org.eclipse.jgit.lib.PersonIdent.new('TEST', 'TEST'))
+        else
+          @repo.commit_content('README.TXT', 'master', 'TEST', 'TEST', {name: 'Test User', email: 'test@example.com', time: Time.now})
+        end
       end
     end
 

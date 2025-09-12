@@ -241,9 +241,16 @@ class Identifier < ApplicationRecord
     end
 
     initial_content = new_identifier.file_template
-    new_identifier.set_content(initial_content, comment: 'Created from SoSOL template',
-                                                actor: publication.owner.instance_of?(User) ? publication.owner.jgit_actor : publication.creator.jgit_actor)
 
+    commit_actor = nil
+    if RUBY_PLATFORM == 'java'
+      commit_actor = publication.owner.instance_of?(User) ? publication.owner.jgit_actor : publication.creator.jgit_actor
+    else
+      commit_actor = publication.owner.instance_of?(User) ? publication.owner.cgit_actor : publication.creator.cgit_actor
+    end
+
+    new_identifier.set_content(initial_content, comment: 'Created from SoSOL template',
+                                                actor: commit_actor)
     new_identifier
   end
 
@@ -327,9 +334,14 @@ class Identifier < ApplicationRecord
   # - *Returns* :
   #   - a String of the SHA1 of the commit
   def set_xml_content(content, options)
-    default_actor = org.eclipse.jgit.lib.PersonIdent.new(Sosol::Application.config.site_full_name,
-                                                         Sosol::Application.config.site_email_from)
-    default_actor = owner.jgit_actor unless owner.nil?
+    default_actor = nil
+    if RUBY_PLATFORM == 'java'
+      org.eclipse.jgit.lib.PersonIdent.new(Sosol::Application.config.site_full_name,
+                                           Sosol::Application.config.site_email_from)
+      default_actor = owner.jgit_actor unless owner.nil?
+    else
+      default_actor = owner.cgit_actor unless owner.nil?
+    end
 
     options.reverse_merge!(
       validate: true,
@@ -373,7 +385,7 @@ class Identifier < ApplicationRecord
                              new_path,
                              branch,
                              commit_message,
-                             owner.jgit_actor)
+                             RUBY_PLATFORM == 'java' ? owner.jgit_actor : owner.cgit_actor)
 
       # rename origin and children
       original_relatives.each do |relative|
@@ -386,7 +398,7 @@ class Identifier < ApplicationRecord
                                         new_path,
                                         relative.branch,
                                         commit_message,
-                                        owner.jgit_actor)
+                                        RUBY_PLATFORM == 'java' ? owner.jgit_actor : owner.cgit_actor)
       end
       after_rename(options)
     end

@@ -13,6 +13,7 @@ jobs:
   test:
     env:
       RAILS_ENV: test
+      BUNDLE_GEMFILE: Gemfile.${{ matrix.ruby }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -29,6 +30,10 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ['3.2', 'jruby-9.4.9.0']
     steps:
     - uses: actions/checkout@v3
     - name: Install dependencies
@@ -43,12 +48,14 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: jruby-9.4.9.0
+        ruby-version: ${{ matrix.ruby }}
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Configure externals
       run: bundle exec cap local externals:setup
     - name: Clone canonical
       run: bundle exec rake git:db:canonical:clone
+    - name: DB migrate
+      run: bundle exec rake db:migrate
     - name: Run tests
       run: bundle exec rake test:all
       env:
@@ -62,6 +69,6 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: logs-${{ matrix.runs-on }}
+        name: logs-${{ matrix.runs-on }}-${{ matrix.ruby }}
         path: log
         retention-days: 1

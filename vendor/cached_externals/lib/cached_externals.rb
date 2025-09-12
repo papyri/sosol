@@ -80,7 +80,7 @@ Capistrano::Configuration.instance.load do
     if in_local_stage?
       FileUtils.rm_rf(path)
       FileUtils.mkdir_p(base)
-      if !File.exists?(destination)
+      if !File.exist?(destination)
         FileUtils.mkdir_p(shared_gems_dir)
         system(install_command) or raise "error installing #{name}:#{options[:version]} gem"
       end
@@ -111,9 +111,9 @@ Capistrano::Configuration.instance.load do
     if in_local_stage?
       FileUtils.rm_rf(path)
       FileUtils.mkdir_p(shared_dir)
-      if !File.exists?(destination)
+      if !File.exist?(destination)
         unless system(scm.checkout(revision, "\"#{destination}\""))
-          FileUtils.rm_rf(destination) if File.exists?(destination)
+          FileUtils.rm_rf(destination) if File.exist?(destination)
           raise "Error checking out #{revision} to #{destination}"
         end
       end
