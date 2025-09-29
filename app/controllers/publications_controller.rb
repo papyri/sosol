@@ -81,6 +81,7 @@ class PublicationsController < ApplicationController
   end
 
   def create_from_identifier
+    Rails.logger.info Rails.autoloaders
     if params[:id].blank?
       flash[:error] = 'You must specify an identifier.'
       redirect_to dashboard_url

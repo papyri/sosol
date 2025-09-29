@@ -18,7 +18,9 @@ namespace :git do
       task clone: :environment do
         require File.expand_path('../../config/boot', __dir__)
 
-        CANONICAL_CLONE_URL = if ENV['RAILS_ENV'] == 'test'
+        CANONICAL_CLONE_URL = if File.exist?('/srv/data/papyri.info/idp.data')
+                                '/srv/data/papyri.info/idp.data'
+                              elsif ENV['RAILS_ENV'] == 'test'
                                 'https://github.com/ryanfb/idp.data.test.git'
                               else
                                 'https://github.com/papyri/idp.data.git'

@@ -85,7 +85,7 @@ class DCLPMetaIdentifiersController < HGVMetaIdentifiersController
   # - *Params*  :
   #   - +id+ -> id from identifier table of the DCLP Text or Meta
   def find_identifier
-    @identifier = DCLPMetaIdentifier.find(params[:id].to_s)
+    @identifier = DCLPCurrentMetaIdentifier.find(params[:id].to_s)
   end
 
   def prune_params

@@ -3,7 +3,7 @@
 .env
 .lock-*
 .sass-cache
-config/environments/production_secret.rb
+config/environments/*_secret.rb
 db/*.sqlite3
 db/*.sqlite3-journal
 doc/api

@@ -128,6 +128,22 @@ Sosol::Application.routes.draw do
       end
     end
 
+    resources :ddb_current_identifiers do
+      member do
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+        get :commentary
+        patch :update_commentary
+        patch :update_frontmatter_commentary
+        delete :delete_commentary
+        delete :delete_frontmatter_commentary
+      end
+    end
+
     resources :hgv_meta_identifiers do
       member do
         post :get_date_preview
@@ -160,7 +176,40 @@ Sosol::Application.routes.draw do
       end
     end
 
+    resources :dclp_current_meta_identifiers do
+      collection do
+        get :biblio_autocomplete
+        get :ancient_author_autocomplete
+      end
+
+      member do
+        get :history
+        get :preview
+        get :editxml
+        get :biblio_preview
+        patch :updatexml
+        get :rename_review
+        patch :rename
+      end
+    end
+
     resources :dclp_text_identifiers do
+      member do
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+        get :commentary
+        patch :update_commentary
+        patch :update_frontmatter_commentary
+        delete :delete_commentary
+        delete :delete_frontmatter_commentary
+      end
+    end
+
+    resources :dclp_current_text_identifiers do
       member do
         get :history
         get :preview
@@ -200,6 +249,18 @@ Sosol::Application.routes.draw do
       end
     end
 
+    resources :translation_identifiers do
+      member do
+        post :add_new_lang_to_xml
+        get :history
+        get :preview
+        get :editxml
+        patch :updatexml
+        get :rename_review
+        patch :rename
+      end
+    end
+
     resources :biblio_identifiers do
       member do
         get :history
@@ -227,7 +288,7 @@ Sosol::Application.routes.draw do
     end
   end
 
-  get 'documentation' => redirect('http://papyri.info/docs/leiden_plus')
+  get 'documentation' => redirect('https://papyri.info/docs/leiden_plus')
   get 'users/:user_name' => 'user#show', :user_name => %r{[^/]*}
   get 'peep_user_dashboard/:user_id(/:publication)' => 'user#peep_user_dashboard', :user_id => /\d+/,
       :publication => /(submitted|editing|new|committed|finalizing|\d+)/
