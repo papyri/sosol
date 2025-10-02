@@ -345,7 +345,7 @@ class Publication < ApplicationRecord
     new_publication.branch_from_master
 
     # create the required meta data and transcriptions
-    new_ddb = DDBIdentifier.new_from_template(new_publication)
+    new_ddb = DDBCurrentIdentifier.new_from_template(new_publication)
     new_hgv_meta = HGVMetaIdentifier.new_from_template(new_publication)
 
     # go ahead and create the third so we can get rid of the create button
@@ -358,7 +358,7 @@ class Publication < ApplicationRecord
     new_publication = Publication.new(owner: creator, creator: creator)
 
     # fetch a title without creating from template
-    new_publication.title = "DCLP #{DCLPMetaIdentifier.new(name: DCLPMetaIdentifier.next_temporary_identifier).titleize}"
+    new_publication.title = "DCLP #{DCLPCurrentMetaIdentifier.new(name: DCLPCurrentMetaIdentifier.next_temporary_identifier).titleize}"
 
     new_publication.status = 'new' # TODO: add new flag else where or flesh out new status#"new"
     new_publication.save!
@@ -367,7 +367,7 @@ class Publication < ApplicationRecord
     new_publication.branch_from_master
 
     # create the required meta data and transcriptions
-    new_dclp_meta = DCLPMetaIdentifier.new_from_template(new_publication)
+    new_dclp_meta = DCLPCurrentMetaIdentifier.new_from_template(new_publication)
     # new_dclp_text = DCLPTextIdentifier.find_by_publication_id(new_publication.id)
 
     # go ahead and create the third so we can get rid of the create button

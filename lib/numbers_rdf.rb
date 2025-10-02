@@ -3,12 +3,12 @@ require 'net/http'
 module NumbersRDF
   Rails.logger.info Rails.autoloaders
   # Top-level namespace used for identifiers, e.g. 'papyri.info' in 'papyri.info/hgv/1234'
-  NAMESPACE_IDENTIFIER = Rails.application.config.numbers_server_identifier || 'papyri.info'.freeze
-  NAMESPACE_PROTOCOL = Rails.application.config.numbers_server_protocol || 'http'.freeze
+  NAMESPACE_IDENTIFIER = Rails.application.config.respond_to?(:numbers_server_identifier) ? Rails.application.config.numbers_server_identifier : 'papyri.info'.freeze
+  NAMESPACE_PROTOCOL = Rails.application.config.respond_to?(:numbers_server_protocol) ? Rails.application.config.numbers_server_protocol : 'http'.freeze
 
   # Actual server address for the Numbers Server, could in theory be different from NAMESPACE_IDENTIFIER
-  NUMBERS_SERVER_DOMAIN = Rails.application.config.numbers_server_domain || 'papyri.info'.freeze
-  NUMBERS_SERVER_PORT = Rails.application.config.numbers_server_port || 443
+  NUMBERS_SERVER_DOMAIN = Rails.application.config.respond_to?(:numbers_server_domain) ? Rails.application.config.numbers_server_domain : 'papyri.info'.freeze
+  NUMBERS_SERVER_PORT = Rails.application.config.respond_to?(:numbers_server_port) ? Rails.application.config.numbers_server_port : 443
 
   class Timeout < ::Timeout::Error; end
 
@@ -60,7 +60,7 @@ module NumbersRDF
       def path_to_numbers_server_response(path, format = 'rdf')
         Rails.logger.debug("Fetching from Numbers Server: #{NUMBERS_SERVER_DOMAIN}:#{NUMBERS_SERVER_PORT}/#{path}")
         http = Net::HTTP.new(NUMBERS_SERVER_DOMAIN, NUMBERS_SERVER_PORT)
-        if Rails.application.config.numbers_server_port.to_i == 443
+        if NUMBERS_SERVER_PORT.to_i == 443
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end

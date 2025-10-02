@@ -1,12 +1,12 @@
 require 'test_helper'
 
-class DDBIdentifiersControllerTest < ActionController::TestCase
+class DDBCurrentIdentifiersControllerTest < ActionController::TestCase
   def setup
     @user = FactoryBot.create(:user)
     @request.session[:user_id] = @user.id
     @publication = FactoryBot.create(:publication, owner: @user, creator: @user, status: 'new')
     @publication.branch_from_master
-    @identifier = DDBIdentifier.new_from_template(@publication)
+    @identifier = DDBCurrentIdentifier.new_from_template(@publication)
   end
 
   def teardown

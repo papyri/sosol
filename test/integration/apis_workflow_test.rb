@@ -409,7 +409,7 @@ class APISWorkflowTest < ActionDispatch::IntegrationTest
 
       context 'submitted with only DDB modifications' do
         setup do
-          @new_ddb = DDBIdentifier.new_from_template(@publication)
+          @new_ddb = DDBCurrentIdentifier.new_from_template(@publication)
           @publication.reload
           @publication.submit
         end

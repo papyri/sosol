@@ -30,7 +30,7 @@ FactoryBot.define do
   factory :board do |f|
     f.title { FactoryBot.generate(:name) }
     f.category { 'category' }
-    f.identifier_classes { ['DDBIdentifier'] }
+    f.identifier_classes { ['DDBCurrentIdentifier'] }
   end
 
   factory :apis_board, parent: :board do |f|
@@ -146,7 +146,7 @@ FactoryBot.define do
     f.alternate_name { FactoryBot.generate(:hgv_number) }
   end
 
-  factory :DDBIdentifier do |f|
+  factory :DDBCurrentIdentifier do |f|
     f.name { FactoryBot.generate(:ddb_identifier_string) }
   end
 

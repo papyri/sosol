@@ -29,7 +29,7 @@ class EmailerMailerTest < ActionMailer::TestCase
                                                      title: 'Publication Title')
       # branch from master so we aren't just creating an empty branch
       @publication.branch_from_master
-      @ddb_identifier = DDBIdentifier.new_from_template(@publication)
+      @ddb_identifier = DDBCurrentIdentifier.new_from_template(@publication)
       @ddb_identifier.title = 'DDB Identifier Title'
       @ddb_identifier.save
       @test_comment = Comment.new(comment: 'A commment on an identifier', identifier_id: @ddb_identifier.id,
