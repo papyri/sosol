@@ -1,0 +1,15 @@
+<div class='site' id='main'>
+  <%# render :partial => "common/flash_all" %>
+  <h3>
+    <%= link_to "All Publications", master_list_url %>
+  </h3>
+  <br>
+  <br>
+  <h3>
+    Boards
+  </h3>
+  <% @boards.each do |board| %>
+    <%= link_to board.title, :controller => "boards", :action => "overview", :id => board.id %>
+    <br>
+  <% end %>
+</div>

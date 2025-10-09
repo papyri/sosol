@@ -1,0 +1,38 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'translation_helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <%= stylesheet_link_tag 'terms' %>
+    <div class='helperpop' id='gapsize'>
+      <h3>Choose Language</h3>
+      <% choices = Hash.new %>
+      <%# choices['Bulgarian'] = "bg" %>
+      <% choices['български'] = "bg" %>
+      <%# choices['German'] = "de" %>
+      <% choices['Deutsch'] = "de" %>
+      <% choices['English'] = "en" %>
+      <%# choices['French'] = "fr" %>
+      <% choices['Français'] = "fr" %>
+      <%# choices['Italain'] = "it" %>
+      <% choices['Italiano'] = "it" %>
+      <%# choices['Spanish'] = "sp" %>
+      <% choices['Español'] = "sp" %>
+      <%# choices['Other'] = "other" %>
+      <% choices = choices.sort {|a,b| a[1] <=> b[1]} %>
+      <form name='new_language_form'>
+        <%= select "lang", "choice", choices, {:include_blank => true} %>
+        <br>
+        <br>
+        or
+        <h3>Enter Language Code</h3>
+        <input class='choosetext' id='other_lang' size='09' type='text'>
+      </form>
+      <div id='button_left'>
+        <button onclick='insertNewLanguage()' type='button'>Insert</button>
+        &nbsp
+        <button onclick='closeHelper()' type='button'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>

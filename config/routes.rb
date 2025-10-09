@@ -294,7 +294,7 @@ Sosol::Application.routes.draw do
       :publication => /(submitted|editing|new|committed|finalizing|\d+)/
   match 'user/info' => 'user#info', :via => %i[get options]
   match 'editor/user/info' => 'user#info', :via => %i[get options]
-  %w[apis biblio collection dclp_meta dclp_text ddb hgv_meta
+  %w[apis biblio collection dclp_meta dclp_current_meta dclp_text dclp_current_text ddb_current hgv_meta
      hgv_trans oac].each do |identifier_class|
     get "publications/:publication_id/#{identifier_class}_identifiers/:id/show_commit/:commit_id",
         controller: "#{identifier_class}_identifiers", action: :show_commit, constraints: { commit_id: /[0-9a-fA-F]{40}/ }

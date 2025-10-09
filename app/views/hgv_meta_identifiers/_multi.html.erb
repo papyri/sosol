@@ -1,0 +1,20 @@
+<% valueList = defined?(multiList) ? multiList : @identifier.non_database_attribute[key] %>
+<% cssClass = /\A([a-zA-Z\d_]*?)(?<partOfKey>[a-zA-Z]+)[\d_]*?\Z/ =~ key.to_s ? partOfKey : 'default' %>
+<div class='multi' <%= tag_options({:id => 'multi_' + key.to_s, :class => cssClass}, false) %>>
+  <ul class='items' <%= tag_options({:id => 'multiItems_' + key.to_s}, false) %>>
+    <% valueList.each_index do |index| %>
+      <li>
+        <% id = 'hgv_meta_identifier[' + key.to_s.gsub(/_/, '][') + '][' + index.to_s + ']' + (defined?(pathToActualValue) ? '[' + pathToActualValue.join('][') + ']' : '') %>
+        <% value = defined?(pathToActualValue) ? HGVMetaIdentifierHelper::getValueFromHashByMultidimensionalKey(valueList[index], pathToActualValue) : valueList[index] %>
+        <%= text_field_tag id, value, :disabled => !@identifier.mutable?, :class => 'observechange' %>
+        <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+        <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+      </li>
+    <% end %>
+  </ul>
+  <p class='add' <%= tag_options({:id => 'multiPlus_' + key.to_s}, false) %>>
+    <input class='observechange'>
+    <span <%= tag_options({:onclick => "multiAdd('" + key.to_s + "'" + (defined?(pathToActualValue) ? ", 0, '" + pathToActualValue.join('_') + "'" : '') + ")", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_" + key.to_s + "'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

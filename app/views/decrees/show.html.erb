@@ -1,0 +1,34 @@
+<p>
+  <b>
+    Action:
+  </b>
+  <%= @decree.action %>
+</p>
+<p>
+  <b>
+    Trigger:
+  </b>
+  <%= @decree.trigger %>
+</p>
+<p>
+  <b>
+    Choices:
+  </b>
+  <%= @decree.choices %>
+</p>
+<p>
+  <b>
+    Trigger:
+  </b>
+  <%= @decree.trigger %>
+  <%= @decree.tally_method %>
+</p>
+<p>
+  <b>
+    Board:
+  </b>
+  <%= @decree.board.title %>
+</p>
+<%= link_to 'Edit', edit_decree_path(@decree) %>
+|
+<%= link_to 'Back', decrees_path %>

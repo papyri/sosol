@@ -1,0 +1,23 @@
+<div id='dateContainer'>
+  <span class='swifty showDateTabs'><%= I18n.t('meta.label.showDateTabs'); %></span>
+  <% ['X', 'Y', 'Z'].each_with_index do |date_id, date_index| %>
+    <% date_item_epidoc = @identifier.get_date_item date_id %>
+    <% date_item_hgv = HGVDate.epidocToHGV date_item_epidoc %>
+    <div <%= tag_options({:class => 'dateItem ' + (date_id == 'X' ? 'dateItemActive': '') + ' dateItem' + date_id}, false) %>>
+      <div class='dateTab' <%= tag_options({:onclick => "openDateTab('" + date_id + "')"}, false) %>>
+        <span><%= date_id %></span>
+      </div>
+      <div class='dateInfo'>
+        <h5><%= I18n.t('meta.label.extraDate') %></h5>
+        <%= render :partial => 'hgv_meta_identifiers/date_extra', :locals => { :date_id => date_id, :date_index => date_index, :date_item => date_item_epidoc } %>
+        <div style='float: none; clear: both; display: block;'></div>
+        <hr>
+        <h5>
+          <%= I18n.t('meta.label.date') %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.date' } %>
+        </h5>
+        <%= render :partial => 'hgv_meta_identifiers/date_form', :locals => { :date_id => date_id, :date_index => date_index, :date_item => date_item_hgv} %>
+      </div>
+    </div>
+  <% end %>
+</div>

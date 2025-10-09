@@ -1,0 +1,35 @@
+<% if @community %>
+  <h1>
+    <%= "Community Admins for " + @community.format_name %>
+  </h1>
+  <p>
+    <%= 'These admins are able to add/remove community members and edit the settings for the '  + @community.format_name %>
+  </p>
+  <br>
+  <h2>
+    Existing Admins
+  </h2>
+  <p>click X by name to remove</p>
+  <br>
+  <% @community.admins.each do |admin| %>
+    <div class='remove_user'>
+      <div class='user_name'>
+        <%= admin.human_name + "  ( " + admin.name + " ) " %>
+        <%= link_to "X", :controller => "communities", :action => "remove_admin", :admin_id => admin.id %>
+      </div>
+    </div>
+    <br>
+  <% end %>
+  <h2>
+    Potential Admins
+  </h2>
+  <p>
+    click name to add
+  </p>
+  <br>
+  <%= render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo::LinkingInfo.new("communities", "add_admin", @community.id ) } %>
+<% end %>
+<br>
+<br>
+  <%= link_to 'Edit more of this community', edit_community_path(@community) %>
+</br>

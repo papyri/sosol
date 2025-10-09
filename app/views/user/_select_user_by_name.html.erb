@@ -1,0 +1,9 @@
+<% if li != nil %>
+  <% users = User.order(full_name: :asc) %>
+  <% users.each do |user| %>
+    <div class='select_user_name'>
+      <%# = link_to user.name + "  ( " + user.human_name + " )", :controller => li.controller, :action => li.action, :id => li.id, :user_name => user.name,  :user_id => user.id %>
+      <%= link_to user.human_name + "  ( " + user.name + " )", :controller => li.controller, :action => li.action, :id => li.id, :user_name => user.name,  :user_id => user.id %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,42 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='app2col'>
+      <%= render :partial => 'markup_warn' %>
+      <h4>Modern correction of ancient error</h4>
+      <div id='app_col'>
+        <div id='app_low'>
+          <form name='appcorr_corr'>
+            <input class='corrlow' id='appcorr_corr_low' name='low' type='checkbox' value='appcorr_corr_low'>Uncertain</input>
+          </form>
+        </div>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appcorr_corr_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Corrected form
+        </div>
+        <div id='app_button'>
+          <button onclick='insertAppCorr()' type='button'>Insert</button>
+          &nbsp
+          <button onclick='closeHelper()' type='button'>Close</button>
+        </div>
+      </div>
+      <div id='app_col'>
+        <div id='app_low'>
+          <form name='appcorr_sic'>
+            <input class='siclow' id='appcorr_sic_low' name='low' type='checkbox' value='appcorr_sic_low'>Uncertain</input>
+          </form>
+        </div>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appcorr_sic_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Incorrect form
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

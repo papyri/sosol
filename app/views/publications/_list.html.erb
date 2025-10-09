@@ -1,0 +1,93 @@
+<ul class='publications'>
+  <% for publication in list %>
+    <% user_vote = nil %>
+    <% vote_count = 0 %>
+    <li>
+      <ul>
+        <%= link_to( image_tag('documents.png', :border => "0") , publication) %>
+        <% if @current_user.developer %>
+          <b>
+            <%= publication.owner.name %>
+          </b>
+        <% end %>
+        <% for identifier in publication.identifiers %>
+          <li <%= tag_options({:class => (identifier == publication.identifiers.last ? 'last' : '')}, false) %>>
+            <% case identifier %>
+            <% when DDBIdentifier %>
+              <%= image_tag('ddb.gif') %>
+            <% when HGVMetaIdentifier %>
+              <%= image_tag('hgv.gif') %>
+            <% when HGVTransIdentifier %>
+              <%= image_tag('hgv.gif') %>
+            <% when APISIdentifier %>
+              <%= image_tag('apis.png') %>
+            <% end %>
+            <% if identifier.needs_reviewing?(@current_user.id) %>
+              <%# %b ! %>
+              <%= image_tag('review_flag.png') %>
+            <% end %>
+            <% if publication.status == 'finalizing' %>
+              <%= link_to(identifier.title, finalize_review_publication_path(publication), :class => (identifier.modified ? 'modified' : '')) %>
+            <% elsif publication.status == 'archived' %>
+              <%= identifier.title %>
+            <% else %>
+              <%= link_to(identifier.title, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : '')) %>
+            <% end %>
+            <%# only do vote processing if publication is in 'voting' status %>
+            <% if publication.status == "voting" %>
+              <% vote_count += identifier.votes.length %>
+              <% identifier.votes.each do |vt| %>
+                <% if vt.user == @current_user %>
+                  <b>
+                    <% user_vote = "Your vote is " + vt.choice %>
+                  </b>
+                <% end %>
+              <% end %>
+            <% end %>
+            <% if @current_user.developer %>
+              <%= "(#{identifier.status})" %>
+              <%= "{" %>
+              <% identifier.votes.each do |v| %>
+                <%= v.choice %>
+              <% end %>
+              <%= "}" %>
+            <% end %>
+          </li>
+        <% end %>
+        <% if @current_user.developer %>
+          <%= "(#{publication.status})" %>
+          <%# if !publication.status.nil? && publication.status != '' %>
+          <%# == (#{publication.status}) %>
+        <% end %>
+        <% if @current_user != publication.creator %>
+          <%= " by " %>
+          <% if !publication.creator.nil? %>
+            <%= link_to "#{publication.creator.name} (#{publication.creator.human_name})", {:controller => 'user', :action => 'show', :user_name => publication.creator.name} %>
+          <% else %>
+            "?"
+          <% end %>
+        <% end %>
+        <% if publication.status == "approved" %>
+          <%# find out who is finalizing %>
+          <% if publication.find_finalizer_user %>
+            <%= "is being finalized by " %>
+            <%= publication.find_finalizer_user.human_name %>
+          <% end %>
+        <% end %>
+        <% if publication.status == "voting" %>
+          <%= "(#{vote_count})" %>
+          <% if user_vote %>
+            <b>
+              <%= user_vote %>
+            </b>
+          <% end %>
+        <% end %>
+      </ul>
+    </li>
+  <% end %>
+</ul>
+<!-- - if @branches.length > 0 -->
+<!-- %h2 Listing Branches -->
+<!-- %ul -->
+<!-- - for branch in @branches -->
+<!-- %li= branch -->

@@ -1,0 +1,45 @@
+<% key = HGVMetaIdentifierHelper::generateRandomId 'geoSpot' %>
+<div class='multi geoSpot' <%= tag_options({:id => 'multi_' + key.to_s}, false) %>>
+  <ul class='items' <%= tag_options({:id => 'multiItems_' + key.to_s}, false) %>>
+    <% geoSpotList.each_index do |index| %>
+      <% geoBase = placeBaseChildren + '[geo][' + index.to_s + ']' %>
+      <% geoBaseAttributes = geoBase + '[attributes]' %>
+      <% geoBaseChildren = geoBase + '[children]' %>
+      <% geo = geoSpotList[index] %>
+      <li>
+        <%= select_tag geoBaseAttributes + '[type]', options_for_select(HGVProvenance.epochOptions, geo.type), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoType' %>
+        <%= select_tag geoBaseAttributes + '[subtype]', options_for_select(HGVProvenance.territoryOptions, geo.subtype), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoSubtype' %>
+        <%= select_tag geoBaseChildren + '[offset][value]', options_for_select(HGVProvenance.offsetOptions, geo.offset), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoOffset' %>
+        <%= text_field_tag geoBase + '[value]', geo.name, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoName' %>
+        <%= check_box_tag geoBaseAttributes + '[certainty]', :low, geo.certain?, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoCertainty' %>
+        <%= label_tag geoBaseAttributes + '[certainty]', I18n.t('meta.label.uncertain'), :class => 'geoSpotUncertain' %>
+        <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')}, false) %>>x</span>
+        <span class='move' <%= tag_options({:title => I18n.t('meta.tooltip.multiMove')}, false) %>>o</span>
+        <div class='paragraph geoReferenceContainer' style='display: none;'>
+          <%= hidden_field_tag geoBaseAttributes + '[reference]', geo.referenceList.join(' '), :class => 'observechange provenanceGeoReference' %>
+          <div class='clear'></div>
+          <%= label_tag geoBaseAttributes + '[reference]', I18n.t('meta.label.reference') %>
+          <%= render :partial => 'hgv_meta_identifiers/geoReference', :locals => {:geoReferenceList => geo.referenceList} %>
+          <div class='clear'></div>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+  <div class='add' <%= tag_options({:id => 'multiPlus_' + key.to_s}, false) %>>
+    <%= select_tag key + '_type', options_for_select(HGVProvenance.epochOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoType' %>
+    <%= select_tag key + '_subtype', options_for_select(HGVProvenance.territoryOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoSubtype' %>
+    <%= select_tag key + '_offset', options_for_select(HGVProvenance.offsetOptions), :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoOffset' %>
+    <%= text_field_tag key + '_name', nil, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoName' %>
+    <%= check_box_tag key + '_certainty', :low, false, :disabled => !@identifier.mutable?, :class => 'observechange provenanceGeoCertainty' %>
+    <%= label_tag key + '_certainty', I18n.t('meta.label.uncertain'), :class => 'geoSpotUncertain' %>
+    <span <%= tag_options({:onclick => "multiAddGeoSpot('" + key.to_s + "', " + provenanceIndex.to_s + ", " + placeIndex.to_s + ")", :title => I18n.t('meta.tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+    <div class='paragraph geoReferenceContainer' style='display: none;'>
+      <%= hidden_field_tag key + '_reference', '', :class => 'observechange provenanceGeoReference' %>
+      <div class='clear'></div>
+      <%= label_tag 'reference', I18n.t('meta.label.reference') %>
+      <%= render :partial => 'hgv_meta_identifiers/geoReference', :locals => {:geoReferenceList => []} %>
+      <div class='clear'></div>
+    </div>
+  </div>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_" + key.to_s + "'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

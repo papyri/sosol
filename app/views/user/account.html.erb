@@ -1,0 +1,83 @@
+<div id='main'>
+  <%# render :partial => "common/flash_all" %>
+  <h1>
+    <%= "#{@current_user.name}'s Account Info" %>
+  </h1>
+  <% if @current_user.community_memberships.length > 0 %>
+    <h3>
+      Communities
+    </h3>
+    <% @current_user.community_memberships.each do |cm| %>
+      <%= cm.name %>
+      <br>
+    <% end %>
+  <% end %>
+  <h3>
+    Personal
+  </h3>
+  <%= form_for(@current_user, :url => { :action => "update_personal", :id => @current_user.id }) do |f| %>
+    <%= f.error_messages %>
+    <p>
+      <%= f.label :full_name %>
+      <br>
+      <%= f.text_field :full_name %>
+    </p>
+    <p>
+      <%= f.label :affiliation %>
+      <br>
+      <%= f.text_field :affiliation %>
+    </p>
+    <p>
+      <%= f.label :email %>
+      <br>
+      <%= f.text_field :email %>
+    </p>
+    <br>
+    <!-- %h3 -->
+    <!-- Interface -->
+    <!-- %p -->
+    <!-- Enter choices for languages (en de it fr la el es) -->
+    <!-- %br -->
+    <!-- = f.text_field :language_prefs -->
+    <p>
+      <br>
+      <%= f.submit "Update" %>
+    </p>
+  <% end %>
+
+  <br>
+  <br>
+  <%= link_to "Your Usage Stats", usage_url %>
+  <br>
+  <br>
+  <%= link_to "Usage Stats By User", all_users_links_url %>
+  <br>
+  <br>
+  <h3>
+    Your OpenIDs
+  </h3>
+  <% if @identifiers.length == 0 %>
+    <p>
+      No OpenIDs are associated with this account.
+    </p>
+  <% else %>
+    <p>
+      OpenIDs associated with this account:
+    </p>
+    <ul>
+      <% @identifiers.each do |identifier| %>
+        <li>
+          <%= h identifier.identifier %>
+          -
+          <%= link_to "delete", :controller => :rpx, :action => "remove_openid", :openid => identifier.id %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <%= link_to "Add an OpenID to your account", rpx_associate_url, :class => 'rpxnow', :onclick => "return false;" %>
+</div>
+<script <%= tag_options({:src => rpx_widget_url, :type => "text/javascript"}, false) %>></script>
+<script>
+  RPXNOW.overlay = true;
+  RPXNOW.language_preference = 'en';
+</script>

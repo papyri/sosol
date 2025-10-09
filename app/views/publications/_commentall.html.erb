@@ -1,0 +1,18 @@
+<div class='comment_partial'>
+  <% for comment in commentall %>
+    <div <%= tag_options({:class => "#{comment.xmltype.downcase}_comment"}, false) %>>
+      <div class='name'>
+        <%= comment.who %>
+      </div>
+      <div class='time'>
+        <%= comment.when.strftime("%a %b %d, %Y  %X") %>
+      </div>
+      <div class='reason'>
+        <%= comment.why %>
+      </div>
+      <div class='comment'>
+        <%= h comment.comment %>
+      </div>
+    </div>
+  <% end %>
+</div>

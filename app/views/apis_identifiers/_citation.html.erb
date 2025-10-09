@@ -1,0 +1,18 @@
+<div id='multi_citation'>
+  <ul id='multiItems_citation'>
+    <li class='citation'>
+      <%= render :partial => 'apis_identifiers/label', :locals => {:key => :citation} %>
+      <%= text_field_tag 'apis_identifier_citation', '', :class => 'observechange apis apis_identifier_citation' %>
+      <%= render :partial => 'apis_identifiers/label', :locals => {:key => :citeNote} %>
+      <%= text_area_tag 'apis_identifier_citeNote', '', :class => 'observechange apis apis_identifier_citeNote' %>
+      <%= render :partial => 'apis_identifiers/label', :locals => {:key => :citeType} %>
+      <%= check_box_tag 'apis_identifier_citeType', 'ddbdp', false, :class => 'observechange apis_identifier_citeType' %>
+      <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+      <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+    </li>
+  </ul>
+  <p class='add' id='multiPlus_citation'>
+    <span <%= tag_options({:onclick => "multiAddCitation()", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_citation'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

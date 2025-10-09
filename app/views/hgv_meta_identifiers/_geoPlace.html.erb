@@ -1,0 +1,23 @@
+<% key = HGVMetaIdentifierHelper::generateRandomId 'geoPlace' %>
+<div class='multi geoSpot' <%= tag_options({:id => 'multi_' + key.to_s}, false) %>>
+  <ul class='items' <%= tag_options({:id => 'multiItems_' + key.to_s}, false) %>>
+    <% placeList.each_index do |placeIndex| # place / alternatives %>
+      <% placeBase = baseChildren + '[place][' + placeIndex.to_s + ']' %>
+      <% placeBaseAttributes = placeBase + '[attributes]' %>
+      <% placeBaseChildren = placeBase + '[children]' %>
+      <% place = placeList[placeIndex] %>
+      <li>
+        <%= hidden_field_tag placeBaseAttributes + '[id]', place.id, :disabled => !@identifier.mutable?, :class => 'observechange provenancePlaceId' %>
+        <%= hidden_field_tag placeBaseAttributes + '[exclude]', place.exclude, :disabled => !@identifier.mutable?, :class => 'observechange provenancePlaceExclude' %>
+        <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode); geoUpdateExcludeLists(\'' + key + '\');', :title => I18n.t('meta.tooltip.multiDelete')}, false) %>>x</span>
+        <span class='move' <%= tag_options({:title => I18n.t('meta.tooltip.multiMove')}, false) %>>o</span>
+        <div class='geoContainer'>
+          <%= render :partial => 'hgv_meta_identifiers/geoSpot', :locals => {:geoSpotList => place.geoList, :placeBaseChildren => placeBaseChildren, :provenanceIndex => provenanceIndex, :placeIndex => placeIndex} %>
+          <div class='clear'></div>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_" + key.to_s + "'), {direction: 'horizontal', handle: '.move'});" %>
+  <span class='swifty addPlace'><%= I18n.t('meta.label.addPlace') %></span>
+</div>

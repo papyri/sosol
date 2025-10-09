@@ -1,0 +1,178 @@
+<%= stylesheet_link_tag 'meta' %>
+<div id='main'>
+  <div class='site metaSite'>
+    <%= render :partial => 'identifiers/header' %>
+    <span class='swifty expandAll' id='expandAll'><%= I18n.t('label.expandAll') %></span>
+    <span class='swifty collapseAll' id='collapseAll'><%= I18n.t('label.collapseAll') %></span>
+    <div id='edit'>
+      <%= form_for @identifier, :url => { :action => :update }, :html => { :autocomplete => :off } do |f| %>
+        <%= f.error_messages %>
+        <h4 class='category date'>
+          <a name='Date'><%= I18n.t('meta.legend.date') %></a>
+        </h4>
+        <div class='editbox' style='display: none;'>
+          <%= render :partial => 'hgv_meta_identifiers/date' %>
+          <div class='clear'></div>
+          <span class='swifty quickSave'><%= I18n.t('label.quickSave') %></span>
+          <span class='swifty datePreview' <%= tag_options({:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_date_preview', :only_path => true)}?' + $$('form.edit_hgv_meta_identifier')[0].serialize(), {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); return false;"}, false) %>><%= I18n.t('meta.label.datePreview') %></span>
+        </div>
+        <h4 class='category mentionedDate'>
+          <a name='mentionedDate'><%= I18n.t('meta.legend.mentionedDate') %></a>
+        </h4>
+        <div class='editbox' style='display: none;'>
+          <%= render :partial => 'hgv_meta_identifiers/mentioned_date' %>
+          <div class='clear'></div>
+          <span class='swifty quickSave'><%= I18n.t('label.quickSave') %></span>
+        </div>
+        <h4 class='category general'>
+          <a name='General&lt;'><%= I18n.t('meta.legend.general') %></a>
+        </h4>
+        <div class='editbox' style='display: none;'>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :titleStmt } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :titleStmt } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :material } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :material } %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :contentText } %>
+          <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :contentText } %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :notes } %>
+          <%= text_area_tag 'hgv_meta_identifier[' + :notes.to_s + ']', @identifier.non_database_attribute[:notes], :disabled => !@identifier.mutable?, :class => 'observechange' %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :plannedForFuturePrintRelease } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :plannedForFuturePrintRelease } %>
+          <div class='clear'></div>
+          <div class='swifty quickSave'><%= I18n.t('label.quickSave') %></div>
+        </div>
+        <h4 class='category publication'>
+          <a name='Publication'><%= I18n.t('meta.legend.publication') %></a>
+        </h4>
+        <div class='editbox' style='display: none;'>
+          <p id='publicationExtraFullTitle'>&nbsp;</p>
+          <span class='swifty publicationPreview' onclick='publicationPreview()'><%= I18n.t('meta.label.publicationPreview') %></span>
+          <hr>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationTitle } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :publicationTitle } %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationTitle' } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :tmNo } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :tmNo } %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.tmNo' } %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationVolume } %>
+          <%= text_field_tag 'hgv_meta_identifier[publicationExtra][0][value]', HGVPublication.getVolume(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange' %>
+          <%= hidden_field_tag 'hgv_meta_identifier[publicationExtra][0][attributes][type]', :volume %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationVolume' } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationFascicle } %>
+          <%= text_field_tag 'hgv_meta_identifier[publicationExtra][1][value]', HGVPublication.getFascicle(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange' %>
+          <%= hidden_field_tag 'hgv_meta_identifier[publicationExtra][1][attributes][type]', :fascicle %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationFascicle' } %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationNumbers } %>
+          <%= text_field_tag 'hgv_meta_identifier[publicationExtra][2][value]', HGVPublication.getNumbers(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange' %>
+          <%= hidden_field_tag 'hgv_meta_identifier[publicationExtra][2][attributes][type]', :numbers %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationNumbers' } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationSide } %>
+          <%= text_field_tag 'hgv_meta_identifier[publicationExtra][3][value]', HGVPublication.getSide(@identifier.non_database_attribute[:publicationExtra]) , :disabled => !@identifier.mutable?, :class => 'observechange' %>
+          <%= hidden_field_tag 'hgv_meta_identifier[publicationExtra][3][attributes][type]', :side %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.publicationSide' } %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :publicationExtra } %>
+          <%= render :partial => 'hgv_meta_identifiers/publicationExtra' %>
+          <div class='clear'></div>
+          <div class='swifty quickSave'><%= I18n.t('label.quickSave') %></div>
+        </div>
+        <h4 class='category collection'>
+          <a name='Collection'><%= I18n.t('meta.legend.collection') %></a>
+        </h4>
+        <div class='editbox' style='display: none;'>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionPlaceName } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionPlaceName } %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionPlaceName' } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collection } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collection } %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collection' } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionInventoryNumber } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionInventoryNumber } %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionInventoryNumber' } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionTemporaryNotes } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionTemporaryNotes } %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryNotes' } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :collectionTemporaryInventoryNumber } %>
+          <%= render :partial => 'hgv_meta_identifiers/text_field', :locals => { :key => :collectionTemporaryInventoryNumber } %>
+          <%= render :partial => 'hgv_meta_identifiers/quick_help', :locals => { :i18nId => 'meta.help.collectionTemporaryInventoryNumber' } %>
+          <div class='clear'></div>
+          <div class='swifty quickSave'><%= I18n.t('label.quickSave') %></div>
+        </div>
+        <h4 class='category provenance'>
+          <a name='Provenance'><%= I18n.t('meta.legend.provenance') %></a>
+        </h4>
+        <div class='editbox' style='display: none;'>
+          <p id='geoPreview'>
+            <%= @identifier.non_database_attribute[:origPlace] %>
+          </p>
+          <span class='swifty geoPreview' <%= tag_options({:onclick => "new Ajax.Request('#{url_for(:controller => 'hgv_meta_identifiers', :action => 'get_geo_preview', :only_path => true)}', {asynchronous:true, evalScripts:true, parameters:$$('form.edit_hgv_meta_identifier')[0].serialize()}); return false;"}, false) %>><%= I18n.t('meta.label.geoPreview') %></span>
+          <hr>
+          <%= render :partial => 'hgv_meta_identifiers/provenance' %>
+          <div class='clear'></div>
+          <span class='swifty quickSave'><%= I18n.t('label.quickSave') %></span>
+          <span class='swifty addProvenance'><%= I18n.t('meta.label.addProvenance') %></span>
+          <span class='swifty showReferenceList' id='toggleReferenceList'><%= I18n.t('meta.label.showReferenceList') %></span>
+        </div>
+        <h4 class='category reference'>
+          <a name='Reference'><%= I18n.t('meta.legend.reference') %></a>
+        </h4>
+        <div class='editbox' style='display: none;'>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliography } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyTarget } %>
+          <%= text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pointer][attributes][target]', @identifier.non_database_attribute[:sammelbuchBibliography] && @identifier.non_database_attribute[:sammelbuchBibliography][:children] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pointer] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pointer][:attributes] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pointer][:attributes][:target] ? @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pointer][:attributes][:target] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyTarget' %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :sammelbuchBibliographyPagination } %>
+          <%= text_field_tag 'hgv_meta_identifier[sammelbuchBibliography][children][pagination][value]', @identifier.non_database_attribute[:sammelbuchBibliography] && @identifier.non_database_attribute[:sammelbuchBibliography][:children] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pagination] && @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pagination][:value] ? @identifier.non_database_attribute[:sammelbuchBibliography][:children][:pagination][:value] : '', :disabled => !@identifier.mutable?, :class => 'observechange sammelbuchBibliographyPagination' %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :citedLiterature} %>
+          <%= render :partial => 'hgv_meta_identifiers/biblio', :locals => { :key => :citedLiterature} %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :figures} %>
+          <%= render :partial => 'hgv_meta_identifiers/figures' %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :illustrations } %>
+          <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :illustrations } %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :otherPublications } %>
+          <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :otherPublications } %>
+          <div class='clear'></div>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :bl } %>
+          <%= render :partial => 'hgv_meta_identifiers/bl' %>
+          <div class='clear'></div>
+          <div class='swifty quickSave'><%= I18n.t('label.quickSave') %></div>
+        </div>
+        <h4 class='category translation'>
+          <a name='Translation'><%= I18n.t('meta.legend.translation') %></a>
+        </h4>
+        <div class='editbox' style='display: none;'>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsDe } %>
+          <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsDe } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsEn } %>
+          <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsEn } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsEs } %>
+          <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsEs } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsFr } %>
+          <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsFr } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsIt } %>
+          <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsIt } %>
+          <%= render :partial => 'hgv_meta_identifiers/label', :locals => { :key => :translationsLa } %>
+          <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :translationsLa } %>
+          <div class='clear'></div>
+          <div class='swifty quickSave'><%= I18n.t('label.quickSave') %></div>
+        </div>
+        <div class='controlPanel'>
+          <%= render :partial => 'identifiers/edit_commit', :locals => { :f => f, :identifier => @identifier, :where_at => :bottom } %>
+          <%= hidden_field_tag 'expansionSet', flash[:expansionSet] %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>
+<%= javascript_include_tag 'edit_mask' %>
+<%= javascript_include_tag 'meta' %>
+<%= javascript_include_tag 'confirm' %>

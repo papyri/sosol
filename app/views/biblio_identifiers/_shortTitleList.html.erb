@@ -1,0 +1,28 @@
+<% shortTitleList = @identifier.non_database_attribute[type] %>
+<% type = type.to_s %>
+<div class='multi' <%= tag_options({:id => 'multi_' + type, :class => 'multi_shortTitleList'}, false) %>>
+  <h6>
+    <label class='shortTitle'><%= I18n.t('biblio.label.shortTitle') %></label>
+    <label class='responsibility'><%= I18n.t('biblio.label.responsibility') %></label>
+  </h6>
+  <ul class='items' <%= tag_options({:id => 'multiItems_' + type}, false) %>>
+    <% if shortTitleList.present? %>
+      <% shortTitleList.each_index do |index| %>
+      <% title          = shortTitleList[index].title %>
+      <% responsibility = shortTitleList[index].responsibility %>
+        <li>
+          <%= text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][title]',          title,          :disabled => !@identifier.mutable?, :class => 'observechange title' %>
+          <%= select_tag     'biblio_identifier[' + type + '][' + index.to_s + '][responsibility]', options_for_select(f.make_options(:shortTitleResponsibility), responsibility), :disabled => !@identifier.mutable?, :class => 'observechange responsibility' %>
+          <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+          <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+  <p class='add' <%= tag_options({:id => 'multiPlus_' + type}, false) %>>
+    <input class='observechange' <%= tag_options({:id => type + '_title'}, false) %>>
+    <%= select_tag type + '_responsibility', options_for_select(f.make_options(:shortTitleResponsibility)), :disabled => !@identifier.mutable?, :class => 'observechange responsibility' %>
+    <span <%= tag_options({:onclick => "multiAddShortTitleList('" + type + "')", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_" + type + "'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

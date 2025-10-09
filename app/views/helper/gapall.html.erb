@@ -1,0 +1,62 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='gapsize'>
+      <%= render :partial => 'markup_warn' %>
+      <h3>Choose Gap Type, Unit, Quantity, and Certainty</h3>
+      <form name='gapallform'>
+        <label>Type:</label>
+        <div id='gapalltyperadio_div'>
+          <input checked='' class='gapalltype_radio' id='lost' name='gapalltype' onclick='checkgapalltype(this.id)' type='radio' value='lost'>Lost, “[ . . ]”</input>
+          <br>
+          <input class='gapalltype_radio' id='illegible' name='gapalltype' onclick='checkgapalltype(this.id)' type='radio' value='illegible'>Illegible “ . . “</input>
+          <br>
+          <input class='gapalltype_radio' id='ellipsis' name='gapalltype' onclick='checkgapalltype(this.id)' type='radio' value='ellipsis'>Not transcribed in this edition:</input>
+        </div>
+        <div id='gapalllangradio_div'>
+          <input checked='' class='gapalllang_radio' disabled='true' id='Arabic' name='gapalllang' onclick='checkgapalllang(this.id)' type='radio' value='Arabic'>Arabic</input>
+          <br>
+          <input class='gapalllang_radio' disabled='true' id='Aramaic' name='gapalllang' onclick='checkgapalllang(this.id)' type='radio' value='Aramaic'>Aramaic</input>
+          <br>
+          <input class='gapalllang_radio' disabled='true' id='Coptic' name='gapalllang' onclick='checkgapalllang(this.id)' type='radio' value='Coptic'>Coptic</input>
+          <br>
+          <input class='gapalllang_radio' disabled='true' id='Demotic' name='gapalllang' onclick='checkgapalllang(this.id)' type='radio' value='Demotic'>Demotic</input>
+          <br>
+          <input class='gapalllang_radio' disabled='true' id='Hieratic' name='gapalllang' onclick='checkgapalllang(this.id)' type='radio' value='Hieratic'>Hieratic</input>
+          <br>
+          <input class='gapalllang_radio' disabled='true' id='Nabatean' name='gapalllang' onclick='checkgapalllang(this.id)' type='radio' value='Nabatean'>Nabatean</input>
+          <br>
+          <input class='gapalllang_radio' disabled='true' id='notspecify' name='gapalllang' onclick='checkgapalllang(this.id)' type='radio' value='notspecify'>Non-transcribed</input>
+        </div>
+        <label>Unit:</label>
+        <div id='gapallunitradio_div'>
+          <input checked='' class='gapallunit_radio' id='character' name='gapallunit' onclick='checkgapallunit(this.id)' type='radio' value='character'>Character</input>
+          <input class='gapallunit_radio' id='line' name='gapallunit' onclick='checkgapallunit(this.id)' type='radio' value='line'>Line</input>
+        </div>
+        <label>Quantity:</label>
+        <div id='gapallqtyradio_div'>
+          <input checked='' class='gapallqty_radio' id='known' name='gapallqty' onclick='checkgapallqty(this.id)' type='radio' value='known'>Known</input>
+          <input class='choosetext' id='known_value' size='03' type='text'>
+          <input class='gapallcirca_cb' id='circa' name='gapallcirca' type='checkbox' value='circa'>Circa?</input>
+          <br>
+          <input class='gapallqty_radio' id='unknown' name='gapallqty' onclick='checkgapallqty(this.id)' type='radio' value='unknown'>Unknown</input>
+          <br>
+          <input class='gapallqty_radio' id='range' name='gapallqty' onclick='checkgapallqty(this.id)' type='radio' value='range'>Range</input>
+          <input class='choosetextradio' disabled='true' id='range1' size='03' type='text'>
+          to
+          <input class='choosetextradio' disabled='true' id='range2' size='03' type='text'>
+        </div>
+        <div id='gapallcertcb_div'>
+          <input class='gapallcert_cb' id='certainty' name='gapallcert' type='checkbox' value='certainty'>Select if presence of gap is in doubt</input>
+        </div>
+      </form>
+      <div id='gapall_button_left'>
+        <button onclick='insertGapStart()' type='button'>Insert</button>
+        &nbsp
+        <button onclick='closeHelper()' type='button'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>

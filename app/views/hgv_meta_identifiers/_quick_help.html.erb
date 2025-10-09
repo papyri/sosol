@@ -1,0 +1,9 @@
+<% pseudoId = rand(1000000).to_s %>
+<span class='quickHelp' <%= tag_options({:class => 'quickHelp_' + i18nId.gsub(/\./, '_')}, false) %>>
+  <span class='hook' <%= tag_options({:onclick => "document.getElementById('" + pseudoId + "').classList.replace('fade-hide', 'fade-show');", :onmouseout => "document.getElementById('" + pseudoId + "').classList.replace('fade-show', 'fade-hide');"}, false) %>>
+    ?
+    <span class='message' <%= tag_options({:id => pseudoId, :class => 'fade-hide'}, false) %>>
+      <%= I18n.t(i18nId) %>
+    </span>
+  </span>
+</span>

@@ -1,0 +1,22 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='gapsize'>
+      <%= render :partial => 'markup_warn' %>
+      <h3>Enter Type of Division</h3>
+      <div id='division_type'>
+        <input class='choosetext' id='divisionType' size='30' type='text'>Type of division (e.g. ‘section’) (obligatory)</input>
+        <br>
+        <br>
+        <input class='choosetext' id='divisionSubtype' size='30' type='text'>Number/label of division (e.g. ‘a’, ‘b’, ‘i’, ‘ii’) (optional)</input>
+        <br>
+        <br>
+        <button onclick='insertDivisionSub()' type='button'>Insert</button>
+        &nbsp
+        <button onclick='closeHelper()' type='button'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>

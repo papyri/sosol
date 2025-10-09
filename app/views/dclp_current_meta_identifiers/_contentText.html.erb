@@ -1,0 +1,49 @@
+<% base = 'hgv_meta_identifier[contentText]' %>
+<% contentText = DCLPWork::ContentText.new(:contentText => @identifier.non_database_attribute[:contentText]) %>
+<% if !contentText.overview || !contentText.overview.empty? %>
+  <div>
+    <%= label_tag 'overview', I18n.t('dclp.label.overview'), :class => 'meta displayName overview', :title => @identifier.configuration.xpath(:contentText) %>
+    <%= text_field_tag 'hgv_meta_identifier[overview]', contentText.overview, :disabled => !@identifier.mutable?, :class => 'observechange displayName' %>
+    <span class='delete' onclick="if(confirm('Are you sure you want to delete the legacy display name?')){console.log($(this).up().select('input')); $(this).up().select('input')[0].setValue(''); $(this).up().hide(); }" title='delete'>x</span>
+  </div>
+  <div class='clear'></div>
+<% end %>
+<div class='contentText genre'>
+  <h5 class='contentText'><%= I18n.t('dclp.label.contentTextGenre') %></h5>
+  <%= text_field_tag base + '[0]', contentText.genre[0] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText' %>
+  <div class='clear'></div>
+  <%= text_field_tag base + '[1]', contentText.genre[1] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText' %>
+</div>
+<div class='contentText religion'>
+  <h5 class='contentText'><%= I18n.t('dclp.label.contentTextReligion') %></h5>
+  <%= text_field_tag base + '[2]', contentText.religion[0] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText' %>
+  <div class='clear'></div>
+  <%= text_field_tag base + '[3]', contentText.religion[1] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText' %>
+</div>
+<div class='contentText culture'>
+  <h5 class='contentText'><%= I18n.t('dclp.label.contentTextCulture') %></h5>
+  <%= text_field_tag base + '[4]', contentText.culture[0] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText' %>
+  <div class='clear'></div>
+  <%= text_field_tag base + '[5]', contentText.culture[1] || '', :disabled => !@identifier.mutable?, :class => 'observechange workContentText' %>
+</div>
+<div class='clear'></div>
+<div class='contentText keywords'>
+  <h5 class='contentText'><%= I18n.t('dclp.label.contentTextKeywords') %></h5>
+  <div class='multi' id='multi_contentText'>
+    <ul class='items' id='multiItems_contentText'>
+      <% contentText.keywords.each_index do |index| %>
+        <% itemIndex = index + 6 %>
+        <li>
+          <%= text_field_tag base + '[' + itemIndex.to_s + ']', contentText.keywords[index], :disabled => !@identifier.mutable?, :class => 'observechange' %>
+          <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+          <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+        </li>
+      <% end %>
+    </ul>
+    <p class='add' id='multiPlus_contentText'>
+      <input class='observechange'>
+      <span <%= tag_options({:onclick => "multiAdd('contentText', 6)", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+    </p>
+    <%= javascript_tag "Sortable.create(document.getElementById('multiItems_contentText'), {direction: 'horizontal', handle: '.move'});" %>
+  </div>
+</div>

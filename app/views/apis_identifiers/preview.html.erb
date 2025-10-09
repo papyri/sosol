@@ -1,0 +1,20 @@
+<%= stylesheet_link_tag 'meta' %>
+<div id='main'>
+  <div class='site metaSite'>
+    <div id='preview'></div>
+  </div>
+</div>
+<script>
+  var xml;
+  jQuery.get('xml', function(data) {
+    jQuery.ajax({
+      type: 'POST',
+      url: 'http://papyri.info/epidocinator?xsl=papyri.info-fragment&coll=apis', 
+      data: data, 
+      success: function(result) {
+        jQuery('#preview').html(result);
+      },
+      contentType: 'text/plain;charset=UTF-8',
+      processData: false
+  })}, 'text');
+</script>

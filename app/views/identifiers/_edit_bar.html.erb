@@ -1,0 +1,191 @@
+<div id='edit_bar'>
+  <div id='identifier_menu'>
+    <ul>
+      <% if @identifier.publication.status == 'finalizing' %>
+        <li <%= tag_options({:class => ((params[:controller] == 'publications') && (params[:action] == 'finalize_review')) ? 'active' : ''}, false) %>>
+          <%= link_to 'Finalize', finalize_review_publication_path(@identifier.publication) %>
+        </li>
+      <% end %>
+      <li <%= tag_options({:class => ((params[:controller] == 'publications') && (params[:action] == 'show')) ? 'active' : ''}, false) %>>
+        <%= link_to 'Overview', publication_path(@identifier.publication) %>
+      </li>
+      <% if @identifier.publication.identifiers.select{|i| i.class.in?([DDBIdentifier, DCLPTextIdentifier])}.length > 0 %>
+        <li <%= tag_options({:class => (params[:controller].in?(['ddb_identifiers', 'dclp_text_identifiers']) ? 'active' : '')}, false) %>>
+          <%= link_to 'Text', edit_text_publication_path(@identifier.publication) %>
+          <% texts = @identifier.publication.identifiers.select{|i| i.class.in?([DDBIdentifier, DCLPTextIdentifier])} %>
+          <% if texts.length > 1 %>
+            <ul>
+              <% for text in texts %>
+                <li>
+                  <%= link_to "#{text.class::FRIENDLY_NAME}: #{text.titleize}", edit_polymorphic_path([@identifier.publication, text]) %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </li>
+      <% end %>
+      <% if @identifier.publication.identifiers.select{|i| i.class.in?([HGVMetaIdentifier, DCLPMetaIdentifier])}.length > 0 %>
+        <li <%= tag_options({:class => (params[:controller].in?(['hgv_meta_identifiers', 'dclp_meta_identifiers']) ? 'active' : '')}, false) %>>
+          <%= link_to 'Meta', edit_meta_publication_path(@identifier.publication) %>
+          <% metas = @identifier.publication.identifiers.select{|i| i.class.in?([HGVMetaIdentifier, DCLPMetaIdentifier])} %>
+          <% if metas.length > 1 %>
+            <ul>
+              <% for meta in metas %>
+                <li>
+                  <%= link_to "#{meta.class::FRIENDLY_NAME}: #{meta.titleize}", edit_polymorphic_path([@identifier.publication, meta]) %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </li>
+      <% end %>
+      <% if @identifier.publication.identifiers.select{|i| i.class == APISIdentifier}.length > 0 %>
+        <li <%= tag_options({:class => params[:controller] == 'apis_identifers' ? 'active' : ''}, false) %>>
+          <%= link_to 'APIS (beta)', edit_apis_publication_path(@identifier.publication) %>
+          <% apisrecs = @identifier.publication.identifiers.select{|i| i.class == APISIdentifier} %>
+          <% if apisrecs.length > 1 %>
+            <ul>
+              <% for apis in apisrecs %>
+                <li>
+                  <%= link_to apis.titleize, edit_polymorphic_path([@identifier.publication, apis]) %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </li>
+      <% end %>
+      <% if @identifier.publication.identifiers.select{|i| i.class == HGVTransIdentifier}.length > 0 %>
+        <li <%= tag_options({:class => params[:controller] == 'hgv_trans_identifiers' ? 'active' : ''}, false) %>>
+          <%= link_to 'Translation', edit_trans_publication_path(@identifier.publication) %>
+          <% trans = @identifier.publication.identifiers.select{|i| i.class == HGVTransIdentifier} %>
+          <% if trans.length > 1 %>
+            <ul>
+              <% for tran in trans %>
+                <li>
+                  <%= link_to tran.titleize, edit_polymorphic_path([@identifier.publication, tran]) %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </li>
+      <% end %>
+      <% if @identifier.publication.identifiers.select{|i| i.class == BiblioIdentifier}.length > 0 %>
+        <li <%= tag_options({:class => params[:controller] == 'biblio_identifiers' ? 'active' : ''}, false) %>>
+          <%= link_to 'Biblio', edit_biblio_publication_path(@identifier.publication) %>
+          <% biblios = @identifier.publication.identifiers.select{|i| i.class == BiblioIdentifier} %>
+          <% if biblios.length > 1 %>
+            <ul>
+              <% for biblio in biblios %>
+                <li>
+                  <%= link_to biblio.titleize, edit_polymorphic_path([@identifier.publication, biblio]) %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </li>
+      <% end %>
+      <%# if controller.action_name != 'show' %>
+      <li class='nav_control'>
+        <%= link_to image_tag('left_arrow_16.png') , :controller => 'publications', :action => 'edit_adjacent', :direction => 'next', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :current_controller_name => controller_name, :current_action_name => action_name %>
+      </li>
+      <li class='nav_control'>
+        <%= link_to image_tag('right_arrow_16.png') , :controller => 'publications', :action => 'edit_adjacent', :direction => 'prev', :pub_id => @identifier.publication.id, :id_id => @identifier.id, :current_controller_name => controller_name, :current_action_name => action_name %>
+      </li>
+    </ul>
+  </div>
+  <div id='identifier_sub_menus'>
+    <% if ((params[:controller] == 'publications') && (params[:action] == 'show')) %>
+      <div class='identifier_sub_menu_empty'></div>
+    <% else %>
+      <div class='identifier_sub_menu'>
+        <div class='joiner'></div>
+        <ul>
+          <% if params[:controller] != 'publications' %>
+            <% if @identifier.class == OACIdentifier %>
+              <li <%= tag_options({:class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}, false) %>><%= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier], :annotation_uri => @identifier[:annotation_uri]) %></li>
+            <% else %>
+              <li <%= tag_options({:class => %w{edit editxml commentary preview update}.include?(params[:action]) ? 'active' : ''}, false) %>><%= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier]) %></li>
+            <% end %>
+            <li <%= tag_options({:class => %w{history show_commit}.include?(params[:action]) ? 'active' : ''}, false) %>><%= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history) %></li>
+            <% if @identifier.publication.status == 'finalizing' && @identifier.mutable? %>
+              <li <%= tag_options({:class => params[:action] == 'rename_review' ? 'active' : ''}, false) %>><%= link_to 'Rename', polymorphic_path([@identifier.publication, @identifier], :action => :rename_review) %></li>
+            <% end %>
+            <%# %li= link_to 'Create', :controller => 'identifiers', :action => 'create', :publication_id => @identifier.publication.id, :identifier_type => @identifier.class, :method => :post %>
+            <li><%= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :onclick => "window.open(this.href,'new win','width=600, height=200');return false;".html_safe %></li>
+          <% elsif params[:action] == 'finalize_review' %>
+            <li <%= tag_options({:class => !%w{history show_commit}.include?(params[:action]) ? 'active' : ''}, false) %>><%= link_to 'Diff', edit_polymorphic_path([@identifier.publication, @identifier]) %></li>
+            <li <%= tag_options({:class => params[:action] == 'history' ? 'active' : ''}, false) %>><%= link_to 'History', polymorphic_path([@identifier.publication, @identifier], :action => :history) %></li>
+            <li><%= link_to 'Comment', {:controller => 'comments',  :action => 'ask_for', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :get }, :onclick => "window.open(this.href,'new win','width=600, height=200');return false;".html_safe %></li>
+          <% end %>
+          <%# another way to do it %>
+        </ul>
+        <%# - linky = url_for :controller => 'comments', :action => 'create', :publication_id => @identifier.publication.id, :identifier_id => @identifier.id, :method => :post %>
+        <%# %a{:href=>"#", :onClick=>"window.open('#{linky}', 'Comment', 'toolbar=0, menubar=0, location=0, status=0')"}=Comment %>
+      </div>
+    <% end %>
+    <% if !%w{history rename_review show show_commit}.include?(params[:action]) %>
+      <% case @identifier %>
+      <% when DCLPTextIdentifier %>
+        <div class='identifier_sub_menu' id='sub_menu_2'>
+          <ul>
+            <li <%= tag_options({:class => %w{edit update}.include?(params[:action]) ? 'active' : ''}, false) %>><%= link_to 'Leiden+', edit_polymorphic_path([@identifier.publication, @identifier]) %></li>
+            <li <%= tag_options({:class => params[:action] == 'editxml' ? 'active' : ''}, false) %>><%= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml) %></li>
+            <li <%= tag_options({:class => params[:action] == 'commentary' ? 'active' : ''}, false) %>><%= link_to 'Commentary', polymorphic_path([@identifier.publication, @identifier], :action => :commentary) %></li>
+            <li <%= tag_options({:class => params[:action] == 'preview' ? 'active' : ''}, false) %>><%= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview) %></li>
+          </ul>
+        </div>
+      <% when DDBIdentifier %>
+        <div class='identifier_sub_menu' id='sub_menu_2'>
+          <ul>
+            <li <%= tag_options({:class => %w{edit update}.include?(params[:action]) ? 'active' : ''}, false) %>><%= link_to 'Leiden+', edit_polymorphic_path([@identifier.publication, @identifier]) %></li>
+            <li <%= tag_options({:class => params[:action] == 'editxml' ? 'active' : ''}, false) %>><%= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml) %></li>
+            <li <%= tag_options({:class => params[:action] == 'commentary' ? 'active' : ''}, false) %>><%= link_to 'Commentary', polymorphic_path([@identifier.publication, @identifier], :action => :commentary) %></li>
+            <li <%= tag_options({:class => params[:action] == 'preview' ? 'active' : ''}, false) %>><%= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview) %></li>
+          </ul>
+        </div>
+      <% when APISIdentifier %>
+        <div class='identifier_sub_menu' id='sub_menu_2'>
+          <ul>
+            <li <%= tag_options({:class => params[:action] == 'edit' ? 'active' : ''}, false) %>><%= link_to 'APIS', edit_polymorphic_path([@identifier.publication, @identifier]) %></li>
+            <li <%= tag_options({:class => params[:action] == 'editxml' ? 'active' : ''}, false) %>><%= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml) %></li>
+            <li <%= tag_options({:class => params[:action] == 'preview' ? 'active' : ''}, false) %>><%= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview) %></li>
+          </ul>
+        </div>
+      <% when DCLPMetaIdentifier %>
+        <div class='identifier_sub_menu' id='sub_menu_2'>
+          <ul>
+            <li <%= tag_options({:class => params[:action] == 'edit' ? 'active' : ''}, false) %>><%= link_to 'Meta', edit_polymorphic_path([@identifier.publication, @identifier]) %></li>
+            <li <%= tag_options({:class => params[:action] == 'editxml' ? 'active' : ''}, false) %>><%= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml) %></li>
+            <li <%= tag_options({:class => params[:action] == 'preview' ? 'active' : ''}, false) %>><%= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview) %></li>
+          </ul>
+        </div>
+      <% when HGVMetaIdentifier %>
+        <div class='identifier_sub_menu' id='sub_menu_2'>
+          <ul>
+            <li <%= tag_options({:class => params[:action] == 'edit' ? 'active' : ''}, false) %>><%= link_to 'HGV', edit_polymorphic_path([@identifier.publication, @identifier]) %></li>
+            <li <%= tag_options({:class => params[:action] == 'editxml' ? 'active' : ''}, false) %>><%= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml) %></li>
+            <li <%= tag_options({:class => params[:action] == 'preview' ? 'active' : ''}, false) %>><%= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview) %></li>
+          </ul>
+        </div>
+      <% when HGVTransIdentifier %>
+        <div class='identifier_sub_menu' id='sub_menu_2'>
+          <ul>
+            <li <%= tag_options({:class =>  %w{edit update}.include?(params[:action]) ? 'active' : ''}, false) %>><%= link_to 'Translations', edit_polymorphic_path([@identifier.publication, @identifier]) %></li>
+            <li <%= tag_options({:class => params[:action] == 'editxml' ? 'active' : ''}, false) %>><%= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml) %></li>
+            <li <%= tag_options({:class => params[:action] == 'preview' ? 'active' : ''}, false) %>><%= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview) %></li>
+          </ul>
+        </div>
+      <% when BiblioIdentifier %>
+        <div class='identifier_sub_menu' id='sub_menu_2'>
+          <div class='site'>
+            <ul>
+              <li <%= tag_options({:class =>  %w{edit update}.include?(params[:action]) ? 'active' : ''}, false) %>><%= link_to 'Edit', edit_polymorphic_path([@identifier.publication, @identifier]) %></li>
+              <li <%= tag_options({:class => params[:action] == 'editxml' ? 'active' : ''}, false) %>><%= link_to 'XML', polymorphic_path([@identifier.publication, @identifier], :action => :editxml) %></li>
+              <li <%= tag_options({:class => params[:action] == 'preview' ? 'active' : ''}, false) %>><%= link_to 'Preview', polymorphic_path([@identifier.publication, @identifier], :action => :preview) %></li>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

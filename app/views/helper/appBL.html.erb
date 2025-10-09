@@ -1,0 +1,40 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='app3col'>
+      <%= render :partial => 'markup_warn' %>
+      <h4>Correction noted in BL</h4>
+      <div id='app_col'>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appBLlem_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Correct form
+        </div>
+        <div id='app_button'>
+          <button onclick='insertAppBL()' type='button'>Insert</button>
+          &nbsp
+          <button onclick='closeHelper()' type='button'>Close</button>
+        </div>
+      </div>
+      <div id='app_col'>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appBLresp_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          BL citation (vol.page), e.g.: 1.171
+        </div>
+      </div>
+      <div id='app_col'>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appBLrdg_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Previous, incorrect form
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<div id='multi_figure'>
+  <ul id='multiItems_figure'>
+    <li class='figure'>
+      <%= render :partial => 'apis_identifiers/label', :locals => {:key => :figHead} %>
+      <%= text_field_tag 'apis_identifier_figHead', '', :class => 'observechange apis apis_identifier_figHead' %>
+      <%= render :partial => 'apis_identifiers/label', :locals => {:key => :figDesc} %>
+      <%= text_area_tag 'apis_identifier_figDesc', '', :class => 'observechange apis apis_identifier_figDesc' %>
+      <%= render :partial => 'apis_identifiers/label', :locals => {:key => :figUrl} %>
+      <%= text_field_tag 'apis_identifier_figUrl', '', :class => 'observechange apis apis_identifier_figUrl' %>
+      <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+      <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+    </li>
+  </ul>
+  <p class='add' id='multiPlus_figure'>
+    <span <%= tag_options({:onclick => "multiAddFigures()", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_figure'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

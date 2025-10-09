@@ -1,0 +1,8 @@
+<div class='illustrationContainer'>
+  <h5 class='illustration'><%= I18n.t('dclp.label.illustration') %></h5>
+  <h6><%= I18n.t('dclp.label.illustrationPrinted') %></h6>
+  <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :printedIllustration } %>
+  <h6><%= I18n.t('dclp.label.illustrationOnline') %></h6>
+  <%= render :partial => 'hgv_meta_identifiers/multi', :locals => { :key => :onlineResource, :pathToActualValue => [:children, :link, :attributes, :target] } %>
+  <div class='clear'></div>
+</div>

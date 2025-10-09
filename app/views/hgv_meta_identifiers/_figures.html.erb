@@ -1,0 +1,17 @@
+<div class='multi' id='multi_figures'>
+  <ul class='items' id='multiItems_figures'>
+    <% @identifier.non_database_attribute[:figures].each_index do |index| %>
+      <% url = @identifier.non_database_attribute[:figures][index][:children] && @identifier.non_database_attribute[:figures][index][:children][:graphic] && @identifier.non_database_attribute[:figures][index][:children][:graphic][:attributes] && @identifier.non_database_attribute[:figures][index][:children][:graphic][:attributes][:url] ? @identifier.non_database_attribute[:figures][index][:children][:graphic][:attributes][:url] : '' %>
+      <li>
+        <%= text_field_tag 'hgv_meta_identifier[figures][' + index.to_s + '][children][graphic][attributes][url]', url, :disabled => !@identifier.mutable?, :class => 'observechange' %>
+        <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+        <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+      </li>
+    <% end %>
+  </ul>
+  <p class='add' id='multiPlus_figures'>
+    <input class='observechange' id='figures_url'>
+    <span <%= tag_options({:onclick => "multiAddFigures()", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_figures'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

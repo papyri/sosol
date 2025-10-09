@@ -1,0 +1,44 @@
+<div class='site' id='main'>
+  <%# render :partial => "common/flash_all" %>
+  <h1>
+    New board
+    <% if @board.community %>
+      <%= " for community " + @board.community.name %>
+    <% end %>
+  </h1>
+  <%= form_for(@board) do |f| %>
+    <%= f.error_messages %>
+    <%= f.hidden_field :community_id %>
+    <p>
+      <%= f.label :title %>
+      <br>
+      <%= f.text_field :title %>
+      <br>
+    </p>
+    <p>
+      <%= f.label :friendly_name %>
+      <br>
+      <%= f.text_field :friendly_name %>
+      <br>
+    </p>
+    <%# %p %>
+    <br>
+    <p>
+      <%= f.label "Identifier classes" %>
+      <br>
+      <% @available_identifier_classes.each do |identifier_class| %>
+        <!-- show all choices -->
+        <%= check_box_tag identifier_class %>
+        <!-- limit to one choice -->
+        <!-- = check_box_tag  "#{identifier_class}", "#{identifier_class}", false -->
+        <%= identifier_class.sub(/Identifier$/,'') %>
+        <br>
+      <% end %>
+    </p>
+    <br>
+    <p>
+      <%= f.submit "Create" %>
+    </p>
+  <% end %>
+
+</div>

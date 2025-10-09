@@ -1,0 +1,22 @@
+<div id='main'>
+  <%#= render :partial => 'identifiers/edit_bar' %>
+  <div class='site'>
+    <h1>
+      History for
+      <%= @identifier.title %>
+      from publication
+      <%= @identifier.publication.title %>
+      <br>
+    </h1>
+    <h3>
+      <%= render :partial => "identifiers/pn_link", :locals => {:identifier => @identifier} %>
+    </h3>
+    <div id='edit'>
+      <ul>
+        <% for commit in @commits %>
+          <li><%= link_to html_escape(commit[:message].split("\n").first), url_for(:action => 'show_commit', :commit_id => commit[:id], :id => @identifier.id, :publication_id => @identifier.publication.id) %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>

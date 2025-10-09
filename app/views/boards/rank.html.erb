@@ -1,0 +1,37 @@
+<%= stylesheet_link_tag "board" %>
+<script>
+  window.onload = function()  {
+  Sortable.create(document.getElementById("board_elements"));
+  //alert(Sortable.serialize('board_elements', {name: "rb"}));
+  }
+  function getRankings() {
+  //put the ranking into a csv list
+  
+  // var new_rankings =  Sortable.serialize('board_elements');
+  // new_rankings = new_rankings.replace(/board_elements\[\]=/g, '');
+  // new_rankings = new_rankings.replace(/&/g, ',');
+  
+  // var rankings_node = document.getElementById('form_board_rankings');
+  // rankings_node.value = new_rankings;
+  }
+
+</script>
+<h1>
+  Board Ranking
+</h1>
+<p>
+  Boards are shown in order of processing submissions. You may reorder the priority ranking by dragging the board titles.
+</p>
+<ul id='board_elements'>
+  <% for board in @boards %>
+    <li <%= tag_options({:id => "board_element_#{board.id}", :class => 'sortable_board'}, false) %>>
+      <%= board.title + "( " + board.friendly_name + " )" %>
+    </li>
+  <% end %>
+</ul>
+<%= form_tag  'update_rankings', { :onSubmit => 'getRankings()'} do %>
+  <%= hidden_field_tag  'ranking',  'no value', { :id => 'form_board_rankings' } %>
+  <%= hidden_field_tag 'community_id', @community_id %>
+  <%= submit_tag  "Update Rankings" %>
+<% end %>
+

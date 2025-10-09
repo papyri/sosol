@@ -1,0 +1,56 @@
+<script>
+  //these funcions have to be in the haml file because of the ruby stuff in them needs to be handled on view load
+  
+  var sendBack = "";
+  
+  function getHGVNumber(identifierIn){
+  
+    request_url = "<%= url_for(:controller => 'ajax_proxy', :action => 'hgvnum', :only_path => true) %>";
+    
+    //made asynchronous false because next call to xsugar was firing before response got back
+    new Ajax.Request(request_url, {
+      method: 'get',
+      parameters: $H({identifier: identifierIn}),
+      asynchronous : false,
+      onSuccess: function(response) {
+        checkResponse = response.responseText;
+        if (checkResponse.search("bad") > -1 || checkResponse.search("no related") > -1) {
+          alert("Oops, there's been an error during Ajax call." + response.responseText);
+          sendBack = 'bad return code or invalid identifier';
+        }
+        else {
+          sendBack = response.responseText;
+        }
+      },
+      onFailure: function(response) {
+        // reload after 10 seconds if we failed, should ONLY be used if JCS cache is working
+        setTimeout("getHGVNumber(" + identifierIn + ")",10000);
+      }
+    });
+    return sendBack;
+  }
+
+</script>
+<div id='main'>
+  <%= csrf_meta_tag %>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'commentary' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='gapsize'>
+      <%= render :partial => 'commentary_markup_warn' %>
+      <h3>Create Link to PN Publication</h3>
+      <%= render :partial => "publications/publication_selector", :locals => { :emend => :helper } %>
+      <h7>Free Form Link Text</h7>
+      <div id='extent_left'>
+        <input class='choosetext' id='insertlink_freetext' size='40' type='text'>
+      </div>
+      <br>
+      <div id='button_left'>
+        <button onclick='insertLinkPN()' type='button'>Insert</button>
+        &nbsp
+        <button onclick='closeHelper()' type='button'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>

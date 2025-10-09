@@ -1,0 +1,24 @@
+<div id='div'>
+  <div <%= tag_options({:id => "#{type}_list_#{user.id}"}, false) %>>
+    <% comments.each do |comment| %>
+      <% if comment['pub_title'] %>
+        <span class='comment'>
+          <%= link_to comment['pub_title'], :controller => 'publications', :id => comment['pub_id'], :action => :show %>
+          <% case comment['reason'] %>
+          <% when 'vote' %>
+            <%= "(" + comment['id_title'] + ")  ".html_safe + "Vote " %>
+          <% when 'submit' %>
+            <%= " (" + comment['pub_status'] + ")  ".html_safe %>
+          <% when 'finalizing' %>
+            <% if comment['id_title'] %>
+              <%= "(" + comment['id_title'] + ")  ".html_safe %>
+            <% end %>
+          <% end %>
+          <%= h comment['comment'] %>
+          <%= comment['created_at'].to_formatted_s(:long) %>
+        </span>
+        <br>
+      <% end %>
+    <% end %>
+  </div>
+</div>

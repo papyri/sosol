@@ -1,0 +1,48 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='diacritical_div'>
+      <h4>Insert Double Diacritical</h4>
+      <div id='dia_left'>
+        <div id='col1hdr'>
+          <h5>Pick First Diacritical</h5>
+        </div>
+        <input checked='' class='diacritical_radio' id='acute1' name='diacritical_type_one' onclick='checktypedia(this.id,1)' type='radio' value='acute'>Acute</input>
+        <br>
+        <input class='diacritical_radio' id='asper1' name='diacritical_type_one' onclick='checktypedia(this.id,1)' type='radio' value='asper'>Asper</input>
+        <br>
+        <input class='diacritical_radio' id='circumflex1' name='diacritical_type_one' onclick='checktypedia(this.id,1)' type='radio' value='circumflex'>Circumflex</input>
+        <br>
+        <input class='diacritical_radio' id='diaeresis1' name='diacritical_type_one' onclick='checktypedia(this.id,1)' type='radio' value='diaeresis'>Diaeresis</input>
+        <br>
+        <input class='diacritical_radio' id='grave1' name='diacritical_type_one' onclick='checktypedia(this.id,1)' type='radio' value='grave'>Grave</input>
+        <br>
+        <input class='diacritical_radio' id='lenis1' name='diacritical_type_one' onclick='checktypedia(this.id,1)' type='radio' value='lenis'>Lenis</input>
+      </div>
+      <div id='dia_left'>
+        <div id='col2hdr'>
+          <h5>Pick Second Diacritical</h5>
+        </div>
+        <input class='diacritical_radio' id='acute2' name='diacritical_type_two' onclick='checktypedia(this.id,2)' type='radio' value='acute'>Acute</input>
+        <br>
+        <input checked='' class='diacritical_radio' id='asper2' name='diacritical_type_two' onclick='checktypedia(this.id,2)' type='radio' value='asper'>Asper</input>
+        <br>
+        <input class='diacritical_radio' id='circumflex2' name='diacritical_type_two' onclick='checktypedia(this.id,2)' type='radio' value='circumflex'>Circumflex</input>
+        <br>
+        <input class='diacritical_radio' id='diaeresis2' name='diacritical_type_two' onclick='checktypedia(this.id,2)' type='radio' value='diaeresis'>Diaeresis</input>
+        <br>
+        <input class='diacritical_radio' id='grave2' name='diacritical_type_two' onclick='checktypedia(this.id,2)' type='radio' value='grave'>Grave</input>
+        <br>
+        <input class='diacritical_radio' id='lenis2' name='diacritical_type_two' onclick='checktypedia(this.id,2)' type='radio' value='lenis'>Lenis</input>
+      </div>
+      <div id='button_left'>
+        <br>
+        <button onclick='insertDiacriticalSub()' type='button'>Insert</button>
+        &nbsp
+        <button onclick='closeHelper()' type='button'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>

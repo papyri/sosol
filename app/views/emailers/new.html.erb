@@ -1,0 +1,14 @@
+<h1>
+  New E-mailer for
+  <%= @board.title %>
+</h1>
+<%= form_for(@emailer) do |f| %>
+  <%= f.error_messages %>
+  <%= f.hidden_field :board_id %>
+  <%= f.label :when_to_send %>
+  <%= f.select :when_to_send, @whens %>
+  <p>
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+

@@ -1,0 +1,61 @@
+<h1>
+  <%= "Community " + @community.format_name %>
+</h1>
+<b>
+  Name:
+</b>
+<%= @community.name %>
+<br>
+<b>
+  Friendly name:
+</b>
+<%= @community.friendly_name %>
+<br>
+<b>
+  Description:
+</b>
+<%= @community.description %>
+<br>
+<br>
+<b>
+  End User
+  <br>
+</b>
+<% if @community.end_user %>
+  <%= @community.end_user.name %>
+<% else %>
+  <%= "! No end user set ! Community cannot accept submissions." %>
+<% end %>
+<br>
+<br>
+<b>
+  Admins
+  <br>
+</b>
+<% @community.admins.each do |a| %>
+  <%= a.human_name + " ( " + a.name + " )" %>
+  <br>
+<% end %>
+<br>
+<b>
+  Members
+  <br>
+</b>
+<% @community.members.each do |m| %>
+  <%= m.human_name + " ( " + m.name + " )" %>
+  <br>
+<% end %>
+<br>
+<b>
+  Boards
+  <br>
+</b>
+<% @community.boards.each do |b| %>
+  <%= b.name %>
+  <br>
+<% end %>
+<%= link_to 'Send Email Reminders', :controller => "boards", :action => "send_board_reminder_emails", :community_id => @community.id %>
+<br>
+<br>
+<%= link_to 'Edit', edit_community_path(@community) %>
+<%= link_to 'Destroy', :controller => "communities", :id => @community.id, :action => "confirm_destroy" %>

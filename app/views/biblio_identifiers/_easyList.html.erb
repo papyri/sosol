@@ -1,0 +1,41 @@
+<% easyObject = @identifier.non_database_attribute[type] %>
+<% type = type.to_s %>
+<% typeBig = type.slice(0, 1).capitalize + type[1..-1] %>
+<div class='multi' <%= tag_options({:id => 'multi_' + type}, false) %>>
+  <h6>
+    <% if easyList.present? && easyList.length > 1 %>
+      <% easyList.each do |item| %>
+        <label <%= tag_options({:class => item}, false) %>><%= I18n.t('biblio.label.' + item) %></label>
+      <% end %>
+    <% end %>
+  </h6>
+  <ul class='items' <%= tag_options({:id => 'multiItems_' + type}, false) %>>
+    <% if easyObject.present? %>
+      <% easyObject.each_index do |index| %>
+        <li>
+          <% easyList.each do |member| %>
+            <% if defined?(optionList) && optionList.kind_of?(Hash) && optionList.include?(member) %>
+              <%= select_tag('biblio_identifier[' + type + '][' + index.to_s + '][' + member + ']', options_for_select(optionList[member], easyObject[index].send(member)), :disabled => !@identifier.mutable?, :class => 'observechange ' + member) %>
+            <% else %>
+              <%= text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + '][' + member + ']', easyObject[index].send(member), :disabled => !@identifier.mutable?, :class => 'observechange ' + member %>
+            <% end %>
+          <% end %>
+          <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+          <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+        </li>
+      <% end %>
+    <% end %>
+    <p class='add' <%= tag_options({:id => 'multiPlus_' + type}, false) %>></p>
+    <% if easyList.present? %>
+      <% easyList.each do |member| %>
+        <% if defined?(optionList) && optionList.kind_of?(Hash) && optionList.include?(member) %>
+          <%= select_tag(type + '_' + member, options_for_select(optionList[member])) %>
+        <% else %>
+          <input class='observechange' <%= tag_options({:id => type + '_' + member}, false) %>>
+        <% end %>
+      <% end %>
+    <% end %>
+    <span <%= tag_options({:onclick => "multiAdd" + typeBig + "()", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </ul>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_" + type + "'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

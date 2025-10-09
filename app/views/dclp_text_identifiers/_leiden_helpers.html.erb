@@ -1,0 +1,234 @@
+<script>
+  // used to form URL to open pop-up window
+  helpView = "<%= url_for(:controller => 'helper', :action => 'wheretogo') %>";
+  // 2 variables below used in ajax calls for conversion
+  convXML2Leiden = "<%= url_for(:controller => 'leiden', :action => 'xml2leiden') %>";
+  convLeiden2XML = "<%= url_for(:controller => 'leiden', :action => 'leiden2xml') %>";
+</script>
+<%= javascript_include_tag 'leiden' %>
+<%= javascript_include_tag 'menu-for-applications' %>
+<%= stylesheet_link_tag 'menu-item' %>
+<%= stylesheet_link_tag 'menu-bar' %>
+<!-- The helper menu is somewhat keyed off the numbering scheme in the li elements and indentations -->
+<!-- have a smart number associated with them.  It starts off with a 1 digit number (when this level goes to -->
+<!-- 2 digits, no drop down data is associated).  From then on there are 2 digit numbers used e.g 101, -->
+<!-- 102, etc. meaning the first, second and third level menu items under item 1.  Then the next level -->
+<!-- continues this with 10101, 10102, 10102 meaning the first, second and third level menu items -->
+<!-- under 101.  This same pattern can be continued on to deeper levels of menu if needed. This works -->
+<!-- in correspondence with the menu-bar and menu-item stylesheets and the menu-for-applications -->
+<!-- javascript. -->
+<%# All the javascript functions called below are in leiden.js other than showMatch which is in confirm.js %>
+<ul id='menuModel' style='display:inherit'>
+  <li id='1'>
+    <a <%= tag_options({:href => "#", :title => "Leiden+ Input Markup"}, false) %>>Markup</a>
+    <ul width='255'>
+      <li id='101' jsFunction="helpDialogOpen('abbrev')">
+        <a <%= tag_options({:href => "#"}, false) %>>Abbreviations</a>
+      </li>
+      <li id='102' itemType='separator'></li>
+      <li id='103'>
+        <a <%= tag_options({:href => "#"}, false) %>>Apparatus</a>
+        <ul width='225'>
+          <li id='10301' jsFunction="helpDialogOpen('appreg')">
+            <a <%= tag_options({:href => "#"}, false) %>>Modern regularization</a>
+          </li>
+          <li id='10302' itemType='separator'></li>
+          <li id='10303' jsFunction="helpDialogOpen('appcorr')">
+            <a <%= tag_options({:href => "#"}, false) %>>Modern correction</a>
+          </li>
+          <li id='10304' itemType='separator'></li>
+          <li id='10305' jsFunction="helpDialogOpen('appsubst')">
+            <a <%= tag_options({:href => "#"}, false) %>>Scribal correction/substitution</a>
+          </li>
+          <li id='10306' itemType='separator'></li>
+          <li id='10307' jsFunction="helpDialogOpen('appalt')">
+            <a <%= tag_options({:href => "#"}, false) %>>Alternate readings</a>
+          </li>
+          <li id='10308' itemType='separator'></li>
+          <li id='10309' jsFunction="helpDialogOpen('appedit')">
+            <a <%= tag_options({:href => "#"}, false) %>>Editorial correction</a>
+          </li>
+        </ul>
+      </li>
+      <li id='104' itemType='separator'></li>
+      <li id='105'>
+        <a <%= tag_options({:href => "#"}, false) %>>Deletion/cancellation</a>
+        <ul width='225'>
+          <li id='10501' jsFunction="insertDeletionMain('slashes')">
+            <a <%= tag_options({:href => "#"}, false) %>>Deletion by slashes (///)</a>
+          </li>
+          <li id='10502' itemType='separator'></li>
+          <li id='10503' jsFunction="insertDeletionMain('cross-strokes')">
+            <a <%= tag_options({:href => "#"}, false) %>>Deletion by cross-strokes (XXX)</a>
+          </li>
+          <li id='10504' itemType='separator'></li>
+          <li id='10505' jsFunction="insertDeletionMain('erasure')">
+            <a <%= tag_options({:href => "#"}, false) %>>Deletion by any other means</a>
+          </li>
+        </ul>
+      </li>
+      <li id='106' itemType='separator'></li>
+      <li id='107'>
+        <a <%= tag_options({:href => "#"}, false) %>>Document Divisions</a>
+        <ul width='225'>
+          <li id='10701' jsFunction="insertDivisionMain('r')">
+            <a <%= tag_options({:href => "#"}, false) %>>Recto</a>
+          </li>
+          <li id='10702' itemType='separator'></li>
+          <li id='10703' jsFunction="insertDivisionMain('v')">
+            <a <%= tag_options({:href => "#"}, false) %>>Verso</a>
+          </li>
+          <li id='10704' itemType='separator'></li>
+          <li id='10705' jsFunction="insertDivisionMain('column')">
+            <a <%= tag_options({:href => "#"}, false) %>>Column</a>
+          </li>
+          <li id='10706' itemType='separator'></li>
+          <li id='10707' jsFunction="insertDivisionMain('document')">
+            <a <%= tag_options({:href => "#"}, false) %>>Document</a>
+          </li>
+          <li id='10708' itemType='separator'></li>
+          <li id='10709' jsFunction="insertDivisionMain('folio')">
+            <a <%= tag_options({:href => "#"}, false) %>>Folio</a>
+          </li>
+          <li id='10710' itemType='separator'></li>
+          <li id='10711' jsFunction="insertDivisionMain('fragment')">
+            <a <%= tag_options({:href => "#"}, false) %>>Fragment</a>
+          </li>
+          <li id='10712' itemType='separator'></li>
+          <li id='10713' jsFunction="helpDialogOpen('division')">
+            <a <%= tag_options({:href => "#"}, false) %>>Other</a>
+          </li>
+        </ul>
+      </li>
+      <li id='108' itemType='separator'></li>
+      <li id='109' jsFunction="helpDialogOpen('gapall')">
+        <a <%= tag_options({:href => "#"}, false) %>>Missing, illegible, or not transcribed</a>
+      </li>
+      <li id='110' itemType='separator'></li>
+      <li id='111' jsFunction="helpDialogOpen('number')">
+        <a <%= tag_options({:href => "#"}, false) %>>Numbers</a>
+      </li>
+    </ul>
+  </li>
+  <li id='2' itemType='separator'></li>
+  <li id='3'>
+    <a <%= tag_options({:href => "#", :title => "Leiden+ Symbols"}, false) %>>Symbols</a>
+    <ul width='240'>
+      <li id='301'>
+        <a <%= tag_options({:href => "#"}, false) %>>Numerical Characters</a>
+        <ul width='135'>
+          <%# this is unicode character u10175 %>
+          <li id='30101' jsFunction="insertSpecialCharMain('𐅵')">
+            <a <%= tag_options({:href => "#"}, false) %>>1/2</a>
+          </li>
+          <li id='30102' itemType='separator'></li>
+          <%# this is unicode character u10177 %>
+          <li id='30103' jsFunction="insertSpecialCharMain('𐅷')">
+            <a <%= tag_options({:href => "#"}, false) %>>2/3</a>
+          </li>
+          <li id='30104' itemType='separator'></li>
+          <%# this is unicode character u10178 %>
+          <li id='30105' jsFunction="insertSpecialCharMain('𐅸')">
+            <a <%= tag_options({:href => "#"}, false) %>>3/4</a>
+          </li>
+          <li id='30106' itemType='separator'></li>
+          <li id='30107' jsFunction="insertSpecialCharMain('\u03DB')">
+            <a <%= tag_options({:href => "#"}, false) %>>Stigma small</a>
+          </li>
+          <li id='30108' itemType='separator'></li>
+          <li id='30109' jsFunction="insertSpecialCharMain('\u03DA')">
+            <a <%= tag_options({:href => "#"}, false) %>>Stigma capital</a>
+          </li>
+          <li id='30110' itemType='separator'></li>
+          <li id='30111' jsFunction="insertSpecialCharMain('\u03D9')">
+            <a <%= tag_options({:href => "#"}, false) %>>Koppa small</a>
+          </li>
+          <li id='30112' itemType='separator'></li>
+          <li id='30113' jsFunction="insertSpecialCharMain('\u03E1')">
+            <a <%= tag_options({:href => "#"}, false) %>>Sampi small</a>
+          </li>
+          <%# %li#30114{ :itemType => "separator"} %>
+          <%# %li#30115{ :jsFunction => "insertSpecialCharMain('\\u00AF')"} %>
+          <%# %a{ :href => "#"}Supraline Spacing Macron %>
+        </ul>
+      </li>
+      <li id='302' itemType='separator'></li>
+      <li id='303'>
+        <a <%= tag_options({:href => "#"}, false) %>>Ancient Diacriticals</a>
+        <ul width='135'>
+          <li id='30301' jsFunction="insertDiacriticalMain('acute')">
+            <a <%= tag_options({:href => "#"}, false) %>>Acute</a>
+          </li>
+          <li id='30302' itemType='separator'></li>
+          <li id='30303' jsFunction="insertDiacriticalMain('asper')">
+            <a <%= tag_options({:href => "#"}, false) %>>Asper</a>
+          </li>
+          <li id='30304' itemType='separator'></li>
+          <li id='30305' jsFunction="insertDiacriticalMain('circumflex')">
+            <a <%= tag_options({:href => "#"}, false) %>>Circumflex</a>
+          </li>
+          <li id='30306' itemType='separator'></li>
+          <li id='30307' jsFunction="insertDiacriticalMain('diaeresis')">
+            <a <%= tag_options({:href => "#"}, false) %>>Diaeresis</a>
+          </li>
+          <li id='30308' itemType='separator'></li>
+          <li id='30309' jsFunction="insertDiacriticalMain('grave')">
+            <a <%= tag_options({:href => "#"}, false) %>>Grave</a>
+          </li>
+          <li id='30310' itemType='separator'></li>
+          <li id='30311' jsFunction="insertDiacriticalMain('lenis')">
+            <a <%= tag_options({:href => "#"}, false) %>>Lenis</a>
+          </li>
+          <li id='30312' itemType='separator'></li>
+          <li id='30313' jsFunction="helpDialogOpen('ancientdia')">
+            <a <%= tag_options({:href => "#"}, false) %>>Double</a>
+          </li>
+        </ul>
+      </li>
+      <li id='304' itemType='separator'></li>
+      <li id='305' jsFunction="insertMilestoneMain('paragraphos')">
+        <a <%= tag_options({:href => "#"}, false) %>>Paragraphos</a>
+      </li>
+      <li id='306' itemType='separator'></li>
+      <li id='307' jsFunction="insertMilestoneMain('horizontal-rule')">
+        <a <%= tag_options({:href => "#"}, false) %>>Horizontal Rule</a>
+      </li>
+      <li id='308' itemType='separator'></li>
+      <li id='309' jsFunction="insertSpecialCharMain('\u0304')">
+        <a <%= tag_options({:href => "#"}, false) %>>Supralinear Stroke</a>
+      </li>
+      <li id='310' itemType='separator'></li>
+      <li id='311' jsFunction="insertSpecialCharMain('\u0342')">
+        <a <%= tag_options({:href => "#"}, false) %>>Circumflex on short vowel</a>
+      </li>
+      <li id='312' itemType='separator'></li>
+      <li id='313' jsFunction="insertSpecialCharMain('\u0345')">
+        <a <%= tag_options({:href => "#"}, false) %>>Iota subscript below short vowel</a>
+      </li>
+    </ul>
+  </li>
+  <li id='4' itemType='separator'></li>
+  <li id='5' <%= tag_options({:jsFunction => "window.open('#{documentation_url(:docotype => "text")}')"}, false) %>>
+    <a <%= tag_options({:href => "#", :title => "Leiden+ Help Page"}, false) %>>Leiden+ Help</a>
+  </li>
+  <li id='6' itemType='separator'></li>
+  <li id='7' jsFunction="insertSpecialCharMain('\u0323')">
+    <a <%= tag_options({:href => "#", :title => "Insert Underdot"}, false) %>>UnderDot</a>
+  </li>
+  <li id='8' itemType='separator'></li>
+  <li id='9' jsFunction="helpDialogOpen('tryit')">
+    <a <%= tag_options({:href => "#", :title => "Try Leiden+ Conversion"}, false) %>>Try It</a>
+  </li>
+  <li id='10' itemType='separator'></li>
+  <li id='11' jsFunction="showMatch('ddb_identifier_leiden_plus', '**POSSIBLE ERROR**')">
+    <a <%= tag_options({:href => "#", :title => "Find Possible Error"}, false) %>>Find Error</a>
+  </li>
+  <li id='12' itemType='separator'></li>
+</ul>
+<p>
+  <% if identifier.mutable? %>
+    <div id='menuDiv'></div>
+  <% else %>
+    <div id='menuDiv' style='display:none'></div>
+  <% end %>
+</p>

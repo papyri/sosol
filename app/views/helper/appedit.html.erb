@@ -1,0 +1,58 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='app2ol'>
+      <%= render :partial => 'markup_warn' %>
+      <h4>Editorial = Correction noted in series Corrigenda or other publication</h4>
+      <h4>BL = Correction noted in BL</h4>
+      <h4>PN = Correction proposed directly via PE and shown in PN -- not published elsewhere</h4>
+      <div id='app_col'>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appeditlem_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Correct form
+        </div>
+      </div>
+      <div id='app_col'>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appeditrdg_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Original, Previous, incorrect form
+        </div>
+      </div>
+    </div>
+    <form name='appEditForm'>
+      <div id='appEditCitation'>
+        <h4>Citation</h4>
+        <input checked='' class='choosetextradio' id='Editorial' name='appEditType' onclick='checkEditType(this.id)' type='radio' value='Editorial'>Editorial</input>
+        <div id='appEditCitationText'>
+          <input class='choosetext greek' id='appeditresp_value' size='25' type='text'>Citation, e.g.: J. Doe, ZPE 234 (2015) 3-4</input>
+        </div>
+        <br>
+        <br>
+        <input class='choosetextradio' id='BL' name='appEditType' onclick='checkEditType(this.id)' type='radio' value='BL'>BL</input>
+        <div id='appEditCitationText'>
+          <input class='choosetext greek' disabled='true' id='appeditBLvol_value' size='5' type='text'>Volume</input>
+          &nbsp
+          <input class='choosetext greek' disabled='true' id='appeditBLpage_value' size='5' type='text'>Page</input>
+        </div>
+        <br>
+        <br>
+        <input class='choosetextradio' id='PN' name='appEditType' onclick='checkEditType(this.id)' type='radio' value='PN'>PN</input>
+        <div id='appEditCitationText'>
+          <input class='choosetext greek' disabled='true' id='appeditPN_value' size='25' type='text'>Authority, e.g.: M. Smith</input>
+        </div>
+        <br>
+      </div>
+    </form>
+    <div id='app_button'>
+      <button onclick='insertAppEdit()' type='button'>Insert</button>
+      &nbsp
+      <button onclick='closeHelper()' type='button'>Close</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='number_div'>
+      <%= render :partial => 'markup_warn' %>
+      <h3>Enter Greek/Latin content and/or Numerical value</h3>
+      <div id='numinp_div'>
+        <input class='choosetext greek' id='number_content' size='04' type='text'>Greek/Latin content on papyrus, e.g. κε, γ</input>
+        <br>
+        <input class='choosetext' id='number_value' size='04' type='text'>Numerical value, e.g. 25, 1/3</input>
+        <form name='uncertain'>
+          <input class='value_uncert_check_c' enabled='true' id='value_uncert' name='value_uncert_check_n' type='checkbox' value='valueuncert'>Value uncertain?</input>
+        </form>
+        <br>
+        Both checkboxes below are ignored if only value is entered above
+        <br>
+        <br>
+        <form name='number'>
+          <input class='rend_tick_check_c' enabled='true' id='rendtick' name='rend_tick_check_n' type='checkbox' value='rendtick'>Select if scribe marked number with a tick (’)</input>
+          <br>
+          <input class='type_frac_check_c' enabled='true' id='typefrac' name='type_frac_check_n' type='checkbox' value='typefrac'>Select if number is an unidentified fraction (value entered and/or uncertain checked above will be ignored if this box is checked)</input>
+          <br>
+        </form>
+      </div>
+      <div id='button_left'>
+        <button onclick='insertNum()' type='button'>Insert</button>
+        &nbsp
+        <button onclick='closeHelper()' type='button'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>

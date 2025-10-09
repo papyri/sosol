@@ -1,0 +1,29 @@
+<ul class='sign_in_out'>
+  <% if @current_user.nil? %>
+    <li>
+      <%= link_to 'sign in', signin_url %>
+    </li>
+  <% else %>
+    <li>
+      <%= link_to "home", dashboard_url %>
+    </li>
+    <li>
+      |
+    </li>
+    <li>
+      <%= link_to @current_user.name, edit_user_registration_url %>
+    </li>
+    <li>
+      |
+    </li>
+    <li>
+      <%= link_to 'sign out', signout_url %>
+    </li>
+  <% end %>
+  <li>
+    |
+  </li>
+  <li>
+    <%= link_to "help", help_url %>
+  </li>
+</ul>

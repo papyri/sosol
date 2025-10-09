@@ -1,0 +1,25 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'translation_helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <%= stylesheet_link_tag 'terms' %>
+    <div id='term_header'>
+      <b>Choose Language</b>
+      <div id='lang_radio_group'>
+        <input checked='checked' class='term_lang' id='none' name='term_lang' onclick='checktypegap(this.id)' type='radio' value='none'>None</input>
+        <input class='term_lang' id='la' name='term_lang' onclick='checktypegap(this.id)' type='radio' value='la'>Latin</input>
+        <input class='term_lang' id='grc-Latn' name='term_lang' onclick='checktypegap(this.id)' type='radio' value='grc-Latn'>Greek-Latin</input>
+      </div>
+      <br>
+      then
+      <b>Click Term Below To Insert</b>
+    </div>
+    <br>
+    <br>
+    <%= @glossary %>
+    <div id='button_left'>
+      <button onclick='closeHelper()' type='button'>Close</button>
+    </div>
+  </div>
+</div>

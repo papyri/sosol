@@ -1,0 +1,42 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='app2col'>
+      <%= render :partial => 'markup_warn' %>
+      <h4>Alternate readings</h4>
+      <div id='app_col'>
+        <div id='app_low'>
+          <form name='appaltlem'>
+            <input class='lemcert' id='appaltlemcert' name='lemcert' type='checkbox' value='appaltlemcert'>Uncertain</input>
+          </form>
+        </div>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appaltlem_value' size='25' type='text'>
+        </div>
+        <div class='greek' id='app_desc'>
+          Preferred reading: e.g. ἐᾶ̣
+        </div>
+        <div id='app_button'>
+          <button onclick='insertAppAlt()' type='button'>Insert</button>
+          &nbsp
+          <button onclick='closeHelper()' type='button'>Close</button>
+        </div>
+      </div>
+      <div id='app_col'>
+        <div id='app_low'>
+          <form name='appaltrdg'>
+            <input class='rdgcert' id='appaltrdgcert' name='rdgcert' type='checkbox' value='appaltrdgcert'>Uncertain</input>
+          </form>
+        </div>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appaltrdg_value' size='25' type='text'>
+        </div>
+        <div class='greek' id='app_desc'>
+          Other possible reading: e.g. ἐᾶ[ι]
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

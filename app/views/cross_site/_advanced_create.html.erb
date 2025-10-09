@@ -1,0 +1,8 @@
+<% unless @current_user.nil? %>
+  <li>
+    |
+  </li>
+  <li>
+    <%= link_to 'Advanced Create', advanced_create_publications_path %>
+  </li>
+<% end %>
