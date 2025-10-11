@@ -20,12 +20,12 @@ class DDBCurrentIdentifiersControllerTest < ActionController::TestCase
     Epidocinator.stubs(:apply_xsl_transform).returns('')
     Epidocinator.stubs(:validate).returns(true)
     # just make a nonsense change to the content
-    content = { xml_content: @identifier.xml_content.sub('English', 'Gobbleygook') }
+    content = { xml_content: @identifier.xml_content.sub('English', 'Gobbledygook') }
     get :editxml, params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s }
     put :updatexml,
         params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s, comment: 'test',
-                  ddb_identifier: content }
-    assert_redirected_to "/publications/#{@publication.id}/ddb_identifiers/#{@identifier.id}/edit"
+                  ddb_current_identifier: content }
+    assert_redirected_to "/publications/#{@publication.id}/ddb_current_identifiers/#{@identifier.id}/edit"
     assert_equal 'Commit failed', flash[:error]
   end
 end

@@ -30,13 +30,10 @@ class DDBCurrentIdentifierTest < ActiveSupport::TestCase
     end
 
     should 'raise an error when the destination exists' do
-      bgu_1_1 = FactoryBot.build(:DDBCurrentIdentifier, name: 'papyri.info/current/11853')
+      bgu_1_1 = FactoryBot.build(:DDBCurrentIdentifier, name: 'papyri.info/current/11583')
       assert_not_nil bgu_1_1.content
-      Rails.logger.info("RENAME CONFLICT TEST: #{bgu_1_1.content.inspect}")
-      Rails.logger.info("RENAME CONFLICT TEST on publication branch: #{@creator.repository.get_file_from_branch(bgu_1_1.to_path, @publication.branch).inspect}")
-
       assert_raise RuntimeError do
-        @ddb_identifier.rename('papyri.info/current/11853')
+        @ddb_identifier.rename('papyri.info/current/11583')
       end
     end
 
