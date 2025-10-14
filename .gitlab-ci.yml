@@ -18,6 +18,7 @@ stages:
   - build
   - test
   - publish
+  - release
   - deploy
 
 .job:
@@ -30,6 +31,9 @@ build:
 
 test:
   extends: .test
+
+release:
+  extends: .release
 
 build-cruby:
   extends: .build
