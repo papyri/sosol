@@ -24,8 +24,8 @@ class DDBCurrentIdentifiersControllerTest < ActionController::TestCase
     get :editxml, params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s }
     put :updatexml,
         params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s, comment: 'test',
-                  ddb_identifier: content }
-    assert_redirected_to edit_publication_ddb_identifier_path(@publication, @identifier)
+                  ddb_current_identifier: content }
+    assert_redirected_to edit_publication_ddb_current_identifier_path(@publication, @identifier)
     assert_equal 'Commit failed', flash[:error]
   end
 end
