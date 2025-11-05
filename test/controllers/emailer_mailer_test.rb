@@ -76,7 +76,11 @@ class EmailerMailerTest < ActionMailer::TestCase
       assert_not ActionMailer::Base.deliveries.empty?
       assert_equal ['johndoe@example.com'], email.to
       assert_equal "submitted: #{@publication.title} #{@ddb_identifier.title}", email.subject
-      assert_equal read_fixture('identifier_parsing').join.gsub(/!PUBLICATION_ID/, @publication.id.to_s).gsub(/!IDENTIFIER_ID/, @ddb_identifier.id.to_s).gsub(/!BOARD_PUBLICATION_ID/, @board_publication.id.to_s),
+      assert_equal read_fixture('identifier_parsing').join
+      .gsub(/!PUBLICATION_ID/, @publication.id.to_s)
+      .gsub(/!IDENTIFIER_ID/, @ddb_identifier.id.to_s)
+      .gsub(/!BOARD_PUBLICATION_ID/, @board_publication.id.to_s)
+      .gsub(/!URL_ROOT/, ENV.fetch('RAILS_RELATIVE_URL_ROOT', '') + '/'),
                    email.body.to_s
     end
 

@@ -59,7 +59,7 @@ pidfile ENV.fetch('PIDFILE') { 'tmp/pids/server.pid' }
 # end
 #
 
-if Rails.env.production?
+if Rails.env.production? && ENV["RAILS_LOG_TO_STDOUT"].blank?
   stdout_redirect "#{Rails.root}/log/production.stdout.log", "#{Rails.root}/log/production.stderr.log",
                   true
 end
