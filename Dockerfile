@@ -44,7 +44,7 @@ ENV BUNDLE_GEMFILE=$BUNDLE_GEMFILE
 ENV RAILS_ENV=production
 ENV RAILS_RELATIVE_URL_ROOT="/editor"
 # Feel free to override this at runtime
-ENV GIT_CONFIG_GLOBAL=/srv/data/papyri.info/sosol/editor/.gitconfig
+ENV GIT_CONFIG=/srv/data/papyri.info/sosol/editor/.gitconfig
 
 RUN echo "${RUBY_VERSION}" > .ruby-version && rbenv install ${RUBY_VERSION} && rbenv rehash && gem install bundler:2.5.23 && rbenv rehash && bundle install && ruby -v && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
 RUN bundle exec cap local externals:setup
