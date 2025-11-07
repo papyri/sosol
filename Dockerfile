@@ -6,6 +6,8 @@ LABEL org.opencontainers.image.authors="Ryan Baumann <ryan.baumann@gmail.com>"
 # openjdk-8-jre
 # Install ruby-build build deps
 ENV DEBIAN_FRONTEND=noninteractive
+#Sets the HOME directory to /root entirely for /root/.gitconfig and git operations
+ENV HOME=/root
 RUN apt-get update && \
   apt-get install -y git wget subversion curl \
   autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev locales \
@@ -44,11 +46,13 @@ ENV BUNDLE_GEMFILE=$BUNDLE_GEMFILE
 ENV RAILS_ENV=production
 ENV RAILS_RELATIVE_URL_ROOT="/editor"
 # Feel free to override this at runtime
-ENV GIT_CONFIG=/srv/data/papyri.info/sosol/editor/.gitconfig
 
 RUN echo "${RUBY_VERSION}" > .ruby-version && rbenv install ${RUBY_VERSION} && rbenv rehash && gem install bundler:2.5.23 && rbenv rehash && bundle install && ruby -v && touch config/environments/development_secret.rb config/environments/production_secret.rb config/environments/test_secret.rb
 RUN bundle exec cap local externals:setup
 # RUN RAILS_ENV=test ./script/setup
+
+RUN chgrp -R 0 /root && \
+    chmod -R g=u /root
 
 RUN chgrp -R 0 /srv/data/papyri.info/sosol/editor && \
     chmod -R g=u /srv/data/papyri.info/sosol/editor && \
@@ -57,7 +61,7 @@ RUN chgrp -R 0 /srv/data/papyri.info/sosol/editor && \
 RUN chgrp -R 0 /opt/sosol && \
     chmod -R g=u /opt/sosol
 # Add git safe directory for the mounted canonical repo
-RUN git config --file /srv/data/papyri.info/sosol/editor/.gitconfig --add safe.directory /srv/data/papyri.info/sosol/repo/canonical.git
+RUN git config --global --add safe.directory /srv/data/papyri.info/sosol/repo/canonical.git
 
 # Finally, start the application
 EXPOSE 3000
