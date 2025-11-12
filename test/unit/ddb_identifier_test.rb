@@ -16,7 +16,7 @@ class DDBCurrentIdentifierTest < ActiveSupport::TestCase
       @creator = FactoryBot.create(:user, name: 'Creator')
       @publication = FactoryBot.create(:publication, owner: @creator, creator: @creator, status: 'new')
       # branch from master so we aren't just creating an empty branch
-      @publication.branch_from_master
+      @publication.branch_from_default
 
       @ddb_identifier = DDBCurrentIdentifier.new_from_template(@publication)
       @original_name = @ddb_identifier.name
