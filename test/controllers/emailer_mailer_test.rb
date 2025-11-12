@@ -28,7 +28,7 @@ class EmailerMailerTest < ActionMailer::TestCase
       @publication = FactoryBot.create(:publication, owner: @creator, creator: @creator, status: 'new',
                                                      title: 'Publication Title')
       # branch from master so we aren't just creating an empty branch
-      @publication.branch_from_master
+      @publication.branch_from_default
       @ddb_identifier = DDBCurrentIdentifier.new_from_template(@publication)
       @ddb_identifier.title = 'DDB Identifier Title'
       @ddb_identifier.save
@@ -40,7 +40,7 @@ class EmailerMailerTest < ActionMailer::TestCase
       @meta_board = FactoryBot.create(:board, title: 'A nice board')
       @board_publication = FactoryBot.create(:publication, owner: @meta_board, creator: @creator,
                                                            status: 'new', title: 'Board Publication Title')
-      @publication.branch_from_master
+      @publication.branch_from_default
       # branch from master so we aren't just creating an empty branch
     end
 

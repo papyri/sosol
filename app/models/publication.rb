@@ -134,7 +134,7 @@ class Publication < ApplicationRecord
         identifier_class = Object.const_get(identifier_name)
         temp_id = identifier_class.new(name: identifier_string)
         # make sure we have a path on master before forking it for this publication
-        next if repository.get_file_from_branch(temp_id.to_path, 'master').blank?
+        next if repository.get_file_from_branch(temp_id.to_path, repository.default_branch).blank?
 
         # 2012-09-17 BALMAS it might be good to have an option to raise an error if we couldn't
         # branch from the master repo? But not for optional secondary identifiers (e.g. annotations)?
@@ -341,8 +341,8 @@ class Publication < ApplicationRecord
     new_publication.status = 'new' # TODO: add new flag else where or flesh out new status#"new"
     new_publication.save!
 
-    # branch from master so we aren't just creating an empty branch
-    new_publication.branch_from_master
+    # branch from default so we aren't just creating an empty branch
+    new_publication.branch_from_default
 
     # create the required meta data and transcriptions
     new_ddb = DDBCurrentIdentifier.new_from_template(new_publication)
@@ -363,8 +363,8 @@ class Publication < ApplicationRecord
     new_publication.status = 'new' # TODO: add new flag else where or flesh out new status#"new"
     new_publication.save!
 
-    # branch from master so we aren't just creating an empty branch
-    new_publication.branch_from_master
+    # branch from default so we aren't just creating an empty branch
+    new_publication.branch_from_default
 
     # create the required meta data and transcriptions
     new_dclp_meta = DCLPCurrentMetaIdentifier.new_from_template(new_publication)
@@ -908,12 +908,12 @@ class Publication < ApplicationRecord
     # (happens on the finalizer's repo)
     finalizer.repository.update_master_from_canonical
     # parent commit should ALWAYS be canonical master head
-    parent_commit = finalizer.repository.get_head('master')
+    parent_commit = finalizer.repository.get_head(finalizer.repository.default_branch)
 
     if RUBY_PLATFORM == 'java'
       controlled_paths_blobs = self.paths_blobs(controlled_paths)
 
-      jgit_tree = paths_blobs_to_jgit_tree(finalizing_publication.repository.jgit_repo, 'master', controlled_paths_blobs)
+      jgit_tree = paths_blobs_to_jgit_tree(finalizing_publication.repository.jgit_repo, finalizing_publication.repository.default_branch, controlled_paths_blobs)
       tree_sha1 = jgit_tree.update_sha
 
       Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
@@ -935,7 +935,7 @@ class Publication < ApplicationRecord
         finalizing_publication.branch, flattened_commit_sha1, true)
     else
       controlled_paths_blobs_oids = self.paths_blobs_oids(controlled_paths)
-      tree_sha1 = paths_blobs_oids_to_cgit_tree(finalizing_publication.repository, 'master', controlled_paths_blobs_oids)
+      tree_sha1 = paths_blobs_oids_to_cgit_tree(finalizing_publication.repository, finalizing_publication.repository.default_branch, controlled_paths_blobs_oids)
       
       Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
@@ -1084,7 +1084,8 @@ class Publication < ApplicationRecord
     owner.repository.get_head(branch)
   end
 
-  def merge_base(branch = 'master')
+  def merge_base(branch = nil)
+    branch ||= repository.default_branch
     Repository.run_command("#{repository.git_command_prefix} merge-base #{branch} #{head}").chomp
   end
 
@@ -1148,7 +1149,7 @@ class Publication < ApplicationRecord
     begin
       canon = Repository.new
       publication_sha = head
-      canonical_sha = canon.get_head('master')
+      canonical_sha = canon.get_head(canon.default_branch)
 
       if canon_controlled_identifiers.length.positive?
         if merge_base(canonical_sha) == canonical_sha
@@ -1165,7 +1166,7 @@ class Publication < ApplicationRecord
             # (happens on the finalizer's repo)
             owner.repository.update_master_from_canonical
 
-            jgit_tree = paths_blobs_to_jgit_tree(owner.repository.jgit_repo, 'master', controlled_paths_blobs)
+            jgit_tree = paths_blobs_to_jgit_tree(owner.repository.jgit_repo, owner.repository.default_branch, controlled_paths_blobs)
             tree_sha1 = jgit_tree.update_sha
 
             Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
@@ -1199,7 +1200,7 @@ class Publication < ApplicationRecord
             # (happens on the finalizer's repo)
             owner.repository.update_master_from_canonical
             
-            tree_sha1 = paths_blobs_oids_to_cgit_tree(owner.repository, 'master', controlled_paths_blobs_oids)
+            tree_sha1 = paths_blobs_oids_to_cgit_tree(owner.repository, owner.repository.default_branch, controlled_paths_blobs_oids)
 
             Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
@@ -1210,7 +1211,7 @@ class Publication < ApplicationRecord
             Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
           end
         end
-        canon.copy_branch_from_repo(branch, 'master', owner.repository)
+        canon.copy_branch_from_repo(branch, canon.default_branch, owner.repository)
         change_status('committed')
         save!
 
@@ -1373,8 +1374,8 @@ class Publication < ApplicationRecord
     end
   end
 
-  def branch_from_master(force = true)
-    owner.repository.create_branch(branch, 'master', force)
+  def branch_from_default(force = true)
+    owner.repository.create_branch(branch, owner.repository.default_branch, force)
   end
 
   # Determines which identifiers are controlled by this publication's board.
@@ -1412,7 +1413,7 @@ class Publication < ApplicationRecord
 
   def diff_from_canon
     canon = Repository.new
-    canonical_sha = canon.get_head('master')
+    canonical_sha = canon.get_head(canon.default_branch)
     diff = Repository.run_command("git --git-dir=\"#{owner.repository.path}\" diff --unified=5000 #{canonical_sha} #{head} -- #{controlled_paths.map do |path|
                                                                                                                                   "\"#{path}\""
                                                                                                                                 end.join(' ')}")

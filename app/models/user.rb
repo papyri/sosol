@@ -82,7 +82,7 @@ class User < ApplicationRecord
         p.creator = user
         p.populate_identifiers_from_identifiers(pn_id)
         p.save!
-        p.branch_from_master
+        p.branch_from_default
 
         e = Event.new
         e.category = 'started editing'

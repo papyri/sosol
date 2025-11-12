@@ -387,7 +387,7 @@ class APISWorkflowTest < ActionDispatch::IntegrationTest
         @publication = FactoryBot.create(:publication, owner: @submitter, creator: @submitter, status: 'new')
 
         # branch from master so we aren't just creating an empty branch
-        @publication.branch_from_master
+        @publication.branch_from_default
       end
 
       teardown do

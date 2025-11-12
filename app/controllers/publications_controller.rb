@@ -62,7 +62,7 @@ class PublicationsController < ApplicationController
     # @publication.creator_id = @current_user
 
     if @publication.save
-      @publication.branch_from_master
+      @publication.branch_from_default
 
       # need to remove repeat against publication model
       e = Event.new
@@ -109,8 +109,8 @@ class PublicationsController < ApplicationController
     new_publication.status = 'new'
     new_publication.save!
 
-    # branch from master so we aren't just creating an empty branch
-    new_publication.branch_from_master
+    # branch from default so we aren't just creating an empty branch
+    new_publication.branch_from_default
 
     # create the required meta data and transcriptions
     new_biblio = BiblioIdentifier.new_from_template(new_publication)
@@ -127,8 +127,8 @@ class PublicationsController < ApplicationController
     new_publication.status = 'new'
     new_publication.save!
 
-    # branch from master so we aren't just creating an empty branch
-    new_publication.branch_from_master
+    # branch from default so we aren't just creating an empty branch
+    new_publication.branch_from_default
 
     new_apis = APISIdentifier.new_from_template(new_publication, params[:apis_collection].to_s)
     @publication = new_publication
@@ -302,7 +302,7 @@ class PublicationsController < ApplicationController
   # GET /publications.xml
   def index
     @branches = @current_user.repository.branches
-    @branches.delete('master')
+    @branches.delete(@current_user.repository.default_branch)
 
     @publications = Publication.where(owner_id: @current_user.id)
     # just give branches that don't have corresponding publications
@@ -793,7 +793,7 @@ class PublicationsController < ApplicationController
     #           identifiers, new_title)
     #
     #         if @publication.save!
-    #           @publication.branch_from_master
+    #           @publication.branch_from_default
     #
     #           # need to remove repeat against publication model
     #           e = Event.new
@@ -873,7 +873,7 @@ class PublicationsController < ApplicationController
       related_identifiers, optional_title
     )
     if @publication.save!
-      @publication.branch_from_master
+      @publication.branch_from_default
 
       # need to remove repeat against publication model
       e = Event.new

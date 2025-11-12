@@ -5,7 +5,7 @@ class DDBCurrentIdentifiersControllerTest < ActionController::TestCase
     @user = FactoryBot.create(:user)
     @request.session[:user_id] = @user.id
     @publication = FactoryBot.create(:publication, owner: @user, creator: @user, status: 'new')
-    @publication.branch_from_master
+    @publication.branch_from_default
     @identifier = DDBCurrentIdentifier.new_from_template(@publication)
   end
 
