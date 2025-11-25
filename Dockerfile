@@ -65,4 +65,4 @@ RUN git config --global --add safe.directory /srv/data/papyri.info/sosol/repo/ca
 
 # Finally, start the application
 EXPOSE 3000
-CMD ./script/server
+CMD umask 002 && ./script/server
