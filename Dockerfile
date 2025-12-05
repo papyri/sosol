@@ -60,9 +60,14 @@ RUN chgrp -R 0 /srv/data/papyri.info/sosol/editor && \
 
 RUN chgrp -R 0 /opt/sosol && \
     chmod -R g=u /opt/sosol
+
+# Set shell umask for shell commands from Ruby run_command() etc.
+RUN echo 'umask 002' >> /etc/bash.bashrc && \
+    echo 'umask 002' >> /etc/profile
+
 # Add git safe directory for the mounted canonical repo
 RUN git config --global --add safe.directory /srv/data/papyri.info/sosol/repo/canonical.git
 
 # Finally, start the application
 EXPOSE 3000
-CMD umask 002 && ./script/server
+CMD ./script/server
