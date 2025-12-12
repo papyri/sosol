@@ -132,7 +132,6 @@ div.content {
 
     min-width: none; /* 900px; */
 
-    width: 96%;  /* this gets scroll bars to go away */
     /* padding: 30px 30px; */
    padding: 2% 2%;
 
@@ -283,9 +282,6 @@ ul.about {
 }
 a {
     color: #162A5C;
-}
-a:visited {
-    color: maroon;
 }
 h1 {
     font-size: 300%;
@@ -496,6 +492,22 @@ div#related h4 {
     font-family: "Lucida Grande","Arial Unicode MS",Verdana,Cardo,Arial,Helvetica,sans-serif;
 }
 
+/** Bootstrap header, footer use the same classes as navigator but these are being overridden elsewhere
+Creating specific rules for matching styles for this area rather than try to mess with the existing rules 
+here and in reset-fonts-grids.css **/
+footer {
+  text-align: left;
+}
+footer a, header a {
+  color: white;
+  /* bootstrap variables */
+  line-height: var(--bs-body-line-height);
+  font-family: var(--bs-body-font-family);
+
+}
+footer a:visited, header a:visited {
+  color: white;
+}
 
 #footer {
     /* commented out so as to not override settings in pn's master.css */
