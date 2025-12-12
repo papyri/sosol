@@ -1,8 +1,8 @@
 <% unless @current_user.nil? %>
-  <li>
-    |
+  <li class="nav-item">
+    <a class='nav-link'>|</a>
   </li>
-  <li>
-    <%= link_to 'Advanced Create', advanced_create_publications_path %>
+  <li class="nav-item">
+    <%= link_to 'Advanced Create', advanced_create_publications_path, class: 'nav-link' %>
   </li>
 <% end %>
