@@ -159,23 +159,6 @@ Sosol::Application.routes.draw do
       end
     end
 
-    resources :dclp_meta_identifiers do
-      collection do
-        get :biblio_autocomplete
-        get :ancient_author_autocomplete
-      end
-
-      member do
-        get :history
-        get :preview
-        get :editxml
-        get :biblio_preview
-        patch :updatexml
-        get :rename_review
-        patch :rename
-      end
-    end
-
     resources :dclp_current_meta_identifiers do
       collection do
         get :biblio_autocomplete
@@ -190,22 +173,6 @@ Sosol::Application.routes.draw do
         patch :updatexml
         get :rename_review
         patch :rename
-      end
-    end
-
-    resources :dclp_text_identifiers do
-      member do
-        get :history
-        get :preview
-        get :editxml
-        patch :updatexml
-        get :rename_review
-        patch :rename
-        get :commentary
-        patch :update_commentary
-        patch :update_frontmatter_commentary
-        delete :delete_commentary
-        delete :delete_frontmatter_commentary
       end
     end
 

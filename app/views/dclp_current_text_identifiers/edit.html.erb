@@ -123,7 +123,7 @@
   }
   
   document.observe("dom:loaded", function() {
- && !#{d<%= ined?(@bad_leiden) ? @bad_leiden : false %>) {
+ && !#{<%= defined?(@bad_leiden) ? @bad_leiden : false %>) {
       was_disabled = $('ddb_identifier_leiden_plus').disabled;
       
       Form.Element.disable('ddb_identifier_leiden_plus');

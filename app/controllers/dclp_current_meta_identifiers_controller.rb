@@ -2,7 +2,7 @@ include DCLPMetaIdentifierHelper
 
 require 'net/http'
 
-class DCLPMetaIdentifiersController < HGVMetaIdentifiersController
+class DCLPCurrentMetaIdentifiersController < HGVMetaIdentifiersController
   def edit
     find_identifier
     @identifier.get_epidoc_attributes
