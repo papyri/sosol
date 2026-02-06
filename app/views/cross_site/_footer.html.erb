@@ -1,38 +1,53 @@
- <footer class="bg-dark py-5" data-bs-theme="dark">
-    <div class="container-xl px-4">
-      <div class="row">
-        <div class="col-6 col-md-3 mb-3">
-          <h2 class="h4">Links</h2>
-          <ul class="list-unstyled no-link-underline">
-            <li><a href="/">Home</a></li>
-            <%= render "cross_site/footer_links" %>
-            <li><%=  link_to "Help", help_url %></li>
-            <li><a href="/docs/resources">Resources</a></li>
-            <li><a href="/feedback.html">Feedback</a></li>
-          </ul>
-        </div>
-        <div class="col-6 col-md-3 mb-3">
-          <h2 class="h4">About</h2>
-          <ul class="list-unstyled about-links no-link-underline">
-            <li><a href="/docs/about">Papyri.info</a></li>
-            <li><a href="/docs/apis">APIS</a></li>
-            <li><a href="/docs/ddbdp">DDbDP</a></li>
-            <li><a href="https://aquila.zaw.uni-heidelberg.de/start">HGV</a></li>
-            <li><a href="http://www.trismegistos.org/">Trismegistos</a></li>
-            <li><a href="https://bibpap.be/">BP</a></li>
-            <li><a href="http://epidoc.sourceforge.net/">EpiDoc</a></li>
-          </ul>
-        </div>
-        <div class="d-none d-md-flex col-md-1 justify-content-center">
-          <div class="vr my-auto h-100 bg-light"></div>
-        </div>
-        <div class="d-md-none d-flex">
-          <hr class="border-light w-100"/>
-        </div>
-        <div class="col-12 col-md-5 mb-3">
-          <h2 class="h4 text-light">Produced by</h2>
-          <p class="text-light">The <a href="http://blogs.library.duke.edu/dcthree/">Duke Collaboratory for Classics Computing</a> &amp;<br/>the <a href="http://www.nyu.edu/isaw/">Institute for the Study of the Ancient World</a>.</p>
-        </div>
+<div id="feedback-row">
+  <div class="container-xl">
+    <p>Questions? Ideas for improvement? <br class="d-sm-none" />Please <a href="/feedback.html">send us feedback</a>.</p>
+  </div>
+</div>
+
+<footer class="bg-dark py-5 flex-grow-1" data-bs-theme="dark">
+  <div class="container-xl px-4">
+    <div class="row">
+
+      <div class="reading-devil col-md-2 mb-3 text-center">
+        <a href="https://library.duke.edu"><img alt="Duke University Libraries" src="/images/reading_devil.png"></a>
       </div>
+
+      <div class="col-12 col-md-1 mb-3">
+        <ul class="list-unstyled no-link-underline">
+          <li class="text-center text-md-start"><a href="/">Home</a></li>
+          <%= render "cross_site/footer_links" %>
+          <li class="text-center text-md-start"><a href="/docs/about">About</a></li>
+          <li class="text-center text-md-start"><a href="/docs/help">Help</a></li>
+          <li class="text-center text-md-start"><a href="/docs/resources">Resources</a></li>
+        </ul>
+      </div>
+
+      <div class="d-none d-md-flex col-md-1 justify-content-center">
+        <div class="vr my-auto h-100 bg-light"></div>
+      </div>
+
+      <div class="col-12 col-md-8 mb-3">
+        <p class="text-light text-center text-md-start mb-3">Papyri.info is a project of <a href="https://library.duke.edu">Duke University Libraries</a>, in collaboration with:</p>
+        <ul class="list-unstyled about-links no-link-underline text-center text-md-start">
+          <li><a href="/docs/apis">APIS</a></li>
+
+          <li><a href="https://bibpap.be/">BP</a></li>
+
+          <li><a href="/docs/dclp">DCLP</a></li>
+
+          <li><a href="/docs/ddbdp">DDbDP</a></li>
+
+          <li><a href="http://epidoc.sourceforge.net/">EpiDoc</a></li>
+
+          <li><a href="https://aquila.zaw.uni-heidelberg.de/start">HGV</a></li>
+
+          <li><a href="https://www.papy.uni-heidelberg.de/">Institute&nbsp;of&nbsp;Papyrology&nbsp;Heidelberg</a></li>
+
+          <li><a href="http://www.trismegistos.org/">Trismegistos</a></li>
+
+        </ul>
+      </div>
+      
     </div>
-  </footer>
+  </div>
+</footer>

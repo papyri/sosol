@@ -1,75 +1,98 @@
   <header id="masthead" class="bg-primary position-relative">
+    
+    
+
     <nav id="masthead-nav" class="navbar flex-wrap navbar-expand-md" data-bs-theme="dark" aria-label="Masthead & user account navigation">
       <div class="container-xl px-4">
-        <div class="d-flex justify-content-between align-items-center w-100">
-          <a href="/" class="navbar-brand">Papyri.info</a>
-          <div class="d-flex align-items-center">
-            <div>
-             <div>
-                  <% redirect_logged_in_user_to_dashboard_instead_of_papyri_info = false%>
-                  <% if redirect_logged_in_user_to_dashboard_instead_of_papyri_info && @current_user %>
-                    <a href="
-                    <%=  dashboard_url %>
-                    ">
-                  </a>
-                  <% end %>
-                        <!-- sosol side -->
-                        
-                  <%= render "cross_site/sign_in_out" %>
-                  <!-- pn side -->
-                  <!-- cross_site/sign_in_out -->
-                    <!-- <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2> -->
-                  </div>
+        <div class="d-flex w-100 mt-2 mb-2 justify-content-between align-items-center">
+            
+          <div class="col-11 col-md-6 d-flex logos">
+            <a href="https://library.duke.edu">
+              <div class="navbar-logo mt-1 me-3 me-md-4">
+                <span class="visually-hidden">Duke University Libraries</span>
               </div>
+            </a>
+            <div class="papyri-logo me-auto">
+              <a href="/" class="navbar-brand">Papyri.info</a>
             </div>
+          </div>
+
+          <div class="col-1 col-md-1 d-flex justify-content-end toggle">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
           </div>
+          
+          <div class="d-none d-md-block col-md-5 signin">
+            <div id="login" class="d-flex justify-content-end ">
+                <% redirect_logged_in_user_to_dashboard_instead_of_papyri_info = false%>
+                  <% if redirect_logged_in_user_to_dashboard_instead_of_papyri_info && @current_user %>
+                    <a href="<%=  dashboard_url %>"></a>
+                  <% end %>
+                  <!-- sosol side -->
+                  <%= render "cross_site/sign_in_out" %>
+            </div>
+          </div>
+          
         </div>
       </div>
     </nav>
-
+    
+    
     <nav id="primary-nav" class="navbar flex-wrap navbar-expand-md bg-primary-darker py-0" data-bs-theme="dark" aria-label="Primary search & browse navigation">
       <div class="container-xl px-4">
         <div id="mainNavbar" class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0 pt-2 pt-md-0">
-          <li class="nav-item"><a class="nav-link disabled nav-category ps-md-0" href="#" tabindex="-1">Browse</a></li>
-          <li class="nav-item"><a class="nav-link" href="/browse/editions/">Editions</a></li>
-          <li class="nav-item"><a class="nav-link" href="/browse/apis/">APIS</a></li>
-          <li class="nav-item"><a class="nav-link" href="/browse/authors">Authors</a></li>
-          <li class="nav-item position-relative">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-target="#tmSearch" aria-expanded="false" aria-controls="tmSearch" style="display: block !important;" role="button">TM Number</a>
 
-            <div class="bg-primary rounded-bottom p-2 mt-0 border-0 collapse position-absolute dropdown-menu" data-bs-theme="light" id="tmSearch">
-              <form onsubmit="window.location='/trismegistos/' + document.getElementById('tmid').value; return false;">
-                <div class="input-group">
-                  <input id="tmid" type="text" class="form-control bg-white" placeholder="" aria-label="TM Number">
-                  <button class="btn btn-light" type="submit" id="tmgo">Go</button>
-                </div>
-              </form>
-            </div>
-          </li>
+          <!-- hide for wider viewports -->
+          <div id="login" class="d-md-none mt-3">
+            <% redirect_logged_in_user_to_dashboard_instead_of_papyri_info = false%>
+              <% if redirect_logged_in_user_to_dashboard_instead_of_papyri_info && @current_user %>
+                <a href="<%=  dashboard_url %>"></a>
+              <% end %>
+              <!-- sosol side -->
+              <%= render "cross_site/sign_in_out" %>
+          </div>
 
-          <li class="nav-item"><a class="nav-link disabled nav-category ms-md-5 mt-3 mt-md-0" href="#" tabindex="-1">Search</a></li>
-          <li class="nav-item"><a class="nav-link" href="/search">Data</a></li>
-          <li class="nav-item"><a class="nav-link" href="/bibliosearch">Bibliography</a></li>
-          <!-- sosol side -->
-          <%= render "cross_site/advanced_create" %>
-        
-          <!-- pn side -->
-          <!-- cross_site/advanced_create -->
+
+          <ul class="navbar-nav me-auto mb-2 mb-md-0 pt-2 pt-md-0">
+            <li class="nav-item"><a class="nav-link disabled nav-category ps-md-0" href="#" aria-hidden="true" tabindex="-1">Browse:</a></li>
+            <li class="nav-item"><a class="nav-link" href="/browse/editions/"><span class="visually-hidden">Browse</span>Editions</a></li>
+            <li class="nav-item"><a class="nav-link" href="/browse/apis/"><span class="visually-hidden">Browse</span>APIS</a></li>
+            <li class="nav-item"><a class="nav-link" href="/authors"><span class="visually-hidden">Browse</span> Authors</a></li>
+            <li class="nav-item position-relative">
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-target="#tmSearch" aria-expanded="false" aria-controls="tmSearch" role="button">TM Number</a>
+
+              <div class="bg-primary rounded-bottom p-2 mt-0 border-0 collapse position-absolute dropdown-menu" data-bs-theme="light" id="tmSearch">
+                <form onsubmit="window.location='/trismegistos/' + document.getElementById('tmid').value; return false;">
+                  <div class="input-group">
+                    <input id="tmid" type="text" class="form-control bg-white" placeholder="" aria-label="TM Number"/>
+                    <button class="btn btn-light" type="submit" id="tmgo">Go</button>
+                  </div>
+                </form>
+              </div>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="/docs/checklist"><span class="visually-hidden">Browse</span> Checklist</a></li>
+
+            <li class="nav-item"><a class="nav-link disabled nav-category ms-lg-4 ms-xl-5 mt-3 mt-md-0" aria-hidden="true" href="#" tabindex="-1">Search:</a></li>
+            <li class="nav-item"><a class="nav-link" href="/search"><span class="visually-hidden">Search</span> Data</a></li>
+            <li class="nav-item"><a class="nav-link" href="/bibliosearch"><span class="visually-hidden">Search</span> Bibliography</a></li>
+
+            <!-- sosol side -->
+            <%= render "cross_site/advanced_create" %>
+
+          </ul>
+
+        </div>
+
+        <!-- right nav is for sosol side -->
+        <ul class="nav right">
+          <%= render "cross_site/board_tabs" %>
+          <%= render "cross_site/user_tabs" %>
         </ul>
+
       </div>
-
-      <!-- right nav is for sosol side -->
-      <ul class="nav right">
-      <%= render "cross_site/board_tabs" %>
-    
-      <%= render "cross_site/user_tabs" %>
-      </ul>
-
     </nav>
+
 
       <% if defined? @is_editor_view %>       
           <%= render "identifiers/edit_bar" %>
