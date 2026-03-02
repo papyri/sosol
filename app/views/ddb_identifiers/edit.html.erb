@@ -124,7 +124,6 @@
   
   document.observe("dom:loaded", function() {
     if (<%= Sosol::Application.config.respond_to?(:xsugar_standalone_enabled) && Sosol::Application.config.xsugar_standalone_enabled %> && !<%= defined?(@bad_leiden) ? @bad_leiden : false %>) {
- && !#{d<%= ined?(@bad_leiden) ? @bad_leiden : false %>) {
       was_disabled = $('ddb_identifier_leiden_plus').disabled;
       
       Form.Element.disable('ddb_identifier_leiden_plus');
