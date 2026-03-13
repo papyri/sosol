@@ -49,6 +49,12 @@ test-cruby:
     BUNDLE_GEMFILE: "Gemfile.3.2"
     RBENV_VERSION: "3.2.9"
 
+release-cruby:
+  extends: .release
+  variables:
+    build_tag: "$CI_REGISTRY_IMAGE/builds/cruby:$CI_COMMIT_SHORT_SHA"
+    release_tag: "$CI_REGISTRY_IMAGE:cruby-$CI_COMMIT_REF_NAME"
+
 integration-tests:
   stage: test
   extends: .trigger_downstream_pipeline
