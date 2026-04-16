@@ -9,9 +9,24 @@
       <li <%= tag_options({:class => ((params[:controller] == 'publications') && (params[:action] == 'show')) ? 'active' : ''}, false) %>>
         <%= link_to 'Overview', publication_path(@identifier.publication) %>
       </li>
+      <% if @identifier&.publication&.identifiers&.select{|i| i.class.in?([DCLPCurrentTextIdentifier, DDBCurrentIdentifier])}.length > 0 %>
+        <li <%= tag_options({:class => (params[:controller] == 'ddb_current_identifiers' ? 'active' : '')}, false) %>>
+          <%= link_to 'Current Text', edit_text_publication_path(@identifier.publication) %>
+          <% texts = @identifier.publication.identifiers.select{|i| i.class.in?([DCLPCurrentTextIdentifier, DDBCurrentIdentifier])} %>
+          <% if texts.length > 1 %>
+            <ul>
+              <% for text in texts %>
+                <li>
+                  <%= link_to "#{text.class::FRIENDLY_NAME}: #{text.titleize}", edit_polymorphic_path([@identifier.publication, text]) %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </li>
+      <% end %>
       <% if @identifier.publication.identifiers.select{|i| i.class.in?([DDBIdentifier, DCLPTextIdentifier])}.length > 0 %>
         <li <%= tag_options({:class => (params[:controller].in?(['ddb_identifiers', 'dclp_text_identifiers']) ? 'active' : '')}, false) %>>
-          <%= link_to 'Text', edit_text_publication_path(@identifier.publication) %>
+          <%= link_to 'Historical Text', edit_text_publication_path(@identifier.publication) %>
           <% texts = @identifier.publication.identifiers.select{|i| i.class.in?([DDBIdentifier, DCLPTextIdentifier])} %>
           <% if texts.length > 1 %>
             <ul>
