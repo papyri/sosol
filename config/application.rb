@@ -53,9 +53,8 @@ module Sosol
     config.repository_root = File.join(::Rails.root.to_s, 'db', 'git')
     config.canonical_repository = File.join(config.repository_root, 'canonical.git')
     config.rpx_base_url = 'https://rpxnow.com'
-    config.site_name = 'SoSOL'
-    config.site_full_name = 'Son of Suda On Line'
-    config.site_wiki_link = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">Integrating Digital Papyrology wiki</a>'
+    config.site_name = ENV.fetch('SITE_NAME', 'Papyrological Editor')
+    config.site_full_name = ENV.fetch('SITE_FULL_NAME', 'Papyrological Editor')
     config.dev_init_files = []
     config.site_catalog_search = 'View in PN'
     config.gitweb_base_url = 'http://127.0.0.1:1234/?p='
