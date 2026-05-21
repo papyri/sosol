@@ -237,8 +237,14 @@ class Repository
     if RUBY_PLATFORM == 'java'
       get_blob_from_branch(file, branch)
     else
-      # self.class.run_command("#{git_command_prefix} show #{Shellwords.escape(branch)}:#{Shellwords.escape(file)} 2> /dev/null").chomp
-      cgit_repo.blob_at(cgit_repo.rev_parse(branch).oid, file)&.content
+      begin
+        # self.class.run_command("#{git_command_prefix} show #{Shellwords.escape(branch)}:#{Shellwords.escape(file)} 2> /dev/null").chomp
+        cgit_repo.blob_at(cgit_repo.rev_parse(branch).oid, file)&.content
+      rescue StandardError => e
+        Rails.logger.error("Error in Repository#get_file_from_branch for #{file} on #{branch} in #{cgit_repo.path}: #{e.inspect}")
+        Rails.logger.debug(e.backtrace.join("\n"))
+        return nil
+      end
     end
   end
 
