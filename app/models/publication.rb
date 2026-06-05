@@ -210,63 +210,64 @@ class Publication < ApplicationRecord
   # When there are no more identifiers to be submitted, then the publication is marked as committed.
   def submit_to_next_board
     Rails.logger.info("Publication#submit_to_next_board called for: #{id}")
-    # NOTE: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
-    @recent_submit_sha = ''
+    self.with_advisory_lock("submit_#{self.id}") do
+      # NOTE: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
+      @recent_submit_sha = ''
 
-    # determine which ids are ready to be submitted (modified, editing...)
-    submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing') }
+      # determine which ids are ready to be submitted (modified, editing...)
+      submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing') }
 
-    if submittable_identifiers.length.zero?
-      Rails.logger.warn("Publication#submit_to_next_board for #{self.id}: no submittable identifiers")
-      Rails.logger.info("Publication#submit_to_next_board for #{self.id} identifier state: #{identifiers.inspect}")
-    else
-      submittable_identifiers.each do |log_si|
-        Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable identifier: #{log_si.class}   #{log_si.title}"
-      end
-    end
-
-    # check if we are part of a community
-    boards = if is_community_publication?
-               Board.ranked_by_community_id(community.id)
-             else
-               Board.ranked
-             end
-
-    # check each board in order by priority rank
-    boards.each do |board|
-      # if board.community == publication.community
-      boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
-      next unless boards_identifiers.length.positive?
-
-      # submit to that board
-      boards_identifiers.each do |log_sbi|
-        Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable board identifier (Board: #{board.friendly_name}): #{log_sbi.class}   #{log_sbi.title}"
-      end
-      # submit each submitting_identifier
-      boards_identifiers.each do |submitting_identifier|
-        submitting_identifier.status = 'submitted'
-        submitting_identifier.save!
-
-        # make the most recent sha for the identifier available...is this the one we want?
-        @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+      if submittable_identifiers.length.zero?
+        Rails.logger.warn("Publication#submit_to_next_board for #{self.id}: no submittable identifiers")
+        Rails.logger.info("Publication#submit_to_next_board for #{self.id} identifier state: #{identifiers.inspect}")
+      else
+        submittable_identifiers.each do |log_si|
+          Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable identifier: #{log_si.class}   #{log_si.title}"
+        end
       end
 
-      # copy the repo, models, etc... to the board
-      boards_copy = copy_to_owner(board)
-      boards_copy.status = 'voting'
-      boards_copy.save!
+      # check if we are part of a community
+      boards = if is_community_publication?
+                 Board.ranked_by_community_id(community.id)
+               else
+                 Board.ranked
+               end
 
-      # trigger emails
-      board.send_status_emails('submitted', self)
+      # check each board in order by priority rank
+      boards.each do |board|
+        # if board.community == publication.community
+        boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+        next unless boards_identifiers.length.positive?
 
-      # update status on user copy
-      change_status('submitted')
-      save!
+        # submit to that board
+        boards_identifiers.each do |log_sbi|
+          Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable board identifier (Board: #{board.friendly_name}): #{log_sbi.class}   #{log_sbi.title}"
+        end
+        # submit each submitting_identifier
+        boards_identifiers.each do |submitting_identifier|
+          submitting_identifier.status = 'submitted'
+          submitting_identifier.save!
 
-      # problem here in that comment will be added to the returned id, but there may be many ids.....
-      # todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
-      return '', boards_identifiers[0].id
-      # boards_identifiers.length > 0
+          # make the most recent sha for the identifier available...is this the one we want?
+          @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+        end
+
+        # copy the repo, models, etc... to the board
+        boards_copy = copy_to_owner(board)
+        boards_copy.status = 'voting'
+        boards_copy.save!
+
+        # trigger emails
+        board.send_status_emails('submitted', self)
+
+        # update status on user copy
+        change_status('submitted')
+        save!
+
+        # problem here in that comment will be added to the returned id, but there may be many ids.....
+        # todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
+        return '', boards_identifiers[0].id
+      end
     end
 
     Rails.logger.debug { "Publication#submit_to_next_board for #{self.id}: no more parts to submit" }
@@ -324,6 +325,39 @@ class Publication < ApplicationRecord
   # Simply pointer to submit_to_next_board method.
   def submit
     submit_to_next_board
+  end
+
+  def submit_with_comment(submission_comment_string)
+    with_advisory_lock("submit_with_comment_#{self.id}") do
+      # git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
+      submission_comment = Comment.new({ publication_id: self.id.to_s, comment: submission_comment_string,
+                                         reason: 'submit', user_id: self.owner.id })
+      submission_comment.save
+
+      error_text, identifier_for_comment = self.submit
+      if (error_text == '') && identifier_for_comment.present?
+        # update comment with git hash when successfully submitted
+        self.reload
+        submission_comment.git_hash = self.recent_submit_sha
+        submission_comment.identifier_id = identifier_for_comment
+        submission_comment.save
+      else
+        # cleanup comment that was inserted before submit completed that is no longer valid because of submit error
+        cleanup_id = Comment.find(:last,
+                                  conditions: { publication_id: self.id.to_s, reason: 'submit',
+                                                user_id: self.owner.id })
+        Comment.destroy(cleanup_id)
+        raise "Error in Publication#submit for Publication #{self.id} (#{self.title}) owned by #{self.owner.name}: #{error_text}"
+      end
+    end
+  end
+
+  def submit_with_comment_async(submission_comment)
+    if Rails.env.test?
+      self.submit_with_comment(submission_comment)
+    else
+      SubmitJob.perform_async(self.id, submission_comment)
+    end
   end
 
   # Creates a new publication from templates found in app/data/templates. The new publication contains a DDBIdentifier and a HGVMetaIdentifier

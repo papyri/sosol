@@ -266,36 +266,16 @@ class PublicationsController < ApplicationController
           # force community id to 0 for sosol
           @publication.community_id = nil
         end
-
-        # need to set id to 0
-        # raise community_id
-
-        # @comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
-        # git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
-        @comment = Comment.new({ publication_id: params[:id].to_s, comment: params[:submit_comment].to_s,
-                                 reason: 'submit', user_id: @current_user.id })
-        @comment.save
-
-        error_text, identifier_for_comment = @publication.submit
-        if error_text == ''
-          # update comment with git hash when successfully submitted
-          @comment.git_hash = @publication.recent_submit_sha
-          @comment.identifier_id = identifier_for_comment
-          @comment.save
-          expire_publication_cache
-          expire_fragment(/board_publications_\d+/)
-          flash[:notice] = 'Publication submitted.'
-        else
-          # cleanup comment that was inserted before submit completed that is no longer valid because of submit error
-          cleanup_id = Comment.find(:last,
-                                    conditions: { publication_id: params[:id].to_s, reason: 'submit',
-                                                  user_id: @current_user.id })
-          Comment.destroy(cleanup_id)
-          flash[:error] = error_text
-        end
-        redirect_to @publication
       end
     end
+
+    @publication.submit_with_comment_async(params[:submit_comment].to_s)
+
+    expire_publication_cache
+    expire_fragment(/board_publications_\d+/)
+    flash[:notice] = 'Publication submitted.'
+    
+    redirect_to @publication
   end
 
   # GET /publications
