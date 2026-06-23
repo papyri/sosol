@@ -321,7 +321,7 @@ class Repository
     # $ ` \ ! "
     # See the bash man page QUOTING section on double quotes.
     # See also Repository.sanitize_ref
-    if RUBY_PLATFORM == 'java'
+    if true || (RUBY_PLATFORM == 'java')
       fallback_git_command = "bash -c \"set -o pipefail; #{git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{Shellwords.escape(branch)}:#{Shellwords.escape(new_branch)} 2>&1 | iconv -c -t UTF-8\""
       self.class.run_command(fallback_git_command)
     else
