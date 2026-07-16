@@ -120,6 +120,28 @@ class Repository
     "git --git-dir=#{Shellwords.escape(path)}"
   end
 
+  # Returns the default branch name for this repository
+  def default_branch
+    @default_branch ||= begin
+      if RUBY_PLATFORM == 'java'
+        # Use git command to get the default branch
+        result = self.class.run_command("#{git_command_prefix} symbolic-ref --short HEAD 2>/dev/null").chomp
+        result.empty? ? 'master' : result
+      else
+        # Use Rugged to get the default branch
+        return 'master' unless File.exist?(@path)
+        repo = cgit_repo
+        return 'master' if repo.nil?
+        
+        head_ref = repo.head.name
+        head_ref.sub('refs/heads/', '')
+      end
+    rescue StandardError => e
+      Rails.logger.warn("Could not determine default branch for #{@path}: #{e.message}")
+      'master' # fallback to master
+    end
+  end
+
   def exists?
     # master.has_repository?
     File.exist?(@path)
@@ -162,7 +184,8 @@ class Repository
 
   # returns the blob that represents the given file
   # the given file is the filename + path to the file
-  def get_blob_from_branch(file, branch = 'master')
+  def get_blob_from_branch(file, branch = nil)
+    branch ||= default_branch
     return get_file_from_branch(file, branch) unless RUBY_PLATFORM == 'java'
 
     if jgit_repo.nil?
@@ -207,18 +230,26 @@ class Repository
     nil
   end
 
-  def get_file_from_branch(file, branch = 'master')
+  def get_file_from_branch(file, branch = nil)
+    branch ||= default_branch
     return nil if file.nil? || branch.nil?
 
     if RUBY_PLATFORM == 'java'
       get_blob_from_branch(file, branch)
     else
-      # self.class.run_command("#{git_command_prefix} show #{Shellwords.escape(branch)}:#{Shellwords.escape(file)} 2> /dev/null").chomp
-      cgit_repo.blob_at(cgit_repo.rev_parse(branch).oid, file)&.content
+      begin
+        # self.class.run_command("#{git_command_prefix} show #{Shellwords.escape(branch)}:#{Shellwords.escape(file)} 2> /dev/null").chomp
+        cgit_repo.blob_at(cgit_repo.rev_parse(branch).oid, file)&.content
+      rescue StandardError => e
+        Rails.logger.error("Error in Repository#get_file_from_branch for #{file} on #{branch} in #{cgit_repo.path}: #{e.inspect}")
+        Rails.logger.debug(e.backtrace.join("\n"))
+        return nil
+      end
     end
   end
 
-  def get_log_for_file_from_branch(file, branch = 'master', limit = 1)
+  def get_log_for_file_from_branch(file, branch = nil, limit = 1)
+    branch ||= default_branch
     self.class.run_command("#{git_command_prefix} log -n #{limit} --follow --pretty=format:%H #{Shellwords.escape(branch)} -- #{Shellwords.escape(file)}").split("\n")
   end
 
@@ -239,16 +270,19 @@ class Repository
   end
 
   def update_master_from_canonical
-    update_ref('master', Repository.new.get_head('master'))
+    canonical_repo = Repository.new
+    default_branch_name = canonical_repo.default_branch
+    update_ref(default_branch_name, canonical_repo.get_head(default_branch_name))
   end
 
   def rename_branch(old_name, new_name)
     self.class.run_command("#{git_command_prefix} branch -m #{Shellwords.escape(old_name)} #{Shellwords.escape(new_name)}")
   end
 
-  def create_branch(name, source_name = 'master', force = false)
-    # We always assume we want to branch from master by default
-    update_master_from_canonical if source_name == 'master'
+  def create_branch(name, source_name = nil, force = false)
+    source_name ||= default_branch
+    # We always assume we want to branch from the default branch by default
+    update_master_from_canonical if source_name == default_branch
 
     if RUBY_PLATFORM == 'java'
       begin
@@ -287,7 +321,7 @@ class Repository
     # $ ` \ ! "
     # See the bash man page QUOTING section on double quotes.
     # See also Repository.sanitize_ref
-    if RUBY_PLATFORM == 'java'
+    if true || (RUBY_PLATFORM == 'java')
       fallback_git_command = "bash -c \"set -o pipefail; #{git_command_prefix} fetch -v --progress #{Shellwords.escape(other_repo.path)} #{Shellwords.escape(branch)}:#{Shellwords.escape(new_branch)} 2>&1 | iconv -c -t UTF-8\""
       self.class.run_command(fallback_git_command)
     else

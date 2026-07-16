@@ -19,7 +19,9 @@ namespace :git do
         require File.expand_path('../../config/boot', __dir__)
 
         CANONICAL_CLONE_URL = if ENV['RAILS_ENV'] == 'test'
-                                'https://github.com/ryanfb/idp.data.test.git'
+                                'https://gitlab.oit.duke.edu/papyri/idp.data.test.git'
+                              elsif File.exist?('/srv/data/papyri.info/idp.data')
+                                '/srv/data/papyri.info/idp.data'
                               else
                                 'https://github.com/papyri/idp.data.git'
                               end

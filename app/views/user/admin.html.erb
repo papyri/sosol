@@ -1,0 +1,103 @@
+<%# -----Communities----- %>
+<% if @current_user.is_community_master_admin %>
+  <%# they can create destroy communities, pick community admins %>
+  <h2>
+    Communities
+  </h2>
+  <%= link_to "Edit All Communities", :controller => "communities" %>
+  <br>
+  <br>
+  <br>
+<% end %>
+<%# can edit their communities %>
+<%# if !@current_user.community_admins.nil? && @current_user.community_admins.count > 0 %>
+<h2>
+  Your Community Admins
+</h2>
+<%= link_to "Create new", :controller => "communities", :action => "new" %>
+<br>
+<br>
+<% @current_user.community_admins.each do |comm| %>
+  <%= link_to comm.friendly_name, comm %>
+  <br>
+<% end %>
+<br>
+<br>
+<%# let them leave a community %>
+<% if @current_user.community_memberships && @current_user.community_memberships.length > 0 %>
+  <h2>
+    Your Community Memberships
+  </h2>
+  <% @current_user.community_memberships.each do |comm| %>
+    <%= comm.friendly_name %>
+    <%= link_to "Leave", :controller => "user", :action => "leave_community", :com_id => comm.id %>
+    <br>
+  <% end %>
+  <br>
+  <br>
+<% end %>
+<%# -----Boards----- %>
+<% if @current_user.admin %>
+  <%# can setup boards %>
+  <h2>
+    Boards
+  </h2>
+  <%= link_to 'Edit Boards', boards_url %>
+  <br>
+  <br>
+  <%# can email all users %>
+  <h2>
+    Communications
+  </h2>
+  <%= link_to 'Email Users', sendmsg_url %>
+  <br>
+  <br>
+<% end %>
+<%# -----Master Admin----- %>
+<% if @current_user.is_master_admin %>
+  <h2>
+    Site Permissions
+  </h2>
+  <%# they can set other users as anything, %>
+  <%= link_to 'Set User Admins', index_user_admins_url %>
+  <br>
+  <br>
+  <br>
+<% end %>
+<%# -----Developer----- %>
+<% if @current_user.developer %>
+  <h2>
+    You are a developer
+  </h2>
+  Warning, your views may differ from users view.
+  <%# see debuging info %>
+<% end %>
+<h2>
+  Publications
+</h2>
+<%= link_to "Download Publications", {:controller => "user", :action => "download_options" } %>
+<%# ------Tell user their rights------ %>
+<h2>
+  Your admins
+</h2>
+<% admin_list = "" %>
+<% if @current_user.is_master_admin %>
+  <% admin_list = admin_list + "Master Admin <br />" %>
+<% end %>
+<% if @current_user.admin %>
+  <% admin_list = admin_list + "Admin <br />" %>
+<% end %>
+<% if @current_user.is_community_master_admin %>
+  <% admin_list = admin_list + "Community Master Admin <br />" %>
+<% end %>
+<% if !@current_user.community_admins.nil? && @current_user.community_admins.count > 0 %>
+  <% @current_user.community_admins.each do |comm| %>
+    <% admin_list = admin_list + "Admin for " + comm.friendly_name + " community<br />" %>
+  <% end %>
+<% end %>
+<% if admin_list == "" %>
+  <% admin_list = "You have no admin rights." %>
+<% end %>
+<p>
+  <%= admin_list %>
+</p>

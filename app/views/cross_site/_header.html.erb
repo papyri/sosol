@@ -1,79 +1,101 @@
-<div id="d">
-    <div id="hd">
-      
-      
-      <% redirect_logged_in_user_to_dashboard_instead_of_papyri_info = false%>
-      <% if redirect_logged_in_user_to_dashboard_instead_of_papyri_info && @current_user %>
-        <a href="
-        <%=  dashboard_url %>
-        ">
-      <% else %>
-       <a href="/">
-      <% end %>
-      <h1>Papyri.info</h1>
-      </a>
-             <!-- sosol side -->
-             
-       <%= render "cross_site/sign_in_out" %>
-       <!-- pn side -->
-       <!-- cross_site/sign_in_out -->
-        <!-- <h2 class="mode">Navigator | <a href="/editor">Editor</a></h2> -->
+  <header id="masthead" class="bg-primary position-relative">
+    
+    
+
+    <nav id="masthead-nav" class="navbar flex-wrap navbar-expand-md" data-bs-theme="dark" aria-label="Masthead & user account navigation">
+      <div class="container-xl px-4">
+        <div class="d-flex w-100 mt-2 mb-2 justify-content-between align-items-center">
+            
+          <div class="col-11 col-md-6 d-flex logos">
+            <a href="https://library.duke.edu">
+              <div class="navbar-logo mt-1 me-3 me-md-4">
+                <span class="visually-hidden">Duke University Libraries</span>
+              </div>
+            </a>
+            <div class="papyri-logo me-auto">
+              <a href="/" class="navbar-brand">Papyri.info</a>
+            </div>
+          </div>
+
+          <div class="col-1 col-md-1 d-flex justify-content-end toggle">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          </div>
+          
+          <div class="d-none d-md-block col-md-5 signin">
+            <div id="login" class="d-flex justify-content-end ">
+                <% redirect_logged_in_user_to_dashboard_instead_of_papyri_info = false%>
+                  <% if redirect_logged_in_user_to_dashboard_instead_of_papyri_info && @current_user %>
+                    <a href="<%=  dashboard_url %>"></a>
+                  <% end %>
+                  <!-- sosol side -->
+                  <%= render "cross_site/sign_in_out" %>
+            </div>
+          </div>
+          
+        </div>
       </div>
-   </div>
-    <div id="bd">
-      <div class="nav">
-        <!-- left nav -->
-        <form method="get" accept-charset="utf-8" style="display:inline;">
-          <ul class="nav">
-            <li>Browse: </li>
-            <li>
-              <a href="/browse/ddbdp/">DDbDP</a>
+    </nav>
+    
+    
+    <nav id="primary-nav" class="navbar flex-wrap navbar-expand-md bg-primary-darker py-0" data-bs-theme="dark" aria-label="Primary search & browse navigation">
+      <div class="container-xl px-4">
+        <div id="mainNavbar" class="collapse navbar-collapse">
+
+          <!-- hide for wider viewports -->
+          <div id="login" class="d-md-none mt-3">
+            <% redirect_logged_in_user_to_dashboard_instead_of_papyri_info = false%>
+              <% if redirect_logged_in_user_to_dashboard_instead_of_papyri_info && @current_user %>
+                <a href="<%=  dashboard_url %>"></a>
+              <% end %>
+              <!-- sosol side -->
+              <%= render "cross_site/sign_in_out" %>
+          </div>
+
+
+          <ul class="navbar-nav me-auto mb-2 mb-md-0 pt-2 pt-md-0">
+            <li class="nav-item"><a class="nav-link disabled nav-category ps-md-0" href="#" aria-hidden="true" tabindex="-1">Browse:</a></li>
+            <li class="nav-item"><a class="nav-link" href="/browse/editions/"><span class="visually-hidden">Browse</span>Editions</a></li>
+            <li class="nav-item"><a class="nav-link" href="/browse/apis/"><span class="visually-hidden">Browse</span>APIS</a></li>
+            <li class="nav-item"><a class="nav-link" href="/authors"><span class="visually-hidden">Browse</span> Authors</a></li>
+            <li class="nav-item position-relative">
+              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-target="#tmSearch" aria-expanded="false" aria-controls="tmSearch" role="button">TM Number</a>
+
+              <div class="bg-primary rounded-bottom p-2 mt-0 border-0 collapse position-absolute dropdown-menu" data-bs-theme="light" id="tmSearch">
+                <form onsubmit="window.location='/trismegistos/' + document.getElementById('tmid').value; return false;">
+                  <div class="input-group">
+                    <input id="tmid" type="text" class="form-control bg-white" placeholder="" aria-label="TM Number"/>
+                    <button class="btn btn-light" type="submit" id="tmgo">Go</button>
+                  </div>
+                </form>
+              </div>
             </li>
-            <li>
-              <a href="/browse/hgv/">HGV</a>
-            </li>
-            <li>
-              <a href="/browse/apis/">APIS</a>
-            </li>
-            <li class="dclp">
-              <a href="/browse/dclp/">DCLP</a>
-            </li>
-            <li>
-              <a href="/authors">Authors</a>
-            </li>
-            <li class="dialog" id="tm" title="TM Number" ><div style="display:none" id="tmc">TM#: <input type="text" name="tmid" value="[enter TM#]" id="tmid" onclick="this.setAttribute('value','');this.focus();" size="10"/> <input onclick="window.location='/trismegistos/'+jQuery('#tmid').attr('value');" type="button" name="tmgo" id="tmgo" value=" &gt; " /></div>
-            </li>
-            <li>or Search: </li>
-            <li>
-              <a href="/search">Data</a>
-            </li>
-            <li>
-              <a href="/bibliosearch">Bibliography</a>
-            </li>
+            <li class="nav-item"><a class="nav-link" href="/docs/checklist"><span class="visually-hidden">Browse</span> Checklist</a></li>
+
+            <li class="nav-item"><a class="nav-link disabled nav-category ms-lg-4 ms-xl-5 mt-3 mt-md-0" aria-hidden="true" href="#" tabindex="-1">Search:</a></li>
+            <li class="nav-item"><a class="nav-link" href="/search"><span class="visually-hidden">Search</span> Data</a></li>
+            <li class="nav-item"><a class="nav-link" href="/bibliosearch"><span class="visually-hidden">Search</span> Bibliography</a></li>
+
             <!-- sosol side -->
             <%= render "cross_site/advanced_create" %>
-          
-            <!-- pn side -->
-            <!-- cross_site/advanced_create -->
-            
+
           </ul>
-        </form>
-        
+
+        </div>
+
         <!-- right nav is for sosol side -->
         <ul class="nav right">
-        <%= render "cross_site/board_tabs" %>
-     
-        <%= render "cross_site/user_tabs" %>
+          <%= render "cross_site/board_tabs" %>
+          <%= render "cross_site/user_tabs" %>
         </ul>
-     
- 
-   
-        
+
       </div>
-      <br />
-             <% if defined? @is_editor_view %>
-          
+    </nav>
+
+
+      <% if defined? @is_editor_view %>       
           <%= render "identifiers/edit_bar" %>
-         
-          
-        <% end %>
+      <% end %>
+
+  </header>

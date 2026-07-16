@@ -1,0 +1,27 @@
+<% @identifier.non_database_attribute[:note] %>
+<div class='multi' id='multi_note'>
+  <h6>
+    <label class='responsibility'><%= I18n.t('biblio.label.annotationResponsibility') %></label>
+    <label class='annotation'><%= I18n.t('biblio.label.annotation') %></label>
+  </h6>
+  <ul class='items' id='multiItems_note'>
+    <% if @identifier.non_database_attribute[:note].present? %>
+      <% @identifier.non_database_attribute[:note].each_index do |index| %>
+      <% responsibility = @identifier.non_database_attribute[:note][index].responsibility %>
+      <% annotation     = @identifier.non_database_attribute[:note][index].annotation %>
+        <li>
+          <%= text_area_tag 'biblio_identifier[note][' + index.to_s + '][responsibility]', responsibility, :disabled => !@identifier.mutable?, :class => 'observechange responsibility' %>
+          <%= text_area_tag 'biblio_identifier[note][' + index.to_s + '][annotation]',     annotation,     :disabled => !@identifier.mutable?, :class => 'observechange annotation' %>
+          <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+          <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+  <p class='add' id='multiPlus_note'>
+    <textarea class='observechange responsibility' id='note_responsibility'></textarea>
+    <textarea class='observechange annotation' id='note_annotation'></textarea>
+    <span <%= tag_options({:onclick => "multiAddNote()", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_note'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

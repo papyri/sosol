@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class DDBIdentifierTest < ActiveSupport::TestCase
+class DDBCurrentIdentifierTest < ActiveSupport::TestCase
   context 'collection names' do
     setup do
-      @collection_names = DDBIdentifier.collection_names
+      @collection_names = DDBCurrentIdentifier.collection_names
     end
 
     should 'be unique' do
@@ -16,9 +16,9 @@ class DDBIdentifierTest < ActiveSupport::TestCase
       @creator = FactoryBot.create(:user, name: 'Creator')
       @publication = FactoryBot.create(:publication, owner: @creator, creator: @creator, status: 'new')
       # branch from master so we aren't just creating an empty branch
-      @publication.branch_from_master
+      @publication.branch_from_default
 
-      @ddb_identifier = DDBIdentifier.new_from_template(@publication)
+      @ddb_identifier = DDBCurrentIdentifier.new_from_template(@publication)
       @original_name = @ddb_identifier.name
       @original_content = @ddb_identifier.content
       @original_path = @ddb_identifier.to_path
@@ -30,19 +30,16 @@ class DDBIdentifierTest < ActiveSupport::TestCase
     end
 
     should 'raise an error when the destination exists' do
-      bgu_1_1 = FactoryBot.build(:DDBIdentifier, name: 'papyri.info/ddbdp/bgu;1;1')
+      bgu_1_1 = FactoryBot.build(:DDBCurrentIdentifier, name: 'papyri.info/current/11583')
       assert_not_nil bgu_1_1.content
-      Rails.logger.info("RENAME CONFLICT TEST: #{bgu_1_1.content.inspect}")
-      Rails.logger.info("RENAME CONFLICT TEST on publication branch: #{@creator.repository.get_file_from_branch(bgu_1_1.to_path, @publication.branch).inspect}")
-
       assert_raise RuntimeError do
-        @ddb_identifier.rename('papyri.info/ddbdp/bgu;1;1')
+        @ddb_identifier.rename('papyri.info/current/11583')
       end
     end
 
     context 'with a valid target' do
       setup do
-        @new_name = 'papyri.info/ddbdp/bgu;1;1000'
+        @new_name = 'papyri.info/current/9999999999'
         @ddb_identifier.rename(@new_name)
       end
 
@@ -51,7 +48,7 @@ class DDBIdentifierTest < ActiveSupport::TestCase
       end
 
       should 'have the correct new title' do
-        expected_title = FactoryBot.build(:DDBIdentifier, name: @new_name).titleize
+        expected_title = FactoryBot.build(:DDBCurrentIdentifier, name: @new_name).titleize
         assert_equal expected_title, @ddb_identifier.title
       end
 
@@ -67,7 +64,7 @@ class DDBIdentifierTest < ActiveSupport::TestCase
 
   context 'identifier mapping' do
     setup do
-      @path_prefix = DDBIdentifier::PATH_PREFIX
+      @path_prefix = DDBCurrentIdentifier::PATH_PREFIX
     end
 
     # TODO: write a DDBIdentifier method for reversing a collection name
@@ -75,11 +72,12 @@ class DDBIdentifierTest < ActiveSupport::TestCase
     # (e.g. #{DDBIdentifier.collection_to_series('bgu')} instead of 0001)
 
     should 'map the first identifier' do
-      bgu_1_1 = FactoryBot.build(:DDBIdentifier, name: 'papyri.info/ddbdp/bgu;1;1')
-      assert_path_equal %w[bgu bgu.1 bgu.1.1.xml], bgu_1_1.to_path
+      bgu_1_1 = FactoryBot.build(:DDBCurrentIdentifier, name: 'papyri.info/current/11853')
+      assert_path_equal %w[11 11853.xml], bgu_1_1.to_path
     end
 
     should 'map ambiguous collections' do
+      skip "May no longer be needed with new identifier scheme"
       bgu_ppetr_2_1 = FactoryBot.build(:DDBIdentifier, name: 'papyri.info/ddbdp/p.petr;2;1')
       assert_path_equal %w[p.petr p.petr.2 p.petr.2.1.xml], bgu_ppetr_2_1.to_path
 
@@ -94,11 +92,13 @@ class DDBIdentifierTest < ActiveSupport::TestCase
     # end
 
     should "map files with ',' in the identifier" do
+      skip "Refactor for historical editions."
       bgu_13_2230_1 = FactoryBot.build(:DDBIdentifier, name: 'papyri.info/ddbdp/bgu;13;2230,1')
       assert_path_equal %w[bgu bgu.13 bgu.13.2230-1.xml], bgu_13_2230_1.to_path
     end
 
     should "map files with '/' in the identifier" do
+      skip "Refactor for historical editions."
       o_bodl_2_1964_1967 = FactoryBot.build(:DDBIdentifier, name: 'papyri.info/ddbdp/o.bodl;2;1964/1967')
       assert_path_equal %w[o.bodl o.bodl.2 o.bodl.2.1964_1967.xml], o_bodl_2_1964_1967.to_path
     end

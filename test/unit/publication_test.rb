@@ -151,9 +151,9 @@ class PublicationTest < ActiveSupport::TestCase
 
       @unicode_title = 'P.Über βρεκεκεκέξ'
       @publication = FactoryBot.create(:publication, owner: @user, creator: @user, title: @unicode_title)
-      @publication.branch_from_master
+      @publication.branch_from_default
 
-      @new_ddb = DDBIdentifier.new_from_template(@publication)
+      @new_ddb = DDBCurrentIdentifier.new_from_template(@publication)
     end
 
     teardown do

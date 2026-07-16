@@ -1,0 +1,88 @@
+<div class='help'>
+  <h1>
+    SoSOL Help
+  </h1>
+  <br>
+  <%= link_to 'Text Leiden+ Help', 'http://papyri.info/docs/leiden_plus' %>
+  <br>
+  <br>
+  <%= link_to 'Translation Leiden+ Help', 'http://papyri.info/docs/leiden_plus_translation' %>
+  <br>
+  <br>
+  <br>
+  <p>
+    <% if @current_user && @current_user.admin %>
+      <br>
+      <br>
+      <h1>
+        Admin Functions
+      </h1>
+      <br>
+      <%= link_to 'Edit Text Leiden+ Help', 'http://papyri.info/docs/leiden_plus' %>
+      <br>
+      <br>
+      <%= link_to 'Edit Translation Leiden+ Help', 'http://papyri.info/docs/leiden_plus_translation' %>
+      <br>
+      <br>
+      <br>
+      <h1>
+        Admin types
+      </h1>
+      <p>
+        Admins have the ability to create, edit and destroy different items based on their type. The admin types are:
+      </p>
+      <ul>
+        <li>
+          <b>
+            Master Admin
+          </b>
+          can set all admin rights for any user.
+        </li>
+        <li>
+          <b>
+            Community Master Admin
+          </b>
+          can create, edit and destroy communities as well as pick community admins.
+        </li>
+        <li>
+          <b>
+            Community Admins
+          </b>
+          can edit their communities.
+        </li>
+        <li>
+          <b>
+            Admins
+          </b>
+          can create, edit and destroy boards. Can email all users.
+        </li>
+        <li>
+          <b>
+            Developer
+          </b>
+          has extra views with debugging info.
+        </li>
+      </ul>
+      <p>
+        <%= "To check your admins, go to the " %>
+        <%= link_to 'admin page', :controller=>'user', :action=>'admin' %>
+      </p>
+      <h1>
+        Community Help
+      </h1>
+      <br>
+      <br>
+        <p>
+          Communities are separate collections of boards. When a publication is ready to be submittied, the user will be given the option to submit to Sosol or to any community to which they belong.
+          The community boards will vote on and finalize the publications using whatever boards the community has created. The main difference is that instead of being commited to canonical, the publication will be given to the "end user" determined by the community.
+          The publication will then appear as an editing publication on the "end user's" dashboard. It will contain the history of the changes made by the submitter and the boards.
+        </p>
+        <p>
+          Community controls are accessible via the
+          <%= link_to 'admin page', :controller=>'user', :action=>'admin' %>
+        </p>
+      </br>
+    <% end %>
+  </p>
+</div>
+<%# / %>

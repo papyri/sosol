@@ -1,13 +1,8 @@
-# SQLite version 3.x
-#   gem install sqlite3-ruby (not necessary on OS X Leopard)
 development:
-  adapter: <%= ENV.fetch('DATABASE_ADAPTER') { 'sqlite3' } %>
-  encoding: utf8
-  database: <%= ENV.fetch('DATABASE_NAME') { 'db/development.sqlite3' } %>
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
-  pool: <%= ENV['DATABASE_POOL'] || '5' %>
-  timeout: 5000
+  adapter: postgresql
+  database: papyri
+  username: papyri
+  host: postgres
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -16,14 +11,10 @@ test:
   adapter: sqlite3
   database: db/test.sqlite3
   pool: 5
-  timeout: 10000
+  timeout: 5000
 
 production:
-  adapter: <%= ENV['DATABASE_ADAPTER'] %>
-  properties:
-    serverTimezone: America/New_York
-  database: <%= ENV['DATABASE_NAME'] %>
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
-  pool: <%= ENV['DATABASE_POOL'] || '16' %>
-  reaping_frequency: <%= ENV['DATABASE_REAPING_FREQUENCY'] || '120' %>
+  adapter: postgresql
+  database: papyri
+  username: papyri
+  host: postgres

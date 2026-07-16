@@ -1,0 +1,42 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='app2col'>
+      <%= render :partial => 'markup_warn' %>
+      <h4>Modern regularization of ancient reading</h4>
+      <div id='app_col'>
+        <div id='app_low'>
+          <form name='appreg_reg'>
+            <input class='corrlow' id='appreg_reg_low' name='low' type='checkbox' value='appreg_reg_low'>Uncertain</input>
+          </form>
+        </div>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appreg_reg_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Regularized form
+        </div>
+        <div id='app_button'>
+          <button onclick='insertAppReg()' type='button'>Insert</button>
+          &nbsp
+          <button onclick='closeHelper()' type='button'>Close</button>
+        </div>
+      </div>
+      <div id='app_col'>
+        <div id='app_low'>
+          <form name='appreg_orig'>
+            <input class='siclow' id='appreg_orig_low' name='low' type='checkbox' value='appreg_orig_low'>Uncertain</input>
+          </form>
+        </div>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appreg_orig_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Non-standard form
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

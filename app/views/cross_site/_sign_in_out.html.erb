@@ -1,0 +1,12 @@
+<div class="align-items-center">
+  <div id="sign_in_out">
+    <% if @current_user.nil? %>
+        <%= link_to 'Sign in', signin_url, class: "btn btn-link btn-sm text-decoration-none" %>
+    <% else %>
+        <%= link_to "home", dashboard_url, class: "btn btn-link btn-sm text-decoration-none" %>
+        <%= link_to @current_user.name, edit_user_registration_url, class: "btn btn-link btn-sm text-decoration-none" %>
+        <%= link_to 'sign out', signout_url, class: "btn btn-link btn-sm text-decoration-none" %>
+    <% end %>
+      <%= link_to "help", help_url, class: "btn btn-link btn-sm text-decoration-none" %>
+  </div>
+</div>

@@ -28,8 +28,8 @@ class EmailerMailerTest < ActionMailer::TestCase
       @publication = FactoryBot.create(:publication, owner: @creator, creator: @creator, status: 'new',
                                                      title: 'Publication Title')
       # branch from master so we aren't just creating an empty branch
-      @publication.branch_from_master
-      @ddb_identifier = DDBIdentifier.new_from_template(@publication)
+      @publication.branch_from_default
+      @ddb_identifier = DDBCurrentIdentifier.new_from_template(@publication)
       @ddb_identifier.title = 'DDB Identifier Title'
       @ddb_identifier.save
       @test_comment = Comment.new(comment: 'A commment on an identifier', identifier_id: @ddb_identifier.id,
@@ -40,7 +40,7 @@ class EmailerMailerTest < ActionMailer::TestCase
       @meta_board = FactoryBot.create(:board, title: 'A nice board')
       @board_publication = FactoryBot.create(:publication, owner: @meta_board, creator: @creator,
                                                            status: 'new', title: 'Board Publication Title')
-      @publication.branch_from_master
+      @publication.branch_from_default
       # branch from master so we aren't just creating an empty branch
     end
 
@@ -76,7 +76,11 @@ class EmailerMailerTest < ActionMailer::TestCase
       assert_not ActionMailer::Base.deliveries.empty?
       assert_equal ['johndoe@example.com'], email.to
       assert_equal "submitted: #{@publication.title} #{@ddb_identifier.title}", email.subject
-      assert_equal read_fixture('identifier_parsing').join.gsub(/!PUBLICATION_ID/, @publication.id.to_s).gsub(/!IDENTIFIER_ID/, @ddb_identifier.id.to_s).gsub(/!BOARD_PUBLICATION_ID/, @board_publication.id.to_s),
+      assert_equal read_fixture('identifier_parsing').join
+      .gsub(/!PUBLICATION_ID/, @publication.id.to_s)
+      .gsub(/!IDENTIFIER_ID/, @ddb_identifier.id.to_s)
+      .gsub(/!BOARD_PUBLICATION_ID/, @board_publication.id.to_s)
+      .gsub(/!URL_ROOT/, ENV.fetch('RAILS_RELATIVE_URL_ROOT', '') + '/'),
                    email.body.to_s
     end
 

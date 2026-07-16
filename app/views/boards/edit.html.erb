@@ -1,0 +1,73 @@
+<%= stylesheet_link_tag "board" %>
+<h1>
+  <%= @board.title + " ( " + @board.friendly_name + " )" %>
+</h1>
+<% if @board.community %>
+  <br>
+  <b>Community</b>
+  <br>
+  <%= @board.community.name + " ( " + @board.community.friendly_name + " ) " %>
+  <br>
+<% end %>
+<b>
+  <%= "Editorial Board for " %>
+</b>
+<% @board.identifier_classes.each do |ic| %>
+  <%= ic + " " %>
+<% end %>
+<br>
+<b>
+  <%= 'Rank is ' %>
+</b>
+<%= @board.rank.to_s %>
+<br>
+<%= form_for(@board) do |f| %>
+  <%= f.error_messages %>
+  <b>
+    Friendly name
+  </b>
+  <%= f.text_field :friendly_name %>
+  <%= f.submit "Update Name" %>
+  <%# dont let them change the name of the board...repositories depend on it 1-2010 %>
+  <%# = f.label :title %>
+  <%# = f.text_field :title %>
+  <%# = f.submit "Save" %>
+  <%# = f.label :rank %>
+  <br>
+  <br>
+  <h3 style='display:inline;'>
+    Members
+  </h3>
+  <%= link_to "Add", :controller => "boards", :action => "find_member", :id => @board.id %>
+  <div class='member'>
+    <% @board.users.each do |user| %>
+      <div class='remove_user'>
+        <div class='user_name'>
+          <%= user.name %>
+          <%= link_to "X", :controller => "boards", :action => "remove_member", :user_id => user.id %>
+          <br>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <h3 style='display:inline;'>
+    Decrees
+  </h3>
+  <%= link_to "Add", :controller => "decrees", :action => "new", :board_id => @board.id %>
+  <% @board.decrees.each do |decree| %>
+    <%= render :partial => decree %>
+  <% end %>
+  <h3 style='display:inline;'>
+    E-mails
+  </h3>
+  <%= link_to "Add", :controller => "emailers", :action => "new", :board_id => @board.id %>
+  <% @board.emailers.each do |emailer| %>
+    <%= render :partial => emailer %>
+  <% end %>
+<% end %>
+
+<%= link_to 'Show This Board', @board %>
+<% if @board.community %>
+  <br>
+  <%= link_to 'Edit ' + @board.community.name + ' community', :controller => 'communities', :action => 'edit', :id => @board.community.id %>
+<% end %>

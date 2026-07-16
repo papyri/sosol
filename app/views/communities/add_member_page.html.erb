@@ -1,0 +1,37 @@
+<h1>
+  <%= "Community Members for " +  @community.format_name %>
+</h1>
+<p>
+  <%= "These are users who are able to submit a publication to the " + @community.format_name %>
+</p>
+<br>
+<% if @community %>
+  <h2>
+    Existing Members
+  </h2>
+  <p>
+    click X by name to remove member
+  </p>
+  <br>
+  <% @community.members.each do |member| %>
+    <div class='remove_user'>
+      <div class='user_name'>
+        <%= member.name %>
+      </div>
+      <%= link_to "X", :controller => "communities", :action => "remove_member", :member_id => member.id %>
+    </div>
+    <br>
+  <% end %>
+  <h2>
+    Potential Members
+  </h2>
+  <p>
+    click name to add member
+  </p>
+  <br>
+  <%= render :partial => "user/select_user_by_name", :locals => { :li => LinkingInfo::LinkingInfo.new("communities", "add_member", @community.id ) } %>
+<% end %>
+<br>
+<br>
+  <%= link_to 'Edit more of this community', edit_community_path(@community) %>
+</br>

@@ -1,0 +1,86 @@
+<div class='site' id='main'>
+  <%# render :partial => "common/flash_all" %>
+  <%= stylesheet_link_tag "board" %>
+  <%# ----------board set-up info------------- %>
+  <% if @board.community %>
+    <h1>
+      Community:
+    </h1>
+    <%= @board.community.name %>
+  <% end %>
+  <h1>
+    <%= @board.title + "( " + @board.friendly_name + " )" %>
+  </h1>
+  <%= "controls " %>
+  <% @board.identifier_classes.each do |ic| %>
+    <%= ic %>
+  <% end %>
+  <br>
+  <b>
+    Rank
+  </b>
+  <%= @board.rank %>
+  <br>
+  <div class='member'>
+    <h3>
+      Members
+    </h3>
+    <% @board.users.count %>
+    <% @board.users.each do |user| %>
+      <p>
+        <%= user.name %>
+      </p>
+    <% end %>
+  </div>
+  <b>
+    Decrees
+  </b>
+  <% @board.decrees.each do |decree| %>
+    <%= render :partial => decree, :locals =>  {:hide_edit_link=> 'true'} %>
+  <% end %>
+  <b>
+    Emails
+  </b>
+  <% @board.emailers.each do |emailer| %>
+    <%= render :partial => emailer, :locals =>  {:hide_edit_link=> 'true'} %>
+  <% end %>
+  <%# -------publications-------- %>
+  <br>
+  <br>
+    <% approved_publications = @board.publications.collect{|p| p.status == "approved" ? p : nil}.compact %>
+    <h2>
+      <%= "#{@board.title}" %>
+      Publications
+    </h2>
+    <% board_publications = @board.publications.collect{|p| p.status == "voting" ? p : nil}.compact %>
+    <% if board_publications.length > 0 %>
+      <h3><%= "Voting Publications" %></h3>
+      <%= render :partial => "publications/list", :object => board_publications %>
+      <br>
+    <% end %>
+    <%# - approved_publications = @board.publications.collect{|p| p.status == "approved" ? p : nil}.compact %>
+    <% if approved_publications.length > 0 %>
+      <h3><%= "Approved Publications" %></h3>
+      <%= render :partial => "publications/list", :object => approved_publications %>
+      <br>
+    <% end %>
+    <% if @finalizing_publications.length > 0 %>
+      <h3><%= "Finalizing" %></h3>
+      <%= render :partial => "publications/list", :object => @finalizing_publications %>
+      <br>
+    <% end %>
+    <% board_publications = @board.publications.collect{|p| p.status == "committed" ? p : nil}.compact %>
+    <% if board_publications.length > 0 %>
+      <h3><%= "Committed Publications" %></h3>
+      <%= render :partial => "publications/list", :object => board_publications %>
+      <br>
+    <% end %>
+    <% board_publications = @board.publications.collect{|p| p.status == "archived" ? p : nil}.compact %>
+    <% if board_publications.length > 0 %>
+      <h3><%= "Archived Publications" %></h3>
+      <%= render :partial => "publications/list", :object => board_publications %>
+      <br>
+    <% end %>
+    <%# %br %>
+  </br>
+</div>

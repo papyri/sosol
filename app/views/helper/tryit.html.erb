@@ -1,0 +1,28 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='tryitdiv'>
+      <h3>Enter the Transcription XML or Leiden+ you want to convert in the input field and select the associated radio button</h3>
+      <div id='app_text'>
+        <label>LEIDEN+</label>
+        <input class='choosetext' id='tryit_leiden' size='125' type='text'>
+      </div>
+      <div id='app_text'>
+        <label>XML</label>
+        <input class='choosetext' id='tryit_xml' size='125' type='text'>
+      </div>
+      <div id='type_left'>
+        <input checked='' class='tryit_radio' id='character' name='tryit_type' onclick='checktryit(this.id)' type='radio' value='xml2non'>XML to Leiden+</input>
+        <br>
+        <input class='tryit_radio' id='line' name='tryit_type' onclick='checktryit(this.id)' type='radio' value='non2xml'>Leiden+ to XML</input>
+      </div>
+      <div id='button_left'>
+        <button onclick='tryitConversion()' type='button'>Convert</button>
+        &nbsp
+        <button onclick='closeHelper()' type='button'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -29,6 +29,19 @@ module ApplicationHelper
       %{<script type="text/javascript">new ClipboardJS('#copy-#{textarea_id}');</script>}
     ].join("\n").html_safe
   end
+
+  # Replaces deprecated and removed Rails tag_options helper
+  def tag_options(options, escape = true)
+    options.map do |key, value|
+      if value == true
+        %(#{key})
+      elsif value == false || value.nil?
+        nil
+      else
+        %(#{key}="#{escape ? h(value) : value}")
+      end
+    end.compact.join(' ').html_safe
+  end
 end
 
 require 'rexml/document'

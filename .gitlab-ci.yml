@@ -19,7 +19,7 @@ stages:
   - test
   - publish
   - release
-  - deploy
+  - deploy-okd
 
 .job:
   except:
@@ -49,6 +49,12 @@ test-cruby:
     BUNDLE_GEMFILE: "Gemfile.3.2"
     RBENV_VERSION: "3.2.9"
 
+release-cruby:
+  extends: .release
+  variables:
+    build_tag: "$CI_REGISTRY_IMAGE/builds/cruby:$CI_COMMIT_SHORT_SHA"
+    release_tag: "$CI_REGISTRY_IMAGE:cruby-$CI_COMMIT_REF_NAME"
+
 integration-tests:
   stage: test
   extends: .trigger_downstream_pipeline
@@ -65,22 +71,11 @@ update_submodules:
   rules:
     - if: $CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"
 
-deploy-dev-deb-12:
+deploy-okd:
+  stage: deploy-okd
   tags:
-    - deploy
-  stage: deploy
-  script:
-    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
-    - sudo /usr/bin/systemctl start papyri-editor-dev-deploy-playbook.service
-    - sudo /usr/bin/journalctl -u papyri-editor-dev-deploy-playbook --since "${CURRENT_TIME}"
+    - deploy-okd
   when: manual
-
-deploy-prod-deb-12:
-  tags:
-    - deploy
-  stage: deploy
   script:
-    - CURRENT_TIME=$(date +%Y-%m-%d\ %H:%M:%S)
-    - sudo /usr/bin/systemctl start papyri-editor-deploy-playbook.service
-    - sudo /usr/bin/journalctl -u papyri-editor-deploy-playbook --since "${CURRENT_TIME}"
-  when: manual
+    - echo "Triggering downstream deployment pipeline in dul-its/dul-papyri"
+    - curl --request POST --form "token=$CI_JOB_TOKEN" --form ref=main --form "variables[BUMP_TARGET]=sosol" "https://gitlab.oit.duke.edu/api/v4/projects/dul-its%2Fdul-papyri/trigger/pipeline"

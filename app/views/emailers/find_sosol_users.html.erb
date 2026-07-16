@@ -1,0 +1,7 @@
+<h1>
+  Add user to email list
+</h1>
+<% @sosol_users.each do |user| %>
+  <%= link_to user.name, :controller => "emailers", :action => "add_member", :id => @emailer.id, :user_name => user.name %>
+  <br>
+<% end %>

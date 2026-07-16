@@ -1,0 +1,58 @@
+<%= stylesheet_link_tag "board" %>
+<% if @board.community %>
+  <br>
+  <b>Community</b>
+  <br>
+  <%= @board.community.name + " ( " + @board.community.friendly_name + " ) " %>
+  <br>
+<% end %>
+<b>
+  Title is
+</b>
+<%= @board.title %>
+<br>
+<b>
+  Friendly Name
+</b>
+<%= @board.friendly_name %>
+<br>
+<b>
+  <%= "Editorial Board for " %>
+</b>
+<% @board.identifier_classes.each do |ic| %>
+  <%= ic + " " %>
+<% end %>
+<br>
+<b>
+  <%= 'Rank is ' %>
+</b>
+<%= @board.rank.to_s %>
+<br>
+<h3>
+  Members
+</h3>
+<div class='member'>
+  <% @board.users.count %>
+  <% @board.users.each do |user| %>
+    <%= user.name %>
+    <br>
+  <% end %>
+</div>
+<h3>
+  Decrees
+</h3>
+<% @board.decrees.each do |decree| %>
+  <%= render :partial => decree, :locals =>  {:hide_edit_link=> 'true'} %>
+<% end %>
+<h3>
+  E-mails
+</h3>
+<% @board.emailers.each do |email| %>
+  <%= render :partial => email, :locals =>  {:hide_edit_link=> 'true'} %>
+<% end %>
+<br>
+<%= link_to 'Edit This Board', edit_board_path(@board) %>
+<% if @board.community %>
+  <br>
+  <%= link_to 'Edit ' + @board.community.name + ' community', :controller => 'communities', :action => 'edit', :id => @board.community.id %>
+<% end %>

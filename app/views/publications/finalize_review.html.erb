@@ -1,0 +1,17 @@
+<div id='main'>
+  <%#= render :partial => 'identifiers/edit_bar' %>
+  <div class='site'>
+    <%= render :partial => 'identifiers/header' %>
+    <br>
+    <%= form_tag  finalize_publication_path(@publication), :method => :post do %>
+      <%= label_tag "Finalization comment:" %>
+      <%= text_area_tag :comment, '', :class => :comment, :cols => '80', :rows => '5', :disabled => (@publication.advisory_lock_exists?("finalize_#{@publication.parent.id}") || @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}")) %>
+      <%= hidden_field_tag 'identifier_id', @identifier.id %>
+      <br>
+      <%= submit_tag "Finalize", :onclick => 'this.disabled=true;this.form.submit();', :class => 'save', :disabled => (@publication.advisory_lock_exists?("finalize_#{@publication.parent.id}") || @publication.parent.advisory_lock_exists?("become_finalizer_#{@publication.parent.id}")) %>
+    <% end %>
+
+    <br>
+    <%= render :partial => 'common/diff', :object => @diff %>
+  </div>
+</div>

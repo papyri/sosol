@@ -1,0 +1,31 @@
+<%= stylesheet_link_tag "community" %>
+<div class='community'>
+  <h1>
+    <%= "New community" %>
+  </h1>
+  <%= form_for(@community) do |f| %>
+    <%= f.error_messages %>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+    <p>
+      Name used to define the community, must be unique and cannot be changed after creation.
+    </p>
+    <br>
+    <%= f.label :friendly_name %>
+    <%= f.text_field :friendly_name %>
+    <p>
+      Name presented to the members of the community. This name will appear on the submit button for publications. Should be unique. Can be changed at anytime.
+    </p>
+    <br>
+    <%= f.label :description %>
+    <%= f.text_field :description %>
+    <p>
+      Brief description of the purpose of the community and its goals.
+    </p>
+    <br>
+    <%= f.submit 'Create' %>
+    <br>
+  <% end %>
+
+  <br>
+</div>

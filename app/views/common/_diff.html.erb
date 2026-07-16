@@ -1,0 +1,21 @@
+<div class='diff'>
+  <% unless (diff.blank?) %>
+    <% diff.split("\n")[3..-1].each do |diff_line| %>
+      <% unless diff_line.empty? %>
+        <% diff_line_text = "&nbsp;" + html_escape(diff_line[0..diff_line.length-1]).to_s %>
+        <% case diff_line[0,1] %>
+        <% when "+" %>
+          <ins>
+            <pre><code><%= diff_line_text.html_safe %></code></pre>
+          </ins>
+        <% when "-" %>
+          <del>
+            <pre><code><%= diff_line_text.html_safe %></code></pre>
+          </del>
+        <% else %>
+          <pre><code><%= diff_line_text.html_safe %></code></pre>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

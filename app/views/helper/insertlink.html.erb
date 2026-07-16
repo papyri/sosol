@@ -1,0 +1,27 @@
+<div id='main'>
+  <%= csrf_meta_tag %>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'commentary' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='gapsize'>
+      <%= render :partial => 'commentary_markup_warn' %>
+      <h3>Create Link to External Publication</h3>
+      <div id='extent_left'>
+        <h7>External Link URL with or without the http://</h7>
+        <input class='choosetext' id='insertlink_external' size='50' type='text'>
+      </div>
+      <br>
+      <h7>Free Form Link Text</h7>
+      <div id='extent_left'>
+        <input class='choosetext' id='insertlink_freetext' size='40' type='text'>
+      </div>
+      <br>
+      <div id='button_left'>
+        <button onclick='insertLinkExt()' type='button'>Insert</button>
+        &nbsp
+        <button onclick='closeHelper()' type='button'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>

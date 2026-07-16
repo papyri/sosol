@@ -1,0 +1,22 @@
+<div class='multi' id='multi_bl'>
+  <ul class='items' id='multiItems_bl'>
+    <% @identifier.non_database_attribute[:bl].each_index do |index| %>
+    <% volume = @identifier.non_database_attribute[:bl][index][:children] && @identifier.non_database_attribute[:bl][index][:children][:volume] && @identifier.non_database_attribute[:bl][index][:children][:volume][:value] ? @identifier.non_database_attribute[:bl][index][:children][:volume][:value] : '' %>
+    <% page = @identifier.non_database_attribute[:bl][index][:children] && @identifier.non_database_attribute[:bl][index][:children][:page] && @identifier.non_database_attribute[:bl][index][:children][:page][:value] ? @identifier.non_database_attribute[:bl][index][:children][:page][:value] : '' %>
+      <li>
+        <%= text_field_tag 'hgv_meta_identifier[bl][' + index.to_s + '][children][volume][value]', volume, :disabled => !@identifier.mutable?, :class => 'observechange volume' %>
+        <%= text_field_tag 'hgv_meta_identifier[bl][' + index.to_s + '][children][page][value]', page, :disabled => !@identifier.mutable?, :class => 'observechange page' %>
+        <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+        <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+      </li>
+    <% end %>
+  </ul>
+  <p class='add' id='multiPlus_bl'>
+    <label><%= I18n.t('meta.label.blVolume') %></label>
+    <%= select_tag '', options_for_select(['', 'I', 'II 1', 'II 2', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']), :id => 'bl_volume', :class => 'observechange' %>
+    <label><%= I18n.t('meta.label.blPage') %></label>
+    <input class='observechange' id='bl_page'>
+    <span <%= tag_options({:onclick => "multiAddBl()", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_bl'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

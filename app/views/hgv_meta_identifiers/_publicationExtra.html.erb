@@ -1,0 +1,21 @@
+<% extras = HGVPublication.getExtras @identifier.non_database_attribute[:publicationExtra] %>
+<div class='multi' id='multi_publicationExtra'>
+  <ul class='items' id='multiItems_publicationExtra'>
+    <% extras.each_index do |index| %>
+      <li>
+        <%= text_field_tag 'hgv_meta_identifier[publicationExtra][' + (index + 4).to_s + '][value]', extras[index][:value], :disabled => !@identifier.mutable?, :class => 'observechange publicationExtra' %>
+        <%= hidden_field_tag 'hgv_meta_identifier[publicationExtra][' + (index + 4).to_s + '][attributes][type]', extras[index][:type], :disabled => !@identifier.mutable?, :class => 'observechange publicationExtra' %>
+        <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+        <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+      </li>
+    <% end %>
+  </ul>
+  <p class='add' id='multiPlus_publicationExtra'>
+    <label><%= I18n.t('meta.label.publicationExtraType') %></label>
+    <%= select_tag 'publicationExtra_type', options_for_select(HGVPublication.getTypeOptions), :class => 'observechange' %>
+    <label><%= I18n.t('meta.label.publicationExtraValue') %></label>
+    <input class='observechange' id='publicationExtra_value'>
+    <span <%= tag_options({:onclick => "multiAddPublicationExtra()", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_publicationExtra'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

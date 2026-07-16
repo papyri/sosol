@@ -1,0 +1,22 @@
+<div class='multi' id='multi_citedLiterature'>
+  <ul class='items' id='multiItems_citedLiterature'>
+    <% @identifier.non_database_attribute[:citedLiterature].each_index do |index| %>
+    <% target = @identifier.non_database_attribute[:citedLiterature][index][:children] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pointer] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pointer][:attributes] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pointer][:attributes][:target] ? @identifier.non_database_attribute[:citedLiterature][index][:children][:pointer][:attributes][:target] : '' %>
+    <% pagination = @identifier.non_database_attribute[:citedLiterature][index][:children] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pagination] && @identifier.non_database_attribute[:citedLiterature][index][:children][:pagination][:value] ? @identifier.non_database_attribute[:citedLiterature][index][:children][:pagination][:value] : '' %>
+      <li>
+        <%= text_field_tag 'hgv_meta_identifier[citedLiterature][' + index.to_s + '][children][pointer][attributes][target]', target, :disabled => !@identifier.mutable?, :class => 'observechange target' %>
+        <%= text_field_tag 'hgv_meta_identifier[citedLiterature][' + index.to_s + '][children][pagination][value]', pagination, :disabled => !@identifier.mutable?, :class => 'observechange pagination' %>
+        <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')}, false) %>>x</span>
+        <span class='move' <%= tag_options({:title => I18n.t('meta.tooltip.multiMove')}, false) %>>o</span>
+      </li>
+    <% end %>
+  </ul>
+  <p class='add' id='multiPlus_citedLiterature'>
+    <label><%= I18n.t('meta.label.citedLiteratureTarget') %></label>
+    <input id='citedLiterature_target'>
+    <label><%= I18n.t('meta.label.citedLiteraturePagingation') %></label>
+    <input class='observechange' id='citedLiterature_pagination'>
+    <span <%= tag_options({:onclick => "multiAddCitedLiterature()", :title => I18n.t('meta.tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_citedLiterature'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

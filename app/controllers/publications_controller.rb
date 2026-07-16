@@ -62,7 +62,7 @@ class PublicationsController < ApplicationController
     # @publication.creator_id = @current_user
 
     if @publication.save
-      @publication.branch_from_master
+      @publication.branch_from_default
 
       # need to remove repeat against publication model
       e = Event.new
@@ -81,6 +81,7 @@ class PublicationsController < ApplicationController
   end
 
   def create_from_identifier
+    Rails.logger.info Rails.autoloaders
     if params[:id].blank?
       flash[:error] = 'You must specify an identifier.'
       redirect_to dashboard_url
@@ -108,8 +109,8 @@ class PublicationsController < ApplicationController
     new_publication.status = 'new'
     new_publication.save!
 
-    # branch from master so we aren't just creating an empty branch
-    new_publication.branch_from_master
+    # branch from default so we aren't just creating an empty branch
+    new_publication.branch_from_default
 
     # create the required meta data and transcriptions
     new_biblio = BiblioIdentifier.new_from_template(new_publication)
@@ -126,8 +127,8 @@ class PublicationsController < ApplicationController
     new_publication.status = 'new'
     new_publication.save!
 
-    # branch from master so we aren't just creating an empty branch
-    new_publication.branch_from_master
+    # branch from default so we aren't just creating an empty branch
+    new_publication.branch_from_default
 
     new_apis = APISIdentifier.new_from_template(new_publication, params[:apis_collection].to_s)
     @publication = new_publication
@@ -265,43 +266,23 @@ class PublicationsController < ApplicationController
           # force community id to 0 for sosol
           @publication.community_id = nil
         end
-
-        # need to set id to 0
-        # raise community_id
-
-        # @comment = Comment.new( {:git_hash => @publication.recent_submit_sha, :publication_id => params[:id].to_s, :comment => params[:submit_comment].to_s, :reason => "submit", :user_id => @current_user.id } )
-        # git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
-        @comment = Comment.new({ publication_id: params[:id].to_s, comment: params[:submit_comment].to_s,
-                                 reason: 'submit', user_id: @current_user.id })
-        @comment.save
-
-        error_text, identifier_for_comment = @publication.submit
-        if error_text == ''
-          # update comment with git hash when successfully submitted
-          @comment.git_hash = @publication.recent_submit_sha
-          @comment.identifier_id = identifier_for_comment
-          @comment.save
-          expire_publication_cache
-          expire_fragment(/board_publications_\d+/)
-          flash[:notice] = 'Publication submitted.'
-        else
-          # cleanup comment that was inserted before submit completed that is no longer valid because of submit error
-          cleanup_id = Comment.find(:last,
-                                    conditions: { publication_id: params[:id].to_s, reason: 'submit',
-                                                  user_id: @current_user.id })
-          Comment.destroy(cleanup_id)
-          flash[:error] = error_text
-        end
-        redirect_to @publication
       end
     end
+
+    @publication.submit_with_comment_async(params[:submit_comment].to_s)
+
+    expire_publication_cache
+    expire_fragment(/board_publications_\d+/)
+    flash[:notice] = 'Publication submitted.'
+    
+    redirect_to @publication
   end
 
   # GET /publications
   # GET /publications.xml
   def index
     @branches = @current_user.repository.branches
-    @branches.delete('master')
+    @branches.delete(@current_user.repository.default_branch)
 
     @publications = Publication.where(owner_id: @current_user.id)
     # just give branches that don't have corresponding publications
@@ -792,7 +773,7 @@ class PublicationsController < ApplicationController
     #           identifiers, new_title)
     #
     #         if @publication.save!
-    #           @publication.branch_from_master
+    #           @publication.branch_from_default
     #
     #           # need to remove repeat against publication model
     #           e = Event.new
@@ -872,7 +853,7 @@ class PublicationsController < ApplicationController
       related_identifiers, optional_title
     )
     if @publication.save!
-      @publication.branch_from_master
+      @publication.branch_from_default
 
       # need to remove repeat against publication model
       e = Event.new

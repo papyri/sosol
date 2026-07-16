@@ -1,0 +1,17 @@
+<div class='publications_header_holder'>
+  <div class='publications_header_title'>
+    <% if defined?(list_name) %>
+      <% list_id = "publication_list_holder_" + list_name %>
+      <div <%= tag_options({:class => "more_less", :id => 'less_' + list_id}, false) %>>
+        <a <%= tag_options({:id => 'less_' + list_id, :class => 'lesslink', :href => '#', :onclick => "window.domSlider.slideUp({element: document.getElementById('#{list_id}')}); $('less_#{list_id}').hide(); $('more_#{list_id}').show(); return false;"}, false) %>>
+          <%= "-" + status %>
+        </a>
+      </div>
+      <div <%= tag_options({:style => "display:none;", :class => "more_less", :id => 'more_' + list_id}, false) %>>
+        <a <%= tag_options({:class => 'morelink', :href => '#', :onclick => "window.domSlider.slideDown({element: document.getElementById('#{list_id}')}); $('more_#{list_id}').hide(); $('less_#{list_id}').show(); return false;"}, false) %>>
+          <%= "+" + status %>
+        </a>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<div id='main'>
+  <%#= render :partial => 'identifiers/edit_bar' %>
+  <div class='site'>
+    <%= render :partial => 'identifiers/header' %>
+    <div id='edit'>
+      <%= form_for @identifier, :url => { :action => :update }  do |f| %>
+        <%= f.error_messages %>
+        <label>Preview</label>
+        <div class='PContent'>
+          <%= @identifier_html_preview.html_safe %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>

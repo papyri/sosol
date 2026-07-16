@@ -1,0 +1,35 @@
+<div id='main'>
+  <%# render :partial => "common/flash_all" %>
+  <p>
+    <%= form_for(@user, :url => { :action => "update_admins", :id => @user.id }) do |f| %>
+      <%= f.error_messages %>
+      <div class='user_admins'>
+        <div class='user_name'>
+          <%= @user.name + " - " + @user.full_name %>
+        </div>
+        <div class='checkbox_container'>
+          <%= f.check_box :is_master_admin %>
+          <%= f.label "Master" %>
+        </div>
+        <div class='checkbox_container'>
+          <%= f.check_box :is_community_master_admin %>
+          <%= f.label "Community Master" %>
+        </div>
+        <div class='checkbox_container'>
+          <%= f.check_box :admin %>
+          <%= f.label :admin %>
+        </div>
+        <div class='checkbox_container'>
+          <%= f.check_box :developer %>
+          <%= f.label :developer %>
+        </div>
+      </div>
+      <p>
+        <br>
+        <%= f.submit "Update" %>
+      </p>
+    <% end %>
+
+    <br>
+  </p>
+</div>

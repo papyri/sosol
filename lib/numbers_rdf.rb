@@ -1,26 +1,28 @@
 require 'net/http'
 
 module NumbersRDF
+  Rails.logger.info Rails.autoloaders
   # Top-level namespace used for identifiers, e.g. 'papyri.info' in 'papyri.info/hgv/1234'
-  NAMESPACE_IDENTIFIER = 'papyri.info'.freeze
+  NAMESPACE_IDENTIFIER = Rails.application.config.respond_to?(:numbers_server_identifier) ? Rails.application.config.numbers_server_identifier : 'papyri.info'.freeze
+  NAMESPACE_PROTOCOL = Rails.application.config.respond_to?(:numbers_server_protocol) ? Rails.application.config.numbers_server_protocol : 'http'.freeze
 
   # Actual server address for the Numbers Server, could in theory be different from NAMESPACE_IDENTIFIER
-  NUMBERS_SERVER_DOMAIN = 'papyri.info'.freeze
-  NUMBERS_SERVER_PORT = 443
+  NUMBERS_SERVER_DOMAIN = Rails.application.config.respond_to?(:numbers_server_domain) ? Rails.application.config.numbers_server_domain : 'papyri.info'.freeze
+  NUMBERS_SERVER_PORT = Rails.application.config.respond_to?(:numbers_server_port) ? Rails.application.config.numbers_server_port : 443
 
   class Timeout < ::Timeout::Error; end
 
   # Provides a number of class methods for working with identifiers and the Numbers Server
-  module NumbersHelper
+  module NumbersRDF::NumbersHelper
     class << self
-      # Converts e.g. 'papyri.info/hgv/1234' to '/hgv/1234'
+      # Converts e.g. 'papyri.info/hgv/1234' to 'hgv/1234'
       def identifier_to_local_identifier(identifier)
         identifier.sub(/^#{NAMESPACE_IDENTIFIER}/, '')
       end
 
       # Converts e.g. 'http://papyri.info/hgv/1234/rdf' to 'papyri.info/hgv/1234'
       def identifier_url_to_identifier(identifier)
-        no_scheme = identifier.sub(%r{^http://}, '')
+        no_scheme = identifier.sub(%r{^https?://}, '')
         no_decorator = no_scheme.sub(%r{/(rdf|source)$}, '')
       end
 
@@ -51,14 +53,17 @@ module NumbersRDF
 
       # Converts e.g. 'papyri.info/hgv/1234' to 'http://papyri.info/hgv/1234'
       def identifier_to_url(identifier)
-        "http://#{identifier}" if identifier.present? && identifier =~ /^#{NAMESPACE_IDENTIFIER}/
+        "#{NAMESPACE_PROTOCOL}://#{identifier}" if identifier.present? && identifier =~ /^#{NAMESPACE_IDENTIFIER}/
       end
 
       # Gets the HTTP response for a given URL path.
       def path_to_numbers_server_response(path, format = 'rdf')
+        Rails.logger.debug("Fetching from Numbers Server: #{NUMBERS_SERVER_DOMAIN}:#{NUMBERS_SERVER_PORT}/#{path}")
         http = Net::HTTP.new(NUMBERS_SERVER_DOMAIN, NUMBERS_SERVER_PORT)
-        http.use_ssl = true
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        if NUMBERS_SERVER_PORT.to_i == 443
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        end
         headers = format == 'json' ? { 'Accept' => 'application/rdf+json' } : {}
         http.get(path, headers)
       rescue Errno::ECONNREFUSED => e
@@ -108,7 +113,7 @@ module NumbersRDF
       # Takes an identifier and returns an array of related identifiers from the numbers server.
       def identifier_to_identifiers(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF//rdf:Description[@rdf:about='http://#{identifier}/source']/dc:relation/@rdf:resource", identifier
+          "/rdf:RDF//rdf:Description[@rdf:about='#{NAMESPACE_PROTOCOL}://#{identifier}/source']/dc:relation/@rdf:resource", identifier
         )
         if results.nil?
           nil
@@ -121,7 +126,7 @@ module NumbersRDF
       # e.g. 'papyri.info/ddbdp' => ["papyri.info/ddbdp/bgu", "papyri.info/ddbdp/c.ep.lat", ...]
       def identifier_to_parts(identifier)
         results = apply_xpath_to_identifier(
-          "/rdf:RDF/rdf:Description[@rdf:about='http://#{identifier}']/dc:hasPart/@rdf:resource", identifier
+          "/rdf:RDF/rdf:Description[@rdf:about='#{NAMESPACE_PROTOCOL}://#{identifier}']/dc:hasPart/@rdf:resource", identifier
         )
         if results.nil?
           nil
@@ -134,7 +139,7 @@ module NumbersRDF
       def collection_identifier_to_identifiers(identifier)
         results = apply_xpath_to_sparql_query(
           '//*:uri/text()',
-          "prefix dc: <http://purl.org/dc/terms/> select ?hgvid from <http://papyri.info/graph> where { ?hgvid dc:identifier <http://#{URI.escape(identifier)}> . filter regex(str(?hgvid), \"^http://papyri.info/hgv/\")}"
+          "prefix dc: <http://purl.org/dc/terms/> select ?hgvid from <#{NAMESPACE_PROTOCOL}://papyri.info/graph> where { ?hgvid dc:identifier <#{NAMESPACE_PROTOCOL}://#{URI.escape(identifier)}> . filter regex(str(?hgvid), \"^#{NAMESPACE_PROTOCOL}://papyri.info/hgv/\")}"
         )
         if results.nil?
           nil

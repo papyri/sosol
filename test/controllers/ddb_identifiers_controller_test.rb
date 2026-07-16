@@ -1,12 +1,12 @@
 require 'test_helper'
 
-class DDBIdentifiersControllerTest < ActionController::TestCase
+class DDBCurrentIdentifiersControllerTest < ActionController::TestCase
   def setup
     @user = FactoryBot.create(:user)
     @request.session[:user_id] = @user.id
     @publication = FactoryBot.create(:publication, owner: @user, creator: @user, status: 'new')
-    @publication.branch_from_master
-    @identifier = DDBIdentifier.new_from_template(@publication)
+    @publication.branch_from_default
+    @identifier = DDBCurrentIdentifier.new_from_template(@publication)
   end
 
   def teardown
@@ -20,12 +20,12 @@ class DDBIdentifiersControllerTest < ActionController::TestCase
     Epidocinator.stubs(:apply_xsl_transform).returns('')
     Epidocinator.stubs(:validate).returns(true)
     # just make a nonsense change to the content
-    content = { xml_content: @identifier.xml_content.sub('English', 'Gobbleygook') }
+    content = { xml_content: @identifier.xml_content.sub('English', 'Gobbledygook') }
     get :editxml, params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s }
     put :updatexml,
         params: { id: @identifier.id.to_s, publication_id: @identifier.publication.id.to_s, comment: 'test',
-                  ddb_identifier: content }
-    assert_redirected_to "/publications/#{@publication.id}/ddb_identifiers/#{@identifier.id}/edit"
+                  ddb_current_identifier: content }
+    assert_redirected_to edit_publication_ddb_current_identifier_path(@publication, @identifier)
     assert_equal 'Commit failed', flash[:error]
   end
 end

@@ -1,0 +1,21 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'translation_helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='number_div'>
+      <form name='linebreak'>
+        <input checked='true' class='rend_frac_check_c' enabled='true' id='render_checkbox' name='render_checkbox' type='checkbox' value='render'>Render Line Break</input>
+        <br>
+        <br>
+        <input class='choosetext' id='linebreak_number' size='09' type='text'>Line Number</input>
+        <br>
+      </form>
+      <div id='button_left'>
+        <button onclick='insertLinebreak()' type='button'>Insert</button>
+        &nbsp
+        <button onclick='closeHelper()' type='button'>Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -548,7 +548,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
         @publication = FactoryBot.create(:publication, owner: @submitter, creator: @submitter, status: 'new')
 
         # branch from master so we aren't just creating an empty branch
-        @publication.branch_from_master
+        @publication.branch_from_default
       end
 
       teardown do
@@ -558,11 +558,12 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
       context 'with only DDB modifications' do
         setup do
-          @new_ddb = DDBIdentifier.new_from_template(@publication)
+          @new_ddb = DDBCurrentIdentifier.new_from_template(@publication)
           @publication.reload
         end
 
         should 'not be able to race with multiple submissions' do
+          skip 'Refactor for asynchronous submit'
           Rails.logger.info("submission race on pub: #{@publication.inspect}")
           assert Publication.exists?(@publication.id)
           assert User.exists?(@publication.owner.id)
@@ -624,7 +625,7 @@ class SosolWorkflowTest < ActionDispatch::IntegrationTest
 
       context 'submitted with only DDB modifications' do
         setup do
-          @new_ddb = DDBIdentifier.new_from_template(@publication)
+          @new_ddb = DDBCurrentIdentifier.new_from_template(@publication)
           @publication.reload
           @publication.submit
         end

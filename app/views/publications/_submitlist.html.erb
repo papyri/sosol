@@ -1,0 +1,62 @@
+<ul class='publications'>
+  <% for publication in submitlist %>
+    <% vote_total = 0 %>
+    <% vote_ddb = 0 %>
+    <% vote_meta = 0 %>
+    <% vote_trans = 0 %>
+    <% status_board = "" %>
+    <% status_msg = "" %>
+    <li>
+      <ul>
+        <%= link_to( image_tag('documents.png', :border => "0") , publication) %>
+        <% if @current_user.developer %>
+          <b>
+            <%= publication.owner.name %>
+          </b>
+        <% end %>
+        <%# call to get vote totals for this user's publication children publications (= board pubs) %>
+        <% vote_total, vote_ddb, vote_meta, vote_trans = publication.children_votes %>
+        <% for identifier in publication.identifiers %>
+          <li <%= tag_options({:class => (identifier == publication.identifiers.last ? 'last' : '')}, false) %>><% case identifier %>
+          <% when DDBIdentifier %>
+            <%= image_tag('ddb.gif') %>
+            <% status_board = "DDB" %>
+          <% when HGVMetaIdentifier %>
+            <%= image_tag('hgv.gif') %>
+            <% status_board = "Meta" %>
+          <% when HGVTransIdentifier %>
+            <%= image_tag('hgv.gif') %>
+            <% status_board = "Trans" %>
+          <% end %>
+          <%= link_to(identifier.title, edit_polymorphic_path([publication, identifier]), :class => (identifier.modified ? 'modified' : '')) %>
+          <% if identifier.status == "committed" %>
+            <% status_msg += "(#{status_board} has been committed) " %>
+          <% elsif identifier.status == "approved" %>
+            <% status_msg += "(#{status_board} is being finalized) " %>
+          <% end %>
+          <% if @current_user.developer %>
+            <%= "(#{identifier.status})" %>
+<% end %>          <% _hamlout.rstrip! %>
+</li>
+        <% end %>
+        <%= "#{status_msg}" %>
+        <% if @current_user.developer %>
+          <%= "(#{publication.status})" %>
+        <% end %>
+        <% if vote_total > 0 %>
+          <%= "(" %>
+          <% if vote_ddb > 0 %>
+            <%= "DDB=#{vote_ddb}" %>
+          <% end %>
+          <% if vote_meta > 0 %>
+            <%= "Meta=#{vote_meta}" %>
+          <% end %>
+          <% if vote_trans > 0 %>
+            <%= "Trans=#{vote_trans}" %>
+          <% end %>
+          <%= ")" %>
+        <% end %>
+      </ul>
+    </li>
+  <% end %>
+</ul>

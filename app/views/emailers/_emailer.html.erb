@@ -1,0 +1,64 @@
+<div class='emailer'>
+  <b>
+    When to send:
+  </b>
+  <%= h emailer.when_to_send %>
+  <br>
+  <b>
+    Include document:
+  </b>
+  <%= h emailer.include_document %>
+  <br>
+  <b>
+    Include comments:
+  </b>
+  <%= h emailer.include_comments %>
+  <br>
+  <b>
+    Send to owner:
+  </b>
+  <%= h emailer.send_to_owner %>
+  <br>
+  <b>
+    Send to all board members:
+  </b>
+  <%= h emailer.send_to_all_board_members %>
+  <br>
+  <b>
+    Other SoSol Users:
+  </b>
+  <% if !defined?(hide_edit_link) %>
+    <%= link_to "Add", :controller => "emailers", :action => "find_sosol_users", :id => emailer.id %>
+  <% end %>
+  <% emailer.users.each do |user| %>
+    <% if user.name != nil %>
+      <%= user.name %>
+      <% if user.email == nil %>
+        (no valid address!)
+      <% end %>
+      <% if !defined?(hide_edit_link) %>
+        <%= link_to "x", :controller => "emailers", :action => "remove_member", :id => emailer.id, :user_id => user.id %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <br>
+  <b>
+    Extra addresses:
+  </b>
+  <%= h emailer.extra_addresses %>
+  <br>
+  <b>
+    Subject:
+  </b>
+  <%= h emailer.subject %>
+  <br>
+  <b>
+    Message:
+  </b>
+  <%= h emailer.message %>
+  <br>
+  <% if !defined?(hide_edit_link) %>
+    <%= link_to 'Edit', edit_emailer_path(emailer) %>
+    <%= link_to 'Delete', emailer, :confirm => 'Are you sure?', :method => :delete %>
+  <% end %>
+</div>

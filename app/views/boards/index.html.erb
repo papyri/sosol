@@ -1,0 +1,21 @@
+<div class='site' id='main'>
+  <%= stylesheet_link_tag "board" %>
+  <%# sort by community and rank? - no community boards are shown on different page %>
+  <h1>
+    Editorial boards
+  </h1>
+  <% for board in @boards %>
+    <%= render :partial => "listing" , :object => board %>
+    <br>
+  <% end %>
+  <br>
+  <p>
+    <%= link_to 'Send Email Reminders', :controller => "boards", :action => "send_board_reminder_emails" %>
+  </p>
+  <p>
+    <%= link_to 'Change Priority Rank', :controller => 'boards', :action => 'rank' %>
+  </p>
+  <p>
+    <%= link_to 'New board', new_board_path %>
+  </p>
+</div>

@@ -1,0 +1,20 @@
+<% relatedObject = @identifier.non_database_attribute[type] %>
+<% type = type.to_s %>
+<div class='multi' <%= tag_options({:id => 'multi_' + type}, false) %>>
+  <ul class='items' <%= tag_options({:id => 'multiItems_' + type}, false) %>>
+    <% if relatedObject.present? %>
+      <% relatedObject.each_index do |index| %>
+        <li>
+          <%= text_field_tag 'biblio_identifier[' + type + '][' + index.to_s + ']', relatedObject[index].pointer, :title => relatedObject[index].ignored, :disabled => !@identifier.mutable?, :class => 'observechange pointer' %>
+          <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('tooltip.multiDelete')}, false) %>>x</span>
+          <span class='move' <%= tag_options({:title => I18n.t('tooltip.multiMove')}, false) %>>o</span>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+  <p class='add' <%= tag_options({:id => 'multiPlus_' + type}, false) %>>
+    <input class='observechange' <%= tag_options({:id => type + '_pointer'}, false) %>>
+    <span <%= tag_options({:onclick => "multiAddRelatedList('" + type + "')", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_" + type + "'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

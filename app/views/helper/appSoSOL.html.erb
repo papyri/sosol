@@ -1,0 +1,40 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='app3col'>
+      <%= render :partial => 'markup_warn' %>
+      <h4>Correction proposed directly via SoSOL -- not published elsewhere</h4>
+      <div id='app_col'>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appSoSOLlem_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Correct form
+        </div>
+        <div id='app_button'>
+          <button onclick='insertAppSoSOL()' type='button'>Insert</button>
+          &nbsp
+          <button onclick='closeHelper()' type='button'>Close</button>
+        </div>
+      </div>
+      <div id='app_col'>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appSoSOLresp_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Authority, e.g.: M. Smith
+        </div>
+      </div>
+      <div id='app_col'>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appSoSOLrdg_value' size='25' type='text'>
+        </div>
+        <div id='app_desc'>
+          Previous, incorrect form
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

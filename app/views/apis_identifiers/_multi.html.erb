@@ -1,0 +1,14 @@
+<div class='multi' <%= tag_options({:id => 'multi_' + key.to_s}, false) %>>
+  <ul class='items' <%= tag_options({:id => 'multiItems_' + key.to_s}, false) %>>
+    <li <%= tag_options({:class => key.to_s}, false) %>>
+      <%= text_field_tag 'apis_identifier_' + key.to_s , "", :class => 'observechange apis_identifier_' + key.to_s %>
+      <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')}, false) %>>x</span>
+      <span class='move' <%= tag_options({:title => I18n.t('meta.tooltip.multiMove')}, false) %>>o</span>
+    </li>
+  </ul>
+  <p class='add' <%= tag_options({:id => 'multiPlus_' + key.to_s}, false) %>>
+    <input class='observechange'>
+    <span <%= tag_options({:onclick => "multiAdd('" + key.to_s + "')", :title => I18n.t('tooltip.multiAdd')}, false) %>><%= I18n.t('tooltip.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_" + key.to_s + "'), {direction: 'horizontal', handle: '.move'});" %>
+</div>

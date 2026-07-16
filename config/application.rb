@@ -49,17 +49,18 @@ module Sosol
 
     # Configure custom application parameters
     config.site_layout = 'pn'
-    config.site_identifiers = 'DDBIdentifier,HGVMetaIdentifier,DCLPMetaIdentifier,DCLPTextIdentifier,HGVTransIdentifier,BiblioIdentifier,APISIdentifier'
+    config.site_identifiers = 'DDBCurrentIdentifier,HGVMetaIdentifier,DCLPCurrentMetaIdentifier,DCLPCurrentTextIdentifier,TranslationIdentifier,BiblioIdentifier,APISIdentifier'
     config.repository_root = File.join(::Rails.root.to_s, 'db', 'git')
     config.canonical_repository = File.join(config.repository_root, 'canonical.git')
     config.rpx_base_url = 'https://rpxnow.com'
-    config.site_name = 'SoSOL'
-    config.site_full_name = 'Son of Suda On Line'
-    config.site_wiki_link = 'the <a href="http://idp.atlantides.org/trac/idp/wiki">Integrating Digital Papyrology wiki</a>'
+    config.site_name = ENV.fetch('SITE_NAME', 'Papyrological Editor')
+    config.site_full_name = ENV.fetch('SITE_FULL_NAME', 'Papyrological Editor')
     config.dev_init_files = []
     config.site_catalog_search = 'View in PN'
     config.gitweb_base_url = 'http://127.0.0.1:1234/?p='
     config.site_user_namespace = 'papyri.info'
+
+    config.legacy_connection_handling = false
 
     # Configure XSugar
     # These can be overridden in config/environments/*_secret.rb

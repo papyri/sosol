@@ -1,0 +1,12 @@
+<h1>
+  <%= "Leaving " + @community.format_name + " community." %>
+</h1>
+<p>
+  You will no longer be able to submit publications to this community once you have left.
+</p>
+<h3>
+  Are you sure you want to leave?
+</h3>
+<%= button_to "Leave Community",  { :controller => "communities", :action => "remove_current_user_membership", :id => @community.id} %>
+<br>
+<%= button_to "      Cancel       ", { :controller => "user", :action => "admin"},{:method => "get"} %>

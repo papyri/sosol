@@ -1,0 +1,24 @@
+<div class='comment_partial'>
+  <div class='name'>
+    <% if comment.user && comment.user.name %>
+      <%= comment.user.human_name %>
+    <% end %>
+  </div>
+  <div class='time'>
+    <%= comment.created_at %>
+  </div>
+  <div class='reason'>
+    <% if comment.reason %>
+      <%= comment.reason %>
+    <% end %>
+    <% if comment.identifier && comment.identifier.title %>
+      on
+      <%= comment.identifier.class::FRIENDLY_NAME %>
+    <% end %>
+  </div>
+  <div class='comment'>
+    <% if comment.comment %>
+      <%= comment.comment %>
+    <% end %>
+  </div>
+</div>

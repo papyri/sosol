@@ -33,8 +33,8 @@ class DecreeTest < ActiveSupport::TestCase
       context 'with votes on a publication/identifier' do
         setup do
           @publication = FactoryBot.create(:publication, owner: @decree.board, creator: @decree.board.users.first)
-          @publication.branch_from_master
-          @ddb_identifier = DDBIdentifier.new_from_template(@publication)
+          @publication.branch_from_default
+          @ddb_identifier = DDBCurrentIdentifier.new_from_template(@publication)
         end
 
         teardown do

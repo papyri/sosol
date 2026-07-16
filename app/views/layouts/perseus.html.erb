@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <%= csrf_meta_tag %>
+    <meta content='text/html;charset=UTF-8' http-equiv='content-type'>
+    <meta content='noindex, nofollow' name='robots'>
+    <title>
+      <%= "#{Sosol::Application.config.site_name} Prototype: #{controller.controller_name} - #{controller.action_name}" %>
+    </title>
+    <%= stylesheet_link_tag 'editor' %>
+    <%= stylesheet_link_tag Sosol::Application.config.site_layout %>
+    <%= stylesheet_link_tag 'master_additions' %>
+    <% if controller.controller_name == 'hgv_meta_identifiers' and controller.action_name == 'edit' %>
+      <%= stylesheet_link_tag 'edit_mask' %>
+      <%= stylesheet_link_tag 'meta' %>
+    <% end %>
+    <% if controller.controller_name == 'biblio_identifiers' and controller.action_name == 'edit' %>
+      <%= stylesheet_link_tag 'edit_mask' %>
+      <%= stylesheet_link_tag 'biblio' %>
+      <!-- / FORK CHANGE START (stylesheet) -->
+    <% end %>
+    <% if controller.controller_name == 'user' and controller.action_name == 'user_dashboard' %>
+      <%= stylesheet_link_tag 'publication_list' %>
+      <%= javascript_include_tag"dashboard" %>
+      <!-- / FORK CHANGE END -->
+    <% end %>
+    <%= javascript_include_tag "application" %>
+    <style type='text/css'>
+      #header {
+        background: <%= defined?(ENVIRONMENT_HEADER_BACKGROUND) ? ENVIRONMENT_HEADER_BACKGROUND : '#EAEAEA' %>;
+      }
+    </style>
+  </head>
+  <body>
+    <div id='header' <%= tag_options({:class => (['edit','editxml','commentary','preview','history','finalize_review','rename_review','show','update','show_commit'].include? params[:action]) ? '' : 'basic'}, false) %>>
+      <div class='site'>
+        <div id='logo'>
+          <h1><%= link_to Sosol::Application.config.site_name, root_url %></h1>
+          <p><%= 'Powered by Son of Suda Online' %></p>
+        </div>
+        <%# = render(:partial => 'master_articles/master_article_box') %>
+        <%# = render(:partial => 'user/admin_box') %>
+        <%= render(:partial => 'user/user_box') %>
+      </div>
+    </div>
+    <% if (@current_user && controller.action_name == 'user_dashboard') %>
+      <div id='cts_selector'>
+        <%= render(:partial => 'publications/cts_selector', :locals => { :emend => :showemend, :hide_text => :hide_text, :controller => 'cts_publications' }) %>
+      </div>
+    <% end %>
+    <%= render :partial => "common/flash_all" %>
+    <div class='content_body'>
+      <div class='nav'>
+        <ul class='nav right'>
+          <%= render "cross_site/board_tabs" %>
+          <%= render "cross_site/user_tabs" %>
+        </ul>
+      </div>
+      <%= yield %>
+    </div>
+  </body>
+</html>

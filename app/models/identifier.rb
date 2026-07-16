@@ -78,7 +78,7 @@ class Identifier < ApplicationRecord
   # - *Returns* :
   #   - the repository branch for this identifier
   def branch
-    publication.nil? ? 'master' : publication.branch
+    publication.nil? ? repository.default_branch : publication.branch
   end
 
   # - *Returns* :

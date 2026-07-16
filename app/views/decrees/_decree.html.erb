@@ -1,0 +1,22 @@
+<div class='decree'>
+  <b>
+    Action:
+  </b>
+  <%= decree.action %>
+  <br>
+  <b>
+    Trigger:
+  </b>
+  <%= decree.trigger %>
+  <%= decree.tally_method %>
+  <br>
+  <b>
+    Choices:
+  </b>
+  <%= decree.choices %>
+  <br>
+  <% if !defined?(hide_edit_link) %>
+    <%= link_to 'Edit', edit_decree_path(decree) %>
+    <%= link_to 'Delete', decree, :confirm => 'Are you sure?', :method => :delete %>
+  <% end %>
+</div>

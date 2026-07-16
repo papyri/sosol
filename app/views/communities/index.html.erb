@@ -1,0 +1,48 @@
+<div class='community'>
+  <h1>
+    Listing communities
+  </h1>
+  <% if @communities.length <= 0 %>
+    <p>
+      No Communities have been setup.
+    </p>
+    <br>
+  <% else %>
+    <table>
+      <tr>
+        <th>
+          Name
+        </th>
+        <th>
+          Friendly name
+        </th>
+        <th>
+          Description
+        </th>
+      </tr>
+      <% @communities.each do |community| %>
+        <tr>
+          <td>
+            <%= community.name %>
+          </td>
+          <td>
+            <%= community.friendly_name %>
+          </td>
+          <td>
+            <%= community.description %>
+          </td>
+          <td>
+            <%= link_to 'Show', community %>
+          </td>
+          <td>
+            <%= link_to 'Edit', edit_community_path(community) %>
+          </td>
+          <td>
+            <%= link_to 'Destroy', community, :confirm => 'Are you sure?', :method => :delete %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+</div>
+<%= link_to 'New community', new_community_path %>

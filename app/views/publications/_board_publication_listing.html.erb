@@ -1,0 +1,116 @@
+<% if defined?(list_name) %>
+  <% list_id = "publication_list_holder_" + list_name %>
+<% else %>
+  <% list_id = "publication_list_holder" %>
+<% end %>
+<% colwidth = 60/Identifier.site_identifier_classes.size %>
+<div <%= tag_options({:class => "publication_list_holder", :id => list_id}, false) %>>
+  <table class='results' width='95%'>
+    <tr>
+      <td></td>
+      <% Identifier.site_identifier_classes.each do |i| %>
+        <% if i.constantize::is_visible %>
+          <td <%= tag_options({:width=>"#{colwidth}%"}, false) %>></td>
+        <% end %>
+      <% end %>
+      <td></td>
+    </tr>
+    <tr class='head'>
+      <td>
+        <%= Publication %>
+      </td>
+      <% Identifier.site_identifier_classes.each do |i| %>
+        <% if i.constantize::is_visible %>
+          <td>
+            <%= i.constantize::FRIENDLY_NAME %>
+          </td>
+        <% end %>
+      <% end %>
+      <td>
+        Info
+      </td>
+    </tr>
+    <% publications.each do |publication| %>
+      <tr>
+        <td>
+          <% display_title = publication.title.split('/').last + " (" + publication.creator.name + ")" %>
+          <%= link_to display_title, publication, :title => "Last modified #{time_ago_in_words(publication.updated_at)} ago. Submitted by " + publication.creator.name %>
+          <%# = link_to publication.title, publication %>
+        </td>
+        <% Identifier.site_identifier_classes.each do |i| %>
+          <% if i.constantize::is_visible %>
+            <td class='identifier_td'>
+              <% meta_ids = publication.identifiers.collect do |ids| %>
+                <% if ids.type == i %>
+                  <% ids %>
+                <% end %>
+              <% end %>
+              <% meta_ids = meta_ids.compact %>
+              <% if meta_ids.length == 0 %>
+                <%# no option to create here %>
+              <% else %>
+                <%= link_to meta_ids.first.title, edit_polymorphic_path([publication,meta_ids.first]) %>
+              <% end %>
+              <% if meta_ids.length > 1 %>
+                <%= render :partial => "publications/batch_box", :locals => {:ids => meta_ids } %>
+              <% end %>
+            </td>
+          <% end %>
+        <% end %>
+        <%# -------------INFO--------------------- %>
+        <td>
+          <%# for efficiency only get extra info for the needed categories %>
+          <% if list_name == "approved" %>
+            <% if publication.find_finalizer_user %>
+              <% finalizer_div_id = "finalizer_" + publication.id.to_s %>
+              <%= publication.find_finalizer_user.human_name %>
+              <%= " is finalizing. " %>
+              <%# = image_tag("show_more_ids.png", :onclick=>"showFinalizer(this, '#{finalizer_div_id}', true)" ) %>
+              <%= image_tag("show_more_ids.png", :onclick=>"toggleFinalizer(this, '#{finalizer_div_id}')" ) %>
+              <%# %div{:class=>"finalizing", :id=>finalizer_div_id, :style=>"display:none;" , :onmouseout=>"showFinalizer(this, '#{finalizer_div_id}',false)"} %>
+              <div <%= tag_options({:class=>"finalizing", :id=>finalizer_div_id, :style=>"display:none;" , :onmouseout=>"toggleFinalizer(this, '#{finalizer_div_id}')"}, false) %>>
+                <%= form_tag({:controller=>'publications', :action=>'become_finalizer', :id=>publication.id}) do %>
+                  <%= submit_tag "Make me finalizer", :disabled => publication.advisory_lock_exists?("become_finalizer_#{publication.id}"), :onclick => 'this.disabled=true;this.form.submit();' %>
+                <% end %>
+
+              </div>
+            <% elsif publication.branch_exists? && (publication.children.length == 0) %>
+              <div class='finalizing'>
+                <%= form_tag({:controller=>'publications', :action=>'become_finalizer', :id=>publication.id}) do %>
+                  <%= submit_tag "Make me finalizer", :disabled => publication.advisory_lock_exists?("become_finalizer_#{publication.id}"), :onclick => 'this.disabled=true;this.form.submit();' %>
+                <% end %>
+
+              </div>
+            <% end %>
+          <% end %>
+          <% if list_name == "needs_review" || list_name == "waiting" %>
+            <% if publication.votes.count > 0 %>
+              <%= publication.votes.count %>
+              <% if publication.votes.count == 1 %>
+                <%= " vote" %>
+              <% else %>
+                <%= " votes" %>
+              <% end %>
+              <% vote_div_id = "votes_" + publication.id.to_s %>
+              <%= image_tag("show_more_ids.png", :onmouseover=>"showVotes(this, '#{vote_div_id}', true)", :onmouseout=>"showVotes(this, '#{vote_div_id}', false)" ) %>
+              <div <%= tag_options({:class=>"votes", :id=>vote_div_id, :style=>"display:none;"}, false) %>>
+                <table>
+                  <% publication.votes.each do |vote| %>
+                    <tr>
+                      <td>
+                        <%= vote.user.human_name + " (" + vote.user.name + ") " %>
+                      </td>
+                      <td>
+                        <%= vote.choice %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </table>
+              </div>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+</div>

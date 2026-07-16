@@ -134,7 +134,7 @@ class Publication < ApplicationRecord
         identifier_class = Object.const_get(identifier_name)
         temp_id = identifier_class.new(name: identifier_string)
         # make sure we have a path on master before forking it for this publication
-        next if repository.get_file_from_branch(temp_id.to_path, 'master').blank?
+        next if repository.get_file_from_branch(temp_id.to_path, repository.default_branch).blank?
 
         # 2012-09-17 BALMAS it might be good to have an option to raise an error if we couldn't
         # branch from the master repo? But not for optional secondary identifiers (e.g. annotations)?
@@ -210,63 +210,64 @@ class Publication < ApplicationRecord
   # When there are no more identifiers to be submitted, then the publication is marked as committed.
   def submit_to_next_board
     Rails.logger.info("Publication#submit_to_next_board called for: #{id}")
-    # NOTE: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
-    @recent_submit_sha = ''
+    self.with_advisory_lock("submit_#{self.id}") do
+      # NOTE: all @recent_submit_sha conde here added because it was here before, not sure if this is still needed
+      @recent_submit_sha = ''
 
-    # determine which ids are ready to be submitted (modified, editing...)
-    submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing') }
+      # determine which ids are ready to be submitted (modified, editing...)
+      submittable_identifiers = identifiers.select { |id| id.modified? && (id.status == 'editing') }
 
-    if submittable_identifiers.length.zero?
-      Rails.logger.warn("Publication#submit_to_next_board for #{self.id}: no submittable identifiers")
-      Rails.logger.info("Publication#submit_to_next_board for #{self.id} identifier state: #{identifiers.inspect}")
-    else
-      submittable_identifiers.each do |log_si|
-        Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable identifier: #{log_si.class}   #{log_si.title}"
-      end
-    end
-
-    # check if we are part of a community
-    boards = if is_community_publication?
-               Board.ranked_by_community_id(community.id)
-             else
-               Board.ranked
-             end
-
-    # check each board in order by priority rank
-    boards.each do |board|
-      # if board.community == publication.community
-      boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
-      next unless boards_identifiers.length.positive?
-
-      # submit to that board
-      boards_identifiers.each do |log_sbi|
-        Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable board identifier (Board: #{board.friendly_name}): #{log_sbi.class}   #{log_sbi.title}"
-      end
-      # submit each submitting_identifier
-      boards_identifiers.each do |submitting_identifier|
-        submitting_identifier.status = 'submitted'
-        submitting_identifier.save!
-
-        # make the most recent sha for the identifier available...is this the one we want?
-        @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+      if submittable_identifiers.length.zero?
+        Rails.logger.warn("Publication#submit_to_next_board for #{self.id}: no submittable identifiers")
+        Rails.logger.info("Publication#submit_to_next_board for #{self.id} identifier state: #{identifiers.inspect}")
+      else
+        submittable_identifiers.each do |log_si|
+          Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable identifier: #{log_si.class}   #{log_si.title}"
+        end
       end
 
-      # copy the repo, models, etc... to the board
-      boards_copy = copy_to_owner(board)
-      boards_copy.status = 'voting'
-      boards_copy.save!
+      # check if we are part of a community
+      boards = if is_community_publication?
+                 Board.ranked_by_community_id(community.id)
+               else
+                 Board.ranked
+               end
 
-      # trigger emails
-      board.send_status_emails('submitted', self)
+      # check each board in order by priority rank
+      boards.each do |board|
+        # if board.community == publication.community
+        boards_identifiers = submittable_identifiers.select { |id| board.controls_identifier?(id) }
+        next unless boards_identifiers.length.positive?
 
-      # update status on user copy
-      change_status('submitted')
-      save!
+        # submit to that board
+        boards_identifiers.each do |log_sbi|
+          Rails.logger.info "Publication#submit_to_next_board for #{self.id}, submittable board identifier (Board: #{board.friendly_name}): #{log_sbi.class}   #{log_sbi.title}"
+        end
+        # submit each submitting_identifier
+        boards_identifiers.each do |submitting_identifier|
+          submitting_identifier.status = 'submitted'
+          submitting_identifier.save!
 
-      # problem here in that comment will be added to the returned id, but there may be many ids.....
-      # todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
-      return '', boards_identifiers[0].id
-      # boards_identifiers.length > 0
+          # make the most recent sha for the identifier available...is this the one we want?
+          @recent_submit_sha = submitting_identifier.get_recent_commit_sha
+        end
+
+        # copy the repo, models, etc... to the board
+        boards_copy = copy_to_owner(board)
+        boards_copy.status = 'voting'
+        boards_copy.save!
+
+        # trigger emails
+        board.send_status_emails('submitted', self)
+
+        # update status on user copy
+        change_status('submitted')
+        save!
+
+        # problem here in that comment will be added to the returned id, but there may be many ids.....
+        # todo move where the comment is being placed, need to have discussion about where comments go 2-22-2010
+        return '', boards_identifiers[0].id
+      end
     end
 
     Rails.logger.debug { "Publication#submit_to_next_board for #{self.id}: no more parts to submit" }
@@ -326,6 +327,39 @@ class Publication < ApplicationRecord
     submit_to_next_board
   end
 
+  def submit_with_comment(submission_comment_string)
+    with_advisory_lock("submit_with_comment_#{self.id}") do
+      # git hash is not yet known, but we need the comment for the publication.submit to add to the changeDesc
+      submission_comment = Comment.new({ publication_id: self.id.to_s, comment: submission_comment_string,
+                                         reason: 'submit', user_id: self.owner.id })
+      submission_comment.save
+
+      error_text, identifier_for_comment = self.submit
+      if (error_text == '') && identifier_for_comment.present?
+        # update comment with git hash when successfully submitted
+        self.reload
+        submission_comment.git_hash = self.recent_submit_sha
+        submission_comment.identifier_id = identifier_for_comment
+        submission_comment.save
+      else
+        # cleanup comment that was inserted before submit completed that is no longer valid because of submit error
+        cleanup_id = Comment.find(:last,
+                                  conditions: { publication_id: self.id.to_s, reason: 'submit',
+                                                user_id: self.owner.id })
+        Comment.destroy(cleanup_id)
+        raise "Error in Publication#submit for Publication #{self.id} (#{self.title}) owned by #{self.owner.name}: #{error_text}"
+      end
+    end
+  end
+
+  def submit_with_comment_async(submission_comment)
+    if Rails.env.test?
+      self.submit_with_comment(submission_comment)
+    else
+      SubmitJob.perform_async(self.id, submission_comment)
+    end
+  end
+
   # Creates a new publication from templates found in app/data/templates. The new publication contains a DDBIdentifier and a HGVMetaIdentifier
   #
   # *Args*:
@@ -341,11 +375,11 @@ class Publication < ApplicationRecord
     new_publication.status = 'new' # TODO: add new flag else where or flesh out new status#"new"
     new_publication.save!
 
-    # branch from master so we aren't just creating an empty branch
-    new_publication.branch_from_master
+    # branch from default so we aren't just creating an empty branch
+    new_publication.branch_from_default
 
     # create the required meta data and transcriptions
-    new_ddb = DDBIdentifier.new_from_template(new_publication)
+    new_ddb = DDBCurrentIdentifier.new_from_template(new_publication)
     new_hgv_meta = HGVMetaIdentifier.new_from_template(new_publication)
 
     # go ahead and create the third so we can get rid of the create button
@@ -358,16 +392,16 @@ class Publication < ApplicationRecord
     new_publication = Publication.new(owner: creator, creator: creator)
 
     # fetch a title without creating from template
-    new_publication.title = "DCLP #{DCLPMetaIdentifier.new(name: DCLPMetaIdentifier.next_temporary_identifier).titleize}"
+    new_publication.title = "DCLP #{DCLPCurrentMetaIdentifier.new(name: DCLPCurrentMetaIdentifier.next_temporary_identifier).titleize}"
 
     new_publication.status = 'new' # TODO: add new flag else where or flesh out new status#"new"
     new_publication.save!
 
-    # branch from master so we aren't just creating an empty branch
-    new_publication.branch_from_master
+    # branch from default so we aren't just creating an empty branch
+    new_publication.branch_from_default
 
     # create the required meta data and transcriptions
-    new_dclp_meta = DCLPMetaIdentifier.new_from_template(new_publication)
+    new_dclp_meta = DCLPCurrentMetaIdentifier.new_from_template(new_publication)
     # new_dclp_text = DCLPTextIdentifier.find_by_publication_id(new_publication.id)
 
     # go ahead and create the third so we can get rid of the create button
@@ -908,12 +942,12 @@ class Publication < ApplicationRecord
     # (happens on the finalizer's repo)
     finalizer.repository.update_master_from_canonical
     # parent commit should ALWAYS be canonical master head
-    parent_commit = finalizer.repository.get_head('master')
+    parent_commit = finalizer.repository.get_head(finalizer.repository.default_branch)
 
     if RUBY_PLATFORM == 'java'
       controlled_paths_blobs = self.paths_blobs(controlled_paths)
 
-      jgit_tree = paths_blobs_to_jgit_tree(finalizing_publication.repository.jgit_repo, 'master', controlled_paths_blobs)
+      jgit_tree = paths_blobs_to_jgit_tree(finalizing_publication.repository.jgit_repo, finalizing_publication.repository.default_branch, controlled_paths_blobs)
       tree_sha1 = jgit_tree.update_sha
 
       Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
@@ -935,7 +969,7 @@ class Publication < ApplicationRecord
         finalizing_publication.branch, flattened_commit_sha1, true)
     else
       controlled_paths_blobs_oids = self.paths_blobs_oids(controlled_paths)
-      tree_sha1 = paths_blobs_oids_to_cgit_tree(finalizing_publication.repository, 'master', controlled_paths_blobs_oids)
+      tree_sha1 = paths_blobs_oids_to_cgit_tree(finalizing_publication.repository, finalizing_publication.repository.default_branch, controlled_paths_blobs_oids)
       
       Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
@@ -1084,7 +1118,8 @@ class Publication < ApplicationRecord
     owner.repository.get_head(branch)
   end
 
-  def merge_base(branch = 'master')
+  def merge_base(branch = nil)
+    branch ||= repository.default_branch
     Repository.run_command("#{repository.git_command_prefix} merge-base #{branch} #{head}").chomp
   end
 
@@ -1148,7 +1183,7 @@ class Publication < ApplicationRecord
     begin
       canon = Repository.new
       publication_sha = head
-      canonical_sha = canon.get_head('master')
+      canonical_sha = canon.get_head(canon.default_branch)
 
       if canon_controlled_identifiers.length.positive?
         if merge_base(canonical_sha) == canonical_sha
@@ -1165,7 +1200,7 @@ class Publication < ApplicationRecord
             # (happens on the finalizer's repo)
             owner.repository.update_master_from_canonical
 
-            jgit_tree = paths_blobs_to_jgit_tree(owner.repository.jgit_repo, 'master', controlled_paths_blobs)
+            jgit_tree = paths_blobs_to_jgit_tree(owner.repository.jgit_repo, owner.repository.default_branch, controlled_paths_blobs)
             tree_sha1 = jgit_tree.update_sha
 
             Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
@@ -1199,7 +1234,7 @@ class Publication < ApplicationRecord
             # (happens on the finalizer's repo)
             owner.repository.update_master_from_canonical
             
-            tree_sha1 = paths_blobs_oids_to_cgit_tree(owner.repository, 'master', controlled_paths_blobs_oids)
+            tree_sha1 = paths_blobs_oids_to_cgit_tree(owner.repository, owner.repository.default_branch, controlled_paths_blobs_oids)
 
             Rails.logger.info("Wrote tree as SHA1: #{tree_sha1}")
 
@@ -1210,7 +1245,7 @@ class Publication < ApplicationRecord
             Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
           end
         end
-        canon.copy_branch_from_repo(branch, 'master', owner.repository)
+        canon.copy_branch_from_repo(branch, canon.default_branch, owner.repository)
         change_status('committed')
         save!
 
@@ -1373,8 +1408,8 @@ class Publication < ApplicationRecord
     end
   end
 
-  def branch_from_master(force = true)
-    owner.repository.create_branch(branch, 'master', force)
+  def branch_from_default(force = true)
+    owner.repository.create_branch(branch, owner.repository.default_branch, force)
   end
 
   # Determines which identifiers are controlled by this publication's board.
@@ -1412,7 +1447,7 @@ class Publication < ApplicationRecord
 
   def diff_from_canon
     canon = Repository.new
-    canonical_sha = canon.get_head('master')
+    canonical_sha = canon.get_head(canon.default_branch)
     diff = Repository.run_command("git --git-dir=\"#{owner.repository.path}\" diff --unified=5000 #{canonical_sha} #{head} -- #{controlled_paths.map do |path|
                                                                                                                                   "\"#{path}\""
                                                                                                                                 end.join(' ')}")

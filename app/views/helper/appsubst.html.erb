@@ -1,0 +1,42 @@
+<div id='main'>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'helper' %>
+  <div class='site'>
+    <%= stylesheet_link_tag 'helper' %>
+    <div class='helperpop' id='app2col'>
+      <%= render :partial => 'markup_warn' %>
+      <h4>Scribal correction</h4>
+      <div id='app_col'>
+        <div id='app_low'>
+          <form name='appsubstadd'>
+            <input class='addcert' id='appsubstaddcert' name='addcert' type='checkbox' value='appsubstaddcert'>Uncertain</input>
+          </form>
+        </div>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appsubstadd_value' size='25' type='text'>
+        </div>
+        <div class='greek' id='app_desc'>
+          Correct form, e.g. κ̣λήρου (with diacriticals and full Leiden)
+        </div>
+        <div id='app_button'>
+          <button onclick='insertAppSubst()' type='button'>Insert</button>
+          &nbsp
+          <button onclick='closeHelper()' type='button'>Close</button>
+        </div>
+      </div>
+      <div id='app_col'>
+        <div id='app_low'>
+          <form name='appsubstdel'>
+            <input class='delcert' id='appsubstdelcert' name='delcert' type='checkbox' value='appsubstdelcert'>Uncertain</input>
+          </form>
+        </div>
+        <div id='app_text'>
+          <input class='choosetext greek' id='appsubstdel_value' size='25' type='text'>
+        </div>
+        <div class='greek' id='app_desc'>
+          Original form, e.g. δ̣ληρου (with full Leiden, but without diacriticals)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

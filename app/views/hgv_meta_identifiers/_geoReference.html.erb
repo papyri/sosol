@@ -1,0 +1,17 @@
+<% key = HGVMetaIdentifierHelper::generateRandomId 'geoReference' %>
+<div class='multi geoReference' <%= tag_options({:id => 'multi_' + key.to_s}, false) %>>
+  <ul class='items' <%= tag_options({:id => 'multiItems_' + key.to_s}, false) %>>
+    <% geoReferenceList.each_index do |index| %>
+      <li>
+        <%= text_field_tag 'hgv_meta_identifier[' + key.to_s + '][' + index.to_s + ']', geoReferenceList[index], :disabled => !@identifier.mutable?, :class => 'observechange' %>
+        <span class='delete' <%= tag_options({:onclick => 'multiRemove(this.parentNode)', :title => I18n.t('meta.tooltip.multiDelete')}, false) %>>x</span>
+        <span class='move' <%= tag_options({:title => I18n.t('meta.tooltip.multiMove')}, false) %>>o</span>
+      </li>
+    <% end %>
+  </ul>
+  <p class='add' <%= tag_options({:id => 'multiPlus_' + key.to_s}, false) %>>
+    <input class='observechange'>
+    <span <%= tag_options({:onclick => "multiAdd('" + key.to_s + "')", :title => I18n.t('meta.tooltip.multiAdd')}, false) %>><%= I18n.t('label.multiAdd') %></span>
+  </p>
+  <%= javascript_tag "Sortable.create(document.getElementById('multiItems_" + key.to_s + "'), {direction: 'horizontal', handle: '.move'});" %>
+</div>
