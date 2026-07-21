@@ -300,7 +300,7 @@ class PublicationsController < ApplicationController
 
     if @publication.advisory_lock_exists?("recover_branch_#{@publication.id}")
       flash[:notice] = 'Git branch recovery is already running for this publication.'
-      redirect_to show
+      redirect_to action: "show"
     else
       RecoverBranchJob.perform_async(@publication.id)
       flash[:notice] = 'Git branch recovery running. Check back in a few minutes.'
@@ -316,13 +316,13 @@ class PublicationsController < ApplicationController
     if @publication.owner_type != 'Board'
       # NOTE: this can only be called on a board owned publication
       flash[:error] = "Can't change finalizer on non-board copy of publication."
-      redirect_to show
+      redirect_to action: "show"
     elsif @publication.advisory_lock_exists?("become_finalizer_#{@publication.id}")
       flash[:notice] = 'Another user is currently making themselves the finalizer of this publication.'
-      redirect_to show
+      redirect_to action: "show"
     elsif @publication.advisory_lock_exists?("finalize_#{@publication.id}")
       flash[:error] = "Can't change finalizer - finalizer's copy is already in the process of being finalized."
-      redirect_to show
+      redirect_to action: "show"
     else
       SendToFinalizerJob.perform_async(@publication.id, @current_user.id)
     end
