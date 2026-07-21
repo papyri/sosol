@@ -1240,7 +1240,7 @@ class Publication < ApplicationRecord
 
             commit_message = "Finalization merge of branch '#{branch}' into canonical master"
 
-            finalized_commit_sha1 = owner.repository.commit_tree_to_branch_cgit(tree_sha1, branch, owner.cgit_actor, owner.cgit_actor, commit_message, [canonical_sha1, publication_sha])
+            finalized_commit_sha1 = owner.repository.commit_tree_to_branch_cgit(tree_sha1, branch, owner.cgit_actor, owner.cgit_actor, commit_message, [canonical_sha, publication_sha])
 
             Rails.logger.info("commit_to_canon: Wrote finalized commit merge as SHA1: #{finalized_commit_sha1}")
           end
